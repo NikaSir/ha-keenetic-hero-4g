@@ -12,3 +12,6 @@
 - Added HACS metadata.
 - Added project icon using a router + radio-link visual.
 - Kept the integration read-only; failover accounting and active probing are deferred to `b002`.
+- Live-tested Config Flow and RCI polling on Home Assistant 2026.8.2 with Keenetic Hero 4G+ KN-2311.
+- Corrected LTE modem model selection to prefer the factual Quectel product/ATI model over Keenetic's numeric modem type code.
+- Refined Ethernet/LTE connectivity entity names for cleaner Home Assistant UI state rendering.
