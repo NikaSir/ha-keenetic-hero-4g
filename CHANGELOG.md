@@ -4,7 +4,7 @@
 
 - Added factual active WAN detection from Keenetic route/interface state.
 - Supports VPN-default-route installations by identifying the public /32 transport route carried by `GigabitEthernet1` or `UsbLte0`; no Lovelace traffic inference is used.
-- Added read-only `tools ping` execution through `/rci/parse`, including Keenetic `continued` response polling.
+- Added read-only `tools ping` execution through RCI Parse commands.
 - Added Ethernet and LTE average ping sensors.
 - Added Ethernet and LTE packet-loss sensors.
 - Added persistent last WAN switch timestamp.
@@ -14,8 +14,9 @@
 - Diagnostic ICMP runs on a slower 60-second cadence and cannot make the base telemetry coordinator unavailable.
 - Added English custom-integration translations and state translations for WAN/failover enum sensors.
 - Integration remains read-only; VPN/WAN/LTE control is still out of scope.
-- Live failover validation confirmed Ethernet -> LTE tracking, switch count, switch timestamp and factual `ethernet_link_down` reason on the target KN-2311.
-- Hardened diagnostic ping collection after live validation: first diagnostics now run immediately, explicitly down interfaces are skipped, probe count is reduced to three, partial ICMP reply times are retained, and packet loss is only derived from a completed command.
+- Live failover validation confirmed Ethernet -> LTE -> Ethernet tracking, switch count, switch timestamp, `ethernet_link_down`, and `ethernet_restored` reasons on the target KN-2311.
+- Hardened diagnostic ping collection after live validation: first diagnostics run immediately, explicitly down interfaces are skipped, probe count is three, partial ICMP reply times are retained, and packet loss is only derived from factual ping output.
+- Corrected Parse transport for KN-2311: submit `{"parse":"..."}` to `POST /rci/`, then poll the same `/rci/` resource while `continued` is true. This replaces the invalid `/rci/parse` continuation path that returned `no input [http/rci ...]`.
 - Completed Russian labels for Ethernet/LTE ping, packet loss and LTE EARFCN.
 
 ## v1.00_b001 — 2026-08-21
