@@ -14,6 +14,6 @@
       "lte_enb_id": {"name": "LTE eNB ID"}, "lte_sector_id": {"name": "LTE Sector ID"}, "lte_phy_cell_id": {"name": "LTE Physical Cell ID"}, "lte_earfcn": {"name": "LTE EARFCN"},
       "lte_modem_temperature": {"name": "Температура LTE-модема"}, "lte_modem_model": {"name": "Модель LTE-модема"}, "lte_modem_firmware": {"name": "Прошивка LTE-модема"}, "lte_sim_state": {"name": "Состояние SIM"}
     },
-    "binary_sensor": {"ethernet_connected": {"name": "Ethernet WAN подключён"}, "lte_connected": {"name": "LTE подключён"}}
+    "binary_sensor": {"ethernet_connected": {"name": "Подключение Ethernet WAN"}, "lte_connected": {"name": "Подключение LTE"}}
   }
 }
