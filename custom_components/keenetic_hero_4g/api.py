@@ -36,12 +36,23 @@ _RTT_RE = re.compile(
     r"(?:/\d+(?:\.\d+)?)?\s*ms",
     re.IGNORECASE,
 )
+_REPLY_TIME_RE = re.compile(
+    r"\btime[=<]?(?P<value>\d+(?:\.\d+)?)\s*ms\b",
+    re.IGNORECASE,
+)
 
 
 class KeeneticRCIClient:
     """Minimal asynchronous read-only Keenetic RCI client."""
 
-    def __init__(self, session: aiohttp.ClientSession, host: str, username: str, password: str, timeout: int = 10) -> None:
+    def __init__(
+        self,
+        session: aiohttp.ClientSession,
+        host: str,
+        username: str,
+        password: str,
+        timeout: int = 10,
+    ) -> None:
         host = host.strip().rstrip("/")
         if not host.startswith(("http://", "https://")):
             host = f"http://{host}"
@@ -80,7 +91,9 @@ class KeeneticRCIClient:
     async def async_authenticate(self) -> None:
         """Perform Keenetic x-ndw2-interactive challenge-response auth."""
         try:
-            async with self._session.get(f"{self._base_url}/auth", timeout=self._timeout) as response:
+            async with self._session.get(
+                f"{self._base_url}/auth", timeout=self._timeout
+            ) as response:
                 self._remember_cookies(response)
                 if response.status == 200:
                     self._authenticated = True
@@ -88,13 +101,17 @@ class KeeneticRCIClient:
                 realm = response.headers.get("X-NDM-Realm")
                 challenge = response.headers.get("X-NDM-Challenge")
                 if response.status != 401 or not realm or not challenge:
-                    raise KeeneticAuthError(f"Unexpected authentication response HTTP {response.status}")
+                    raise KeeneticAuthError(
+                        f"Unexpected authentication response HTTP {response.status}"
+                    )
 
             md5_value = hashlib.md5(
                 f"{self._username}:{realm}:{self._password}".encode(),
                 usedforsecurity=False,
             ).hexdigest()
-            password_hash = hashlib.sha256(f"{challenge}{md5_value}".encode()).hexdigest()
+            password_hash = hashlib.sha256(
+                f"{challenge}{md5_value}".encode()
+            ).hexdigest()
             headers = {"Content-Type": "application/json"}
             if cookie := self._cookie_header():
                 headers["Cookie"] = cookie
@@ -107,7 +124,9 @@ class KeeneticRCIClient:
             ) as response:
                 self._remember_cookies(response)
                 if response.status != 200:
-                    raise KeeneticAuthError(f"Authentication failed with HTTP {response.status}")
+                    raise KeeneticAuthError(
+                        f"Authentication failed with HTTP {response.status}"
+                    )
                 self._authenticated = True
         except (aiohttp.ClientError, TimeoutError) as err:
             raise KeeneticConnectionError(str(err)) from err
@@ -130,9 +149,13 @@ class KeeneticRCIClient:
                         await self.async_authenticate()
                         continue
                     if response.status == 401:
-                        raise KeeneticAuthError("Router rejected the authenticated session")
+                        raise KeeneticAuthError(
+                            "Router rejected the authenticated session"
+                        )
                     if response.status >= 400:
-                        raise KeeneticConnectionError(f"HTTP {response.status} while reading {path}")
+                        raise KeeneticConnectionError(
+                            f"HTTP {response.status} while reading {path}"
+                        )
                     return await response.json(content_type=None)
             except (aiohttp.ClientError, TimeoutError) as err:
                 raise KeeneticConnectionError(str(err)) from err
@@ -159,9 +182,13 @@ class KeeneticRCIClient:
                         await self.async_authenticate()
                         continue
                     if response.status == 401:
-                        raise KeeneticAuthError("Router rejected the authenticated session")
+                        raise KeeneticAuthError(
+                            "Router rejected the authenticated session"
+                        )
                     if response.status >= 400:
-                        raise KeeneticConnectionError(f"HTTP {response.status} while posting {path}")
+                        raise KeeneticConnectionError(
+                            f"HTTP {response.status} while posting {path}"
+                        )
                     return await response.json(content_type=None)
             except (aiohttp.ClientError, TimeoutError) as err:
                 raise KeeneticConnectionError(str(err)) from err
@@ -182,8 +209,31 @@ class KeeneticRCIClient:
         if errors:
             raise KeeneticCommandError("; ".join(errors))
 
-    async def async_parse_command(self, command: str, *, max_wait: float = 15.0) -> list[str]:
-        """Run one diagnostic CLI command through /rci/parse and collect streamed output."""
+    @staticmethod
+    def _collect_messages(data: Any, lines: list[str]) -> bool:
+        """Collect Web CLI output and return the continued flag."""
+        if not isinstance(data, dict):
+            return False
+
+        if isinstance(data.get("parse"), dict):
+            data = data["parse"]
+
+        message = data.get("message")
+        if isinstance(message, list):
+            lines.extend(str(item) for item in message)
+        elif isinstance(message, str):
+            lines.append(message)
+
+        return bool(data.get("continued"))
+
+    async def async_parse_command(
+        self, command: str, *, max_wait: float = 15.0
+    ) -> tuple[list[str], bool]:
+        """Run a diagnostic CLI command and collect its streamed output.
+
+        The bool return value tells the caller whether Keenetic explicitly
+        completed the command. Partial reply lines are retained on timeout.
+        """
         data = await self.async_post_json("/rci/parse", command)
         lines: list[str] = []
         loop = asyncio.get_running_loop()
@@ -191,36 +241,48 @@ class KeeneticRCIClient:
 
         while True:
             self._raise_rci_error(data)
-            if isinstance(data, dict):
-                message = data.get("message")
-                if isinstance(message, list):
-                    lines.extend(str(item) for item in message)
-                elif isinstance(message, str):
-                    lines.append(message)
-                continued = bool(data.get("continued"))
-            else:
-                continued = False
+            continued = self._collect_messages(data, lines)
 
             if not continued:
-                return lines
+                return lines, True
             if loop.time() >= deadline:
-                raise KeeneticCommandError(f"Diagnostic command timed out: {command}")
+                return lines, False
 
-            await asyncio.sleep(0.25)
+            await asyncio.sleep(0.5)
             data = await self.async_get_json("/rci/parse")
 
-    async def async_ping(self, host: str, interface: str, *, count: int = 5) -> dict[str, float | None]:
+    async def async_ping(
+        self, host: str, interface: str, *, count: int = 3
+    ) -> dict[str, float | None]:
         """Return factual average ping and packet loss for one source interface."""
-        lines = await self.async_parse_command(
-            f"tools ping {host} count {count} source {interface}"
+        lines, completed = await self.async_parse_command(
+            f"tools ping {host} count {count} source {interface}",
+            max_wait=max(10.0, count * 3.0),
         )
         text = "\n".join(lines)
+
         packet = _PACKET_RE.search(text)
         rtt = _RTT_RE.search(text)
-        return {
-            "ping_ms": float(rtt.group("avg")) if rtt else None,
-            "packet_loss": float(packet.group("loss")) if packet else None,
-        }
+        reply_times = [
+            float(match.group("value")) for match in _REPLY_TIME_RE.finditer(text)
+        ]
+
+        if rtt:
+            ping_ms: float | None = float(rtt.group("avg"))
+        elif reply_times:
+            ping_ms = round(sum(reply_times) / len(reply_times), 2)
+        else:
+            ping_ms = None
+
+        if packet:
+            packet_loss: float | None = float(packet.group("loss"))
+        elif completed:
+            replies = min(len(reply_times), count)
+            packet_loss = round((count - replies) / count * 100.0, 1)
+        else:
+            packet_loss = None
+
+        return {"ping_ms": ping_ms, "packet_loss": packet_loss}
 
     async def async_get_system(self) -> dict[str, Any]:
         data = await self.async_get_json("/rci/show/system")
