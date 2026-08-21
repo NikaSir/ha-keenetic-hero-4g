@@ -14,6 +14,9 @@
 - Diagnostic ICMP runs on a slower 60-second cadence and cannot make the base telemetry coordinator unavailable.
 - Added English custom-integration translations and state translations for WAN/failover enum sensors.
 - Integration remains read-only; VPN/WAN/LTE control is still out of scope.
+- Live failover validation confirmed Ethernet -> LTE tracking, switch count, switch timestamp and factual `ethernet_link_down` reason on the target KN-2311.
+- Hardened diagnostic ping collection after live validation: first diagnostics now run immediately, explicitly down interfaces are skipped, probe count is reduced to three, partial ICMP reply times are retained, and packet loss is only derived from a completed command.
+- Completed Russian labels for Ethernet/LTE ping, packet loss and LTE EARFCN.
 
 ## v1.00_b001 — 2026-08-21
 
