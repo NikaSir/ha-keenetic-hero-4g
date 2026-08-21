@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.00_b002 — 2026-08-21
+
+- Added factual active WAN detection from Keenetic route/interface state.
+- Supports VPN-default-route installations by identifying the public /32 transport route carried by `GigabitEthernet1` or `UsbLte0`; no Lovelace traffic inference is used.
+- Added read-only `tools ping` execution through `/rci/parse`, including Keenetic `continued` response polling.
+- Added Ethernet and LTE average ping sensors.
+- Added Ethernet and LTE packet-loss sensors.
+- Added persistent last WAN switch timestamp.
+- Added conservative last-switch reason states: Ethernet link down, Ethernet restored, or route changed when the root cause cannot be proven.
+- Added WAN switch count for the current day.
+- Added cumulative LTE active time for the current day.
+- Diagnostic ICMP runs on a slower 60-second cadence and cannot make the base telemetry coordinator unavailable.
+- Added English custom-integration translations and state translations for WAN/failover enum sensors.
+- Integration remains read-only; VPN/WAN/LTE control is still out of scope.
+
 ## v1.00_b001 — 2026-08-21
 
 - Added first installable Home Assistant custom integration under `custom_components/keenetic_hero_4g`.
