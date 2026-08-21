@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import json
 import re
 from http.cookies import SimpleCookie
 from typing import Any
@@ -194,9 +195,48 @@ class KeeneticRCIClient:
                 raise KeeneticConnectionError(str(err)) from err
         raise KeeneticAuthError("Authentication retry failed")
 
+    async def async_post_json_string(self, path: str, value: str) -> Any:
+        """POST an RCI JSON string as an exact raw request body.
+
+        `/rci/parse` expects a JSON string, not a JSON object. Using an explicit
+        serialized body keeps the wire format identical to the documented curl
+        form: --data-ascii '"command ..."'.
+        """
+        if not self._authenticated:
+            await self.async_authenticate()
+
+        body = json.dumps(value, ensure_ascii=False)
+        for attempt in range(2):
+            headers = self._request_headers()
+            headers["Content-Type"] = "application/json"
+            try:
+                async with self._session.post(
+                    f"{self._base_url}{path}",
+                    data=body,
+                    headers=headers,
+                    timeout=self._timeout,
+                ) as response:
+                    self._remember_cookies(response)
+                    if response.status == 401 and attempt == 0:
+                        self._authenticated = False
+                        await self.async_authenticate()
+                        continue
+                    if response.status == 401:
+                        raise KeeneticAuthError(
+                            "Router rejected the authenticated session"
+                        )
+                    if response.status >= 400:
+                        raise KeeneticConnectionError(
+                            f"HTTP {response.status} while posting {path}"
+                        )
+                    return await response.json(content_type=None)
+            except (aiohttp.ClientError, TimeoutError) as err:
+                raise KeeneticConnectionError(str(err)) from err
+        raise KeeneticAuthError("Authentication retry failed")
+
     @staticmethod
     def _parse_payload(data: Any) -> Any:
-        """Unwrap the response produced by POST /rci/ with a parse command."""
+        """Unwrap a nested Parse response when Keenetic returns one."""
         if isinstance(data, dict) and isinstance(data.get("parse"), dict):
             return data["parse"]
         return data
@@ -237,16 +277,16 @@ class KeeneticRCIClient:
     ) -> tuple[list[str], bool]:
         """Run a diagnostic CLI command and collect its streamed output.
 
-        Keenetic Web CLI submits Parse commands to the RCI root as
-        {"parse": "<command>"}. When the response contains `continued`, RCI
-        requires polling the same resource URL used for the initiating POST.
-        Therefore a command started at /rci/ is continued with GET /rci/.
+        Keenetic exposes Parse directly at `/rci/parse`. That endpoint accepts
+        one JSON string containing the CLI command. Long-running commands return
+        `continued: true`; in that case RCI requires GET polling of the same
+        resource URL until a response without `continued` is received.
 
         The bool return value tells the caller whether Keenetic explicitly
         completed the command. Partial reply lines are retained on timeout.
         """
-        resource_path = "/rci/"
-        data = await self.async_post_json(resource_path, {"parse": command})
+        resource_path = "/rci/parse"
+        data = await self.async_post_json_string(resource_path, command)
         lines: list[str] = []
         loop = asyncio.get_running_loop()
         deadline = loop.time() + max_wait
@@ -267,7 +307,7 @@ class KeeneticRCIClient:
         self, host: str, interface: str, *, count: int = 3
     ) -> dict[str, float | None]:
         """Return factual average ping and packet loss for one source interface."""
-        lines, completed = await self.async_parse_command(
+        lines, _completed = await self.async_parse_command(
             f"tools ping {host} count {count} source {interface}",
             max_wait=max(10.0, count * 3.0),
         )
@@ -278,7 +318,6 @@ class KeeneticRCIClient:
         reply_times = [
             float(match.group("value")) for match in _REPLY_TIME_RE.finditer(text)
         ]
-        has_ping_context = "PING " in text or "sending ICMP" in text
 
         if rtt:
             ping_ms: float | None = float(rtt.group("avg"))
@@ -287,13 +326,12 @@ class KeeneticRCIClient:
         else:
             ping_ms = None
 
-        if packet:
-            packet_loss: float | None = float(packet.group("loss"))
-        elif completed and has_ping_context:
-            replies = min(len(reply_times), count)
-            packet_loss = round((count - replies) / count * 100.0, 1)
-        else:
-            packet_loss = None
+        # Packet loss is published only when Keenetic itself returns the final
+        # packet summary. Do not infer loss from a partial stream: doing so can
+        # turn an incomplete diagnostic into a false 100%/66.7% reading.
+        packet_loss: float | None = (
+            float(packet.group("loss")) if packet is not None else None
+        )
 
         return {"ping_ms": ping_ms, "packet_loss": packet_loss}
 
