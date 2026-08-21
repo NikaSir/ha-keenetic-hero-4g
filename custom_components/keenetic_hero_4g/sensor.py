@@ -1,0 +1,127 @@
+from __future__ import annotations
+
+from collections.abc import Callable
+from dataclasses import dataclass
+from typing import Any
+
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import PERCENTAGE, UnitOfDataRate, UnitOfFrequency, UnitOfTemperature, UnitOfTime
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+
+from .coordinator import KeeneticCoordinator
+from .entity import KeeneticEntity, as_float, first_value
+
+ValueFn = Callable[[dict[str, Any]], Any]
+
+
+@dataclass(frozen=True, kw_only=True)
+class KeeneticSensorDescription(SensorEntityDescription):
+    value_fn: ValueFn
+
+
+def block(name: str, *paths: tuple[str, ...]) -> ValueFn:
+    return lambda data: first_value(data.get(name, {}), paths)
+
+
+def memory_usage(data: dict[str, Any]) -> float | None:
+    system = data.get("system", {})
+    memory = first_value(system, (("memory",),))
+    if isinstance(memory, str) and "/" in memory:
+        used, total = memory.split("/", 1)
+        try:
+            return round(float(used) / float(total) * 100, 1)
+        except (ValueError, ZeroDivisionError):
+            return None
+    total = as_float(first_value(system, (("memtotal",), ("memory-total",))))
+    free = as_float(first_value(system, (("memfree",), ("memory-free",))))
+    if total and free is not None:
+        return round((total - free) / total * 100, 1)
+    return None
+
+
+def interface_uptime(name: str) -> ValueFn:
+    def value_fn(data: dict[str, Any]) -> int | None:
+        value = as_float(first_value(data.get(name, {}), (("uptime",), ("link", "uptime"))))
+        return int(value / 60) if value is not None else None
+    return value_fn
+
+
+def ethernet_speed(data: dict[str, Any]) -> float | None:
+    value = first_value(
+        data.get("ethernet", {}),
+        (("speed",), ("link", "speed"), ("port", "speed"), ("physical", "speed")),
+    )
+    return as_float(value)
+
+
+def lte_band(data: dict[str, Any]) -> str | None:
+    value = first_value(data.get("lte", {}), (("band",), ("radio", "band")))
+    return f"B{value}" if value not in (None, "") else None
+
+
+def lte_carriers(data: dict[str, Any]) -> str | None:
+    carrier = first_value(data.get("lte", {}), (("carrier",), ("carriers",)))
+    items = carrier.values() if isinstance(carrier, dict) else carrier if isinstance(carrier, list) else []
+    values: list[str] = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        active = item.get("active")
+        if active is False or str(active).lower() in {"false", "no", "0"}:
+            continue
+        band = item.get("band")
+        bandwidth = item.get("bandwidth")
+        if band is None:
+            continue
+        label = f"B{band}"
+        if bandwidth is not None:
+            label += f" ({bandwidth} MHz)"
+        values.append(label)
+    return " + ".join(values) if values else None
+
+
+SENSORS: tuple[KeeneticSensorDescription, ...] = (
+    KeeneticSensorDescription(key="cpu_load", translation_key="cpu_load", icon="mdi:cpu-64-bit", native_unit_of_measurement=PERCENTAGE, value_fn=lambda d: as_float(first_value(d.get("system", {}), (("cpuload",), ("cpu-load",))))),
+    KeeneticSensorDescription(key="memory_usage", translation_key="memory_usage", icon="mdi:memory", native_unit_of_measurement=PERCENTAGE, value_fn=memory_usage),
+    KeeneticSensorDescription(key="firmware_version", translation_key="firmware_version", icon="mdi:router-wireless-settings", value_fn=block("version", ("release",), ("version",), ("title",))),
+    KeeneticSensorDescription(key="ethernet_wan_ipv4", translation_key="ethernet_wan_ipv4", icon="mdi:ip-network", value_fn=block("ethernet", ("address",), ("ip", "address"))),
+    KeeneticSensorDescription(key="ethernet_link_speed", translation_key="ethernet_link_speed", icon="mdi:ethernet", native_unit_of_measurement=UnitOfDataRate.MEGABITS_PER_SECOND, value_fn=ethernet_speed),
+    KeeneticSensorDescription(key="ethernet_interface_uptime", translation_key="ethernet_interface_uptime", icon="mdi:timer-outline", native_unit_of_measurement=UnitOfTime.MINUTES, value_fn=interface_uptime("ethernet")),
+    KeeneticSensorDescription(key="lte_wan_ipv4", translation_key="lte_wan_ipv4", icon="mdi:ip-network-outline", value_fn=block("lte", ("address",), ("ip", "address"))),
+    KeeneticSensorDescription(key="lte_interface_uptime", translation_key="lte_interface_uptime", icon="mdi:timer-outline", native_unit_of_measurement=UnitOfTime.MINUTES, value_fn=interface_uptime("lte")),
+    KeeneticSensorDescription(key="lte_operator", translation_key="lte_operator", icon="mdi:access-point-network", value_fn=block("lte", ("operator",), ("mobile", "operator"))),
+    KeeneticSensorDescription(key="lte_network_type", translation_key="lte_network_type", icon="mdi:signal-4g", value_fn=block("lte", ("mobile",), ("network",), ("network-type",))),
+    KeeneticSensorDescription(key="lte_primary_band", translation_key="lte_primary_band", icon="mdi:radio-tower", value_fn=lte_band),
+    KeeneticSensorDescription(key="lte_carriers", translation_key="lte_carriers", icon="mdi:signal-cellular-3", value_fn=lte_carriers),
+    KeeneticSensorDescription(key="lte_bandwidth", translation_key="lte_bandwidth", icon="mdi:sine-wave", native_unit_of_measurement=UnitOfFrequency.MEGAHERTZ, value_fn=lambda d: as_float(first_value(d.get("lte", {}), (("bandwidth",), ("radio", "bandwidth"))))),
+    KeeneticSensorDescription(key="lte_enb_id", translation_key="lte_enb_id", icon="mdi:transmission-tower", value_fn=block("lte", ("enb-id",), ("enb_id",))),
+    KeeneticSensorDescription(key="lte_sector_id", translation_key="lte_sector_id", icon="mdi:transmission-tower", value_fn=block("lte", ("sector-id",), ("sector_id",))),
+    KeeneticSensorDescription(key="lte_phy_cell_id", translation_key="lte_phy_cell_id", icon="mdi:transmission-tower", value_fn=block("lte", ("phy-cell-id",), ("pci",))),
+    KeeneticSensorDescription(key="lte_earfcn", translation_key="lte_earfcn", icon="mdi:sine-wave", value_fn=block("lte", ("earfcn",))),
+    KeeneticSensorDescription(key="lte_modem_temperature", translation_key="lte_modem_temperature", icon="mdi:thermometer", device_class=SensorDeviceClass.TEMPERATURE, native_unit_of_measurement=UnitOfTemperature.CELSIUS, value_fn=lambda d: as_float(first_value(d.get("lte", {}), (("temperature",), ("modem", "temperature"))))),
+    KeeneticSensorDescription(key="lte_modem_model", translation_key="lte_modem_model", icon="mdi:expansion-card", value_fn=block("lte", ("model",), ("modem", "model"))),
+    KeeneticSensorDescription(key="lte_modem_firmware", translation_key="lte_modem_firmware", icon="mdi:chip", value_fn=block("lte", ("fw",), ("firmware",), ("modem", "firmware"))),
+    KeeneticSensorDescription(key="lte_sim_state", translation_key="lte_sim_state", icon="mdi:sim", value_fn=block("lte", ("sim",), ("sim-state",), ("sim", "state"))),
+)
+
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddConfigEntryEntitiesCallback) -> None:
+    """Set up Keenetic sensors."""
+    coordinator: KeeneticCoordinator = entry.runtime_data
+    async_add_entities(KeeneticSensor(coordinator, description) for description in SENSORS)
+
+
+class KeeneticSensor(KeeneticEntity, SensorEntity):
+    """Keenetic sensor."""
+
+    entity_description: KeeneticSensorDescription
+
+    def __init__(self, coordinator: KeeneticCoordinator, description: KeeneticSensorDescription) -> None:
+        super().__init__(coordinator, description.key)
+        self.entity_description = description
+
+    @property
+    def native_value(self) -> Any:
+        return self.entity_description.value_fn(self.coordinator.data)
