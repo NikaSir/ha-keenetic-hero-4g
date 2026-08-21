@@ -62,7 +62,13 @@ def _public_host_route_interface(routes: Any) -> str | None:
             ip = ipaddress.ip_interface(destination).ip
         except ValueError:
             continue
-        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_multicast or ip.is_unspecified:
+        if (
+            ip.is_private
+            or ip.is_loopback
+            or ip.is_link_local
+            or ip.is_multicast
+            or ip.is_unspecified
+        ):
             continue
         candidates.add(interface)
 
@@ -71,7 +77,11 @@ def _public_host_route_interface(routes: Any) -> str | None:
     return None
 
 
-def determine_active_wan(routes: Any, ethernet: dict[str, Any], lte: dict[str, Any]) -> str | None:
+def determine_active_wan(
+    routes: Any,
+    ethernet: dict[str, Any],
+    lte: dict[str, Any],
+) -> str | None:
     """Determine the physical active WAN from factual router state."""
     eth_connected = _connected(ethernet)
     lte_connected = _connected(lte)
@@ -122,7 +132,8 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             WAN_ETHERNET: {"ping_ms": None, "packet_loss": None},
             WAN_LTE: {"ping_ms": None, "packet_loss": None},
         }
-        self._last_diagnostics = time.monotonic()
+        # Run the first diagnostic cycle immediately after startup.
+        self._last_diagnostics = 0.0
         self._store: Store[dict[str, Any]] = Store(
             hass, 1, f"{DOMAIN}.{entry.entry_id}.failover"
         )
@@ -162,7 +173,9 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             return "route_changed"
         return "route_changed"
 
-    def _update_tracking(self, active_wan: str | None, ethernet: dict[str, Any]) -> None:
+    def _update_tracking(
+        self, active_wan: str | None, ethernet: dict[str, Any]
+    ) -> None:
         now = dt_util.now()
         today = now.date().isoformat()
         monotonic_now = time.monotonic()
@@ -176,7 +189,9 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         if self._last_poll_monotonic is not None and previous_wan == WAN_LTE:
             elapsed = monotonic_now - self._last_poll_monotonic
-            base_interval = self.update_interval.total_seconds() if self.update_interval else 30.0
+            base_interval = (
+                self.update_interval.total_seconds() if self.update_interval else 30.0
+            )
             max_reasonable = max(90.0, base_interval * 2.5)
             if 0 <= elapsed <= max_reasonable:
                 self._tracking["lte_seconds_today"] = float(
@@ -204,22 +219,40 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._first_runtime_update = False
         self._store.async_delay_save(lambda: dict(self._tracking), 60)
 
-    async def _async_update_diagnostics(self) -> None:
+    async def _async_update_diagnostics(
+        self,
+        ethernet: dict[str, Any],
+        lte: dict[str, Any],
+    ) -> None:
         now = time.monotonic()
         if now - self._last_diagnostics < DIAGNOSTIC_INTERVAL.total_seconds():
             return
 
         self._last_diagnostics = now
-        for name, interface in (
-            (WAN_ETHERNET, ETHERNET_INTERFACE),
-            (WAN_LTE, LTE_INTERFACE),
-        ):
+        interfaces = (
+            (WAN_ETHERNET, ETHERNET_INTERFACE, ethernet),
+            (WAN_LTE, LTE_INTERFACE, lte),
+        )
+        for name, interface, interface_data in interfaces:
+            # An explicitly down interface is not a failed ping test; it has no
+            # current path to measure. Do not let it block the other channel.
+            if _connected(interface_data) is False:
+                self._diagnostics[name] = {
+                    "ping_ms": None,
+                    "packet_loss": None,
+                }
+                continue
+
             try:
                 self._diagnostics[name] = await self.client.async_ping(
-                    PING_HOST, interface, count=5
+                    PING_HOST, interface, count=3
                 )
             except KeeneticError as err:
-                _LOGGER.debug("Keenetic %s diagnostic ping unavailable: %s", name, err)
+                _LOGGER.warning(
+                    "Keenetic %s diagnostic ping unavailable: %s",
+                    name,
+                    err,
+                )
                 self._diagnostics[name] = {
                     "ping_ms": None,
                     "packet_loss": None,
@@ -241,7 +274,7 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         active_wan = determine_active_wan(routes, ethernet, lte)
         self._update_tracking(active_wan, ethernet)
-        await self._async_update_diagnostics()
+        await self._async_update_diagnostics(ethernet, lte)
 
         return {
             "system": system,
@@ -255,6 +288,8 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "last_switch": self._tracking.get("last_switch"),
                 "last_switch_reason": self._tracking.get("last_switch_reason"),
                 "switches_today": int(self._tracking.get("switches_today", 0)),
-                "lte_seconds_today": float(self._tracking.get("lte_seconds_today", 0.0)),
+                "lte_seconds_today": float(
+                    self._tracking.get("lte_seconds_today", 0.0)
+                ),
             },
         }
