@@ -1,0 +1,25 @@
+{
+  "title": "Keenetic Hero 4G+",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Keenetic Hero 4G+",
+        "description": "Local read-only telemetry via the Keenetic RCI interface.",
+        "data": {"host": "Router address", "username": "Username", "password": "Password"}
+      }
+    },
+    "error": {"cannot_connect": "Cannot connect to the router.", "invalid_auth": "Authentication failed.", "unknown": "Unexpected error."},
+    "abort": {"already_configured": "This router is already configured."}
+  },
+  "entity": {
+    "sensor": {
+      "cpu_load": {"name": "CPU load"}, "memory_usage": {"name": "Memory usage"}, "firmware_version": {"name": "Firmware version"},
+      "ethernet_wan_ipv4": {"name": "Ethernet WAN IPv4"}, "ethernet_link_speed": {"name": "Ethernet link speed"}, "ethernet_interface_uptime": {"name": "Ethernet interface uptime"},
+      "lte_wan_ipv4": {"name": "LTE WAN IPv4"}, "lte_interface_uptime": {"name": "LTE interface uptime"}, "lte_operator": {"name": "LTE operator"},
+      "lte_network_type": {"name": "LTE network type"}, "lte_primary_band": {"name": "LTE primary band"}, "lte_carriers": {"name": "LTE carriers"}, "lte_bandwidth": {"name": "LTE bandwidth"},
+      "lte_enb_id": {"name": "LTE eNB ID"}, "lte_sector_id": {"name": "LTE sector ID"}, "lte_phy_cell_id": {"name": "LTE physical Cell ID"}, "lte_earfcn": {"name": "LTE EARFCN"},
+      "lte_modem_temperature": {"name": "LTE modem temperature"}, "lte_modem_model": {"name": "LTE modem model"}, "lte_modem_firmware": {"name": "LTE modem firmware"}, "lte_sim_state": {"name": "LTE SIM state"}
+    },
+    "binary_sensor": {"ethernet_connected": {"name": "Ethernet WAN connection"}, "lte_connected": {"name": "LTE connection"}}
+  }
+}
