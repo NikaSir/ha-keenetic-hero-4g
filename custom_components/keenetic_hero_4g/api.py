@@ -238,15 +238,15 @@ class KeeneticRCIClient:
         """Run a diagnostic CLI command and collect its streamed output.
 
         Keenetic Web CLI submits Parse commands to the RCI root as
-        {"parse": "<command>"}. A direct POST of the command string to
-        /rci/parse is rejected by the KN-2311 web RCI transport with
-        "no input [http/rci ...]". If the command is asynchronous, follow-up
-        GET requests to /rci/parse collect the continued output.
+        {"parse": "<command>"}. When the response contains `continued`, RCI
+        requires polling the same resource URL used for the initiating POST.
+        Therefore a command started at /rci/ is continued with GET /rci/.
 
         The bool return value tells the caller whether Keenetic explicitly
         completed the command. Partial reply lines are retained on timeout.
         """
-        data = await self.async_post_json("/rci/", {"parse": command})
+        resource_path = "/rci/"
+        data = await self.async_post_json(resource_path, {"parse": command})
         lines: list[str] = []
         loop = asyncio.get_running_loop()
         deadline = loop.time() + max_wait
@@ -261,7 +261,7 @@ class KeeneticRCIClient:
                 return lines, False
 
             await asyncio.sleep(0.5)
-            data = await self.async_get_json("/rci/parse")
+            data = await self.async_get_json(resource_path)
 
     async def async_ping(
         self, host: str, interface: str, *, count: int = 3
@@ -278,6 +278,7 @@ class KeeneticRCIClient:
         reply_times = [
             float(match.group("value")) for match in _REPLY_TIME_RE.finditer(text)
         ]
+        has_ping_context = "PING " in text or "sending ICMP" in text
 
         if rtt:
             ping_ms: float | None = float(rtt.group("avg"))
@@ -288,7 +289,7 @@ class KeeneticRCIClient:
 
         if packet:
             packet_loss: float | None = float(packet.group("loss"))
-        elif completed:
+        elif completed and has_ping_context:
             replies = min(len(reply_times), count)
             packet_loss = round((count - replies) / count * 100.0, 1)
         else:
