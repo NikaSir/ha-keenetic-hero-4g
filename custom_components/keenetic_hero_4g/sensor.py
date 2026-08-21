@@ -82,6 +82,20 @@ def lte_carriers(data: dict[str, Any]) -> str | None:
     return " + ".join(values) if values else None
 
 
+def lte_modem_model(data: dict[str, Any]) -> str | None:
+    """Return the factual modem product/model, not Keenetic's numeric modem type code."""
+    lte = data.get("lte", {})
+    return first_value(
+        lte,
+        (
+            ("product",),
+            ("ati", "model"),
+            ("modem", "model"),
+            ("model",),
+        ),
+    )
+
+
 SENSORS: tuple[KeeneticSensorDescription, ...] = (
     KeeneticSensorDescription(key="cpu_load", translation_key="cpu_load", icon="mdi:cpu-64-bit", native_unit_of_measurement=PERCENTAGE, value_fn=lambda d: as_float(first_value(d.get("system", {}), (("cpuload",), ("cpu-load",))))),
     KeeneticSensorDescription(key="memory_usage", translation_key="memory_usage", icon="mdi:memory", native_unit_of_measurement=PERCENTAGE, value_fn=memory_usage),
@@ -101,7 +115,7 @@ SENSORS: tuple[KeeneticSensorDescription, ...] = (
     KeeneticSensorDescription(key="lte_phy_cell_id", translation_key="lte_phy_cell_id", icon="mdi:transmission-tower", value_fn=block("lte", ("phy-cell-id",), ("pci",))),
     KeeneticSensorDescription(key="lte_earfcn", translation_key="lte_earfcn", icon="mdi:sine-wave", value_fn=block("lte", ("earfcn",))),
     KeeneticSensorDescription(key="lte_modem_temperature", translation_key="lte_modem_temperature", icon="mdi:thermometer", device_class=SensorDeviceClass.TEMPERATURE, native_unit_of_measurement=UnitOfTemperature.CELSIUS, value_fn=lambda d: as_float(first_value(d.get("lte", {}), (("temperature",), ("modem", "temperature"))))),
-    KeeneticSensorDescription(key="lte_modem_model", translation_key="lte_modem_model", icon="mdi:expansion-card", value_fn=block("lte", ("model",), ("modem", "model"))),
+    KeeneticSensorDescription(key="lte_modem_model", translation_key="lte_modem_model", icon="mdi:expansion-card", value_fn=lte_modem_model),
     KeeneticSensorDescription(key="lte_modem_firmware", translation_key="lte_modem_firmware", icon="mdi:chip", value_fn=block("lte", ("fw",), ("firmware",), ("modem", "firmware"))),
     KeeneticSensorDescription(key="lte_sim_state", translation_key="lte_sim_state", icon="mdi:sim", value_fn=block("lte", ("sim",), ("sim-state",), ("sim", "state"))),
 )
