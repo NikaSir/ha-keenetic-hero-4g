@@ -39,7 +39,7 @@
       "lte_enb_id": {"name": "Идентификатор LTE eNB"},
       "lte_sector_id": {"name": "Идентификатор сектора LTE"},
       "lte_phy_cell_id": {"name": "Физический идентификатор ячейки LTE"},
-      "lte_earfcn": {"name": "LTE EARFCN"},
+      "lte_earfcn": {"name": "Номер канала LTE (EARFCN)"},
       "lte_modem_temperature": {"name": "Температура LTE-модема"},
       "lte_modem_model": {"name": "Модель LTE-модема"},
       "lte_modem_firmware": {"name": "Прошивка LTE-модема"},
@@ -48,10 +48,10 @@
         "name": "Активный WAN",
         "state": {"ethernet": "Ethernet", "lte": "LTE", "unknown": "Неизвестно"}
       },
-      "ethernet_ping": {"name": "Ethernet ping"},
-      "ethernet_packet_loss": {"name": "Ethernet packet loss"},
-      "lte_ping": {"name": "LTE ping"},
-      "lte_packet_loss": {"name": "LTE packet loss"},
+      "ethernet_ping": {"name": "Пинг Ethernet"},
+      "ethernet_packet_loss": {"name": "Потеря пакетов Ethernet"},
+      "lte_ping": {"name": "Пинг LTE"},
+      "lte_packet_loss": {"name": "Потеря пакетов LTE"},
       "last_wan_switch": {"name": "Последнее переключение WAN"},
       "last_wan_switch_reason": {
         "name": "Причина последнего переключения WAN",
