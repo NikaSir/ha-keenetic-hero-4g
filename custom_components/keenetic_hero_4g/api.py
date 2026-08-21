@@ -195,7 +195,15 @@ class KeeneticRCIClient:
         raise KeeneticAuthError("Authentication retry failed")
 
     @staticmethod
-    def _raise_rci_error(data: Any) -> None:
+    def _parse_payload(data: Any) -> Any:
+        """Unwrap the response produced by POST /rci/ with a parse command."""
+        if isinstance(data, dict) and isinstance(data.get("parse"), dict):
+            return data["parse"]
+        return data
+
+    @classmethod
+    def _raise_rci_error(cls, data: Any) -> None:
+        data = cls._parse_payload(data)
         if not isinstance(data, dict):
             return
         statuses = data.get("status")
@@ -209,14 +217,12 @@ class KeeneticRCIClient:
         if errors:
             raise KeeneticCommandError("; ".join(errors))
 
-    @staticmethod
-    def _collect_messages(data: Any, lines: list[str]) -> bool:
+    @classmethod
+    def _collect_messages(cls, data: Any, lines: list[str]) -> bool:
         """Collect Web CLI output and return the continued flag."""
+        data = cls._parse_payload(data)
         if not isinstance(data, dict):
             return False
-
-        if isinstance(data.get("parse"), dict):
-            data = data["parse"]
 
         message = data.get("message")
         if isinstance(message, list):
@@ -231,10 +237,16 @@ class KeeneticRCIClient:
     ) -> tuple[list[str], bool]:
         """Run a diagnostic CLI command and collect its streamed output.
 
+        Keenetic Web CLI submits Parse commands to the RCI root as
+        {"parse": "<command>"}. A direct POST of the command string to
+        /rci/parse is rejected by the KN-2311 web RCI transport with
+        "no input [http/rci ...]". If the command is asynchronous, follow-up
+        GET requests to /rci/parse collect the continued output.
+
         The bool return value tells the caller whether Keenetic explicitly
         completed the command. Partial reply lines are retained on timeout.
         """
-        data = await self.async_post_json("/rci/parse", command)
+        data = await self.async_post_json("/rci/", {"parse": command})
         lines: list[str] = []
         loop = asyncio.get_running_loop()
         deadline = loop.time() + max_wait
