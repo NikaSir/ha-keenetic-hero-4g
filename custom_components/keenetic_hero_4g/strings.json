@@ -20,6 +20,6 @@
       "lte_enb_id": {"name": "LTE eNB ID"}, "lte_sector_id": {"name": "LTE sector ID"}, "lte_phy_cell_id": {"name": "LTE physical Cell ID"}, "lte_earfcn": {"name": "LTE EARFCN"},
       "lte_modem_temperature": {"name": "LTE modem temperature"}, "lte_modem_model": {"name": "LTE modem model"}, "lte_modem_firmware": {"name": "LTE modem firmware"}, "lte_sim_state": {"name": "LTE SIM state"}
     },
-    "binary_sensor": {"ethernet_connected": {"name": "Ethernet WAN connected"}, "lte_connected": {"name": "LTE connected"}}
+    "binary_sensor": {"ethernet_connected": {"name": "Ethernet WAN connection"}, "lte_connected": {"name": "LTE connection"}}
   }
 }
