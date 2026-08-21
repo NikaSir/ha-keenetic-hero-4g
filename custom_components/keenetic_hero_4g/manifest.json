@@ -1,7 +1,7 @@
 {
   "domain": "keenetic_hero_4g",
   "name": "Keenetic Hero 4G+",
-  "version": "1.00.001",
+  "version": "1.0.0-b001",
   "config_flow": true,
   "documentation": "https://github.com/NikaSir/ha-keenetic-hero-4g",
   "issue_tracker": "https://github.com/NikaSir/ha-keenetic-hero-4g/issues",
