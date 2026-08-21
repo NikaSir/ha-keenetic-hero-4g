@@ -1,0 +1,73 @@
+{
+  "title": "Keenetic Hero 4G+",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect Keenetic Hero 4G+",
+        "description": "Local read-only telemetry through Keenetic RCI.",
+        "data": {
+          "host": "Router address",
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to the router.",
+      "invalid_auth": "Authentication failed.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This router is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "cpu_load": {"name": "CPU load"},
+      "memory_usage": {"name": "Memory usage"},
+      "firmware_version": {"name": "Firmware version"},
+      "ethernet_wan_ipv4": {"name": "Ethernet WAN IPv4"},
+      "ethernet_link_speed": {"name": "Ethernet link speed"},
+      "ethernet_interface_uptime": {"name": "Ethernet uptime"},
+      "lte_wan_ipv4": {"name": "LTE WAN IPv4"},
+      "lte_interface_uptime": {"name": "LTE uptime"},
+      "lte_operator": {"name": "LTE operator"},
+      "lte_network_type": {"name": "Mobile network type"},
+      "lte_primary_band": {"name": "Primary LTE band"},
+      "lte_carriers": {"name": "LTE carrier aggregation"},
+      "lte_bandwidth": {"name": "LTE bandwidth"},
+      "lte_enb_id": {"name": "LTE eNB ID"},
+      "lte_sector_id": {"name": "LTE sector ID"},
+      "lte_phy_cell_id": {"name": "LTE physical Cell ID"},
+      "lte_earfcn": {"name": "LTE EARFCN"},
+      "lte_modem_temperature": {"name": "LTE modem temperature"},
+      "lte_modem_model": {"name": "LTE modem model"},
+      "lte_modem_firmware": {"name": "LTE modem firmware"},
+      "lte_sim_state": {"name": "SIM state"},
+      "active_wan": {
+        "name": "Active WAN",
+        "state": {"ethernet": "Ethernet", "lte": "LTE", "unknown": "Unknown"}
+      },
+      "ethernet_ping": {"name": "Ethernet ping"},
+      "ethernet_packet_loss": {"name": "Ethernet packet loss"},
+      "lte_ping": {"name": "LTE ping"},
+      "lte_packet_loss": {"name": "LTE packet loss"},
+      "last_wan_switch": {"name": "Last WAN switch"},
+      "last_wan_switch_reason": {
+        "name": "Last WAN switch reason",
+        "state": {
+          "ethernet_link_down": "Ethernet link down",
+          "ethernet_restored": "Ethernet link restored",
+          "route_changed": "WAN route changed",
+          "unknown": "Unknown"
+        }
+      },
+      "wan_switches_today": {"name": "WAN switches today"},
+      "lte_time_today": {"name": "LTE time today"}
+    },
+    "binary_sensor": {
+      "ethernet_connected": {"name": "Ethernet WAN connection"},
+      "lte_connected": {"name": "LTE connection"}
+    }
+  }
+}
