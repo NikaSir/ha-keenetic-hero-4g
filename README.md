@@ -8,10 +8,34 @@ Custom Home Assistant integration for **Keenetic Hero 4G+ (KN-2311)**. The integ
 
 - `v1.00_b001` — accepted first RCI telemetry build.
 - `v1.00_b002` — current validation build for WAN diagnostics and failover accounting.
+- native panel `v0.1.0` — separate draft validation line in `feature/native-panel-v1`.
 
-`b002` has already passed live Ethernet -> LTE -> Ethernet failover testing on the target KN-2311. The remaining acceptance item is live validation of the direct RCI Ethernet/LTE ping and packet-loss probes.
+`b002` has already passed live Ethernet -> LTE -> Ethernet failover testing on the target KN-2311. The remaining b002 acceptance item is live validation of the direct RCI Ethernet/LTE ping and packet-loss probes.
 
 Existing SNMP/template entities may remain installed during comparison testing. Temporary `_2` or `_old` entity IDs are not part of the integration's final entity model.
+
+## Native Network Control Center panel
+
+The integration owns a specialized mobile-first Keenetic panel. Its stable Home Assistant route is:
+
+`/dashboard-keenetic`
+
+The panel is designed first for iPhone Pro Max portrait and is intended to replace the old central sensor-list detail page as the primary Keenetic operating view inside Home Assistant.
+
+Views:
+
+- **Overview** — Internet, active WAN, Ethernet, LTE reserve, telemetry trust and the last failover;
+- **WAN / LTE** — detailed channel and LTE radio diagnostics;
+- **Traffic** — current counters and Recorder statistics when available;
+- **Failover** — last switch, factual direction/reason and recorded Active-WAN transitions;
+- **System** — router/modem technical state;
+- **Diagnostics** — source provenance, data age, raw unknown/unavailable states and technical values.
+
+The panel is registered by the integration itself and ships its frontend assets inside `custom_components/keenetic_hero_4g`. It never performs browser-side RCI/SNMP access or router writes. Long press on factual metrics opens native Home Assistant more-info.
+
+Reliability rule: `unknown` / `unavailable` is not normal. Router telemetry failure is not interpreted as proof that Ethernet WAN is down, and missing ping/loss is never converted to `0 ms` / `0%`.
+
+See [`docs/PANEL.md`](docs/PANEL.md), [`docs/PANEL_TESTS.md`](docs/PANEL_TESTS.md), and [`docs/PANEL_NAVIGATION_CONTRACT.yaml`](docs/PANEL_NAVIGATION_CONTRACT.yaml).
 
 ## Current telemetry
 
@@ -79,6 +103,7 @@ For branch validation before a release, replace only `/config/custom_components/
 - `main` is the stable household installation source.
 - Development is performed in feature branches and pull requests.
 - Repository checks, Hassfest, HACS validation, changelog/version checks, and required live tests are release gates.
+- The native panel is accepted through its own draft PR before it is allowed into an integration release.
 - After HACS migration, accepted updates are delivered from the repository; routine manual folder replacement stops.
 
 See [`docs/RELEASES.md`](docs/RELEASES.md) for the release policy.
