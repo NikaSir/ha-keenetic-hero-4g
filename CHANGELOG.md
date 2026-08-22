@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.00_b009 — 2026-08-23
+
+- Added optional RCI interface-statistics polling through `/rci/show/interface/stat?name=<interface>` for `GigabitEthernet1` and `UsbLte0`.
+- Added integration-owned Ethernet and LTE RX/TX rate sensors from factual `rxspeed` / `txspeed` values, converted from bit/s to Mbit/s.
+- Added integration-owned cumulative Ethernet and LTE RX/TX counters from factual `rxbytes` / `txbytes`, converted to GiB; existing LTE `_gb` entity-key suffixes are preserved for panel compatibility while the unit is GiB.
+- Added integration-owned Active WAN RX/TX sensors that follow the factual `active_wan` state rather than Lovelace/template inference.
+- Interface statistics are optional telemetry: HTTP/RCI errors or unsupported stats payloads remain unknown and do not make the base coordinator unavailable.
+- Factual zero traffic remains `0`; missing or malformed values remain unknown and are never manufactured as zero.
+- Added pure regression coverage for rate/counter conversion, Active-WAN selection and RCI error payload handling.
+- The existing panel role resolver automatically prefers these new integration-owned entities; daily/monthly traffic totals remain on the legacy utility-meter fallback for now.
+- UI remains on v0.3.0; WAN/LTE/failover semantics are unchanged.
+
 ## v1.00_b008 — 2026-08-23
 
 - Fixed a fatal `binary_sensor.py` import regression that prevented the Keenetic Config Entry from loading: `KeeneticBinarySensor` inherited from `KeeneticEntity`, but the `KeeneticEntity` import had been removed during WAN-contract refactoring.
