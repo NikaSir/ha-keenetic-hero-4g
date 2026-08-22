@@ -4,61 +4,99 @@ const V030_COMPONENT = customElements.get("keenetic-hero-app-panel-v030");
 class KeeneticHeroAppPanelV031 extends V030_COMPONENT {
   connectedCallback() {
     super.connectedCallback();
-    this._applyLayoutV031();
+    this._applyTemplateV031();
   }
 
   _renderShell() {
     super._renderShell();
-    this._applyLayoutV031();
+    this._applyTemplateV031();
   }
 
-  _applyLayoutV031() {
+  _applyTemplateV031() {
     const root = this.shadowRoot;
     if (!root) return;
 
     const subtitle = root.querySelector(".title span");
-    if (subtitle) subtitle.textContent = `KN-2311 · UI v${APP_SHELL_VERSION_V031}`;
+    if (subtitle) {
+      subtitle.textContent = `Network Control Center · UI v${APP_SHELL_VERSION_V031}`;
+    }
 
-    if (root.querySelector("style[data-nikas-v031-layout]")) return;
+    if (root.querySelector("style[data-nikas-v031-template]")) return;
     const style = document.createElement("style");
-    style.dataset.nikasV031Layout = "true";
+    style.dataset.nikasV031Template = "true";
     style.textContent = `
-      /* Equal side rails keep the title geometrically centered on the viewport. */
+      /* NikaS Integration Panel Template v1.0
+         Header = 52px | minmax(0,1fr) | 52px. */
       .nika-header {
-        grid-template-columns: 92px minmax(0, 1fr) 92px !important;
+        grid-template-columns: 52px minmax(0, 1fr) 52px !important;
         column-gap: 4px !important;
         min-height: 60px !important;
         padding-left: max(8px, env(safe-area-inset-left)) !important;
         padding-right: max(8px, env(safe-area-inset-right)) !important;
       }
-      .back {
-        width: 92px !important;
-        min-width: 0 !important;
-        justify-content: flex-start !important;
-        padding: 0 4px !important;
-        white-space: nowrap;
-      }
+      .back,
       .refresh {
-        width: 44px !important;
-        min-width: 44px !important;
-        justify-self: end !important;
+        width: 52px !important;
+        min-width: 52px !important;
+        min-height: 44px !important;
         padding: 0 !important;
+        justify-self: center !important;
+        justify-content: center !important;
       }
+      .back span { display: none !important; }
+      .back ha-icon,
+      .refresh ha-icon { --mdc-icon-size: 24px !important; }
+
       .title {
-        min-width: 0 !important;
         width: 100%;
+        min-width: 0 !important;
         justify-self: center;
+        text-align: center !important;
+        line-height: 1.1 !important;
       }
       .title strong {
+        display: block;
         font-size: 17px !important;
+        font-weight: 750 !important;
         line-height: 1.12 !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .title span {
+        display: block;
+        margin-top: 2px !important;
         font-size: 9px !important;
+        font-weight: 600 !important;
         line-height: 1.15 !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
-      /* Full-width docked app navigation. */
+      /* Common NikaS card rhythm. */
+      #app-content .view {
+        gap: 14px !important;
+      }
+      #app-content .card {
+        border-radius: 22px !important;
+        box-shadow: 0 2px 10px color-mix(in srgb, #000 5%, transparent) !important;
+      }
+      #app-content .hero-card,
+      #app-content .channel-card,
+      #app-content .failover-strip,
+      #app-content .detail-card,
+      #app-content .traffic-summary,
+      #app-content .failover-hero,
+      #app-content .event-card,
+      #app-content .system-hero,
+      #app-content .diagnostics-card,
+      #app-content .diagnostic-actions,
+      #app-content .integrity-card {
+        padding: 16px !important;
+      }
+
+      /* Full-width, edge-attached Bottom Tab Bar. */
       .nika-tabbar {
         width: 100% !important;
         grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
@@ -80,7 +118,7 @@ class KeeneticHeroAppPanelV031 extends V030_COMPONENT {
         white-space: nowrap;
       }
 
-      /* The content viewport itself may scroll vertically, never horizontally. */
+      /* Mobile content: vertical scroll only. */
       #app-content,
       keenetic-hero-panel {
         width: 100%;
@@ -89,18 +127,24 @@ class KeeneticHeroAppPanelV031 extends V030_COMPONENT {
         overflow-x: hidden;
       }
 
-      /* Narrow phones keep symmetric rails; Back becomes icon-only. */
+      /* Desktop is an adaptation of the same information hierarchy. */
+      #app-content > keenetic-hero-panel {
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+
+      /* NikaS narrow-mobile header = 48px | 1fr | 48px. */
       @media (max-width: 390px) {
         .nika-header {
-          grid-template-columns: 56px minmax(0, 1fr) 56px !important;
+          grid-template-columns: 48px minmax(0, 1fr) 48px !important;
         }
-        .back {
-          width: 44px !important;
-          justify-content: center !important;
-          padding: 0 !important;
+        .back,
+        .refresh {
+          width: 48px !important;
+          min-width: 48px !important;
         }
-        .back span { display: none !important; }
-        .refresh { width: 44px !important; }
+        .title strong { font-size: 16px !important; }
+        .title span { font-size: 8.5px !important; }
       }
     `;
     root.append(style);
