@@ -1,0 +1,20 @@
+{
+  "panel": {
+    "id": "keenetic",
+    "title": "Keenetic",
+    "path": "/dashboard-keenetic",
+    "icon": "mdi:router-network",
+    "owner": "ha-keenetic-hero-4g",
+    "expose_in_generated_ui": true,
+    "preferred_view": "overview",
+    "version": "0.1.0"
+  },
+  "views": [
+    "overview",
+    "wan",
+    "traffic",
+    "failover",
+    "system",
+    "diagnostics"
+  ]
+}
