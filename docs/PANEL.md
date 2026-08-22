@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel version: **0.2.3**  
+Panel version: **0.2.5**  
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -20,14 +20,15 @@ The first screen must answer, without opening Keenetic Web UI:
 
 ## Home Assistant NikaS app shell
 
-Panel 0.2.3 follows the common specialized-panel navigation standard used across Home Assistant NikaS.
+Panel 0.2.5 follows **Home Assistant NikaS Integration Dashboard UI Standard v1.2**.
 
 ### Header
 
 The header is application navigation, not device control:
 
 - left: `mdi:arrow-left` + `Назад` when space permits;
-- center: `Keenetic Hero 4G+`;
+- center: `Keenetic Hero 4G+`, geometrically centered against the viewport;
+- no decorative router/brand icon beside the title;
 - secondary text: compact UI/version identity;
 - right: one global `Обновить` action;
 - Back touch target is at least 44 × 44 CSS px;
@@ -36,8 +37,6 @@ The header is application navigation, not device control:
 Back uses an explicit application route and never browser-history semantics:
 
 `/dashboard-infrastructure/overview`
-
-This remains deterministic when the panel is opened from Infrastructure, sidebar, a notification, or a deep link.
 
 ### Bottom navigation
 
@@ -49,55 +48,63 @@ The bottom Tab Bar is a dedicated app-shell row outside the vertical scroll regi
 4. `Трафик`
 5. `Диагн.`
 
-`Система` is deliberately secondary and remains reachable from Diagnostics as a drill-down screen. Primary top tabs are not used.
-
-The shell rule is therefore:
-
-`Header = leave the Keenetic application`  
-`Bottom navigation = move inside the Keenetic application`
+`Система` remains a secondary drill-down from Diagnostics. Primary top tabs are not used.
 
 ## Architecture
 
 The panel is a Home Assistant custom panel shipped inside the integration. It is registered by the config entry and served from integration-owned static files. It uses Home Assistant's authenticated WebSocket API and state model; it does not make direct browser requests to Keenetic.
 
-The panel does **not** implement router writes. It does not call RCI from Lovelace/JavaScript, does not reproduce challenge-response authentication in the browser, does not execute shell/curl, and does not perform SNMP writes.
+The panel does **not** implement router writes. It does not call RCI from Lovelace/JavaScript, reproduce challenge-response authentication in the browser, execute shell/curl or perform SNMP writes.
 
 ### Navigation contract
 
 `/dashboard-keenetic` is a stable cross-integration deep link. `ha-contract-generated-ui` should keep only the compact Keenetic summary and navigate to this route for details.
 
-The runtime bootstrap exports panel owner, panel version, parent route, preferred view, entity-role mapping, factual source type, coordinator health and scan interval. The machine-readable contract is stored in `custom_components/keenetic_hero_4g/panel_contract.json`.
-
 ### Frontend cache contract
 
-Panel release candidates use a versioned module URL and versioned custom-element name. This is intentional: Home Assistant iOS/WebView may keep an already registered JavaScript custom element in memory across an integration update. A new panel candidate must therefore not silently reuse the previous app shell.
+Panel release candidates use a versioned module URL and versioned custom-element name. This prevents Home Assistant iOS/WebView from silently retaining an older registered panel component after an integration update.
 
 ## Views
 
 ### Overview
 
-Operational status only: Internet, active WAN, primary Ethernet, reserve LTE, current RX/TX, channel ping/loss, LTE radio quality, last failover, switch count today and LTE usage time today. The compact topology is functional and changes according to factual state.
+Overview keeps the functional network topology permanently visible:
 
-Overview intentionally shows **both Ethernet and LTE at the same time**, because reserve readiness must be visible without interaction.
+`Internet -> active WAN -> Ethernet / LTE -> Keenetic`
 
-### WAN / LTE
-
-Detailed channel diagnostics use a contextual two-segment selector based on the successful Stark SolarPower device-selector pattern:
+Immediately below that topology is a contextual selector:
 
 `Провод | LTE`
 
-This selector is **not** primary application navigation. It only selects which transport detail is shown inside the already selected `WAN/LTE` screen. The bottom Tab Bar remains unchanged.
+Ethernet and LTE are channels of one router, **not peer physical devices**, so this is not a Device Selector from the NikaS multi-device model.
 
-- `Провод` shows Ethernet WAN status, address/link/uptime, ping/loss, current rates and accumulated traffic.
-- `LTE` shows connection status, operator/network, signal, ping/loss, traffic, band/carrier/cell/EARFCN and modem/SIM data when factual entities exist.
-- only one detailed transport card is shown at a time, reducing scroll depth;
-- each segment also shows the factual channel state;
-- the initially selected segment follows the factual active WAN when available, otherwise Ethernet is the default;
-- switching the segment does not create a new route and does not change the meaning of `Назад`.
+Behavior:
+
+- on initial Overview load, the selected channel follows factual `active_wan`;
+- if Ethernet is active, Ethernet detail is selected by default;
+- if LTE is active, LTE detail is selected by default;
+- only the selected channel's detailed card is shown below the selector;
+- the user may inspect the inactive channel without changing the router state;
+- factual active-route indication remains independent from the user's diagnostic selection;
+- if Active WAN is unknown, the panel does not invent a default selection;
+- no selector action can switch physical WAN.
+
+Recent failover remains visible after the selected channel detail.
+
+### WAN / LTE
+
+Detailed channel diagnostics use a contextual two-segment selector:
+
+`Провод | LTE`
+
+Only one transport detail is shown at a time, reducing scroll depth. The selector does not change the meaning of Back or the bottom Tab Bar.
+
+- `Провод`: Ethernet status, address/link/uptime, ping/loss, rates and accumulated traffic.
+- `LTE`: connection status, operator/network, signal, ping/loss, traffic, band/carrier/cell/EARFCN and modem/SIM data when factual entities exist.
 
 ### Failover
 
-Shows the last recorded switch, direction, factual reason, switches today and LTE time today. When Home Assistant Recorder history for factual Active WAN exists, transport transitions are listed. Historical causes are **not reconstructed** when they were not stored.
+Shows the last recorded switch, direction, factual reason, switches today and LTE time today. Recorder history may list factual Active-WAN transitions. Historical causes are not reconstructed when they were not stored.
 
 ### Traffic
 
@@ -105,11 +112,11 @@ Current daily/monthly/total counters plus Recorder charts for 24 hours, 7 days a
 
 ### Diagnostics
 
-Technical source view. It exposes mapped RCI/SNMP/template/utility-meter/external-probe sources, raw WAN/LTE values, state age, unknown/unavailable states and telemetry trust. This is the main technical screen for separating a WAN failure from a router/telemetry failure.
+Technical source view. It exposes mapped RCI/SNMP/template/utility-meter/external-probe sources, raw WAN/LTE values, state age, unknown/unavailable states and telemetry trust.
 
 ### System — secondary drill-down
 
-Model, firmware, hostname, CPU/RAM, uptime information and LTE modem status/temperature. It is not a primary bottom-navigation destination because connectivity is the operational priority.
+Model, firmware, hostname, CPU/RAM, uptime information and LTE modem status/temperature. It is not a primary bottom-navigation destination.
 
 ## Entity role resolution
 
@@ -117,30 +124,21 @@ Integration-owned `keenetic_hero_4g` entities are resolved by config-entry owner
 
 During migration, known factual legacy entities already present in Home Assistant NikaS may fill roles that the RCI integration does not yet expose. Integration-owned RCI entities always take precedence. The source is shown in Diagnostics.
 
-Current transitional source classes:
-
-- `rci` — entities owned by this integration;
-- `snmp` — existing read-only Keenetic SNMP telemetry;
-- `template` — existing derived rates/active-channel entities;
-- `utility_meter` — existing traffic period counters;
-- `ndms2` — existing router connectivity entity;
-- `external_probe` — independent Internet probe.
-
 No missing role is filled with a fabricated value.
 
 ## Reliability semantics
 
 `unknown` / `unavailable` is never treated as healthy.
 
-The UI distinguishes factual WAN down, WAN state unknown, failed RCI update, stale telemetry, an unavailable mapped entity and independent Internet-probe failure.
+The UI distinguishes factual WAN down, WAN state unknown, failed RCI update, stale telemetry, unavailable mapped entity and independent Internet-probe failure.
 
-If router telemetry is not trustworthy, WAN cards say **`Состояние неизвестно`**. Loss of communication with Keenetic is not used as proof that Ethernet WAN failed.
+If router telemetry is not trustworthy, WAN states remain unknown. Loss of communication with Keenetic is not proof that Ethernet WAN failed.
 
-Ping/loss unknown is displayed as **`Нет данных`** or **`Неизвестно`**, never `0 ms` / `0%`.
+Ping/loss unknown is displayed as `Нет данных` or `Неизвестно`, never as a synthetic `0 ms` / `0%`.
 
 ## LTE quality label
 
-The human-readable LTE quality label is a **panel heuristic**, not a router-provided alarm state. It combines available RSRP/RSRQ/SINR into a simple operational label while preserving raw values. Missing radio inputs are not replaced with zeroes.
+The human-readable LTE quality label is a panel heuristic based on available RSRP/RSRQ/SINR. Raw values remain visible and missing inputs are never replaced with zeroes.
 
 ## Mobile layout
 
@@ -148,16 +146,15 @@ Control viewport: **430 × 932 CSS px**, representative of iPhone Pro Max portra
 
 - no horizontal scrolling;
 - primary Internet/WAN state immediately below the unified header;
-- no second row of primary application navigation above the content;
-- contextual selectors such as `Провод | LTE` are permitted inside a functional screen;
+- network topology stays above the channel selector;
 - full-width edge-attached bottom Tab Bar with large targets;
 - Tab Bar lives outside the scroll region and never covers the final content row;
-- safe-area insets are handled by the panel (`handle_safe_area=True` plus CSS `env(safe-area-inset-*)`);
+- iOS safe-area insets are handled by the panel;
 - desktop/iPad may widen cards without changing information hierarchy.
 
 ## More-info
 
-Long press on a factual entity metric opens Home Assistant native `more-info`. Header, transport selector and bottom-navigation elements are navigation/selection controls only and never trigger entity-specific or router actions.
+Long press on a factual entity metric opens Home Assistant native `more-info`. Header, contextual channel selectors and bottom navigation never trigger entity-specific or router actions.
 
 ## Central UI contract
 
