@@ -8,12 +8,17 @@ on:
       - "fix/panel-safe-mode-*"
     paths:
       - "custom_components/keenetic_hero_4g/frontend/**"
+      - "custom_components/keenetic_hero_4g/__init__.py"
+      - "custom_components/keenetic_hero_4g/panel_v*.py"
+      - "custom_components/keenetic_hero_4g/panel_contract.json"
       - "scripts/build_frontend_bundle.py"
       - ".github/workflows/frontend-bundle.yml"
   pull_request:
     paths:
       - "custom_components/keenetic_hero_4g/frontend/**"
-      - "custom_components/keenetic_hero_4g/panel.py"
+      - "custom_components/keenetic_hero_4g/__init__.py"
+      - "custom_components/keenetic_hero_4g/panel_v*.py"
+      - "custom_components/keenetic_hero_4g/panel_contract.json"
       - "scripts/build_frontend_bundle.py"
       - ".github/workflows/frontend-bundle.yml"
   workflow_dispatch:
@@ -51,6 +56,18 @@ jobs:
             echo "Production panel bundle must be self-contained."
             exit 1
           fi
+
+      - name: Verify production module registration
+        shell: bash
+        run: |
+          grep -q 'from .panel_v030 import async_register_native_panel' custom_components/keenetic_hero_4g/__init__.py
+          grep -q '_PANEL_BUNDLE = "keenetic-panel-bundle.js"' custom_components/keenetic_hero_4g/panel_v030.py
+          grep -q '?v={PANEL_VERSION}' custom_components/keenetic_hero_4g/panel_v030.py
+          grep -q '"mode": "self_contained_bundle"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"module": "keenetic-panel-bundle.js"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"includes_styles": true' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"runtime_previous_version_imports": false' custom_components/keenetic_hero_4g/panel_contract.json
+          echo "Production frontend registration contract OK"
 
       - name: Verify committed bundle on pull request
         if: github.event_name == 'pull_request'
