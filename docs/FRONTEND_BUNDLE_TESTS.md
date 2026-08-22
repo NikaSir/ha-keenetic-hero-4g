@@ -6,6 +6,7 @@ The production frontend release is accepted only when all of the following pass.
 
 - Home Assistant `module_url` points to `keenetic-panel.bundle.js?v=0.2.9`.
 - `keenetic-panel.bundle.js` exists and is generated from the declared source entry.
+- the generated production artifact is committed to the repository and reproducible by the builder;
 - generated bundle contains no runtime relative JavaScript `import` statements;
 - generated bundle contains no runtime reference to `keenetic-panel.css`;
 - production bundle contains the CSS required by the panel;
