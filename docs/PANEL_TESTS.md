@@ -1,7 +1,7 @@
 # Native panel acceptance tests
 
 Panel: Keenetic Hero 4G+  
-Panel version: 0.2.2  
+Panel version: 0.2.3  
 Target device: KN-2311  
 Primary viewport: iPhone Pro Max portrait (control viewport 430 × 932 CSS px)
 
@@ -26,7 +26,7 @@ For every scenario:
 - System is secondary drill-down, not a sixth primary tab;
 - Tab Bar never covers working content or the final content row;
 - all factual entity metrics support long-press -> native more-info;
-- header and bottom navigation never invoke entity-specific more-info;
+- header, bottom navigation and contextual channel selector never invoke entity-specific more-info;
 - no browser-side RCI/SNMP write requests are made;
 - no missing value is rendered as zero;
 - switching views does not require a page reload;
@@ -137,7 +137,7 @@ Rename one integration-owned entity through Home Assistant.
 ### J. iPad / desktop
 
 - information hierarchy is unchanged;
-- cards expand to multi-column layout;
+- cards expand without restoring simultaneous long Ethernet/LTE detail lists;
 - app header and bottom navigation keep the same semantics;
 - no mobile-only control becomes inaccessible.
 
@@ -167,6 +167,20 @@ Install an older panel candidate, then update to the next candidate and restart 
 - old custom-element implementation is not reused;
 - module URL and web-component name change when required to break stale frontend registration.
 
+### N. WAN transport selector
+
+Open `WAN/LTE` while Ethernet is active and LTE is connected as reserve.
+
+- a two-segment selector appears directly under the app header/content start: `Провод | LTE`;
+- the selector is contextual to the WAN screen and does not replace or duplicate the bottom Tab Bar;
+- the initially selected segment follows factual Active WAN when available;
+- each segment displays the factual connection state and never converts unknown/unavailable into healthy;
+- selecting `Провод` displays only Ethernet detailed diagnostics;
+- selecting `LTE` displays only LTE detailed diagnostics;
+- switching segments does not change `/dashboard-keenetic#wan` and does not change Back semantics;
+- Overview continues to show both channels simultaneously;
+- selector buttons do not trigger Home Assistant more-info or any router control command.
+
 ## Release gate
 
-The panel is accepted only when scenarios A-F plus the app-shell navigation gates pass on the real KN-2311 and the Overview is faster to interpret for WAN/LTE/failover than the previous sensor-list detail page. Live iPhone Pro Max screenshots must be captured after hardware acceptance; design-reference screenshots are not a substitute for release evidence.
+The panel is accepted only when scenarios A-F plus the app-shell navigation and WAN-selector gates pass on the real KN-2311 and the Overview is faster to interpret for WAN/LTE/failover than the previous sensor-list detail page. Live iPhone Pro Max screenshots must be captured after hardware acceptance; design-reference screenshots are not a substitute for release evidence.
