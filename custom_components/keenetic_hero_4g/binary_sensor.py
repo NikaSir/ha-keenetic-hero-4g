@@ -10,6 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .coordinator import KeeneticCoordinator
+from .entity import KeeneticEntity
 from .wan import connected as interface_connected
 
 BoolFn = Callable[[dict[str, Any]], bool | None]

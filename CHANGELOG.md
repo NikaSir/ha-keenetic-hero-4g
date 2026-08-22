@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.00_b008 — 2026-08-23
+
+- Fixed a fatal `binary_sensor.py` import regression that prevented the Keenetic Config Entry from loading: `KeeneticBinarySensor` inherited from `KeeneticEntity`, but the `KeeneticEntity` import had been removed during WAN-contract refactoring.
+- The observed Home Assistant failure was `NameError: name 'KeeneticEntity' is not defined`, followed by `ImportError: Exception importing custom_components.keenetic_hero_4g.binary_sensor` and `Error setting up entry Keenetic-5027`.
+- Restored the missing `from .entity import KeeneticEntity` import.
+- Added an AST regression test that rejects unbound names used as module-level class bases, covering this class of import-time failure that `compileall` alone cannot detect.
+- Preserved the b007 startup lifecycle fix: `/dashboard-keenetic` is registered before the first non-fatal RCI refresh, and UI remains on v0.3.0.
+- No WAN/LTE/failover telemetry semantics were changed in this build.
+
 ## v1.00_b007 — 2026-08-23
 
 - Decoupled the Keenetic panel lifecycle from physical router availability during Home Assistant startup.
