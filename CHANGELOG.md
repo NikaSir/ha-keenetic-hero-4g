@@ -1,5 +1,17 @@
 # Changelog
 
+## Native panel v0.2.9 — frontend hardening
+
+- Replaced the production runtime chain of versioned frontend modules with one self-contained JavaScript bundle: `keenetic-panel.bundle.js`.
+- Home Assistant `module_url` now points only to the stable production bundle name with `?v=0.2.9` cache busting.
+- Previous UI modules remain development/history sources only and are not runtime dependencies of the production panel.
+- Inlined the panel CSS into the JavaScript bundle; the production panel no longer requires a separate `keenetic-panel.css` HTTP request.
+- Added deterministic bundle generation in `scripts/build_frontend_bundle.py`.
+- Added CI/build checks that reject runtime relative imports and external panel CSS references in the production artifact.
+- Added a new versioned custom element `keenetic-hero-app-panel-v029` so the hardening release cannot silently reuse the previous web component after an update.
+- External design and read-only router behavior remain unchanged; this release changes frontend packaging/loading architecture only.
+- Cold-cache, restart, repeated-open, local and Home Assistant Cloud loading are mandatory acceptance gates before final UI acceptance.
+
 ## Native panel v0.2.1 — draft
 
 - Aligned the Keenetic panel with Home Assistant NikaS specialized-panel UI standard v1.1.
