@@ -19,11 +19,20 @@ SOURCES = [
     FRONTEND / "keenetic-app-v029.js",
 ]
 IMPORT_RE = re.compile(r"^\s*import\s+[\"']\./[^\"']+[\"'];?\s*$", re.MULTILINE)
+CSS_LINK = '<link rel="stylesheet" href="/keenetic_hero_4g_static/keenetic-panel.css?v=${encodeURIComponent(PANEL_VERSION)}">'
 
 
 def _clean(path: Path) -> str:
     text = path.read_text(encoding="utf-8")
     text = IMPORT_RE.sub("", text).strip()
+
+    if path.name == "keenetic-panel.js":
+        css_literal = json.dumps(CSS_SOURCE.read_text(encoding="utf-8"), ensure_ascii=False)
+        if CSS_LINK not in text:
+            raise SystemExit("Base panel no longer contains the expected stylesheet link")
+        text = text.replace(CSS_LINK, '<style>${BUNDLED_PANEL_CSS}</style>')
+        text = f"const BUNDLED_PANEL_CSS = {css_literal};\n" + text
+
     if re.search(r"^\s*(?:import|export)\b", text, re.MULTILINE):
         raise SystemExit(f"Unsupported ES module statement remains in {path}")
     return text
@@ -42,33 +51,6 @@ def _wrap(path: Path) -> str:
     )
 
 
-def _inline_css_patch() -> str:
-    css = CSS_SOURCE.read_text(encoding="utf-8")
-    css_literal = json.dumps(css, ensure_ascii=False)
-    return f"""// BEGIN inlined keenetic-panel.css
-(() => {{
-  const BUNDLED_CSS = {css_literal};
-  const BasePanel = customElements.get(\"keenetic-hero-panel\");
-  if (!BasePanel || BasePanel.prototype.__keeneticBundledCss) return;
-  BasePanel.prototype.__keeneticBundledCss = true;
-  const previousRender = BasePanel.prototype._render;
-  BasePanel.prototype._render = function (...args) {{
-    previousRender.apply(this, args);
-    const root = this.shadowRoot;
-    if (!root) return;
-    root.querySelectorAll('link[rel=\"stylesheet\"][href*=\"keenetic-panel.css\"]').forEach((node) => node.remove());
-    let style = root.querySelector('style[data-keenetic-bundled-css]');
-    if (!style) {{
-      style = document.createElement(\"style\");
-      style.dataset.keeneticBundledCss = \"true\";
-      root.append(style);
-    }}
-    style.textContent = BUNDLED_CSS;
-  }};
-}})();
-// END inlined keenetic-panel.css"""
-
-
 def build() -> str:
     parts = [
         "// GENERATED FILE. DO NOT EDIT DIRECTLY.",
@@ -81,8 +63,6 @@ def build() -> str:
             raise SystemExit(f"Missing frontend source: {path}")
         parts.append(_wrap(path))
         parts.append("")
-    parts.append(_inline_css_patch())
-    parts.append("")
     return "\n".join(parts).rstrip() + "\n"
 
 
