@@ -3,6 +3,7 @@ name: Frontend bundle
 on:
   push:
     branches:
+      # Stabilization branches use the same deterministic production bundler.
       - "hardening/self-contained-frontend-*"
       - "fix/panel-safe-mode-*"
     paths:
