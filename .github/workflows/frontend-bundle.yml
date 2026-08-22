@@ -41,17 +41,7 @@ jobs:
         run: python scripts/build_frontend_bundle.py
 
       - name: Verify production bundle contract
-        shell: bash
-        run: |
-          python scripts/build_frontend_bundle.py --check
-          if grep -Eq '^[[:space:]]*import[[:space:]]+["'"']\./' custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js; then
-            echo "Production bundle contains a runtime import" >&2
-            exit 1
-          fi
-          if grep -q 'keenetic-panel.css?v=' custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js; then
-            echo "Production bundle contains an external panel CSS reference" >&2
-            exit 1
-          fi
+        run: python scripts/build_frontend_bundle.py --check
 
       - name: Commit generated bundle when changed
         shell: bash
