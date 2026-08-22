@@ -7,11 +7,11 @@ panel:
   parent_route: /dashboard-infrastructure/overview
   expose_in_generated_ui: true
   preferred_view: overview
-  version: 0.2.0
+  version: 0.2.1
 
 app_shell:
   standard: Home Assistant NikaS specialized panel
-  version: 1
+  version: 1.1
   header:
     back:
       icon: mdi:arrow-left
@@ -24,6 +24,10 @@ app_shell:
       - refresh
   bottom_navigation:
     fixed: true
+    edge_attached: true
+    full_width_mobile: true
+    floating: false
+    safe_area: true
     max_primary_items: 5
     items:
       - overview
