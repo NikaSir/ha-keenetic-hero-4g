@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import asyncio
 import hashlib
+import re
 from http.cookies import SimpleCookie
 from typing import Any
 
@@ -19,10 +21,38 @@ class KeeneticConnectionError(KeeneticError):
     """Connection failed."""
 
 
+class KeeneticCommandError(KeeneticError):
+    """RCI command failed."""
+
+
+_PACKET_RE = re.compile(
+    r"(?P<tx>\d+)\s+packets transmitted,\s+(?P<rx>\d+)\s+(?:packets )?received.*?"
+    r"(?P<loss>\d+(?:\.\d+)?)%\s+packet loss",
+    re.IGNORECASE,
+)
+_RTT_RE = re.compile(
+    r"(?:rtt|round-trip).*?=\s*(?P<min>\d+(?:\.\d+)?)/"
+    r"(?P<avg>\d+(?:\.\d+)?)/(?P<max>\d+(?:\.\d+)?)"
+    r"(?:/\d+(?:\.\d+)?)?\s*ms",
+    re.IGNORECASE,
+)
+_REPLY_TIME_RE = re.compile(
+    r"\btime[=<]?(?P<value>\d+(?:\.\d+)?)\s*ms\b",
+    re.IGNORECASE,
+)
+
+
 class KeeneticRCIClient:
     """Minimal asynchronous read-only Keenetic RCI client."""
 
-    def __init__(self, session: aiohttp.ClientSession, host: str, username: str, password: str, timeout: int = 10) -> None:
+    def __init__(
+        self,
+        session: aiohttp.ClientSession,
+        host: str,
+        username: str,
+        password: str,
+        timeout: int = 10,
+    ) -> None:
         host = host.strip().rstrip("/")
         if not host.startswith(("http://", "https://")):
             host = f"http://{host}"
@@ -52,10 +82,18 @@ class KeeneticRCIClient:
             for key, morsel in parsed.items():
                 self._cookies[key] = morsel.value
 
+    def _request_headers(self) -> dict[str, str]:
+        headers = {"Accept": "application/json"}
+        if cookie := self._cookie_header():
+            headers["Cookie"] = cookie
+        return headers
+
     async def async_authenticate(self) -> None:
         """Perform Keenetic x-ndw2-interactive challenge-response auth."""
         try:
-            async with self._session.get(f"{self._base_url}/auth", timeout=self._timeout) as response:
+            async with self._session.get(
+                f"{self._base_url}/auth", timeout=self._timeout
+            ) as response:
                 self._remember_cookies(response)
                 if response.status == 200:
                     self._authenticated = True
@@ -63,13 +101,17 @@ class KeeneticRCIClient:
                 realm = response.headers.get("X-NDM-Realm")
                 challenge = response.headers.get("X-NDM-Challenge")
                 if response.status != 401 or not realm or not challenge:
-                    raise KeeneticAuthError(f"Unexpected authentication response HTTP {response.status}")
+                    raise KeeneticAuthError(
+                        f"Unexpected authentication response HTTP {response.status}"
+                    )
 
             md5_value = hashlib.md5(
                 f"{self._username}:{realm}:{self._password}".encode(),
                 usedforsecurity=False,
             ).hexdigest()
-            password_hash = hashlib.sha256(f"{challenge}{md5_value}".encode()).hexdigest()
+            password_hash = hashlib.sha256(
+                f"{challenge}{md5_value}".encode()
+            ).hexdigest()
             headers = {"Content-Type": "application/json"}
             if cookie := self._cookie_header():
                 headers["Cookie"] = cookie
@@ -82,7 +124,9 @@ class KeeneticRCIClient:
             ) as response:
                 self._remember_cookies(response)
                 if response.status != 200:
-                    raise KeeneticAuthError(f"Authentication failed with HTTP {response.status}")
+                    raise KeeneticAuthError(
+                        f"Authentication failed with HTTP {response.status}"
+                    )
                 self._authenticated = True
         except (aiohttp.ClientError, TimeoutError) as err:
             raise KeeneticConnectionError(str(err)) from err
@@ -93,12 +137,11 @@ class KeeneticRCIClient:
             await self.async_authenticate()
 
         for attempt in range(2):
-            headers: dict[str, str] = {"Accept": "application/json"}
-            if cookie := self._cookie_header():
-                headers["Cookie"] = cookie
             try:
                 async with self._session.get(
-                    f"{self._base_url}{path}", headers=headers, timeout=self._timeout
+                    f"{self._base_url}{path}",
+                    headers=self._request_headers(),
+                    timeout=self._timeout,
                 ) as response:
                     self._remember_cookies(response)
                     if response.status == 401 and attempt == 0:
@@ -106,13 +149,177 @@ class KeeneticRCIClient:
                         await self.async_authenticate()
                         continue
                     if response.status == 401:
-                        raise KeeneticAuthError("Router rejected the authenticated session")
+                        raise KeeneticAuthError(
+                            "Router rejected the authenticated session"
+                        )
                     if response.status >= 400:
-                        raise KeeneticConnectionError(f"HTTP {response.status} while reading {path}")
+                        raise KeeneticConnectionError(
+                            f"HTTP {response.status} while reading {path}"
+                        )
                     return await response.json(content_type=None)
             except (aiohttp.ClientError, TimeoutError) as err:
                 raise KeeneticConnectionError(str(err)) from err
         raise KeeneticAuthError("Authentication retry failed")
+
+    async def async_post_json(self, path: str, payload: Any) -> Any:
+        """POST JSON to an RCI endpoint, re-authenticating once on HTTP 401."""
+        if not self._authenticated:
+            await self.async_authenticate()
+
+        for attempt in range(2):
+            headers = self._request_headers()
+            headers["Content-Type"] = "application/json"
+            try:
+                async with self._session.post(
+                    f"{self._base_url}{path}",
+                    json=payload,
+                    headers=headers,
+                    timeout=self._timeout,
+                ) as response:
+                    self._remember_cookies(response)
+                    if response.status == 401 and attempt == 0:
+                        self._authenticated = False
+                        await self.async_authenticate()
+                        continue
+                    if response.status == 401:
+                        raise KeeneticAuthError(
+                            "Router rejected the authenticated session"
+                        )
+                    if response.status >= 400:
+                        raise KeeneticConnectionError(
+                            f"HTTP {response.status} while posting {path}"
+                        )
+                    return await response.json(content_type=None)
+            except (aiohttp.ClientError, TimeoutError) as err:
+                raise KeeneticConnectionError(str(err)) from err
+        raise KeeneticAuthError("Authentication retry failed")
+
+    async def async_delete(self, path: str) -> None:
+        """Stop one session-bound RCI background process."""
+        if not self._authenticated:
+            await self.async_authenticate()
+
+        for attempt in range(2):
+            try:
+                async with self._session.delete(
+                    f"{self._base_url}{path}",
+                    headers=self._request_headers(),
+                    timeout=self._timeout,
+                ) as response:
+                    self._remember_cookies(response)
+                    if response.status == 401 and attempt == 0:
+                        self._authenticated = False
+                        await self.async_authenticate()
+                        continue
+                    if response.status == 401:
+                        raise KeeneticAuthError(
+                            "Router rejected the authenticated session"
+                        )
+                    if response.status >= 400 and response.status != 404:
+                        raise KeeneticConnectionError(
+                            f"HTTP {response.status} while deleting {path}"
+                        )
+                    return
+            except (aiohttp.ClientError, TimeoutError) as err:
+                raise KeeneticConnectionError(str(err)) from err
+        raise KeeneticAuthError("Authentication retry failed")
+
+    @staticmethod
+    def _raise_rci_error(data: Any) -> None:
+        if not isinstance(data, dict):
+            return
+        statuses = data.get("status")
+        if not isinstance(statuses, list):
+            return
+        errors = [
+            str(item.get("message") or item.get("code") or "RCI command failed")
+            for item in statuses
+            if isinstance(item, dict) and item.get("status") == "error"
+        ]
+        if errors:
+            raise KeeneticCommandError("; ".join(errors))
+
+    @staticmethod
+    def _collect_messages(data: Any, lines: list[str]) -> bool:
+        """Collect background-process output and return the continued flag."""
+        if not isinstance(data, dict):
+            return False
+
+        message = data.get("message")
+        if isinstance(message, list):
+            lines.extend(str(item) for item in message)
+        elif isinstance(message, str):
+            lines.append(message)
+
+        return bool(data.get("continued"))
+
+    async def async_background_process(
+        self,
+        path: str,
+        payload: dict[str, Any],
+        *,
+        max_wait: float = 15.0,
+        poll_interval: float = 1.0,
+    ) -> tuple[list[str], bool]:
+        """Run a session-bound RCI background process and collect its output.
+
+        Keenetic background resources are started with POST and polled with GET
+        on the exact same resource while `continued` is true. The router binds
+        the process to the authenticated HTTP session.
+        """
+        data = await self.async_post_json(path, payload)
+        lines: list[str] = []
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + max_wait
+
+        while True:
+            self._raise_rci_error(data)
+            continued = self._collect_messages(data, lines)
+
+            if not continued:
+                return lines, True
+            if loop.time() >= deadline:
+                try:
+                    await self.async_delete(path)
+                except KeeneticError:
+                    pass
+                return lines, False
+
+            await asyncio.sleep(poll_interval)
+            data = await self.async_get_json(path)
+
+    async def async_ping(
+        self, host: str, interface: str, *, count: int = 3
+    ) -> dict[str, float | None]:
+        """Return factual average ping and packet loss for one source interface."""
+        lines, _completed = await self.async_background_process(
+            "/rci/tools/ping",
+            {"host": host, "count": count, "source": interface},
+            max_wait=max(12.0, count * 3.0 + 5.0),
+            poll_interval=0.75,
+        )
+        text = "\n".join(lines)
+
+        packet = _PACKET_RE.search(text)
+        rtt = _RTT_RE.search(text)
+        reply_times = [
+            float(match.group("value")) for match in _REPLY_TIME_RE.finditer(text)
+        ]
+
+        if rtt:
+            ping_ms: float | None = float(rtt.group("avg"))
+        elif reply_times:
+            ping_ms = round(sum(reply_times) / len(reply_times), 2)
+        else:
+            ping_ms = None
+
+        # Packet loss is published only when Keenetic itself returns the final
+        # packet summary. Never infer loss from an incomplete background stream.
+        packet_loss: float | None = (
+            float(packet.group("loss")) if packet is not None else None
+        )
+
+        return {"ping_ms": ping_ms, "packet_loss": packet_loss}
 
     async def async_get_system(self) -> dict[str, Any]:
         data = await self.async_get_json("/rci/show/system")

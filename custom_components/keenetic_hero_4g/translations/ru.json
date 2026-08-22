@@ -1,19 +1,73 @@
 {
   "title": "Keenetic Hero 4G+",
   "config": {
-    "step": {"user": {"title": "Подключение Keenetic Hero 4G+", "description": "Локальная read-only телеметрия через RCI Keenetic.", "data": {"host": "Адрес роутера", "username": "Имя пользователя", "password": "Пароль"}}},
-    "error": {"cannot_connect": "Не удалось подключиться к роутеру.", "invalid_auth": "Ошибка авторизации.", "unknown": "Неожиданная ошибка."},
-    "abort": {"already_configured": "Этот роутер уже настроен."}
+    "step": {
+      "user": {
+        "title": "Подключение Keenetic Hero 4G+",
+        "description": "Локальная read-only телеметрия через RCI Keenetic.",
+        "data": {
+          "host": "Адрес роутера",
+          "username": "Имя пользователя",
+          "password": "Пароль"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Не удалось подключиться к роутеру.",
+      "invalid_auth": "Ошибка авторизации.",
+      "unknown": "Неожиданная ошибка."
+    },
+    "abort": {
+      "already_configured": "Этот роутер уже настроен."
+    }
   },
   "entity": {
     "sensor": {
-      "cpu_load": {"name": "Загрузка CPU"}, "memory_usage": {"name": "Использование RAM"}, "firmware_version": {"name": "Версия прошивки"},
-      "ethernet_wan_ipv4": {"name": "Ethernet WAN IPv4"}, "ethernet_link_speed": {"name": "Скорость Ethernet-link"}, "ethernet_interface_uptime": {"name": "Uptime Ethernet"},
-      "lte_wan_ipv4": {"name": "LTE WAN IPv4"}, "lte_interface_uptime": {"name": "Uptime LTE"}, "lte_operator": {"name": "Оператор LTE"},
-      "lte_network_type": {"name": "Тип мобильной сети"}, "lte_primary_band": {"name": "Основной LTE band"}, "lte_carriers": {"name": "LTE carrier aggregation"}, "lte_bandwidth": {"name": "Ширина канала LTE"},
-      "lte_enb_id": {"name": "LTE eNB ID"}, "lte_sector_id": {"name": "LTE Sector ID"}, "lte_phy_cell_id": {"name": "LTE Physical Cell ID"}, "lte_earfcn": {"name": "LTE EARFCN"},
-      "lte_modem_temperature": {"name": "Температура LTE-модема"}, "lte_modem_model": {"name": "Модель LTE-модема"}, "lte_modem_firmware": {"name": "Прошивка LTE-модема"}, "lte_sim_state": {"name": "Состояние SIM"}
+      "cpu_load": {"name": "Загрузка CPU"},
+      "memory_usage": {"name": "Использование RAM"},
+      "firmware_version": {"name": "Версия прошивки"},
+      "ethernet_wan_ipv4": {"name": "Ethernet WAN IPv4"},
+      "ethernet_link_speed": {"name": "Скорость Ethernet-link"},
+      "ethernet_interface_uptime": {"name": "Время работы Ethernet"},
+      "lte_wan_ipv4": {"name": "LTE WAN IPv4"},
+      "lte_interface_uptime": {"name": "Время работы LTE"},
+      "lte_operator": {"name": "Оператор LTE"},
+      "lte_network_type": {"name": "Тип мобильной сети"},
+      "lte_primary_band": {"name": "Основной диапазон LTE"},
+      "lte_carriers": {"name": "Агрегация несущих LTE"},
+      "lte_bandwidth": {"name": "Ширина канала LTE"},
+      "lte_enb_id": {"name": "Идентификатор LTE eNB"},
+      "lte_sector_id": {"name": "Идентификатор сектора LTE"},
+      "lte_phy_cell_id": {"name": "Физический идентификатор ячейки LTE"},
+      "lte_earfcn": {"name": "Номер канала LTE (EARFCN)"},
+      "lte_modem_temperature": {"name": "Температура LTE-модема"},
+      "lte_modem_model": {"name": "Модель LTE-модема"},
+      "lte_modem_firmware": {"name": "Прошивка LTE-модема"},
+      "lte_sim_state": {"name": "Состояние SIM"},
+      "active_wan": {
+        "name": "Активный WAN",
+        "state": {"ethernet": "Ethernet", "lte": "LTE", "unknown": "Неизвестно"}
+      },
+      "ethernet_ping": {"name": "Пинг Ethernet"},
+      "ethernet_packet_loss": {"name": "Потеря пакетов Ethernet"},
+      "lte_ping": {"name": "Пинг LTE"},
+      "lte_packet_loss": {"name": "Потеря пакетов LTE"},
+      "last_wan_switch": {"name": "Последнее переключение WAN"},
+      "last_wan_switch_reason": {
+        "name": "Причина последнего переключения WAN",
+        "state": {
+          "ethernet_link_down": "Ethernet link отключён",
+          "ethernet_restored": "Ethernet link восстановлен",
+          "route_changed": "Маршрут WAN изменён",
+          "unknown": "Неизвестно"
+        }
+      },
+      "wan_switches_today": {"name": "Переключений WAN сегодня"},
+      "lte_time_today": {"name": "Время через LTE сегодня"}
     },
-    "binary_sensor": {"ethernet_connected": {"name": "Подключение Ethernet WAN"}, "lte_connected": {"name": "Подключение LTE"}}
+    "binary_sensor": {
+      "ethernet_connected": {"name": "Подключение Ethernet WAN"},
+      "lte_connected": {"name": "Подключение LTE"}
+    }
   }
 }

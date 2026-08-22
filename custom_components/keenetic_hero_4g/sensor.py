@@ -6,11 +6,18 @@ from typing import Any
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import PERCENTAGE, UnitOfDataRate, UnitOfFrequency, UnitOfTemperature, UnitOfTime
+from homeassistant.const import (
+    PERCENTAGE,
+    UnitOfDataRate,
+    UnitOfFrequency,
+    UnitOfTemperature,
+    UnitOfTime,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.util import dt as dt_util
 
-from .coordinator import KeeneticCoordinator
+from .coordinator import KeeneticCoordinator, WAN_ETHERNET, WAN_LTE
 from .entity import KeeneticEntity, as_float, first_value
 
 ValueFn = Callable[[dict[str, Any]], Any]
@@ -84,16 +91,37 @@ def lte_carriers(data: dict[str, Any]) -> str | None:
 
 def lte_modem_model(data: dict[str, Any]) -> str | None:
     """Return the factual modem product/model, not Keenetic's numeric modem type code."""
-    lte = data.get("lte", {})
     return first_value(
-        lte,
-        (
-            ("product",),
-            ("ati", "model"),
-            ("modem", "model"),
-            ("model",),
-        ),
+        data.get("lte", {}),
+        (("product",), ("ati", "model"), ("modem", "model"), ("model",)),
     )
+
+
+def diagnostic(channel: str, key: str) -> ValueFn:
+    return lambda data: first_value(data.get("diagnostics", {}).get(channel, {}), ((key,),))
+
+
+def active_wan(data: dict[str, Any]) -> str:
+    value = data.get("active_wan")
+    return value if value in {WAN_ETHERNET, WAN_LTE} else "unknown"
+
+
+def last_switch(data: dict[str, Any]) -> Any:
+    value = first_value(data.get("failover", {}), (("last_switch",),))
+    if not isinstance(value, str):
+        return None
+    return dt_util.parse_datetime(value)
+
+
+def last_switch_reason(data: dict[str, Any]) -> str:
+    value = first_value(data.get("failover", {}), (("last_switch_reason",),))
+    allowed = {"ethernet_link_down", "ethernet_restored", "route_changed"}
+    return value if value in allowed else "unknown"
+
+
+def lte_time_today(data: dict[str, Any]) -> float | None:
+    seconds = as_float(first_value(data.get("failover", {}), (("lte_seconds_today",),)))
+    return round(seconds / 60, 1) if seconds is not None else None
 
 
 SENSORS: tuple[KeeneticSensorDescription, ...] = (
@@ -118,6 +146,15 @@ SENSORS: tuple[KeeneticSensorDescription, ...] = (
     KeeneticSensorDescription(key="lte_modem_model", translation_key="lte_modem_model", icon="mdi:expansion-card", value_fn=lte_modem_model),
     KeeneticSensorDescription(key="lte_modem_firmware", translation_key="lte_modem_firmware", icon="mdi:chip", value_fn=block("lte", ("fw",), ("firmware",), ("modem", "firmware"))),
     KeeneticSensorDescription(key="lte_sim_state", translation_key="lte_sim_state", icon="mdi:sim", value_fn=block("lte", ("sim",), ("sim-state",), ("sim", "state"))),
+    KeeneticSensorDescription(key="active_wan", translation_key="active_wan", icon="mdi:wan", device_class=SensorDeviceClass.ENUM, options=[WAN_ETHERNET, WAN_LTE, "unknown"], value_fn=active_wan),
+    KeeneticSensorDescription(key="ethernet_ping", translation_key="ethernet_ping", icon="mdi:lan-connect", device_class=SensorDeviceClass.DURATION, native_unit_of_measurement=UnitOfTime.MILLISECONDS, value_fn=lambda d: as_float(diagnostic(WAN_ETHERNET, "ping_ms")(d))),
+    KeeneticSensorDescription(key="ethernet_packet_loss", translation_key="ethernet_packet_loss", icon="mdi:percent-outline", native_unit_of_measurement=PERCENTAGE, value_fn=lambda d: as_float(diagnostic(WAN_ETHERNET, "packet_loss")(d))),
+    KeeneticSensorDescription(key="lte_ping", translation_key="lte_ping", icon="mdi:signal-4g", device_class=SensorDeviceClass.DURATION, native_unit_of_measurement=UnitOfTime.MILLISECONDS, value_fn=lambda d: as_float(diagnostic(WAN_LTE, "ping_ms")(d))),
+    KeeneticSensorDescription(key="lte_packet_loss", translation_key="lte_packet_loss", icon="mdi:percent-outline", native_unit_of_measurement=PERCENTAGE, value_fn=lambda d: as_float(diagnostic(WAN_LTE, "packet_loss")(d))),
+    KeeneticSensorDescription(key="last_wan_switch", translation_key="last_wan_switch", icon="mdi:swap-horizontal-bold", device_class=SensorDeviceClass.TIMESTAMP, value_fn=last_switch),
+    KeeneticSensorDescription(key="last_wan_switch_reason", translation_key="last_wan_switch_reason", icon="mdi:swap-horizontal", device_class=SensorDeviceClass.ENUM, options=["ethernet_link_down", "ethernet_restored", "route_changed", "unknown"], value_fn=last_switch_reason),
+    KeeneticSensorDescription(key="wan_switches_today", translation_key="wan_switches_today", icon="mdi:counter", value_fn=lambda d: int(first_value(d.get("failover", {}), (("switches_today",),)) or 0)),
+    KeeneticSensorDescription(key="lte_time_today", translation_key="lte_time_today", icon="mdi:timer-outline", device_class=SensorDeviceClass.DURATION, native_unit_of_measurement=UnitOfTime.MINUTES, value_fn=lte_time_today),
 )
 
 
