@@ -28,8 +28,10 @@ from .coordinator import KeeneticCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 PANEL_STATIC_URL = f"/{DOMAIN}_static"
-PANEL_COMPONENT = "keenetic-hero-app-panel"
-PANEL_MODULE = f"{PANEL_STATIC_URL}/keenetic-app.js"
+# Version the web component and module URL so an already-running HA/iOS frontend
+# cannot keep an older app-shell class after an integration upgrade.
+PANEL_COMPONENT = "keenetic-hero-app-panel-v022"
+PANEL_MODULE = f"{PANEL_STATIC_URL}/keenetic-app-v022.js?v={PANEL_VERSION}"
 
 _DATA_PANEL_REGISTERED = "native_panel_registered"
 _DATA_STATIC_REGISTERED = "native_panel_static_registered"
