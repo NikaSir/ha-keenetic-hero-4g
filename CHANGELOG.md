@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.00_b006 — 2026-08-23
+
+- Rolled the integration-owned Keenetic panel runtime back from UI v0.3.1 to the last known working UI v0.3.0 after the v0.3.1 update caused `/dashboard-keenetic` to disappear from the Home Assistant sidebar on the target installation.
+- Restored `panel_v030` as the registered runtime panel component and restored the v0.3.0 machine-readable panel contract.
+- Kept all accepted `v1.00_b005` backend work intact: shared WAN/failover semantics, Ethernet/LTE diagnostics, regression tests and live KN-2311 acceptance remain unchanged.
+- This is a conservative frontend rollback only; no RCI, WAN, LTE, failover or entity behavior is reverted.
+
 ## v1.00_b005 — 2026-08-22
 
 - Unified Ethernet/LTE link-state, route and failover semantics in a shared pure backend contract module (`wan.py`).
