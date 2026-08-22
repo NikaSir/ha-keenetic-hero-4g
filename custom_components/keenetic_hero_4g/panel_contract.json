@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.2.2"
+    "version": "0.2.3"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -42,6 +42,16 @@
       ]
     },
     "secondary_views": ["system"]
+  },
+  "view_patterns": {
+    "wan": {
+      "selector": "segmented",
+      "items": ["ethernet", "lte"],
+      "labels": ["Провод", "LTE"],
+      "simultaneous_on_overview": true,
+      "single_detail_visible": true,
+      "reference_pattern": "Stark SolarPower device selector"
+    }
   },
   "generated_ui": {
     "mode": "compact_summary",
