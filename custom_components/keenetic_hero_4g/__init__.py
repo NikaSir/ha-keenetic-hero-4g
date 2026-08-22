@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
@@ -12,12 +13,19 @@ from .const import CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL, DEFAULT_TIMEOUT, P
 from .coordinator import KeeneticCoordinator
 from .panel_v030 import async_register_native_panel, async_unregister_native_panel
 
+_LOGGER = logging.getLogger(__name__)
+
 
 type KeeneticConfigEntry = ConfigEntry[KeeneticCoordinator]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: KeeneticConfigEntry) -> bool:
-    """Set up Keenetic Hero 4G+ from a config entry."""
+    """Set up Keenetic Hero 4G+ from a config entry.
+
+    The panel lifecycle is independent of router reachability. A transient RCI
+    failure may make telemetry unavailable, but it must never remove the stable
+    /dashboard-keenetic route from Home Assistant.
+    """
     session = async_get_clientsession(hass)
     client = KeeneticRCIClient(
         session,
@@ -35,10 +43,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: KeeneticConfigEntry) -> 
         client,
         timedelta(seconds=scan_interval),
     )
-    await coordinator.async_config_entry_first_refresh()
+
+    # panel.py builds an initial bootstrap snapshot during registration. Keep a
+    # safe empty/fail-closed coordinator state until the first RCI poll succeeds.
+    coordinator.data = {}
+    coordinator.last_update_success = False
     entry.runtime_data = coordinator
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    # Register the stable application surface before touching the physical
+    # router. Device availability controls panel content, never panel existence.
     await async_register_native_panel(hass, entry)
+
+    # Do not use async_config_entry_first_refresh(): a transient RCI failure would
+    # raise ConfigEntryNotReady and remove the whole integration (including the
+    # panel) from the current startup cycle. async_refresh() records failure and
+    # leaves the coordinator scheduled for normal retries.
+    await coordinator.async_refresh()
+    if not coordinator.last_update_success:
+        _LOGGER.warning(
+            "Initial Keenetic RCI refresh failed; keeping integration and panel loaded with unavailable telemetry"
+        )
+
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
 
