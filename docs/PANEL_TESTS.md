@@ -1,7 +1,7 @@
 # Native panel acceptance tests
 
 Panel: Keenetic Hero 4G+  
-Panel version: 0.2.0  
+Panel version: 0.2.1  
 Target device: KN-2311  
 Primary viewport: iPhone Pro Max portrait (control viewport 430 × 932 CSS px)
 
@@ -18,6 +18,9 @@ For every scenario:
 - top operational block remains readable immediately below the header;
 - no primary top-tab row is present;
 - fixed bottom navigation remains available during vertical scrolling;
+- bottom navigation is **full-width and edge-attached** on the iPhone viewport;
+- bottom navigation has no external side/bottom gap and is not rendered as a floating pill/card over content;
+- active tab remains highlighted inside the common Tab Bar rather than visually detached from it;
 - bottom navigation order is Overview / WAN-LTE / Failover / Traffic / Diagnostics;
 - System is secondary drill-down, not a sixth primary tab;
 - bottom navigation does not cover the last content;
@@ -129,6 +132,7 @@ Rename one integration-owned entity through Home Assistant.
 - information hierarchy is unchanged;
 - cards expand to multi-column layout;
 - app header and bottom navigation keep the same semantics;
+- desktop adaptation may constrain the Tab Bar width, but the iPhone layout remains the normative full-width edge-attached implementation;
 - no mobile-only control becomes inaccessible.
 
 ### K. Deep-link/back contract
@@ -143,6 +147,7 @@ Open `/dashboard-keenetic` directly from a fresh browser/app session.
 On Traffic or Diagnostics, scroll to the bottom of a long page.
 
 - bottom navigation remains visible;
+- Tab Bar remains attached to the viewport bottom and does not become a floating card;
 - last content row stays above the nav/safe-area inset;
 - header remains logically consistent;
 - switching tabs is possible one-handed without returning to page top.
