@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.00_b005 — 2026-08-22
+
+- Unified Ethernet/LTE link-state, route and failover semantics in a shared pure backend contract module (`wan.py`).
+- Made the coordinator/failover logic and connectivity binary sensors use the same factual state normalization, including `connected` / `ready` / `disconnected` variants returned by Keenetic.
+- Preserved fail-closed behavior: missing, partial or ambiguous telemetry remains unknown and is never converted into a healthy WAN state.
+- Added automated regression coverage for Ethernet active, LTE active, default-route selection, rejecting/ambiguous routes, partial telemetry and failover reasons.
+- Added the WAN contract tests to the repository CI gate; Repository checks, Hassfest and HACS validation passed before release preparation.
+- Completed live hardware acceptance on the target Keenetic Hero 4G+ KN-2311 by physically removing and restoring the Ethernet WAN cable.
+- Confirmed `Ethernet -> LTE` failover with Internet remaining online, factual Ethernet-down state, active LTE, direct RCI LTE ping and `0.0%` packet loss, switch counter increment and LTE active-time accumulation.
+- Confirmed `LTE -> Ethernet` recovery with `ethernet_restored` reason, Ethernet ping `216.84 ms`, Ethernet packet loss `0.0%`, LTE ping still measurable in reserve (`217.15 ms`) and the daily switch counter reaching 2.
+- Confirmed that an explicitly down Ethernet path exposes unavailable/unknown diagnostics instead of fabricated `0 ms` / `0%` values.
+- This build is a backend reliability/acceptance release. No new integration-owned panel features are added; generated panel ownership is being migrated separately to `ha-contract-generated-ui`.
+
 ## Native panel v0.3.1 / v1.00_b004 — 2026-08-22
 
 - Adopted **NikaS Integration Panel Template v1.0** for the Keenetic specialized panel shell.
