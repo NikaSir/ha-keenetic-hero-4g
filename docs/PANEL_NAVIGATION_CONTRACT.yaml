@@ -7,7 +7,7 @@ panel:
   parent_route: /dashboard-infrastructure/overview
   expose_in_generated_ui: true
   preferred_view: overview
-  version: 0.2.2
+  version: 0.2.3
 
 app_shell:
   standard: Home Assistant NikaS specialized panel
@@ -39,3 +39,15 @@ app_shell:
       - diagnostics
   secondary_views:
     - system
+
+view_patterns:
+  wan:
+    selector: segmented
+    reference: Stark SolarPower device selector
+    items:
+      - id: ethernet
+        label: Провод
+      - id: lte
+        label: LTE
+    single_detail_visible: true
+    overview_shows_both_channels: true
