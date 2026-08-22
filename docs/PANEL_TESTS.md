@@ -13,6 +13,7 @@ At 430 × 932 CSS px:
 
 - no horizontal scrolling anywhere in the specialized panel;
 - Header grid is `52px | minmax(0,1fr) | 52px`;
+- with 8 px side padding and two 4 px grid gaps, the center Header rail has about **302 px** available at the 430 px control viewport;
 - left Header control is icon-only `mdi:arrow-left`; text `Назад` is not rendered;
 - right Header control is one Refresh action;
 - Back and Refresh touch targets are at least 44 × 44 px;
@@ -22,6 +23,7 @@ At 430 × 932 CSS px:
 - Header never uses browser history for Back; Back navigates explicitly to `/dashboard-infrastructure/overview`;
 - Bottom Tab Bar is full-width, edge-attached, outside the vertical scroll region and safe-area aware;
 - Bottom Tab Bar order is `Обзор / WAN-LTE / Failover / Трафик / Диагн.`;
+- at 430 px width the five equal Tab Bar cells have roughly **83 px** of horizontal budget each after side safe padding, sufficient for the approved short labels without horizontal scrolling;
 - each Bottom Tab Bar item has at least a 44 px touch target;
 - active tab uses primary icon/text plus a light primary surface;
 - no floating outer side/bottom gap exists around the Tab Bar;
