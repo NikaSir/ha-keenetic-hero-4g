@@ -5,9 +5,37 @@
     "path": "/dashboard-keenetic",
     "icon": "mdi:router-network",
     "owner": "ha-keenetic-hero-4g",
+    "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.1.0"
+    "version": "0.2.0"
+  },
+  "app_shell": {
+    "standard": "Home Assistant NikaS specialized panel",
+    "version": 1,
+    "header": {
+      "back": {
+        "icon": "mdi:arrow-left",
+        "label": "Назад",
+        "navigate": "/dashboard-infrastructure/overview",
+        "use_browser_history": false,
+        "min_touch_target_px": 44
+      },
+      "title": "Keenetic Hero 4G+",
+      "actions": ["refresh"]
+    },
+    "bottom_navigation": {
+      "fixed": true,
+      "max_primary_items": 5,
+      "items": [
+        "overview",
+        "wan",
+        "failover",
+        "traffic",
+        "diagnostics"
+      ]
+    },
+    "secondary_views": ["system"]
   },
   "generated_ui": {
     "mode": "compact_summary",
@@ -26,12 +54,12 @@
       "router_system_details"
     ]
   },
-  "views": [
+  "primary_views": [
     "overview",
     "wan",
-    "traffic",
     "failover",
-    "system",
+    "traffic",
     "diagnostics"
-  ]
+  ],
+  "secondary_views": ["system"]
 }
