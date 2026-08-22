@@ -10,7 +10,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .api import KeeneticRCIClient
 from .const import CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL, DEFAULT_TIMEOUT, PLATFORMS
 from .coordinator import KeeneticCoordinator
-from .panel_v026 import async_register_native_panel, async_unregister_native_panel
+from .panel_v027 import async_register_native_panel, async_unregister_native_panel
 
 
 type KeeneticConfigEntry = ConfigEntry[KeeneticCoordinator]
