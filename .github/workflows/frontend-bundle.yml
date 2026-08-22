@@ -8,6 +8,16 @@ on:
       - "custom_components/keenetic_hero_4g/frontend/**"
       - "scripts/build_frontend_bundle.py"
       - ".github/workflows/frontend-bundle.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "custom_components/keenetic_hero_4g/frontend/**"
+      - "scripts/build_frontend_bundle.py"
+      - ".github/workflows/frontend-bundle.yml"
+      - "custom_components/keenetic_hero_4g/panel_v029.py"
+      - "custom_components/keenetic_hero_4g/__init__.py"
+      - "custom_components/keenetic_hero_4g/const.py"
   workflow_dispatch:
 
 permissions:
@@ -17,10 +27,10 @@ jobs:
   bundle:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
+      - name: Check out source branch
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -45,6 +55,8 @@ jobs:
 
       - name: Commit generated bundle when changed
         shell: bash
+        env:
+          TARGET_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
         run: |
           if git diff --quiet -- custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js; then
             echo "Bundle already current"
@@ -54,4 +66,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js
           git commit -m "build: refresh standalone frontend bundle"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git push origin "HEAD:${TARGET_BRANCH}"
