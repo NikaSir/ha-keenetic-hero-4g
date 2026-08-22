@@ -1,0 +1,62 @@
+name: Publish release tag
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "custom_components/keenetic_hero_4g/manifest.json"
+      - "scripts/release_tag.py"
+      - ".github/workflows/release-tag.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: keenetic-release-tag
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository with tags
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Resolve release tag
+        id: release
+        shell: bash
+        run: |
+          tag="$(python scripts/release_tag.py)"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Release tag: $tag"
+
+      - name: Publish immutable tag
+        shell: bash
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          git fetch --tags --force
+
+          if git show-ref --tags --verify --quiet "refs/tags/$TAG"; then
+            existing="$(git rev-list -n 1 "$TAG")"
+            if [ "$existing" != "$GITHUB_SHA" ]; then
+              echo "ERROR: immutable tag $TAG already points to $existing, not $GITHUB_SHA"
+              exit 1
+            fi
+            echo "Tag $TAG already points to this commit; nothing to do."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" "$GITHUB_SHA" -m "Keenetic Hero 4G+ $TAG"
+          git push origin "refs/tags/$TAG"
