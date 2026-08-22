@@ -9,6 +9,23 @@
     "preferred_view": "overview",
     "version": "0.1.0"
   },
+  "generated_ui": {
+    "mode": "compact_summary",
+    "deep_link": "/dashboard-keenetic",
+    "roles": {
+      "internet": "internet_connectivity",
+      "active_wan": "active_wan",
+      "lte_reserve": "lte_connected",
+      "switches_today": "wan_switches_today"
+    },
+    "do_not_duplicate": [
+      "wan_lte_diagnostics",
+      "traffic_history",
+      "failover_details",
+      "lte_radio_diagnostics",
+      "router_system_details"
+    ]
+  },
   "views": [
     "overview",
     "wan",
