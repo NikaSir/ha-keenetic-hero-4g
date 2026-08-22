@@ -7,7 +7,7 @@ panel:
   parent_route: /dashboard-infrastructure/overview
   expose_in_generated_ui: true
   preferred_view: overview
-  version: 0.2.5
+  version: 0.2.6
 
 app_shell:
   standard: Home Assistant NikaS specialized panel
@@ -45,8 +45,7 @@ app_shell:
 view_patterns:
   overview:
     preserve_network_topology: true
-    selector: contextual_segmented
-    device_selector: false
+    channel_selector: contextual_segmented
     items:
       - id: ethernet
         label: Провод
@@ -56,15 +55,22 @@ view_patterns:
     active_branch_indicator: true
     single_channel_detail_visible: true
     unknown_active_wan_has_no_fabricated_default: true
+    device_selector: false
     device_control: false
-    tap_action: show selected channel detail in Overview
   wan:
     selector: contextual_segmented
-    device_selector: false
-    reference: Stark-style segmented context selector
     items:
       - id: ethernet
         label: Провод
       - id: lte
         label: LTE
     single_detail_visible: true
+    device_selector: false
+  traffic:
+    periods:
+      - 24h
+      - 7d
+      - 30d
+    refresh_on_each_selection: true
+    stale_period_cache_must_not_suppress_reload: true
+    late_response_must_not_replace_current_period_state: true
