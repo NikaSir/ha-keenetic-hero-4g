@@ -1,6 +1,6 @@
 import "./keenetic-panel.js";
 
-const APP_SHELL_VERSION = "0.2.0";
+const APP_SHELL_VERSION = "0.2.1";
 const PARENT_ROUTE = "/dashboard-infrastructure/overview";
 const BASE_COMPONENT = customElements.get("keenetic-hero-panel");
 
@@ -32,6 +32,47 @@ if (BASE_COMPONENT) {
         )
         .join("")}
     </nav>`;
+  };
+
+  // NikaS UI standard v1.1: the primary Tab Bar is edge-attached and full
+  // width on the mobile application viewport. It must not float as a pill/card
+  // above content. The override is appended after the base stylesheet on each
+  // render because the child panel replaces its shadow DOM during updates.
+  const baseRender = BASE_COMPONENT.prototype._render;
+  BASE_COMPONENT.prototype._render = function (...args) {
+    baseRender.apply(this, args);
+    const root = this.shadowRoot;
+    if (!root || root.querySelector("style[data-nikas-edge-tabbar]")) return;
+
+    const style = document.createElement("style");
+    style.dataset.nikasEdgeTabbar = "true";
+    style.textContent = `
+      .shell {
+        padding-bottom: calc(82px + env(safe-area-inset-bottom)) !important;
+      }
+      .bottom-nav {
+        left: 50% !important;
+        right: auto !important;
+        bottom: 0 !important;
+        width: min(100%, 560px) !important;
+        transform: translateX(-50%) !important;
+        padding: 7px max(7px, env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(7px, env(safe-area-inset-left)) !important;
+        border: 1px solid var(--kp-border) !important;
+        border-bottom: 0 !important;
+        border-radius: 18px 18px 0 0 !important;
+        box-shadow: 0 -6px 24px color-mix(in srgb, #000 12%, transparent) !important;
+        background: color-mix(in srgb, var(--kp-surface) 94%, transparent) !important;
+      }
+      .bottom-nav button {
+        min-height: 56px !important;
+      }
+      @media (min-width: 760px) {
+        .bottom-nav {
+          width: min(560px, calc(100% - 32px)) !important;
+        }
+      }
+    `;
+    root.append(style);
   };
 }
 
