@@ -1,0 +1,57 @@
+name: Frontend bundle
+
+on:
+  push:
+    branches:
+      - "feature/frontend-bundle-*"
+    paths:
+      - "custom_components/keenetic_hero_4g/frontend/**"
+      - "scripts/build_frontend_bundle.py"
+      - ".github/workflows/frontend-bundle.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Build self-contained panel module
+        run: python scripts/build_frontend_bundle.py
+
+      - name: Verify production bundle contract
+        shell: bash
+        run: |
+          python scripts/build_frontend_bundle.py --check
+          if grep -Eq '^[[:space:]]*import[[:space:]]+["'"']\./' custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js; then
+            echo "Production bundle contains a runtime import" >&2
+            exit 1
+          fi
+          if grep -q 'keenetic-panel.css?v=' custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js; then
+            echo "Production bundle contains an external panel CSS reference" >&2
+            exit 1
+          fi
+
+      - name: Commit generated bundle when changed
+        shell: bash
+        run: |
+          if git diff --quiet -- custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js; then
+            echo "Bundle already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js
+          git commit -m "build: refresh standalone frontend bundle"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
