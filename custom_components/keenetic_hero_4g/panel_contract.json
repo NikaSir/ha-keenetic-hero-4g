@@ -8,11 +8,11 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.2.4"
+    "version": "0.2.5"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
-    "version": "1.1",
+    "version": "1.2",
     "header": {
       "back": {
         "icon": "mdi:arrow-left",
@@ -22,6 +22,8 @@
         "min_touch_target_px": 44
       },
       "title": "Keenetic Hero 4G+",
+      "title_alignment": "viewport_center",
+      "show_brand_icon": false,
       "actions": ["refresh"]
     },
     "bottom_navigation": {
@@ -45,20 +47,25 @@
   },
   "view_patterns": {
     "overview": {
-      "wan_quick_buttons": true,
+      "preserve_network_topology": true,
+      "channel_selector": "contextual_segmented",
       "items": ["ethernet", "lte"],
       "labels": ["Провод", "LTE"],
-      "active_from_role": "active_wan",
-      "active_branch_highlight": true,
+      "default_selected_from_role": "active_wan",
+      "active_branch_indicator": true,
+      "single_channel_detail_visible": true,
+      "unknown_active_wan_has_no_fabricated_default": true,
+      "device_selector": false,
       "device_control": false,
-      "tap_action": "open selected WAN/LTE detail"
+      "tap_action": "show selected channel detail in Overview"
     },
     "wan": {
-      "selector": "segmented",
+      "selector": "contextual_segmented",
       "items": ["ethernet", "lte"],
       "labels": ["Провод", "LTE"],
       "single_detail_visible": true,
-      "reference_pattern": "Stark SolarPower device selector"
+      "device_selector": false,
+      "reference_pattern": "Stark-style segmented context selector"
     }
   },
   "generated_ui": {
