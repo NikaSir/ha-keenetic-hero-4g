@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .coordinator import KeeneticCoordinator
-from .entity import KeeneticEntity, first_value
+from .wan import connected as interface_connected
 
 BoolFn = Callable[[dict[str, Any]], bool | None]
 
@@ -21,16 +21,12 @@ class KeeneticBinaryDescription(BinarySensorEntityDescription):
 
 
 def connected(block_name: str) -> BoolFn:
+    """Return one binary-sensor value using the shared WAN state contract."""
+
     def value_fn(data: dict[str, Any]) -> bool | None:
-        value = first_value(data.get(block_name, {}), (("connected",), ("link",), ("state",), ("connection-state",)))
-        if value is None:
-            return None
-        normalized = str(value).strip().lower()
-        if normalized in {"true", "yes", "1", "on", "up", "connected", "ready"}:
-            return True
-        if normalized in {"false", "no", "0", "off", "down", "disconnected", "not-connected"}:
-            return False
-        return None
+        block = data.get(block_name, {})
+        return interface_connected(block) if isinstance(block, dict) else None
+
     return value_fn
 
 
