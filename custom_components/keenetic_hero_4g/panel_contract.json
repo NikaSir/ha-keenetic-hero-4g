@@ -14,7 +14,12 @@
     "name": "NikaS Integration Panel Template",
     "version": "1.0",
     "mobile_first": true,
-    "control_viewport_css_px": [430, 932]
+    "control_viewport_css_px": [430, 932],
+    "fit_budget": {
+      "header_center_rail_css_px": 302,
+      "bottom_tab_cell_css_px_approx": 83,
+      "horizontal_scroll_allowed": false
+    }
   },
   "app_shell": {
     "header": {
