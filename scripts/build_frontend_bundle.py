@@ -18,6 +18,7 @@ SOURCES = [
     FRONTEND / "keenetic-app-v028.js",
     FRONTEND / "keenetic-app-v029.js",
     FRONTEND / "keenetic-app-v030.js",
+    FRONTEND / "keenetic-app-v031.js",
 ]
 IMPORT_RE = re.compile(r"^\s*import\s+[\"']\./[^\"']+[\"'];?\s*$", re.MULTILINE)
 CSS_LINK = '<link rel="stylesheet" href="/keenetic_hero_4g_static/keenetic-panel.css?v=${encodeURIComponent(PANEL_VERSION)}">'
