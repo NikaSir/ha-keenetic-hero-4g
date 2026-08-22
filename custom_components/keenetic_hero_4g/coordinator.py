@@ -14,6 +14,7 @@ from homeassistant.util import dt as dt_util
 
 from .api import KeeneticError, KeeneticRCIClient
 from .const import DIAGNOSTIC_INTERVAL, DOMAIN, ETHERNET_INTERFACE, LTE_INTERFACE, PING_HOST
+from .traffic import rci_error_message
 from .wan import WAN_ETHERNET, WAN_LTE, connected, determine_active_wan, switch_reason
 
 _LOGGER = logging.getLogger(__name__)
@@ -113,6 +114,24 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._first_runtime_update = False
         self._store.async_delay_save(lambda: dict(self._tracking), 60)
 
+    async def _async_optional_interface_stats(
+        self, channel: str, interface: str
+    ) -> dict[str, Any]:
+        """Read interface traffic stats without making base telemetry fail."""
+        try:
+            data = await self.client.async_get_json(
+                f"/rci/show/interface/stat?name={interface}"
+            )
+        except KeeneticError as err:
+            _LOGGER.debug("Keenetic %s interface stats unavailable: %s", channel, err)
+            return {}
+
+        error = rci_error_message(data)
+        if error is not None:
+            _LOGGER.debug("Keenetic %s interface stats rejected: %s", channel, error)
+            return {}
+        return data if isinstance(data, dict) else {}
+
     async def _async_update_diagnostics(
         self,
         ethernet: dict[str, Any],
@@ -156,12 +175,22 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         await self._async_load_tracking()
 
         try:
-            system, version, ethernet, lte, routes = await asyncio.gather(
+            (
+                system,
+                version,
+                ethernet,
+                lte,
+                routes,
+                ethernet_stats,
+                lte_stats,
+            ) = await asyncio.gather(
                 self.client.async_get_system(),
                 self.client.async_get_version(),
                 self.client.async_get_interface(ETHERNET_INTERFACE),
                 self.client.async_get_interface(LTE_INTERFACE),
                 self.client.async_get_routes(),
+                self._async_optional_interface_stats(WAN_ETHERNET, ETHERNET_INTERFACE),
+                self._async_optional_interface_stats(WAN_LTE, LTE_INTERFACE),
             )
         except KeeneticError as err:
             raise UpdateFailed(str(err)) from err
@@ -181,6 +210,8 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "version": version,
             "ethernet": ethernet,
             "lte": lte,
+            "ethernet_stats": ethernet_stats,
+            "lte_stats": lte_stats,
             "routes": routes,
             "active_wan": active_wan,
             "diagnostics": self._diagnostics,
