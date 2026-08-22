@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.00_b007 — 2026-08-23
+
+- Decoupled the Keenetic panel lifecycle from physical router availability during Home Assistant startup.
+- `runtime_data` and the stable `/dashboard-keenetic` panel are now published before the first RCI poll.
+- Replaced startup `async_config_entry_first_refresh()` with a non-fatal `async_refresh()` so a transient RCI failure no longer sends the whole Config Entry into retry before panel registration.
+- Added a fail-closed empty coordinator snapshot before the first poll; the panel remains present and reports unavailable/unknown telemetry until real data arrives.
+- Normal coordinator retries continue on the configured polling cadence after an initial failure.
+- Added a regression test that locks the startup order and forbids first-refresh-gated panel registration.
+- UI remains on the last known working v0.3.0 runtime from b006; WAN/LTE/failover behavior from b005 is unchanged.
+
 ## v1.00_b006 — 2026-08-23
 
 - Rolled the integration-owned Keenetic panel runtime back from UI v0.3.1 to the last known working UI v0.3.0 after the v0.3.1 update caused `/dashboard-keenetic` to disappear from the Home Assistant sidebar on the target installation.
