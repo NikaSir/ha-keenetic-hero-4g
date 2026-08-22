@@ -1,7 +1,7 @@
 # Native panel acceptance tests
 
 Panel: Keenetic Hero 4G+  
-Panel version: 0.2.5  
+Panel version: 0.2.6  
 Target device: KN-2311  
 Primary viewport: iPhone Pro Max portrait (control viewport 430 × 932 CSS px)
 
@@ -177,6 +177,17 @@ With Active WAN unknown:
 - only one detailed transport is visible at a time;
 - switching segments does not change Back semantics or execute router control.
 
+### P. Traffic period symmetry
+
+Open Traffic and exercise both directions:
+
+- `24 ч -> 7 дн -> 30 дн` refreshes statistics for each selected range;
+- `30 дн -> 7 дн -> 24 ч` also refreshes each selected range;
+- returning to a previously viewed shorter period must not silently reuse a stale lifetime cache;
+- the selected button, chart data and max scale belong to the same period;
+- rapid period changes may leave older requests in flight, but a late response must not replace the loading/error state of the currently selected period;
+- no period selection changes the traffic source entities or fabricates missing history.
+
 ## Release gate
 
-The panel is accepted only when scenarios A-F plus app-shell, cache and selector gates pass on the real KN-2311. Final iPhone Pro Max screenshots must demonstrate the accepted layout and failover behavior.
+The panel is accepted only when scenarios A-F plus app-shell, cache, selector and traffic-period gates pass on the real KN-2311. Final iPhone Pro Max screenshots must demonstrate the accepted layout and failover behavior.
