@@ -1,5 +1,15 @@
 # Changelog
 
+## Native panel v0.2.9 / v1.00_b003 — 2026-08-22
+
+- Replaced the runtime chain of versioned Keenetic frontend modules with one autonomous production bundle: `keenetic-panel-bundle.js`.
+- Inlined `keenetic-panel.css` into the generated JavaScript artifact so the specialized panel has one production frontend loading point.
+- Registered the v0.2.9 shell from the self-contained bundle with query-string cache busting.
+- Added deterministic build tooling and CI guards that reject runtime `import` / `export` dependencies and verify the committed bundle against a clean rebuild.
+- Historical `keenetic-app-v0xx.js`, base panel source and CSS remain development/build inputs only; they are not production runtime dependencies.
+- Preserved the accepted panel UX, explicit Back route, full-width fixed Bottom Tab Bar, bootstrap fallback, read-only behavior and strict `unknown` / `unavailable` semantics.
+- This is a frontend loading-architecture hardening release; RCI, ping, failover and telemetry semantics are unchanged.
+
 ## Native panel v0.2.1 — draft
 
 - Aligned the Keenetic panel with Home Assistant NikaS specialized-panel UI standard v1.1.
