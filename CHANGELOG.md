@@ -1,5 +1,16 @@
 # Changelog
 
+## Native panel v0.3.0 — 2026-08-22
+
+- Stabilization release focused on getting the specialized Keenetic panel reliably usable before restoring Recorder-backed traffic history.
+- Removed the `24 ч / 7 дн / 30 дн` period selector from the Traffic screen.
+- Disabled all Recorder traffic-history requests from the Traffic screen; current RX/TX and accumulated counters remain available from factual Home Assistant entities.
+- Added cold-start property replay for `panel`, `hass`, and `route` to handle Home Assistant/iOS cases where properties are assigned before custom-element upgrade.
+- Applied bootstrap timeout/fallback handling to the actual child `keenetic-hero-panel` component instead of the outer app shell.
+- Added a new frontend component id `keenetic-hero-app-panel-v030` and cache-busting UI version `0.3.0`.
+- Preserved the self-contained production frontend bundle architecture introduced in v0.2.9.
+- WAN/LTE, failover, diagnostics, Back navigation, bottom Tab Bar, read-only behavior, and `unknown` / `unavailable` semantics are unchanged.
+
 ## Native panel v0.2.9 / v1.00_b003 — 2026-08-22
 
 - Replaced the runtime chain of versioned Keenetic frontend modules with one autonomous production bundle: `keenetic-panel-bundle.js`.
