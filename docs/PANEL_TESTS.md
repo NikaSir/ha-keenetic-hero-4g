@@ -1,7 +1,7 @@
 # Native panel acceptance tests
 
 Panel: Keenetic Hero 4G+  
-Panel version: 0.1.0  
+Panel version: 0.2.0  
 Target device: KN-2311  
 Primary viewport: iPhone Pro Max portrait (control viewport 430 × 932 CSS px)
 
@@ -11,8 +11,18 @@ For every scenario:
 
 - no horizontal scrolling;
 - Home Assistant header/safe areas do not cover controls;
-- top operational block remains readable before deep scrolling;
+- unified app header is present on every primary view;
+- Back is explicit and navigates to `/dashboard-infrastructure/overview`, never browser history;
+- Back and Refresh have >= 44 px touch targets;
+- hold/double tap on header controls does not execute router/device actions;
+- top operational block remains readable immediately below the header;
+- no primary top-tab row is present;
+- fixed bottom navigation remains available during vertical scrolling;
+- bottom navigation order is Overview / WAN-LTE / Failover / Traffic / Diagnostics;
+- System is secondary drill-down, not a sixth primary tab;
+- bottom navigation does not cover the last content;
 - all factual entity metrics support long-press -> native more-info;
+- header and bottom navigation never invoke entity-specific more-info;
 - no browser-side RCI/SNMP write requests are made;
 - no missing value is rendered as zero;
 - switching views does not require a page reload;
@@ -99,6 +109,7 @@ Expected:
 - panel registers automatically after the config entry loads;
 - existing config entry/credentials remain intact;
 - route is present without YAML panel configuration;
+- sidebar entry is registered;
 - panel does not create duplicate entities.
 
 ### H. Entity ID renamed by user
@@ -117,8 +128,25 @@ Rename one integration-owned entity through Home Assistant.
 
 - information hierarchy is unchanged;
 - cards expand to multi-column layout;
+- app header and bottom navigation keep the same semantics;
 - no mobile-only control becomes inaccessible.
+
+### K. Deep-link/back contract
+
+Open `/dashboard-keenetic` directly from a fresh browser/app session.
+
+- Back still navigates to `/dashboard-infrastructure/overview`;
+- it does not depend on prior browser navigation history.
+
+### L. Long-scroll navigation
+
+On Traffic or Diagnostics, scroll to the bottom of a long page.
+
+- bottom navigation remains visible;
+- last content row stays above the nav/safe-area inset;
+- header remains logically consistent;
+- switching tabs is possible one-handed without returning to page top.
 
 ## Release gate
 
-The panel is accepted only when scenarios A-F pass on the real KN-2311 and the Overview is faster to interpret for WAN/LTE/failover than the previous sensor-list detail page. Live screenshots must be captured after this hardware acceptance; design-reference screenshots are not a substitute for the release evidence.
+The panel is accepted only when scenarios A-F plus the app-shell navigation gates pass on the real KN-2311 and the Overview is faster to interpret for WAN/LTE/failover than the previous sensor-list detail page. Live iPhone Pro Max screenshots must be captured after hardware acceptance; design-reference screenshots are not a substitute for release evidence.
