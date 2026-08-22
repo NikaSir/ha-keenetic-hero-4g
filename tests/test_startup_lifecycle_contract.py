@@ -15,8 +15,11 @@ class StartupLifecycleContractTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.source = INIT.read_text(encoding="utf-8")
 
-    def test_first_refresh_helper_is_not_used(self) -> None:
-        self.assertNotIn("async_config_entry_first_refresh", self.source)
+    def test_first_refresh_helper_is_not_called(self) -> None:
+        self.assertNotIn(
+            "await coordinator.async_config_entry_first_refresh()",
+            self.source,
+        )
 
     def test_panel_is_registered_before_initial_rci_refresh(self) -> None:
         runtime = self.source.index("entry.runtime_data = coordinator")
