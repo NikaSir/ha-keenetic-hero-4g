@@ -55,24 +55,39 @@ Diagnostic ICMP is run by the router itself through the command-specific RCI bac
 
 The diagnostic cadence is intentionally slower than normal telemetry polling, and a diagnostic failure cannot make the normal router telemetry coordinator unavailable.
 
-## Installation
+## Installation and updates
+
+**HACS from this GitHub repository is the normal installation and update method.** Manual ZIP copying is reserved for controlled feature-branch testing or recovery.
 
 ### HACS custom repository
 
-1. Add this repository to HACS as an **Integration** custom repository.
-2. Install **Keenetic Hero 4G+**.
-3. Restart Home Assistant.
-4. Go to **Settings → Devices & services → Add integration → Keenetic Hero 4G+**.
-5. Enter the local router address, username and password.
+1. In HACS, open **Custom repositories**.
+2. Add `https://github.com/NikaSir/ha-keenetic-hero-4g` with category **Integration**.
+3. Install **Keenetic Hero 4G+**.
+4. Restart Home Assistant.
+5. Go to **Settings -> Devices & services -> Add integration -> Keenetic Hero 4G+** for a first-time configuration only.
+6. Enter the local router address, username and password.
 
 Default router address used during development: `192.168.0.1`.
 
+For an existing manual installation, keep the Home Assistant Config Entry and migrate only the component files to HACS. See [`docs/HACS_MIGRATION.md`](docs/HACS_MIGRATION.md) for the one-time transition procedure.
+
 For branch validation before a release, replace only `/config/custom_components/keenetic_hero_4g/` with the same directory from the test branch and restart Home Assistant. The existing Config Entry and credentials do not need to be recreated.
+
+## Repository release model
+
+- `main` is the stable household installation source.
+- Development is performed in feature branches and pull requests.
+- Repository checks, Hassfest, HACS validation, changelog/version checks, and required live tests are release gates.
+- After HACS migration, accepted updates are delivered from the repository; routine manual folder replacement stops.
+
+See [`docs/RELEASES.md`](docs/RELEASES.md) for the release policy.
 
 ## Security
 
 - Credentials are entered through Home Assistant Config Flow and are never committed to the repository.
 - Router cookies, SNMP communities, IMEI/IMSI/ICCID and other private identifiers must not be committed.
+- Home Assistant diagnostics redact credentials and sensitive cellular identifiers.
 - Diagnostic ping is read-only from the Home Assistant integration's point of view and does not modify router configuration.
 - VPN/WAN/LTE control commands are not implemented in the current release line.
 
