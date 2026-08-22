@@ -19,6 +19,21 @@ def as_number(value: Any) -> float | None:
     return number
 
 
+def rci_error_message(payload: Any) -> str | None:
+    """Return an RCI error message from an optional telemetry payload."""
+    if not isinstance(payload, dict):
+        return None
+    statuses = payload.get("status")
+    if not isinstance(statuses, list):
+        return None
+    errors = [
+        str(item.get("message") or item.get("code") or "RCI command failed")
+        for item in statuses
+        if isinstance(item, dict) and item.get("status") == "error"
+    ]
+    return "; ".join(errors) if errors else None
+
+
 def rate_mbps(stats: dict[str, Any], key: str) -> float | None:
     """Convert factual Keenetic interface bit/s statistics to Mbit/s."""
     value = as_number(stats.get(key)) if isinstance(stats, dict) else None
