@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.13"
 
@@ -40,6 +40,22 @@ jobs:
         run: |
           if [ -d custom_components ]; then
             python -m compileall -q custom_components
+          fi
+
+      - name: Validate standalone frontend production bundle
+        shell: bash
+        run: |
+          if [ -f scripts/build_frontend_bundle.py ]; then
+            python scripts/build_frontend_bundle.py --check
+            bundle="custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js"
+            if grep -Eq '^[[:space:]]*import[[:space:]]+["'"']\./' "$bundle"; then
+              echo "Production bundle contains a runtime relative import" >&2
+              exit 1
+            fi
+            if grep -q 'keenetic-panel.css?v=' "$bundle"; then
+              echo "Production bundle still references external integration CSS" >&2
+              exit 1
+            fi
           fi
 
       - name: Validate panel JavaScript when present
