@@ -1,5 +1,14 @@
 # Changelog
 
+## Native panel v0.2.1 — draft
+
+- Aligned the Keenetic panel with Home Assistant NikaS specialized-panel UI standard v1.1.
+- Replaced the floating bottom navigation geometry with a **full-width, edge-attached fixed Tab Bar** on the iPhone viewport.
+- Removed external side/bottom gaps from primary navigation and kept active-tab highlighting inside the shared bar.
+- Increased primary navigation touch targets to 56 px and retained iOS safe-area padding.
+- Increased content bottom clearance so the final card scrolls completely above the Tab Bar.
+- Kept the existing five primary sections, explicit Back route, read-only behavior and `unknown` / `unavailable` semantics unchanged.
+
 ## Native panel v0.2.0 — draft
 
 - Adopted the common Home Assistant NikaS specialized-panel app shell.
