@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "hardening/self-contained-frontend-*"
+      - "fix/panel-safe-mode-*"
     paths:
       - "custom_components/keenetic_hero_4g/frontend/**"
       - "scripts/build_frontend_bundle.py"
@@ -58,10 +59,10 @@ jobs:
           if git ls-files --error-unmatch "$BUNDLE" >/dev/null 2>&1; then
             git diff --exit-code -- "$BUNDLE"
           else
-            echo "Bundle bootstrap: generated artifact will be committed by the hardening-branch push workflow."
+            echo "Bundle bootstrap: generated artifact will be committed by the branch push workflow."
           fi
 
-      - name: Commit generated bundle on hardening branch
+      - name: Commit generated bundle on supported branch
         if: github.event_name == 'push'
         shell: bash
         run: |
