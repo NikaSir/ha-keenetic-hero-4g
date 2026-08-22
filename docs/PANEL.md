@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel version: **0.2.0**  
+Panel version: **0.2.3**  
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -20,7 +20,7 @@ The first screen must answer, without opening Keenetic Web UI:
 
 ## Home Assistant NikaS app shell
 
-Panel 0.2.0 adopts the common specialized-panel navigation standard used across Home Assistant NikaS.
+Panel 0.2.3 follows the common specialized-panel navigation standard used across Home Assistant NikaS.
 
 ### Header
 
@@ -41,7 +41,7 @@ This remains deterministic when the panel is opened from Infrastructure, sidebar
 
 ### Bottom navigation
 
-The fixed bottom navigation is the only primary section switcher. It respects the iOS bottom safe area and contains at most five destinations:
+The bottom Tab Bar is a dedicated app-shell row outside the vertical scroll region and is the only primary section switcher. It spans the useful mobile width, is attached to the bottom edge, respects the iOS bottom safe area and contains at most five destinations:
 
 1. `Обзор`
 2. `WAN/LTE`
@@ -68,15 +68,32 @@ The panel does **not** implement router writes. It does not call RCI from Lovela
 
 The runtime bootstrap exports panel owner, panel version, parent route, preferred view, entity-role mapping, factual source type, coordinator health and scan interval. The machine-readable contract is stored in `custom_components/keenetic_hero_4g/panel_contract.json`.
 
+### Frontend cache contract
+
+Panel release candidates use a versioned module URL and versioned custom-element name. This is intentional: Home Assistant iOS/WebView may keep an already registered JavaScript custom element in memory across an integration update. A new panel candidate must therefore not silently reuse the previous app shell.
+
 ## Views
 
 ### Overview
 
 Operational status only: Internet, active WAN, primary Ethernet, reserve LTE, current RX/TX, channel ping/loss, LTE radio quality, last failover, switch count today and LTE usage time today. The compact topology is functional and changes according to factual state.
 
+Overview intentionally shows **both Ethernet and LTE at the same time**, because reserve readiness must be visible without interaction.
+
 ### WAN / LTE
 
-Detailed channel diagnostics. Ethernet includes status, address/link/uptime, ping/loss, current rates and accumulated traffic. LTE includes status, operator/network, signal, ping/loss, traffic, band/carrier/cell/EARFCN and modem/SIM data when factual entities exist.
+Detailed channel diagnostics use a contextual two-segment selector based on the successful Stark SolarPower device-selector pattern:
+
+`Провод | LTE`
+
+This selector is **not** primary application navigation. It only selects which transport detail is shown inside the already selected `WAN/LTE` screen. The bottom Tab Bar remains unchanged.
+
+- `Провод` shows Ethernet WAN status, address/link/uptime, ping/loss, current rates and accumulated traffic.
+- `LTE` shows connection status, operator/network, signal, ping/loss, traffic, band/carrier/cell/EARFCN and modem/SIM data when factual entities exist.
+- only one detailed transport card is shown at a time, reducing scroll depth;
+- each segment also shows the factual channel state;
+- the initially selected segment follows the factual active WAN when available, otherwise Ethernet is the default;
+- switching the segment does not create a new route and does not change the meaning of `Назад`.
 
 ### Failover
 
@@ -131,15 +148,16 @@ Control viewport: **430 × 932 CSS px**, representative of iPhone Pro Max portra
 
 - no horizontal scrolling;
 - primary Internet/WAN state immediately below the unified header;
-- no second row of primary navigation above the content;
-- fixed bottom navigation with large targets;
-- bottom content padding prevents overlap with navigation;
+- no second row of primary application navigation above the content;
+- contextual selectors such as `Провод | LTE` are permitted inside a functional screen;
+- full-width edge-attached bottom Tab Bar with large targets;
+- Tab Bar lives outside the scroll region and never covers the final content row;
 - safe-area insets are handled by the panel (`handle_safe_area=True` plus CSS `env(safe-area-inset-*)`);
 - desktop/iPad may widen cards without changing information hierarchy.
 
 ## More-info
 
-Long press on a factual entity metric opens Home Assistant native `more-info`. Header and bottom-navigation elements are navigation only and never trigger entity-specific or router actions.
+Long press on a factual entity metric opens Home Assistant native `more-info`. Header, transport selector and bottom-navigation elements are navigation/selection controls only and never trigger entity-specific or router actions.
 
 ## Central UI contract
 
