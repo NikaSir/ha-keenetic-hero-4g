@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.2.6"
+    "version": "0.2.7"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -71,7 +71,13 @@
       "periods": ["24h", "7d", "30d"],
       "refresh_on_each_selection": true,
       "stale_period_cache_must_not_suppress_reload": true,
-      "late_response_must_not_replace_current_period_state": true
+      "late_response_must_not_replace_current_period_state": true,
+      "finite_ui_timeout_seconds": {
+        "24h": 6,
+        "7d": 8,
+        "30d": 10
+      },
+      "period_switching_remains_available_while_previous_request_is_pending": true
     }
   },
   "generated_ui": {
