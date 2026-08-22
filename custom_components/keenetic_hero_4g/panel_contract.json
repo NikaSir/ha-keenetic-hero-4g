@@ -58,7 +58,8 @@
       "websocket_refresh": true,
       "websocket_timeout_seconds": 5,
       "blank_screen_on_bootstrap_timeout": false,
-      "fallback_excludes_host_and_unique_id": true
+      "fallback_excludes_host_and_unique_id": true,
+      "upgrade_predefined_panel_property": true
     }
   },
   "view_patterns": {
@@ -84,16 +85,13 @@
       "reference_pattern": "Stark-style segmented context selector"
     },
     "traffic": {
-      "periods": ["24h", "7d", "30d"],
-      "refresh_on_each_selection": true,
-      "stale_period_cache_must_not_suppress_reload": true,
-      "late_response_must_not_replace_current_period_state": true,
-      "finite_ui_timeout_seconds": {
-        "24h": 6,
-        "7d": 8,
-        "30d": 10
-      },
-      "period_switching_remains_available_while_previous_request_is_pending": true
+      "mode": "stabilization_current_only",
+      "recorder_history_enabled": false,
+      "period_selector_visible": false,
+      "periods_temporarily_removed": ["24h", "7d", "30d"],
+      "show_current_rates": true,
+      "show_accumulated_counters": true,
+      "restore_history_in_separate_change": true
     }
   },
   "generated_ui": {
