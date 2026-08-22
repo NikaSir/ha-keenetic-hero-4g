@@ -27,3 +27,7 @@ jobs:
       - uses: hacs/action@main
         with:
           category: integration
+          # This repository is used as a private/custom HACS source, not submitted
+          # to the public HACS default catalog. Repository-topic validation is
+          # therefore intentionally excluded; all integration/content checks run.
+          ignore: topics
