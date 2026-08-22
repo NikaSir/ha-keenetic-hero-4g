@@ -48,12 +48,13 @@ jobs:
         env:
           TARGET_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
         run: |
-          if git diff --quiet -- custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js; then
+          bundle="custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js"
+          if [ -z "$(git status --porcelain -- "$bundle")" ]; then
             echo "Bundle already current"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add custom_components/keenetic_hero_4g/frontend/keenetic-panel.bundle.js
+          git add "$bundle"
           git commit -m "build: refresh standalone frontend bundle"
           git push origin "HEAD:${TARGET_BRANCH}"
