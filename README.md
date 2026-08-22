@@ -2,13 +2,16 @@
 
 ![Keenetic Hero 4G+ integration icon](docs/icon.svg)
 
-Custom Home Assistant integration for **Keenetic Hero 4G+ (KN-2311)**. The integration uses the router's local RCI interface with the verified `x-ndw2-interactive` challenge-response authentication and is **read-only** in the initial release line.
+Custom Home Assistant integration for **Keenetic Hero 4G+ (KN-2311)**. The integration uses the router's local RCI interface with verified `x-ndw2-interactive` challenge-response authentication and remains **read-only** in the current release line.
 
 ## Status
 
-`v1.00_b001` — first RCI telemetry build for controlled testing.
+- `v1.00_b001` — accepted first RCI telemetry build.
+- `v1.00_b002` — current validation build for WAN diagnostics and failover accounting.
 
-Existing SNMP/template entities should remain installed during comparison testing. Do not keep temporary `_2` or `_old` entity IDs as the final migration result.
+`b002` has already passed live Ethernet -> LTE -> Ethernet failover testing on the target KN-2311. The remaining acceptance item is live validation of the direct RCI Ethernet/LTE ping and packet-loss probes.
+
+Existing SNMP/template entities may remain installed during comparison testing. Temporary `_2` or `_old` entity IDs are not part of the integration's final entity model.
 
 ## Current telemetry
 
@@ -21,7 +24,8 @@ Ethernet WAN (`GigabitEthernet1`):
 - connection state;
 - WAN IPv4;
 - physical link speed;
-- interface uptime.
+- interface uptime;
+- ping and packet loss (`b002`).
 
 LTE (`UsbLte0`):
 - connection state and WAN IPv4;
@@ -32,9 +36,24 @@ LTE (`UsbLte0`):
 - LTE modem temperature;
 - modem model / firmware;
 - SIM state;
-- interface uptime.
+- interface uptime;
+- ping and packet loss (`b002`).
 
-The integration intentionally does not manufacture values when a field is absent.
+WAN/failover (`b002`):
+- factual active WAN derived from Keenetic route/interface state;
+- VPN-aware transport detection when the default route is carried by OpenVPN;
+- last WAN switch time;
+- conservative switch reason;
+- switch count for the current day;
+- cumulative LTE active time for the current day.
+
+The integration intentionally does not manufacture values when a field is absent or ambiguous. A standby interface being down does not imply total Internet failure when another WAN is operating.
+
+## WAN diagnostics
+
+Diagnostic ICMP is run by the router itself through the command-specific RCI background resource `/rci/tools/ping`, not from the Home Assistant host. Ethernet and LTE probes are bound to their respective source interfaces and are collected by polling the same RCI resource while Keenetic reports `continued: true`.
+
+The diagnostic cadence is intentionally slower than normal telemetry polling, and a diagnostic failure cannot make the normal router telemetry coordinator unavailable.
 
 ## Installation
 
@@ -48,21 +67,15 @@ The integration intentionally does not manufacture values when a field is absent
 
 Default router address used during development: `192.168.0.1`.
 
+For branch validation before a release, replace only `/config/custom_components/keenetic_hero_4g/` with the same directory from the test branch and restart Home Assistant. The existing Config Entry and credentials do not need to be recreated.
+
 ## Security
 
 - Credentials are entered through Home Assistant Config Flow and are never committed to the repository.
 - Router cookies, SNMP communities, IMEI/IMSI/ICCID and other private identifiers must not be committed.
-- No control commands are implemented in `b001`.
+- Diagnostic ping is read-only from the Home Assistant integration's point of view and does not modify router configuration.
+- VPN/WAN/LTE control commands are not implemented in the current release line.
 
-## Planned `b002`
+## Control research
 
-After `b001` has been compared against the existing working telemetry:
-- Ethernet ping and packet loss;
-- LTE ping and packet loss;
-- real WAN/failover state;
-- last WAN switch time;
-- switch count for the current day;
-- LTE active time for the current day;
-- switch reason only if the router exposes a stable factual source.
-
-VPN/WAN/LTE control remains a separate research track and will not be mixed into read-only telemetry until verified safe.
+VPN status/control, forced WAN switching, LTE reconnect and Internet-interface restart remain a separate research track. They will not be mixed into the read-only telemetry path until each command has been verified to be supported and safe on the target KeeneticOS build.
