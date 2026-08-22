@@ -1,7 +1,7 @@
 # Native panel acceptance tests
 
 Panel: Keenetic Hero 4G+  
-Panel version: 0.2.6  
+Panel version: 0.2.7  
 Target device: KN-2311  
 Primary viewport: iPhone Pro Max portrait (control viewport 430 × 932 CSS px)
 
@@ -177,7 +177,7 @@ With Active WAN unknown:
 - only one detailed transport is visible at a time;
 - switching segments does not change Back semantics or execute router control.
 
-### P. Traffic period symmetry
+### P. Traffic period symmetry and non-blocking behavior
 
 Open Traffic and exercise both directions:
 
@@ -186,6 +186,10 @@ Open Traffic and exercise both directions:
 - returning to a previously viewed shorter period must not silently reuse a stale lifetime cache;
 - the selected button, chart data and max scale belong to the same period;
 - rapid period changes may leave older requests in flight, but a late response must not replace the loading/error state of the currently selected period;
+- the UI must never remain indefinitely in `Загрузка истории…`;
+- UI wait limits are finite: approximately 6 s for 24 h, 8 s for 7 d, 10 s for 30 d;
+- after a timeout, Traffic remains interactive and the user can immediately select another period;
+- a timeout is shown as an explicit Recorder/history error rather than a frozen panel;
 - no period selection changes the traffic source entities or fabricates missing history.
 
 ## Release gate
