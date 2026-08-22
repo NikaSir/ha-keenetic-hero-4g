@@ -1,210 +1,109 @@
 # Native panel acceptance tests
 
 Panel: Keenetic Hero 4G+  
-Panel version: 0.2.8  
+Panel version: 0.3.1  
+Integration build: 1.0.0-b004  
+Template: NikaS Integration Panel Template v1.0  
 Target device: KN-2311  
 Primary viewport: iPhone Pro Max portrait (control viewport 430 × 932 CSS px)
 
-## General UI gate
+## 1. App-shell / viewport gate
 
-For every scenario:
+At 430 × 932 CSS px:
 
-- no horizontal scrolling;
-- Header is present on every primary view;
-- Back explicitly navigates to `/dashboard-infrastructure/overview`, never browser history;
-- title is geometrically centered against the viewport;
-- no decorative router/brand icon appears beside the Header title;
-- Back and Refresh have >= 44 px touch targets;
-- no primary top-tab row is present;
-- primary Tab Bar remains available during vertical scrolling;
-- Tab Bar is full-width, edge-attached and outside the scroll region;
-- Tab Bar has no floating side/bottom gap;
-- active tab is highlighted inside the common bar;
-- bottom navigation order is Overview / WAN-LTE / Failover / Traffic / Diagnostics;
-- System is a secondary drill-down;
-- Tab Bar never covers the final content row;
-- factual entity metrics support long-press -> native more-info;
-- Header, contextual selectors and Bottom Tab Bar never invoke entity-specific actions;
-- no browser-side RCI/SNMP write requests are made;
-- no missing value is rendered as zero;
-- `/dashboard-keenetic` remains the stable entry route;
-- a panel upgrade must display the current UI version and must not retain an older registered web component.
+- no horizontal scrolling anywhere in the specialized panel;
+- Header grid is `52px | minmax(0,1fr) | 52px`;
+- with 8 px side padding and two 4 px grid gaps, the center Header rail has about **302 px** available at the 430 px control viewport;
+- left Header control is icon-only `mdi:arrow-left`; text `Назад` is not rendered;
+- right Header control is one Refresh action;
+- Back and Refresh touch targets are at least 44 × 44 px;
+- title `Keenetic Hero 4G+` is geometrically centered against the viewport;
+- subtitle is `Network Control Center · UI v0.3.1` and remains on one line or ellipsizes inside the center rail without moving the title;
+- on <=390 px width Header rails become symmetric 48 px rails;
+- Header never uses browser history for Back; Back navigates explicitly to `/dashboard-infrastructure/overview`;
+- Bottom Tab Bar is full-width, edge-attached, outside the vertical scroll region and safe-area aware;
+- Bottom Tab Bar order is `Обзор / WAN-LTE / Failover / Трафик / Диагн.`;
+- at 430 px width the five equal Tab Bar cells have roughly **83 px** of horizontal budget each after side safe padding, sufficient for the approved short labels without horizontal scrolling;
+- each Bottom Tab Bar item has at least a 44 px touch target;
+- active tab uses primary icon/text plus a light primary surface;
+- no floating outer side/bottom gap exists around the Tab Bar;
+- final content can scroll completely above the Tab Bar;
+- mobile primary content is one-column at the screen level;
+- cards use the common NikaS rhythm: radius about 22 px, padding 16 px, vertical gap about 14 px;
+- desktop content does not grow beyond 1280 px and preserves the same information hierarchy.
 
-## A. Normal operation — Ethernet active, LTE standby
+## 2. Loading / bootstrap gate
 
-Expected:
+- shell Header and Bottom Tab Bar remain present during loading;
+- panel never remains indefinitely on a blank `Загрузка Keenetic…` state;
+- registration bootstrap fallback is used when the live bootstrap WebSocket is delayed;
+- bootstrap WebSocket has an approximately 5 second UI timeout;
+- fallback excludes host and integration unique-id;
+- later successful bootstrap refresh replaces fallback data;
+- no fake healthy values are created from missing telemetry.
 
-- Internet: Online when the independent probe is online;
-- Active WAN: Ethernet;
-- network topology remains visible at the top of Overview;
-- `Провод` is selected by default below the topology;
-- factual active-route indication identifies Ethernet;
-- only the Ethernet detail card is shown below the selector;
-- LTE reserve state remains visible in the topology and selector;
-- user can select LTE for inspection without changing router state;
-- factual Ethernet/LTE ping and loss are shown when available;
-- telemetry trust is green only while RCI data is fresh.
-
-## B. Primary WAN failure — Ethernet -> LTE
+## 3. Overview — Ethernet active, LTE standby
 
 Expected:
 
-- Internet stays Online if LTE provides connectivity;
-- Active WAN changes to LTE;
-- Ethernet becomes down only when factual router/interface data proves it;
-- LTE becomes Active;
-- after a fresh/opened Overview context, `LTE` is selected by default;
-- LTE-only ping/loss remains factual after failover;
-- last-switch time updates;
-- direction is Ethernet -> LTE;
-- reason is integration-provided or Unknown;
-- switches-today increments;
-- LTE time today increases.
+- Hero answers Internet state and factual active WAN first;
+- compact network topology remains above the contextual channel selector;
+- `Провод | LTE` is contextual inspection, not a Device Selector and never performs router control;
+- `Провод` is selected initially when factual `active_wan` is Ethernet;
+- only the selected channel detail is shown below the selector;
+- LTE reserve state stays visible in topology/selector;
+- missing/unknown values remain `Неизвестно` / `Нет данных`, never fabricated zero.
 
-## C. Primary WAN restored — LTE -> Ethernet
+## 4. Failover — Ethernet -> LTE -> Ethernet
 
 Expected:
 
-- Active WAN returns to Ethernet;
-- LTE returns to reserve-ready state;
-- after a fresh/opened Overview context, `Провод` is selected by default;
-- direction is LTE -> Ethernet;
-- reason shows Ethernet restored only when factual;
-- Internet remains Online through the transition when connectivity is preserved.
+- Ethernet failure changes active WAN to LTE only from factual router state;
+- LTE becomes active and Overview defaults to LTE on a fresh/opened context;
+- last switch timestamp, direction, factual reason, switches today and LTE time today update;
+- recovery returns active WAN to Ethernet and LTE to reserve-ready;
+- router/telemetry loss alone never proves Ethernet failure.
 
-## D. LTE radio degradation
+## 5. WAN/LTE screen
 
-Expected:
-
-- human quality label degrades according to the documented panel heuristic;
-- raw RSSI/RSRP/RSRQ/SINR remain visible;
-- poor LTE quality does not automatically mark Ethernet or total Internet down;
-- missing radio inputs never become zero.
-
-## E. Ping/loss unavailable
-
-Expected:
-
-- value is `Нет данных` / `Неизвестно`;
-- never `0 ms` or `0%` as fallback;
-- channel connectivity is still determined from factual WAN state.
-
-## F. Keenetic/router telemetry unavailable
-
-Expected:
-
-- telemetry banner marks data untrusted/unavailable;
-- Ethernet/LTE remain `Состояние неизвестно` unless another still-fresh factual source proves state;
-- UI must not claim Ethernet failure merely because Keenetic cannot update;
-- independent Internet probe may still show its own factual state;
-- technical Diagnostics exposes unavailable/stale source data.
-
-## Additional regression tests
-
-### G. Restart Home Assistant
-
-- panel registers automatically after config entry load;
-- route and sidebar entry are present without Lovelace YAML;
-- existing credentials/config entry remain intact;
-- no duplicate entities are created.
-
-### H. Entity ID renamed by user
-
-- panel still resolves the role through entity registry unique-id/config-entry ownership;
-- more-info opens the renamed entity.
-
-### I. Recorder unavailable / no long-term statistics
-
-- Overview and WAN continue to work;
-- Traffic/Failover show factual no-history states instead of fake data.
-
-### J. iPad / desktop
-
-- information hierarchy remains unchanged;
-- network topology stays above the contextual selector;
-- app header and bottom navigation keep the same semantics.
-
-### K. Deep-link/back contract
-
-Open `/dashboard-keenetic` directly from a fresh app/browser session.
-
-- Back still navigates to `/dashboard-infrastructure/overview`;
-- browser history is irrelevant.
-
-### L. Long-scroll navigation
-
-On Traffic or Diagnostics:
-
-- Tab Bar remains a dedicated bottom app-shell row;
-- it never covers the scroll region;
-- final content row can be read completely.
-
-### M. Frontend cache / component upgrade
-
-Install an older candidate then update without clearing iOS cache.
-
-- header reports the new UI version;
-- new navigation/selector geometry loads;
-- old custom-element implementation is not reused.
-
-### N. Overview channel selector
-
-With Ethernet active and LTE reserve connected:
-
-- topology remains visible above the selector;
 - selector is `Провод | LTE`;
-- selector is contextual and is not a Device Selector;
-- `Провод` is selected by default from factual `active_wan`;
-- only Ethernet detail is shown below it;
-- selecting LTE keeps Overview open and replaces Ethernet detail with LTE detail;
-- factual active-route indication still identifies Ethernet while LTE is inspected;
-- selector never performs router control.
-
-With LTE active:
-
-- a fresh/opened Overview defaults to LTE;
-- only LTE detail is shown initially;
-- Ethernet may still be inspected manually.
-
-With Active WAN unknown:
-
-- neither channel is silently chosen as active/default;
-- the UI asks for a diagnostic selection without claiming which WAN is active.
-
-### O. WAN/LTE detail selector
-
-- `Провод | LTE` remains contextual inside the WAN/LTE primary screen;
 - only one detailed transport is visible at a time;
-- switching segments does not change Back semantics or execute router control.
+- Ethernet and LTE raw metrics remain available;
+- contextual selector does not alter Header Back semantics;
+- long press on factual entity-backed values opens native Home Assistant more-info.
 
-### P. Traffic period symmetry and non-blocking behavior
+## 6. Traffic stabilization mode
 
-Open Traffic and exercise both directions:
+For UI v0.3.1:
 
-- `24 ч -> 7 дн -> 30 дн` refreshes statistics for each selected range;
-- `30 дн -> 7 дн -> 24 ч` also refreshes each selected range;
-- returning to a previously viewed shorter period must not silently reuse a stale lifetime cache;
-- the selected button, chart data and max scale belong to the same period;
-- rapid period changes may leave older requests in flight, but a late response must not replace the loading/error state of the currently selected period;
-- the UI must never remain indefinitely in `Загрузка истории…`;
-- UI wait limits are finite: approximately 6 s for 24 h, 8 s for 7 d, 10 s for 30 d;
-- after a timeout, Traffic remains interactive and the user can immediately select another period;
-- a timeout is shown as an explicit Recorder/history error rather than a frozen panel;
-- no period selection changes the traffic source entities or fabricates missing history.
+- `24 ч / 7 дн / 30 дн` controls are absent;
+- Traffic screen makes no Recorder traffic-history request;
+- current Ethernet/LTE RX/TX remain visible;
+- daily/monthly factual counters remain visible where available;
+- accumulated Ethernet/LTE counters remain visible;
+- Traffic screen cannot block the entire app shell;
+- Recorder-backed charts are explicitly deferred to a separate future change.
 
-### Q. Bootstrap / app-shell resilience
+## 7. Diagnostics / trust semantics
 
-Open the panel during a delayed or failed `keenetic_hero_4g/panel/bootstrap` WebSocket response.
+- `unknown` / `unavailable` are never rendered as normal/OK/zero;
+- stale or failed RCI telemetry is visibly distinguished from actual WAN down;
+- Diagnostics exposes factual source type and entity state;
+- technical LTE radio values remain available without overloading Overview.
 
-- the panel must not remain indefinitely on a blank `Загрузка Keenetic…` screen;
-- panel registration provides a privacy-minimized bootstrap snapshot containing entity-role mapping and current factual metadata;
-- host and integration unique-id are excluded from that frontend fallback snapshot;
-- the fallback snapshot may render immediately while the WebSocket refresh is pending;
-- WebSocket bootstrap has a finite UI timeout of approximately 5 seconds;
-- after timeout the app shell, bottom navigation and factual entity-backed data remain usable from the registration snapshot;
-- later successful bootstrap refresh replaces the snapshot with current mapping/telemetry;
-- a bootstrap timeout never creates fake healthy values and never changes WAN state semantics.
+## 8. Frontend production bundle
+
+- Home Assistant `module_url` points to one self-contained `keenetic-panel-bundle.js`;
+- production frontend contains no runtime import/export dependency on previous UI versions;
+- panel CSS is embedded in the production bundle;
+- `node --check` passes for the generated bundle;
+- cold-cache local load works;
+- cold-cache Home Assistant Cloud / Nabu Casa load works;
+- first open after full Home Assistant restart works;
+- repeated open/close works;
+- no `Unable to load custom panel`;
+- no `Configuration error`.
 
 ## Release gate
 
-The panel is accepted only when scenarios A-F plus app-shell, cache, selector, traffic-period and bootstrap-resilience gates pass on the real KN-2311. Final iPhone Pro Max screenshots must demonstrate the accepted layout and failover behavior.
+UI v0.3.1 is accepted only after the app-shell/viewport, bootstrap, Overview, WAN/LTE, Traffic stabilization and cold-load gates pass on the real iPhone Pro Max / KN-2311 environment.

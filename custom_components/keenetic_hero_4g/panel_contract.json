@@ -8,23 +8,37 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.3.0"
+    "version": "0.3.1"
+  },
+  "template": {
+    "name": "NikaS Integration Panel Template",
+    "version": "1.0",
+    "mobile_first": true,
+    "control_viewport_css_px": [430, 932],
+    "fit_budget": {
+      "header_center_rail_css_px": 302,
+      "bottom_tab_cell_css_px_approx": 83,
+      "horizontal_scroll_allowed": false
+    }
   },
   "app_shell": {
-    "standard": "Home Assistant NikaS specialized panel",
-    "version": "1.2",
     "header": {
+      "grid_px": [52, "minmax(0,1fr)", 52],
+      "narrow_grid_px": [48, "minmax(0,1fr)", 48],
       "back": {
         "icon": "mdi:arrow-left",
-        "label": "Назад",
+        "show_text": false,
         "navigate": "/dashboard-infrastructure/overview",
         "use_browser_history": false,
         "min_touch_target_px": 44
       },
       "title": "Keenetic Hero 4G+",
+      "subtitle": "Network Control Center · UI v0.3.1",
       "title_alignment": "viewport_center",
       "show_brand_icon": false,
-      "actions": ["refresh"]
+      "action": "refresh",
+      "action_icon": "mdi:refresh",
+      "max_actions": 1
     },
     "bottom_navigation": {
       "fixed": true,
@@ -35,15 +49,33 @@
       "outside_scroll_region": true,
       "overlaps_content": false,
       "max_primary_items": 5,
+      "min_touch_target_px": 44,
       "items": [
         "overview",
         "wan",
         "failover",
         "traffic",
         "diagnostics"
+      ],
+      "labels": [
+        "Обзор",
+        "WAN/LTE",
+        "Failover",
+        "Трафик",
+        "Диагн."
       ]
     },
-    "secondary_views": ["system"],
+    "card_geometry": {
+      "radius_px": 22,
+      "padding_px": 16,
+      "vertical_gap_px": 14,
+      "shadow": "minimal"
+    },
+    "content": {
+      "mobile_width": "100%",
+      "desktop_max_width_px": 1280,
+      "horizontal_scroll": false
+    },
     "bootstrap": {
       "registration_snapshot_fallback": true,
       "websocket_refresh": true,
@@ -62,6 +94,7 @@
   },
   "view_patterns": {
     "overview": {
+      "hero_first": true,
       "preserve_network_topology": true,
       "channel_selector": "contextual_segmented",
       "items": ["ethernet", "lte"],
@@ -71,16 +104,14 @@
       "single_channel_detail_visible": true,
       "unknown_active_wan_has_no_fabricated_default": true,
       "device_selector": false,
-      "device_control": false,
-      "tap_action": "show selected channel detail in Overview"
+      "device_control": false
     },
     "wan": {
       "selector": "contextual_segmented",
       "items": ["ethernet", "lte"],
       "labels": ["Провод", "LTE"],
       "single_detail_visible": true,
-      "device_selector": false,
-      "reference_pattern": "Stark-style segmented context selector"
+      "device_selector": false
     },
     "traffic": {
       "mode": "stabilization_current_only",
@@ -91,23 +122,6 @@
       "show_accumulated_counters": true,
       "restore_history_in_separate_change": true
     }
-  },
-  "generated_ui": {
-    "mode": "compact_summary",
-    "deep_link": "/dashboard-keenetic",
-    "roles": {
-      "internet": "internet_connectivity",
-      "active_wan": "active_wan",
-      "lte_reserve": "lte_connected",
-      "switches_today": "wan_switches_today"
-    },
-    "do_not_duplicate": [
-      "wan_lte_diagnostics",
-      "traffic_history",
-      "failover_details",
-      "lte_radio_diagnostics",
-      "router_system_details"
-    ]
   },
   "primary_views": [
     "overview",

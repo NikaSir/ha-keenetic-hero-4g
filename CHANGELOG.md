@@ -1,5 +1,19 @@
 # Changelog
 
+## Native panel v0.3.1 / v1.00_b004 — 2026-08-22
+
+- Adopted **NikaS Integration Panel Template v1.0** for the Keenetic specialized panel shell.
+- Standardized Header geometry to symmetric `52px | minmax(0,1fr) | 52px`; <=390 px uses symmetric 48 px side rails.
+- Removed Header Back text; the left control is now icon-only `mdi:arrow-left` with an explicit parent navigation contract.
+- Kept one global Refresh action in the symmetric right Header rail.
+- Standardized center title/subtitle as `Keenetic Hero 4G+` and `Network Control Center · UI v0.3.1`.
+- Standardized common card rhythm to approximately 22 px radius, 16 px padding and 14 px vertical gaps with minimal shadow.
+- Hardened mobile horizontal fit: panel content is constrained to the viewport with no horizontal scroll.
+- Kept the Bottom Tab Bar full-width, edge-attached, safe-area aware and outside the scroll region; five equal navigation cells remain `Обзор / WAN-LTE / Failover / Трафик / Диагн.`.
+- Desktop content is capped at 1280 px while preserving the mobile information hierarchy.
+- Traffic remains in v0.3.0 stabilization mode: Recorder-backed `24 ч / 7 дн / 30 дн` history stays disabled.
+- Self-contained production frontend bundle delivery is preserved.
+
 ## Native panel v0.3.0 — 2026-08-22
 
 - Stabilization release focused on getting the specialized Keenetic panel reliably usable before restoring Recorder-backed traffic history.
