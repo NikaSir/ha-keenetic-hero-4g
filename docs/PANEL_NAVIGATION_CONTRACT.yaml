@@ -7,7 +7,7 @@ panel:
   parent_route: /dashboard-infrastructure/overview
   expose_in_generated_ui: true
   preferred_view: overview
-  version: 0.2.6
+  version: 0.2.9
 
 app_shell:
   standard: Home Assistant NikaS specialized panel
@@ -41,6 +41,13 @@ app_shell:
       - diagnostics
   secondary_views:
     - system
+
+frontend_delivery:
+  mode: self_contained_bundle
+  module: keenetic-panel-bundle.js
+  includes_styles: true
+  cache_busting: query_panel_version
+  runtime_previous_version_imports: false
 
 view_patterns:
   overview:
