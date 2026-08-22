@@ -254,6 +254,18 @@ def _bootstrap_payload(hass: HomeAssistant, entry: ConfigEntry) -> dict[str, Any
     }
 
 
+def _frontend_bootstrap_fallback(
+    hass: HomeAssistant, entry: ConfigEntry
+) -> dict[str, Any]:
+    """Return a privacy-minimized initial snapshot embedded in panel config."""
+    payload = _bootstrap_payload(hass, entry)
+    entry_payload = dict(payload.get("entry", {}))
+    entry_payload.pop("host", None)
+    entry_payload.pop("unique_id", None)
+    payload["entry"] = entry_payload
+    return payload
+
+
 @websocket_api.websocket_command(
     {
         vol.Required("type"): f"{DOMAIN}/panel/bootstrap",
@@ -332,6 +344,7 @@ async def async_register_native_panel(
                 "parent_route": PANEL_PARENT_ROUTE,
                 "panel_version": PANEL_VERSION,
                 "preferred_view": PANEL_PREFERRED_VIEW,
+                "bootstrap_fallback": _frontend_bootstrap_fallback(hass, entry),
             },
         )
     except ValueError as err:

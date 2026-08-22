@@ -1,7 +1,7 @@
 # Native panel acceptance tests
 
 Panel: Keenetic Hero 4G+  
-Panel version: 0.2.7  
+Panel version: 0.2.8  
 Target device: KN-2311  
 Primary viewport: iPhone Pro Max portrait (control viewport 430 × 932 CSS px)
 
@@ -192,6 +192,19 @@ Open Traffic and exercise both directions:
 - a timeout is shown as an explicit Recorder/history error rather than a frozen panel;
 - no period selection changes the traffic source entities or fabricates missing history.
 
+### Q. Bootstrap / app-shell resilience
+
+Open the panel during a delayed or failed `keenetic_hero_4g/panel/bootstrap` WebSocket response.
+
+- the panel must not remain indefinitely on a blank `Загрузка Keenetic…` screen;
+- panel registration provides a privacy-minimized bootstrap snapshot containing entity-role mapping and current factual metadata;
+- host and integration unique-id are excluded from that frontend fallback snapshot;
+- the fallback snapshot may render immediately while the WebSocket refresh is pending;
+- WebSocket bootstrap has a finite UI timeout of approximately 5 seconds;
+- after timeout the app shell, bottom navigation and factual entity-backed data remain usable from the registration snapshot;
+- later successful bootstrap refresh replaces the snapshot with current mapping/telemetry;
+- a bootstrap timeout never creates fake healthy values and never changes WAN state semantics.
+
 ## Release gate
 
-The panel is accepted only when scenarios A-F plus app-shell, cache, selector and traffic-period gates pass on the real KN-2311. Final iPhone Pro Max screenshots must demonstrate the accepted layout and failover behavior.
+The panel is accepted only when scenarios A-F plus app-shell, cache, selector, traffic-period and bootstrap-resilience gates pass on the real KN-2311. Final iPhone Pro Max screenshots must demonstrate the accepted layout and failover behavior.

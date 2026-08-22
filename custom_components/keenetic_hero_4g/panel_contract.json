@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.2.7"
+    "version": "0.2.8"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -43,7 +43,14 @@
         "diagnostics"
       ]
     },
-    "secondary_views": ["system"]
+    "secondary_views": ["system"],
+    "bootstrap": {
+      "registration_snapshot_fallback": true,
+      "websocket_refresh": true,
+      "websocket_timeout_seconds": 5,
+      "blank_screen_on_bootstrap_timeout": false,
+      "fallback_excludes_host_and_unique_id": true
+    }
   },
   "view_patterns": {
     "overview": {
