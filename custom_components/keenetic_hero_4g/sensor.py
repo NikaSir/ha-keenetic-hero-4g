@@ -4,12 +4,18 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
+    SensorStateClass,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     PERCENTAGE,
     UnitOfDataRate,
     UnitOfFrequency,
+    UnitOfInformation,
     UnitOfTemperature,
     UnitOfTime,
 )
@@ -19,6 +25,7 @@ from homeassistant.util import dt as dt_util
 
 from .coordinator import KeeneticCoordinator, WAN_ETHERNET, WAN_LTE
 from .entity import KeeneticEntity, as_float, first_value
+from .traffic import active_rate_mbps, channel_stats, rate_mbps, total_gib
 
 ValueFn = Callable[[dict[str, Any]], Any]
 
@@ -131,8 +138,18 @@ SENSORS: tuple[KeeneticSensorDescription, ...] = (
     KeeneticSensorDescription(key="ethernet_wan_ipv4", translation_key="ethernet_wan_ipv4", icon="mdi:ip-network", value_fn=block("ethernet", ("address",), ("ip", "address"))),
     KeeneticSensorDescription(key="ethernet_link_speed", translation_key="ethernet_link_speed", icon="mdi:ethernet", native_unit_of_measurement=UnitOfDataRate.MEGABITS_PER_SECOND, value_fn=ethernet_speed),
     KeeneticSensorDescription(key="ethernet_interface_uptime", translation_key="ethernet_interface_uptime", icon="mdi:timer-outline", native_unit_of_measurement=UnitOfTime.MINUTES, value_fn=interface_uptime("ethernet")),
+    KeeneticSensorDescription(key="ethernet_rx_mbps", translation_key="ethernet_rx_mbps", icon="mdi:download-network-outline", device_class=SensorDeviceClass.DATA_RATE, state_class=SensorStateClass.MEASUREMENT, native_unit_of_measurement=UnitOfDataRate.MEGABITS_PER_SECOND, value_fn=lambda d: rate_mbps(channel_stats(d, WAN_ETHERNET), "rxspeed")),
+    KeeneticSensorDescription(key="ethernet_tx_mbps", translation_key="ethernet_tx_mbps", icon="mdi:upload-network-outline", device_class=SensorDeviceClass.DATA_RATE, state_class=SensorStateClass.MEASUREMENT, native_unit_of_measurement=UnitOfDataRate.MEGABITS_PER_SECOND, value_fn=lambda d: rate_mbps(channel_stats(d, WAN_ETHERNET), "txspeed")),
+    KeeneticSensorDescription(key="ethernet_rx_total_gib", translation_key="ethernet_rx_total_gib", icon="mdi:download-network", device_class=SensorDeviceClass.DATA_SIZE, state_class=SensorStateClass.TOTAL_INCREASING, native_unit_of_measurement=UnitOfInformation.GIBIBYTES, value_fn=lambda d: total_gib(channel_stats(d, WAN_ETHERNET), "rxbytes")),
+    KeeneticSensorDescription(key="ethernet_tx_total_gib", translation_key="ethernet_tx_total_gib", icon="mdi:upload-network", device_class=SensorDeviceClass.DATA_SIZE, state_class=SensorStateClass.TOTAL_INCREASING, native_unit_of_measurement=UnitOfInformation.GIBIBYTES, value_fn=lambda d: total_gib(channel_stats(d, WAN_ETHERNET), "txbytes")),
     KeeneticSensorDescription(key="lte_wan_ipv4", translation_key="lte_wan_ipv4", icon="mdi:ip-network-outline", value_fn=block("lte", ("address",), ("ip", "address"))),
     KeeneticSensorDescription(key="lte_interface_uptime", translation_key="lte_interface_uptime", icon="mdi:timer-outline", native_unit_of_measurement=UnitOfTime.MINUTES, value_fn=interface_uptime("lte")),
+    KeeneticSensorDescription(key="lte_rx_mbps", translation_key="lte_rx_mbps", icon="mdi:download-network-outline", device_class=SensorDeviceClass.DATA_RATE, state_class=SensorStateClass.MEASUREMENT, native_unit_of_measurement=UnitOfDataRate.MEGABITS_PER_SECOND, value_fn=lambda d: rate_mbps(channel_stats(d, WAN_LTE), "rxspeed")),
+    KeeneticSensorDescription(key="lte_tx_mbps", translation_key="lte_tx_mbps", icon="mdi:upload-network-outline", device_class=SensorDeviceClass.DATA_RATE, state_class=SensorStateClass.MEASUREMENT, native_unit_of_measurement=UnitOfDataRate.MEGABITS_PER_SECOND, value_fn=lambda d: rate_mbps(channel_stats(d, WAN_LTE), "txspeed")),
+    KeeneticSensorDescription(key="lte_rx_total_gb", translation_key="lte_rx_total_gb", icon="mdi:download-network", device_class=SensorDeviceClass.DATA_SIZE, state_class=SensorStateClass.TOTAL_INCREASING, native_unit_of_measurement=UnitOfInformation.GIBIBYTES, value_fn=lambda d: total_gib(channel_stats(d, WAN_LTE), "rxbytes")),
+    KeeneticSensorDescription(key="lte_tx_total_gb", translation_key="lte_tx_total_gb", icon="mdi:upload-network", device_class=SensorDeviceClass.DATA_SIZE, state_class=SensorStateClass.TOTAL_INCREASING, native_unit_of_measurement=UnitOfInformation.GIBIBYTES, value_fn=lambda d: total_gib(channel_stats(d, WAN_LTE), "txbytes")),
+    KeeneticSensorDescription(key="active_rx_mbps", translation_key="active_rx_mbps", icon="mdi:download-network-outline", device_class=SensorDeviceClass.DATA_RATE, state_class=SensorStateClass.MEASUREMENT, native_unit_of_measurement=UnitOfDataRate.MEGABITS_PER_SECOND, value_fn=lambda d: active_rate_mbps(d, "rxspeed")),
+    KeeneticSensorDescription(key="active_tx_mbps", translation_key="active_tx_mbps", icon="mdi:upload-network-outline", device_class=SensorDeviceClass.DATA_RATE, state_class=SensorStateClass.MEASUREMENT, native_unit_of_measurement=UnitOfDataRate.MEGABITS_PER_SECOND, value_fn=lambda d: active_rate_mbps(d, "txspeed")),
     KeeneticSensorDescription(key="lte_operator", translation_key="lte_operator", icon="mdi:access-point-network", value_fn=block("lte", ("operator",), ("mobile", "operator"))),
     KeeneticSensorDescription(key="lte_network_type", translation_key="lte_network_type", icon="mdi:signal-4g", value_fn=block("lte", ("mobile",), ("network",), ("network-type",))),
     KeeneticSensorDescription(key="lte_primary_band", translation_key="lte_primary_band", icon="mdi:radio-tower", value_fn=lte_band),
