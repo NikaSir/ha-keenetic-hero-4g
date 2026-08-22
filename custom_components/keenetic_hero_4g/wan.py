@@ -6,20 +6,32 @@ from typing import Any
 WAN_ETHERNET = "ethernet"
 WAN_LTE = "lte"
 
+_TRUE_STATES = {"yes", "true", "1", "on", "up", "running", "connected", "ready"}
+_FALSE_STATES = {
+    "no",
+    "false",
+    "0",
+    "off",
+    "down",
+    "disabled",
+    "disconnected",
+    "not-connected",
+}
+
 
 def connected(interface: dict[str, Any]) -> bool | None:
     """Return factual interface link state when the router exposes it."""
     if not isinstance(interface, dict) or not interface:
         return None
 
-    for key in ("connected", "state", "link"):
+    for key in ("connected", "state", "connection-state", "link"):
         value = interface.get(key)
         if value is None:
             continue
-        text = str(value).lower()
-        if text in {"yes", "true", "1", "on", "up", "running"}:
+        text = str(value).strip().lower()
+        if text in _TRUE_STATES:
             return True
-        if text in {"no", "false", "0", "off", "down", "disabled"}:
+        if text in _FALSE_STATES:
             return False
     return None
 
