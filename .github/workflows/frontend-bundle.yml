@@ -60,9 +60,9 @@ jobs:
       - name: Verify production module registration
         shell: bash
         run: |
-          grep -q 'from .panel_v031 import async_register_native_panel' custom_components/keenetic_hero_4g/__init__.py
-          grep -q '_PANEL_BUNDLE = "keenetic-panel-bundle.js"' custom_components/keenetic_hero_4g/panel_v031.py
-          grep -q '?v={PANEL_VERSION}' custom_components/keenetic_hero_4g/panel_v031.py
+          grep -q 'from .panel_v030 import async_register_native_panel' custom_components/keenetic_hero_4g/__init__.py
+          grep -q '_PANEL_BUNDLE = "keenetic-panel-bundle.js"' custom_components/keenetic_hero_4g/panel_v030.py
+          grep -q '?v={PANEL_VERSION}' custom_components/keenetic_hero_4g/panel_v030.py
           grep -q '"mode": "self_contained_bundle"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"module": "keenetic-panel-bundle.js"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"includes_styles": true' custom_components/keenetic_hero_4g/panel_contract.json
