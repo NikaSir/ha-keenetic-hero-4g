@@ -1,0 +1,76 @@
+panel:
+  id: keenetic
+  title: Keenetic
+  path: /dashboard-keenetic
+  icon: mdi:router-network
+  owner: ha-keenetic-hero-4g
+  parent_route: /dashboard-infrastructure/overview
+  expose_in_generated_ui: true
+  preferred_view: overview
+  version: 0.2.6
+
+app_shell:
+  standard: Home Assistant NikaS specialized panel
+  version: 1.2
+  header:
+    back:
+      icon: mdi:arrow-left
+      label: Назад
+      navigate: /dashboard-infrastructure/overview
+      use_browser_history: false
+      min_touch_target_px: 44
+    title: Keenetic Hero 4G+
+    title_alignment: viewport_center
+    show_brand_icon: false
+    actions:
+      - refresh
+  bottom_navigation:
+    fixed: true
+    edge_attached: true
+    full_width_mobile: true
+    floating: false
+    safe_area: true
+    outside_scroll_region: true
+    overlaps_content: false
+    max_primary_items: 5
+    items:
+      - overview
+      - wan
+      - failover
+      - traffic
+      - diagnostics
+  secondary_views:
+    - system
+
+view_patterns:
+  overview:
+    preserve_network_topology: true
+    channel_selector: contextual_segmented
+    items:
+      - id: ethernet
+        label: Провод
+      - id: lte
+        label: LTE
+    default_selected_from_role: active_wan
+    active_branch_indicator: true
+    single_channel_detail_visible: true
+    unknown_active_wan_has_no_fabricated_default: true
+    device_selector: false
+    device_control: false
+  wan:
+    selector: contextual_segmented
+    items:
+      - id: ethernet
+        label: Провод
+      - id: lte
+        label: LTE
+    single_detail_visible: true
+    device_selector: false
+  traffic:
+    periods:
+      - 24h
+      - 7d
+      - 30d
+    refresh_on_each_selection: true
+    stale_period_cache_must_not_suppress_reload: true
+    late_response_must_not_replace_current_period_state: true

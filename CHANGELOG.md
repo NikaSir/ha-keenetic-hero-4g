@@ -1,5 +1,45 @@
 # Changelog
 
+## Native panel v0.2.1 — draft
+
+- Aligned the Keenetic panel with Home Assistant NikaS specialized-panel UI standard v1.1.
+- Replaced the floating bottom navigation geometry with a **full-width, edge-attached fixed Tab Bar** on the iPhone viewport.
+- Removed external side/bottom gaps from primary navigation and kept active-tab highlighting inside the shared bar.
+- Increased primary navigation touch targets to 56 px and retained iOS safe-area padding.
+- Increased content bottom clearance so the final card scrolls completely above the Tab Bar.
+- Kept the existing five primary sections, explicit Back route, read-only behavior and `unknown` / `unavailable` semantics unchanged.
+
+## Native panel v0.2.0 — draft
+
+- Adopted the common Home Assistant NikaS specialized-panel app shell.
+- Added persistent top header with explicit `← Назад`, centered `Keenetic Hero 4G+`, and global Refresh action.
+- Back now navigates deterministically to `/dashboard-infrastructure/overview`; browser-history semantics are not used.
+- Standardized 44+ px header touch targets and kept header free of device actions on hold/double tap.
+- Standardized fixed five-item bottom navigation: Overview / WAN-LTE / Failover / Traffic / Diagnostics.
+- Removed System from primary navigation; it remains a secondary drill-down from Diagnostics.
+- Kept primary content immediately below the header with no top-tab navigation row.
+- Extended machine-readable panel contract with parent route, app-shell metadata, primary/secondary view roles and navigation constraints.
+- Extended iPhone Pro Max acceptance tests with Back/deep-link, long-scroll and bottom-safe-area gates.
+- Panel remains read-only and preserves strict `unknown` / `unavailable` semantics.
+
+## Native panel v0.1.0 — draft
+
+- Added integration-owned Home Assistant panel with stable route `/dashboard-keenetic`.
+- Added mobile-first Network Control Center layout for iPhone Pro Max portrait.
+- Added Overview, WAN/LTE, Traffic, Failover, System and Diagnostics views.
+- Added compact functional Internet -> Ethernet/LTE -> Keenetic topology on Overview.
+- Added explicit telemetry-trust semantics: stale/failed RCI data is not treated as a WAN failure.
+- Added strict `unknown` / `unavailable` handling; missing ping/loss is never rendered as zero.
+- Added human-readable LTE signal assessment while preserving factual RSSI/RSRP/RSRQ/SINR values.
+- Added Recorder-backed traffic charts and Active-WAN transition history when historical data exists.
+- Added long-press Home Assistant more-info support for factual entity metrics.
+- Added authenticated panel bootstrap WebSocket API and entity-role resolution by config-entry ownership plus stable unique-id suffix.
+- Added transitional factual mapping for existing NikaS SNMP/template/utility-meter/NDMS2/external-probe sources; integration-owned RCI entities always take precedence.
+- Added machine-readable panel/generated-UI navigation contract and panel acceptance tests.
+- Added JavaScript syntax validation to repository CI.
+- Panel remains read-only and performs no direct browser-side RCI/SNMP/shell access.
+- Live iPhone/KN-2311 acceptance scenarios and screenshots are required before this panel is merged into an integration release.
+
 ## v1.00_b002 — 2026-08-22
 
 - Added factual active WAN detection from Keenetic route/interface state.
