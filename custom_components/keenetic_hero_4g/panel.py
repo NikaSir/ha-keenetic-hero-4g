@@ -17,6 +17,7 @@ from .const import (
     DOMAIN,
     PANEL_ICON,
     PANEL_OWNER,
+    PANEL_PARENT_ROUTE,
     PANEL_PREFERRED_VIEW,
     PANEL_TITLE,
     PANEL_URL_PATH,
@@ -27,8 +28,8 @@ from .coordinator import KeeneticCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 PANEL_STATIC_URL = f"/{DOMAIN}_static"
-PANEL_COMPONENT = "keenetic-hero-panel"
-PANEL_MODULE = f"{PANEL_STATIC_URL}/keenetic-panel.js"
+PANEL_COMPONENT = "keenetic-hero-app-panel"
+PANEL_MODULE = f"{PANEL_STATIC_URL}/keenetic-app.js"
 
 _DATA_PANEL_REGISTERED = "native_panel_registered"
 _DATA_STATIC_REGISTERED = "native_panel_static_registered"
@@ -221,6 +222,7 @@ def _bootstrap_payload(hass: HomeAssistant, entry: ConfigEntry) -> dict[str, Any
             "path": f"/{PANEL_URL_PATH}",
             "icon": PANEL_ICON,
             "owner": PANEL_OWNER,
+            "parent_route": PANEL_PARENT_ROUTE,
             "preferred_view": PANEL_PREFERRED_VIEW,
             "version": PANEL_VERSION,
             "expose_in_generated_ui": True,
@@ -325,6 +327,7 @@ async def async_register_native_panel(
             config={
                 "entry_id": entry.entry_id,
                 "owner": PANEL_OWNER,
+                "parent_route": PANEL_PARENT_ROUTE,
                 "panel_version": PANEL_VERSION,
                 "preferred_view": PANEL_PREFERRED_VIEW,
             },
