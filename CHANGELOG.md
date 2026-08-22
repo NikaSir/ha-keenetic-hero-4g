@@ -1,5 +1,18 @@
 # Changelog
 
+## Native panel v0.2.0 — draft
+
+- Adopted the common Home Assistant NikaS specialized-panel app shell.
+- Added persistent top header with explicit `← Назад`, centered `Keenetic Hero 4G+`, and global Refresh action.
+- Back now navigates deterministically to `/dashboard-infrastructure/overview`; browser-history semantics are not used.
+- Standardized 44+ px header touch targets and kept header free of device actions on hold/double tap.
+- Standardized fixed five-item bottom navigation: Overview / WAN-LTE / Failover / Traffic / Diagnostics.
+- Removed System from primary navigation; it remains a secondary drill-down from Diagnostics.
+- Kept primary content immediately below the header with no top-tab navigation row.
+- Extended machine-readable panel contract with parent route, app-shell metadata, primary/secondary view roles and navigation constraints.
+- Extended iPhone Pro Max acceptance tests with Back/deep-link, long-scroll and bottom-safe-area gates.
+- Panel remains read-only and preserves strict `unknown` / `unavailable` semantics.
+
 ## Native panel v0.1.0 — draft
 
 - Added integration-owned Home Assistant panel with stable route `/dashboard-keenetic`.
