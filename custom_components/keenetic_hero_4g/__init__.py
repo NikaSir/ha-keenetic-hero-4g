@@ -22,9 +22,9 @@ type KeeneticConfigEntry = ConfigEntry[KeeneticCoordinator]
 async def async_setup_entry(hass: HomeAssistant, entry: KeeneticConfigEntry) -> bool:
     """Set up Keenetic Hero 4G+ from a config entry.
 
-    The integration-owned panel is infrastructure and must not disappear just
-    because the router is temporarily unavailable during Home Assistant startup.
-    Register the panel before the first RCI poll and make that poll non-fatal.
+    The panel lifecycle is independent of router reachability. A transient RCI
+    failure may make telemetry unavailable, but it must never remove the stable
+    /dashboard-keenetic route from Home Assistant.
     """
     session = async_get_clientsession(hass)
     client = KeeneticRCIClient(
@@ -44,16 +44,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: KeeneticConfigEntry) -> 
         timedelta(seconds=scan_interval),
     )
 
-    # Make runtime_data and the stable panel route available independently of
-    # router reachability. The panel can then render an honest unavailable state
-    # while the coordinator keeps retrying on its normal update cadence.
+    # panel.py builds an initial bootstrap snapshot during registration. Keep a
+    # safe empty/fail-closed coordinator state until the first RCI poll succeeds.
+    coordinator.data = {}
+    coordinator.last_update_success = False
     entry.runtime_data = coordinator
+
+    # Register the stable application surface before touching the physical
+    # router. Device availability controls panel content, never panel existence.
     await async_register_native_panel(hass, entry)
 
-    # Do not use async_config_entry_first_refresh() here: it raises
-    # ConfigEntryNotReady on a transient startup failure and prevents the panel
-    # from being available. async_refresh() records last_update_success=False
-    # without making the entire Config Entry disappear.
+    # Do not use async_config_entry_first_refresh(): a transient RCI failure would
+    # raise ConfigEntryNotReady and remove the whole integration (including the
+    # panel) from the current startup cycle. async_refresh() records failure and
+    # leaves the coordinator scheduled for normal retries.
     await coordinator.async_refresh()
     if not coordinator.last_update_success:
         _LOGGER.warning(
