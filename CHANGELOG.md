@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.00_b010 — 2026-08-23
+
+- Reordered Home Assistant startup so integration-owned sensor/binary-sensor entities are registered before the Keenetic panel bootstrap is built.
+- The stable `/dashboard-keenetic` route is still registered before the first physical-router RCI refresh, so panel existence remains independent of router availability.
+- Fixed a startup race where `bootstrap_fallback` could be created before new b009 traffic entities existed in the Entity Registry, causing the panel to keep Template/SNMP role mappings instead of the new RCI-owned traffic entities.
+- Added regression coverage that locks the required order: `runtime_data -> entity platforms -> panel registration -> non-fatal RCI refresh`.
+- UI remains v0.3.0; no traffic calculation, WAN/failover or RCI endpoint semantics changed.
+
 ## v1.00_b009 — 2026-08-23
 
 - Added optional RCI interface-statistics polling through `/rci/show/interface/stat?name=<interface>` for `GigabitEthernet1` and `UsbLte0`.
