@@ -15,6 +15,7 @@ from homeassistant.util import dt as dt_util
 from .api import KeeneticError, KeeneticRCIClient
 from .const import DIAGNOSTIC_INTERVAL, DOMAIN, ETHERNET_INTERFACE, LTE_INTERFACE, PING_HOST
 from .traffic import rci_error_message
+from .traffic_accounting import update_accounting
 from .wan import WAN_ETHERNET, WAN_LTE, connected, determine_active_wan, switch_reason
 
 _LOGGER = logging.getLogger(__name__)
@@ -56,6 +57,7 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "last_switch_reason": None,
             "switches_today": 0,
             "lte_seconds_today": 0.0,
+            "traffic": None,
         }
         self._last_poll_monotonic: float | None = None
         self._first_runtime_update = True
@@ -69,7 +71,11 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._state_loaded = True
 
     def _update_tracking(
-        self, active_wan: str | None, ethernet: dict[str, Any]
+        self,
+        active_wan: str | None,
+        ethernet: dict[str, Any],
+        ethernet_stats: dict[str, Any],
+        lte_stats: dict[str, Any],
     ) -> None:
         now = dt_util.now()
         today = now.date().isoformat()
@@ -109,6 +115,16 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         if active_wan in {WAN_ETHERNET, WAN_LTE}:
             self._tracking["active_wan"] = active_wan
+
+        # Keep long-period traffic independent from raw interface-counter
+        # baselines. The accounting engine persists deltas and survives a raw
+        # counter reset without fabricating pre-reset traffic.
+        self._tracking["traffic"] = update_accounting(
+            self._tracking.get("traffic"),
+            now,
+            ethernet_stats,
+            lte_stats,
+        )
 
         self._last_poll_monotonic = monotonic_now
         self._first_runtime_update = False
@@ -202,7 +218,12 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             ethernet_interface=ETHERNET_INTERFACE,
             lte_interface=LTE_INTERFACE,
         )
-        self._update_tracking(active_wan, ethernet)
+        self._update_tracking(
+            active_wan,
+            ethernet,
+            ethernet_stats,
+            lte_stats,
+        )
         await self._async_update_diagnostics(ethernet, lte)
 
         return {
@@ -215,6 +236,7 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "routes": routes,
             "active_wan": active_wan,
             "diagnostics": self._diagnostics,
+            "traffic_accounting": self._tracking.get("traffic") or {},
             "failover": {
                 "last_switch": self._tracking.get("last_switch"),
                 "last_switch_reason": self._tracking.get("last_switch_reason"),
