@@ -22,9 +22,10 @@ type KeeneticConfigEntry = ConfigEntry[KeeneticCoordinator]
 async def async_setup_entry(hass: HomeAssistant, entry: KeeneticConfigEntry) -> bool:
     """Set up Keenetic Hero 4G+ from a config entry.
 
-    The panel lifecycle is independent of router reachability. A transient RCI
-    failure may make telemetry unavailable, but it must never remove the stable
-    /dashboard-keenetic route from Home Assistant.
+    The panel lifecycle is independent of router reachability. Entity platforms
+    are registered before the panel bootstrap so integration-owned RCI roles are
+    available immediately, but no physical-router request is required for the
+    panel route itself to exist.
     """
     session = async_get_clientsession(hass)
     client = KeeneticRCIClient(
@@ -44,14 +45,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: KeeneticConfigEntry) -> 
         timedelta(seconds=scan_interval),
     )
 
-    # panel.py builds an initial bootstrap snapshot during registration. Keep a
-    # safe empty/fail-closed coordinator state until the first RCI poll succeeds.
+    # Keep a safe empty/fail-closed coordinator state until the first RCI poll
+    # succeeds. Platforms can register entities against this snapshot without
+    # manufacturing healthy telemetry.
     coordinator.data = {}
     coordinator.last_update_success = False
     entry.runtime_data = coordinator
 
-    # Register the stable application surface before touching the physical
-    # router. Device availability controls panel content, never panel existence.
+    # Register sensor/binary_sensor entities before building panel bootstrap.
+    # This lets the initial role resolver see newly introduced integration-owned
+    # entities and prevents a stale Template/SNMP fallback map from being baked
+    # into the panel configuration during Home Assistant startup.
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    # Publish the stable application surface before touching the physical router.
+    # Device availability controls panel content, never panel existence.
     await async_register_native_panel(hass, entry)
 
     # Do not use async_config_entry_first_refresh(): a transient RCI failure would
@@ -64,7 +72,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: KeeneticConfigEntry) -> 
             "Initial Keenetic RCI refresh failed; keeping integration and panel loaded with unavailable telemetry"
         )
 
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
 

@@ -21,23 +21,23 @@ class StartupLifecycleContractTests(unittest.TestCase):
             self.source,
         )
 
-    def test_panel_is_registered_before_initial_rci_refresh(self) -> None:
+    def test_entities_exist_before_panel_bootstrap_and_router_refresh(self) -> None:
         runtime = self.source.index("entry.runtime_data = coordinator")
-        panel = self.source.index("await async_register_native_panel(hass, entry)")
-        refresh = self.source.index("await coordinator.async_refresh()")
         platforms = self.source.index(
             "await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)"
         )
-        self.assertLess(runtime, panel)
+        panel = self.source.index("await async_register_native_panel(hass, entry)")
+        refresh = self.source.index("await coordinator.async_refresh()")
+        self.assertLess(runtime, platforms)
+        self.assertLess(platforms, panel)
         self.assertLess(panel, refresh)
-        self.assertLess(refresh, platforms)
 
     def test_pre_refresh_state_is_fail_closed(self) -> None:
-        panel = self.source.index("await async_register_native_panel(hass, entry)")
+        refresh = self.source.index("await coordinator.async_refresh()")
         empty_data = self.source.index("coordinator.data = {}")
         failed_state = self.source.index("coordinator.last_update_success = False")
-        self.assertLess(empty_data, panel)
-        self.assertLess(failed_state, panel)
+        self.assertLess(empty_data, refresh)
+        self.assertLess(failed_state, refresh)
 
 
 if __name__ == "__main__":
