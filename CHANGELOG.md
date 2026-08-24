@@ -1,5 +1,17 @@
 # Changelog
 
+## UI v0.4.4 / v1.00_b018 — 2026-08-24
+
+- Restored the mandatory NikaS specialized-panel Header contract: explicit `← Назад` on the left, `Keenetic Hero 4G+` geometrically centered, and one global Refresh action on the right.
+- Back now explicitly navigates to `/dashboard-infrastructure/overview`; the integration-owned Header no longer substitutes the Home Assistant hamburger menu for the application Back action.
+- Made Header side rails symmetric: 84 px on the iPhone Pro Max target viewport and 52 px on <=390 px layouts; the `Назад` label hides only on the narrower layout while the arrow remains.
+- Preserved >=44 px touch targets for Back/Refresh and 56 px primary Bottom Tab Bar buttons.
+- Hardened mobile horizontal fit: shell, Header, scroll content and Bottom Tab Bar are constrained to the viewport with no horizontal scrolling; the five bottom navigation items use equal-width tracks.
+- Kept the Bottom Tab Bar full-width, edge-attached, safe-area aware and outside the vertical scroll region.
+- Restored the mandatory self-contained production frontend delivery: Home Assistant now registers `keenetic-panel-bundle.js?v=0.4.4` and `keenetic-hero-app-panel-v044`; previous UI modules are build-time inputs only and are not runtime dependencies.
+- Rebuilt the current v0.4.x dependency graph into one autonomous JS artifact with embedded panel CSS; production bundle CI rejects runtime imports and external panel stylesheet loading.
+- Traffic remains in stabilization mode without `24 ч / 7 дн / 30 дн` Recorder history; Failover Recorder history also remains disabled. WAN/LTE, ping/loss, failover telemetry and read-only router semantics are unchanged.
+
 ## v1.00_b010 — 2026-08-23
 
 - Reordered Home Assistant startup so integration-owned sensor/binary-sensor entities are registered before the Keenetic panel bootstrap is built.
