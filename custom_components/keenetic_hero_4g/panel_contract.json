@@ -29,6 +29,10 @@
       "outside_scroll_region": true,
       "overlaps_content": false,
       "max_primary_items": 5,
+      "standard_geometry": "specialized_panel_compact",
+      "equal_width_items": true,
+      "active_state": "compact_tint",
+      "active_full_cell_fill": false,
       "items": ["overview", "wan", "failover", "traffic", "diagnostics"]
     },
     "secondary_views": ["system"],
