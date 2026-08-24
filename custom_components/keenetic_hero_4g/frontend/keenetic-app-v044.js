@@ -86,8 +86,59 @@ if (BASE_COMPONENT && !customElements.get("keenetic-hero-app-panel-v044")) {
   class KeeneticHeroAppPanelV044 extends BASE_COMPONENT {
     _renderShell() {
       super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
+      const root = this.shadowRoot;
+      const version = root?.querySelector(".title span");
       if (version) version.textContent = "Network Control Center · UI v0.4.4";
+
+      if (root && !root.querySelector("style[data-nikas-v044-tabbar]")) {
+        const style = document.createElement("style");
+        style.dataset.nikasV044Tabbar = "true";
+        style.textContent = `
+          .nika-tabbar {
+            gap: 0 !important;
+            padding: 4px max(8px, env(safe-area-inset-right)) calc(4px + env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)) !important;
+            box-shadow: 0 -1px 0 var(--shell-border) !important;
+          }
+          .nika-tabbar button {
+            min-height: 52px !important;
+            border-radius: 12px !important;
+            gap: 1px !important;
+            padding: 3px 2px !important;
+          }
+          .nika-tabbar button.active {
+            background: transparent !important;
+          }
+          .nika-tabbar button.active::before {
+            content: "";
+            position: absolute;
+            inset: 4px 16%;
+            border-radius: 12px;
+            background: color-mix(in srgb, var(--shell-accent) 10%, transparent);
+            z-index: -1;
+          }
+          .nika-tabbar button {
+            position: relative;
+            isolation: isolate;
+          }
+          .nika-tabbar ha-icon {
+            --mdc-icon-size: 21px !important;
+          }
+          .nika-tabbar span {
+            font-size: 9px !important;
+            font-weight: 650 !important;
+          }
+          @media (min-width: 700px) {
+            .nika-tabbar {
+              padding-left: max(18px, env(safe-area-inset-left)) !important;
+              padding-right: max(18px, env(safe-area-inset-right)) !important;
+            }
+            .nika-tabbar button.active::before {
+              inset: 4px 28%;
+            }
+          }
+        `;
+        root.append(style);
+      }
     }
   }
   customElements.define("keenetic-hero-app-panel-v044", KeeneticHeroAppPanelV044);
