@@ -28,10 +28,11 @@ from .coordinator import KeeneticCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 PANEL_STATIC_URL = f"/{DOMAIN}_static"
-# Version the web component and module URL so an already-running HA/iOS frontend
-# cannot keep an older app-shell class after an integration upgrade.
-PANEL_COMPONENT = "keenetic-hero-app-panel-v022"
-PANEL_MODULE = f"{PANEL_STATIC_URL}/keenetic-app-v022.js?v={PANEL_VERSION}"
+# Use a versioned physical module path and web-component name. iOS/Home Assistant
+# may retain an older ES module even when only the query string changes, so each
+# UI contract revision gets a hard cache-bust path.
+PANEL_COMPONENT = "keenetic-hero-app-panel-v040"
+PANEL_MODULE = f"{PANEL_STATIC_URL}/keenetic-app-v040.js?v={PANEL_VERSION}"
 
 _DATA_PANEL_REGISTERED = "native_panel_registered"
 _DATA_STATIC_REGISTERED = "native_panel_static_registered"
