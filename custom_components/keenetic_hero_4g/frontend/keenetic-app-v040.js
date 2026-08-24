@@ -1,8 +1,7 @@
-import "./keenetic-panel.js?v=0.4.0";
-import "./keenetic-overview-v040.js?v=0.4.0";
+import "./keenetic-panel.js?v=0.4.1";
+import "./keenetic-overview-v040.js?v=0.4.1";
 
-const APP_SHELL_VERSION = "0.4.0";
-const PARENT_ROUTE = "/dashboard-infrastructure/overview";
+const APP_SHELL_VERSION = "0.4.1";
 const BASE_COMPONENT = customElements.get("keenetic-hero-panel");
 
 if (BASE_COMPONENT) {
@@ -32,10 +31,13 @@ if (BASE_COMPONENT) {
   };
 }
 
-function navigateExplicit(path) {
-  if (!path) return;
-  history.pushState(null, "", path);
-  window.dispatchEvent(new Event("location-changed"));
+function openHomeAssistantMenu(target) {
+  target.dispatchEvent(
+    new CustomEvent("hass-toggle-menu", {
+      bubbles: true,
+      composed: true,
+    }),
+  );
 }
 
 class KeeneticHeroAppPanelV040 extends HTMLElement {
@@ -161,7 +163,7 @@ class KeeneticHeroAppPanelV040 extends HTMLElement {
         .nika-header {
           min-height: 56px;
           display: grid;
-          grid-template-columns: minmax(76px, auto) 1fr 52px;
+          grid-template-columns: 52px 1fr 52px;
           align-items: center;
           gap: 4px;
           padding: max(4px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) 4px max(8px, env(safe-area-inset-left));
@@ -169,7 +171,7 @@ class KeeneticHeroAppPanelV040 extends HTMLElement {
           border-bottom: 1px solid var(--shell-border);
           z-index: 2;
         }
-        .back, .refresh {
+        .menu, .refresh {
           min-width: 44px;
           min-height: 44px;
           border: 0;
@@ -179,14 +181,13 @@ class KeeneticHeroAppPanelV040 extends HTMLElement {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 3px;
           padding: 0 8px;
           font: inherit;
           -webkit-tap-highlight-color: transparent;
         }
-        .back { justify-self: start; font-size: 13px; font-weight: 650; }
+        .menu { justify-self: start; }
         .refresh { justify-self: end; }
-        .back ha-icon, .refresh ha-icon { --mdc-icon-size: 23px; }
+        .menu ha-icon, .refresh ha-icon { --mdc-icon-size: 24px; }
         .title { min-width: 0; text-align: center; line-height: 1.1; }
         .title strong {
           display: block;
@@ -253,15 +254,11 @@ class KeeneticHeroAppPanelV040 extends HTMLElement {
           font-size: 9px;
           font-weight: 700;
         }
-        @media (max-width: 390px) {
-          .nika-header { grid-template-columns: 50px 1fr 50px; }
-          .back span { display: none; }
-        }
       </style>
       <div id="nika-app-shell">
         <header class="nika-header" aria-label="Keenetic">
-          <button type="button" class="back" id="nika-back" aria-label="Назад в Инфраструктуру">
-            <ha-icon icon="mdi:arrow-left"></ha-icon><span>Назад</span>
+          <button type="button" class="menu" id="nika-menu" aria-label="Открыть меню Home Assistant">
+            <ha-icon icon="mdi:menu"></ha-icon>
           </button>
           <div class="title">
             <strong>Keenetic Hero 4G+</strong>
@@ -275,8 +272,8 @@ class KeeneticHeroAppPanelV040 extends HTMLElement {
         <nav class="nika-tabbar" id="nika-tabbar" aria-label="Разделы Keenetic"></nav>
       </div>`;
 
-    this.shadowRoot.getElementById("nika-back")?.addEventListener("click", () => {
-      navigateExplicit(this._panel?.config?.parent_route || PARENT_ROUTE);
+    this.shadowRoot.getElementById("nika-menu")?.addEventListener("click", (event) => {
+      openHomeAssistantMenu(event.currentTarget);
     });
     this.shadowRoot.getElementById("nika-refresh")?.addEventListener("click", () => {
       this._child?._loadBootstrap?.(false);
