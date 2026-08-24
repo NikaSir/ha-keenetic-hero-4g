@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "ui/header-tabbar-*"
+      - "fix/b019-*"
     paths:
       - "custom_components/keenetic_hero_4g/frontend/**"
       - "custom_components/keenetic_hero_4g/panel_runtime.py"
@@ -59,16 +60,21 @@ jobs:
             exit 1
           fi
 
-      - name: Verify UI v0.4.4 registration contract
+      - name: Verify UI v0.4.5 registration and performance contract
         shell: bash
         run: |
-          grep -q 'PANEL_VERSION = "0.4.4"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'PANEL_VERSION = "0.4.5"' custom_components/keenetic_hero_4g/const.py
           grep -q 'keenetic-panel-bundle.js' custom_components/keenetic_hero_4g/panel_runtime.py
-          grep -q '"version": "0.4.4"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"web_component": "keenetic-hero-app-panel-v044"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"version": "0.4.5"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"web_component": "keenetic-hero-app-panel-v045"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"runtime_previous_version_imports": false' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q 'mdi:arrow-left' custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
-          grep -q 'grid-template-columns: 84px minmax(0, 1fr) 84px' custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
+          grep -q '"websocket_refresh": "background_only"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"structural_polling_seconds": 0' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"active_full_cell_fill": false' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q 'CustomEvent("hass-toggle-menu"' custom_components/keenetic_hero_4g/frontend/keenetic-app-v045.js
+          grep -q 'BOOTSTRAP_CACHE_KEY_V045' custom_components/keenetic_hero_4g/frontend/keenetic-app-v045.js
+          grep -q 'Bootstrap timeout 5 s' custom_components/keenetic_hero_4g/frontend/keenetic-app-v045.js
+          grep -q 'keenetic-hero-app-panel-v045' custom_components/keenetic_hero_4g/frontend/keenetic-app-v045.js
 
       - name: Commit generated bundle when changed
         shell: bash
@@ -83,7 +89,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$BUNDLE"
-          git commit -m "build: refresh Keenetic UI v0.4.4 autonomous bundle"
+          git commit -m "build: refresh Keenetic UI v0.4.5 autonomous bundle"
           git push origin "HEAD:${TARGET_BRANCH}"
 
       - name: Verify bundle is current

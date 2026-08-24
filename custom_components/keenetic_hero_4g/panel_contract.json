@@ -8,22 +8,20 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.4.4"
+    "version": "0.4.5"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
-    "version": "1.2",
+    "version": "1.3",
     "header": {
-      "back": {
-        "icon": "mdi:arrow-left",
-        "label": "Назад",
-        "navigate": "/dashboard-infrastructure/overview",
-        "use_browser_history": false,
+      "menu": {
+        "icon": "mdi:menu",
+        "action": "hass-toggle-menu",
         "min_touch_target_px": 44
       },
       "title": "Keenetic Hero 4G+",
       "title_alignment": "viewport_center",
-      "symmetric_side_slots_px_iphone_pro_max": 84,
+      "symmetric_side_slots_px": 64,
       "compact_side_slots_px_narrow": 52,
       "show_brand_icon": false,
       "actions": ["refresh"]
@@ -37,8 +35,12 @@
       "outside_scroll_region": true,
       "overlaps_content": false,
       "equal_width_items": true,
+      "standard_geometry": "specialized_panel_compact",
+      "active_state": "compact_tint",
+      "active_full_cell_fill": false,
+      "active_max_width_px": 112,
       "min_touch_target_px": 44,
-      "preferred_button_height_px": 56,
+      "preferred_button_height_px": 54,
       "max_primary_items": 5,
       "items": ["overview", "wan", "failover", "traffic", "diagnostics"]
     },
@@ -47,16 +49,21 @@
       "secondary_check_css_width_px": 390,
       "horizontal_scroll_allowed": false,
       "content_overflow_x_hidden": true,
-      "header_title_must_not_shift_with_back_label": true,
-      "back_text_may_hide_below_css_width_px": 390,
+      "header_title_must_remain_geometrically_centered": true,
       "tab_labels_must_fit_or_ellipsis_inside_equal_tracks": true
     },
     "secondary_views": ["system"],
     "bootstrap": {
       "registration_snapshot_fallback": true,
-      "websocket_refresh": true,
+      "cached_role_mapping": true,
+      "cache_privacy_safe": true,
+      "cache_excludes_host_and_unique_id": true,
+      "live_values_from_hass_states": true,
+      "websocket_refresh": "background_only",
       "websocket_timeout_seconds": 5,
+      "structural_polling_seconds": 0,
       "blank_screen_on_bootstrap_timeout": false,
+      "keep_cached_mapping_on_timeout": true,
       "fallback_excludes_host_and_unique_id": true,
       "replay_pre_upgrade_properties": true
     }
@@ -64,7 +71,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v044",
+    "web_component": "keenetic-hero-app-panel-v045",
     "includes_styles": true,
     "cache_busting": "query_panel_version",
     "runtime_previous_version_imports": false,
@@ -74,6 +81,9 @@
     "overview_cross_module_time_helper": true,
     "failover_recorder_history_enabled": false,
     "failover_history_timeout_seconds": 0,
+    "bootstrap_cache_storage": "localStorage",
+    "bootstrap_timeout_seconds": 5,
+    "bootstrap_polling_enabled": false,
     "infinite_loading_allowed": false
   },
   "view_patterns": {

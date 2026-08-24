@@ -20,6 +20,7 @@ SOURCES = [
     FRONTEND / "keenetic-app-v042.js",
     FRONTEND / "keenetic-app-v043.js",
     FRONTEND / "keenetic-app-v044.js",
+    FRONTEND / "keenetic-app-v045.js",
 ]
 
 RUNTIME_IMPORT_RE = re.compile(
