@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.4.1"
+    "version": "0.4.2"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -46,12 +46,17 @@
     }
   },
   "frontend_delivery": {
-    "mode": "versioned_module",
-    "module": "keenetic-app-v040.js",
-    "web_component": "keenetic-hero-app-panel-v040",
+    "mode": "versioned_runtime_selector",
+    "module": "keenetic-app-v042.js",
+    "web_component": "keenetic-hero-app-panel-v042",
     "includes_styles": true,
-    "cache_busting": "query_panel_version",
-    "runtime_previous_version_imports": false
+    "cache_busting": "physical_module_version_plus_query_panel_version",
+    "runtime_previous_version_imports": true
+  },
+  "runtime_guards": {
+    "overview_cross_module_time_helper": true,
+    "failover_history_timeout_seconds": 8,
+    "infinite_loading_allowed": false
   },
   "view_patterns": {
     "overview": {
