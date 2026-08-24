@@ -11,7 +11,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .api import KeeneticRCIClient
 from .const import CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL, DEFAULT_TIMEOUT, PLATFORMS
 from .coordinator import KeeneticCoordinator
-from .panel import async_register_native_panel, async_unregister_native_panel
+from .panel_runtime import async_register_native_panel, async_unregister_native_panel
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,8 +52,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: KeeneticConfigEntry) -> 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     # Publish the integration-owned route before the first physical-router poll.
-    # The current panel module owns the UI contract; legacy stabilization wrappers
-    # must never participate in the startup path.
+    # Frontend delivery is selected from PANEL_VERSION by panel_runtime; canonical
+    # registration/bootstrap logic remains in panel.py.
     await async_register_native_panel(hass, entry)
 
     await coordinator.async_refresh()

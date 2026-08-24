@@ -6,6 +6,7 @@ on:
       - "custom_components/keenetic_hero_4g/frontend/**"
       - "custom_components/keenetic_hero_4g/__init__.py"
       - "custom_components/keenetic_hero_4g/panel.py"
+      - "custom_components/keenetic_hero_4g/panel_runtime.py"
       - "custom_components/keenetic_hero_4g/panel_contract.json"
       - ".github/workflows/frontend-bundle.yml"
   workflow_dispatch:
@@ -30,22 +31,25 @@ jobs:
           node --check custom_components/keenetic_hero_4g/frontend/keenetic-panel.js
           node --check custom_components/keenetic_hero_4g/frontend/keenetic-overview-v040.js
           node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v040.js
+          node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v041.js
+          node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
 
       - name: Verify production module registration
         shell: bash
         run: |
-          grep -q 'from .panel import async_register_native_panel, async_unregister_native_panel' custom_components/keenetic_hero_4g/__init__.py
+          grep -q 'from .panel_runtime import async_register_native_panel, async_unregister_native_panel' custom_components/keenetic_hero_4g/__init__.py
           if grep -q 'panel_v030' custom_components/keenetic_hero_4g/__init__.py; then
             echo "Legacy panel_v030 must not be in the runtime startup path."
             exit 1
           fi
-          grep -q 'PANEL_COMPONENT = "keenetic-hero-app-panel-v040"' custom_components/keenetic_hero_4g/panel.py
-          grep -q 'keenetic-app-v040.js' custom_components/keenetic_hero_4g/panel.py
-          grep -q '"version": "0.4.1"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"mode": "versioned_module"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"module": "keenetic-app-v040.js"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"web_component": "keenetic-hero-app-panel-v040"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"action": "hass-toggle-menu"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q 'CustomEvent("hass-toggle-menu"' custom_components/keenetic_hero_4g/frontend/keenetic-app-v040.js
-          grep -q '"runtime_previous_version_imports": false' custom_components/keenetic_hero_4g/panel_contract.json
-          echo "Production UI v0.4.1 HA menu contract OK"
+          grep -q 'PANEL_VERSION = "0.4.2"' custom_components/keenetic_hero_4g/const.py
+          grep -q '_frontend_slug' custom_components/keenetic_hero_4g/panel_runtime.py
+          grep -q 'keenetic-app-{slug}.js' custom_components/keenetic_hero_4g/panel_runtime.py
+          grep -q '"version": "0.4.2"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"mode": "versioned_runtime_selector"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"module": "keenetic-app-v042.js"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"web_component": "keenetic-hero-app-panel-v042"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"failover_history_timeout_seconds": 8' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q 'globalThis.formatAgo' custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
+          grep -q 'HA Recorder не ответил за 8 с' custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
+          echo "Production UI v0.4.2 loading-guard contract OK"
