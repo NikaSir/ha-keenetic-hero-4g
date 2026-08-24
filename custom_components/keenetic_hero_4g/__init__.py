@@ -11,7 +11,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .api import KeeneticRCIClient
 from .const import CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL, DEFAULT_TIMEOUT, PLATFORMS
 from .coordinator import KeeneticCoordinator
-from .panel_v030 import async_register_native_panel, async_unregister_native_panel
+from .panel import async_register_native_panel, async_unregister_native_panel
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,27 +45,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: KeeneticConfigEntry) -> 
         timedelta(seconds=scan_interval),
     )
 
-    # Keep a safe empty/fail-closed coordinator state until the first RCI poll
-    # succeeds. Platforms can register entities against this snapshot without
-    # manufacturing healthy telemetry.
     coordinator.data = {}
     coordinator.last_update_success = False
     entry.runtime_data = coordinator
 
-    # Register sensor/binary_sensor entities before building panel bootstrap.
-    # This lets the initial role resolver see newly introduced integration-owned
-    # entities and prevents a stale Template/SNMP fallback map from being baked
-    # into the panel configuration during Home Assistant startup.
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
-    # Publish the stable application surface before touching the physical router.
-    # Device availability controls panel content, never panel existence.
+    # Publish the integration-owned route before the first physical-router poll.
+    # The current panel module owns the UI contract; legacy stabilization wrappers
+    # must never participate in the startup path.
     await async_register_native_panel(hass, entry)
 
-    # Do not use async_config_entry_first_refresh(): a transient RCI failure would
-    # raise ConfigEntryNotReady and remove the whole integration (including the
-    # panel) from the current startup cycle. async_refresh() records failure and
-    # leaves the coordinator scheduled for normal retries.
     await coordinator.async_refresh()
     if not coordinator.last_update_success:
         _LOGGER.warning(
