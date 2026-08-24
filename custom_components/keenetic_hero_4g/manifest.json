@@ -14,5 +14,5 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/NikaSir/ha-keenetic-hero-4g/issues",
   "requirements": [],
-  "version": "1.0.0-b013"
+  "version": "1.0.0-b014"
 }
