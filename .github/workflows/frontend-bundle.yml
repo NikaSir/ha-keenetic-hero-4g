@@ -41,9 +41,11 @@ jobs:
           fi
           grep -q 'PANEL_COMPONENT = "keenetic-hero-app-panel-v040"' custom_components/keenetic_hero_4g/panel.py
           grep -q 'keenetic-app-v040.js' custom_components/keenetic_hero_4g/panel.py
-          grep -q '"version": "0.4.0"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"version": "0.4.1"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"mode": "versioned_module"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"module": "keenetic-app-v040.js"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"web_component": "keenetic-hero-app-panel-v040"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"action": "hass-toggle-menu"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q 'CustomEvent("hass-toggle-menu"' custom_components/keenetic_hero_4g/frontend/keenetic-app-v040.js
           grep -q '"runtime_previous_version_imports": false' custom_components/keenetic_hero_4g/panel_contract.json
-          echo "Production UI v0.4.0 registration contract OK"
+          echo "Production UI v0.4.1 HA menu contract OK"
