@@ -1,6 +1,7 @@
-import "./keenetic-panel.js?v=0.2.2";
+import "./keenetic-panel.js?v=0.4.0";
+import "./keenetic-overview-v040.js?v=0.4.0";
 
-const APP_SHELL_VERSION = "0.2.2";
+const APP_SHELL_VERSION = "0.4.0";
 const PARENT_ROUTE = "/dashboard-infrastructure/overview";
 const BASE_COMPONENT = customElements.get("keenetic-hero-panel");
 
@@ -9,8 +10,6 @@ if (BASE_COMPONENT) {
     return "";
   };
 
-  // The NikaS app shell owns primary navigation. The specialized panel renders
-  // only device content; this prevents a floating bar from overlapping content.
   BASE_COMPONENT.prototype._renderNav = function () {
     return "";
   };
@@ -117,7 +116,7 @@ class KeeneticHeroAppPanelV022 extends HTMLElement {
     if (!nav) return;
     const items = [
       ["overview", "mdi:view-dashboard-outline", "Обзор"],
-      ["wan", "mdi:wan", "WAN/LTE"],
+      ["wan", "mdi:wan", "Каналы"],
       ["failover", "mdi:swap-horizontal-bold", "Failover"],
       ["traffic", "mdi:chart-timeline-variant", "Трафик"],
       ["diagnostics", "mdi:stethoscope", "Диагн."],
