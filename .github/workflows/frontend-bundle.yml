@@ -33,6 +33,7 @@ jobs:
           node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v040.js
           node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v041.js
           node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
+          node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v043.js
 
       - name: Verify production module registration
         shell: bash
@@ -42,14 +43,12 @@ jobs:
             echo "Legacy panel_v030 must not be in the runtime startup path."
             exit 1
           fi
-          grep -q 'PANEL_VERSION = "0.4.2"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'PANEL_VERSION = "0.4.3"' custom_components/keenetic_hero_4g/const.py
           grep -q '_frontend_slug' custom_components/keenetic_hero_4g/panel_runtime.py
           grep -q 'keenetic-app-{slug}.js' custom_components/keenetic_hero_4g/panel_runtime.py
-          grep -q '"version": "0.4.2"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"mode": "versioned_runtime_selector"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"module": "keenetic-app-v042.js"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"web_component": "keenetic-hero-app-panel-v042"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"failover_history_timeout_seconds": 8' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q 'globalThis.formatAgo' custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
-          grep -q 'HA Recorder не ответил за 8 с' custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
-          echo "Production UI v0.4.2 loading-guard contract OK"
+          grep -q '"version": "0.4.3"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"module": "keenetic-app-v043.js"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"web_component": "keenetic-hero-app-panel-v043"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"failover_recorder_history_enabled": false' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q 'История HA Recorder временно отключена' custom_components/keenetic_hero_4g/frontend/keenetic-app-v043.js
+          echo "Production UI v0.4.3 no-infinite-loading contract OK"
