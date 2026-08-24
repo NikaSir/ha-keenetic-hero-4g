@@ -34,6 +34,7 @@ jobs:
           node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v041.js
           node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
           node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v043.js
+          node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
 
       - name: Verify production module registration
         shell: bash
@@ -43,12 +44,15 @@ jobs:
             echo "Legacy panel_v030 must not be in the runtime startup path."
             exit 1
           fi
-          grep -q 'PANEL_VERSION = "0.4.3"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'PANEL_VERSION = "0.4.4"' custom_components/keenetic_hero_4g/const.py
           grep -q '_frontend_slug' custom_components/keenetic_hero_4g/panel_runtime.py
           grep -q 'keenetic-app-{slug}.js' custom_components/keenetic_hero_4g/panel_runtime.py
-          grep -q '"version": "0.4.3"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"module": "keenetic-app-v043.js"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"web_component": "keenetic-hero-app-panel-v043"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"failover_recorder_history_enabled": false' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q 'История HA Recorder временно отключена' custom_components/keenetic_hero_4g/frontend/keenetic-app-v043.js
-          echo "Production UI v0.4.3 no-infinite-loading contract OK"
+          grep -q '"version": "0.4.4"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"module": "keenetic-app-v044.js"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"web_component": "keenetic-hero-app-panel-v044"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"cached_role_mapping": true' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"structural_polling_seconds": 0' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q 'BOOTSTRAP_CACHE_KEY' custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
+          grep -q 'BOOTSTRAP_TIMEOUT_MS = 5000' custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
+          grep -q 'clearInterval(this._refreshTimer)' custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
+          echo "Production UI v0.4.4 non-blocking bootstrap contract OK"
