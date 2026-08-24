@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.4.3"
+    "version": "0.4.4"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -34,17 +34,21 @@
     "secondary_views": ["system"],
     "bootstrap": {
       "registration_snapshot_fallback": true,
-      "websocket_refresh": true,
+      "cached_role_mapping": true,
+      "live_values_from_hass_states": true,
+      "websocket_refresh": "background_only",
       "websocket_timeout_seconds": 5,
+      "structural_polling_seconds": 0,
       "blank_screen_on_bootstrap_timeout": false,
+      "keep_cached_mapping_on_timeout": true,
       "fallback_excludes_host_and_unique_id": true,
       "replay_pre_upgrade_properties": true
     }
   },
   "frontend_delivery": {
     "mode": "versioned_runtime_selector",
-    "module": "keenetic-app-v043.js",
-    "web_component": "keenetic-hero-app-panel-v043",
+    "module": "keenetic-app-v044.js",
+    "web_component": "keenetic-hero-app-panel-v044",
     "includes_styles": true,
     "cache_busting": "physical_module_version_plus_query_panel_version",
     "runtime_previous_version_imports": true
@@ -53,6 +57,9 @@
     "overview_cross_module_time_helper": true,
     "failover_recorder_history_enabled": false,
     "failover_history_timeout_seconds": 0,
+    "bootstrap_cache_storage": "localStorage",
+    "bootstrap_timeout_seconds": 5,
+    "bootstrap_polling_enabled": false,
     "infinite_loading_allowed": false
   },
   "view_patterns": {
