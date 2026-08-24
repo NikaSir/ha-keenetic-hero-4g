@@ -8,17 +8,15 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.4.0"
+    "version": "0.4.1"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
     "version": "1.2",
     "header": {
-      "back": {
-        "icon": "mdi:arrow-left",
-        "label": "Назад",
-        "navigate": "/dashboard-infrastructure/overview",
-        "use_browser_history": false,
+      "menu": {
+        "icon": "mdi:menu",
+        "action": "hass-toggle-menu",
         "min_touch_target_px": 44
       },
       "title": "Keenetic Hero 4G+",
@@ -52,7 +50,7 @@
     "module": "keenetic-app-v040.js",
     "web_component": "keenetic-hero-app-panel-v040",
     "includes_styles": true,
-    "cache_busting": "physical_module_version_plus_query_panel_version",
+    "cache_busting": "query_panel_version",
     "runtime_previous_version_imports": false
   },
   "view_patterns": {
