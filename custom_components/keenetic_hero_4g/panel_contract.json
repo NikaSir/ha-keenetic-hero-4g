@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.3.0"
+    "version": "0.4.0"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -35,13 +35,7 @@
       "outside_scroll_region": true,
       "overlaps_content": false,
       "max_primary_items": 5,
-      "items": [
-        "overview",
-        "wan",
-        "failover",
-        "traffic",
-        "diagnostics"
-      ]
+      "items": ["overview", "wan", "failover", "traffic", "diagnostics"]
     },
     "secondary_views": ["system"],
     "bootstrap": {
@@ -54,15 +48,19 @@
     }
   },
   "frontend_delivery": {
-    "mode": "self_contained_bundle",
-    "module": "keenetic-panel-bundle.js",
+    "mode": "versioned_module",
+    "module": "keenetic-app-v040.js",
+    "web_component": "keenetic-hero-app-panel-v040",
     "includes_styles": true,
-    "cache_busting": "query_panel_version",
+    "cache_busting": "physical_module_version_plus_query_panel_version",
     "runtime_previous_version_imports": false
   },
   "view_patterns": {
     "overview": {
       "preserve_network_topology": true,
+      "active_path_only": true,
+      "inactive_grey_branches": false,
+      "reserve_channel_separate": true,
       "channel_selector": "contextual_segmented",
       "items": ["ethernet", "lte"],
       "labels": ["Провод", "LTE"],
@@ -71,16 +69,14 @@
       "single_channel_detail_visible": true,
       "unknown_active_wan_has_no_fabricated_default": true,
       "device_selector": false,
-      "device_control": false,
-      "tap_action": "show selected channel detail in Overview"
+      "device_control": false
     },
     "wan": {
       "selector": "contextual_segmented",
       "items": ["ethernet", "lte"],
       "labels": ["Провод", "LTE"],
       "single_detail_visible": true,
-      "device_selector": false,
-      "reference_pattern": "Stark-style segmented context selector"
+      "device_selector": false
     },
     "traffic": {
       "mode": "stabilization_current_only",
@@ -101,20 +97,8 @@
       "lte_reserve": "lte_connected",
       "switches_today": "wan_switches_today"
     },
-    "do_not_duplicate": [
-      "wan_lte_diagnostics",
-      "traffic_history",
-      "failover_details",
-      "lte_radio_diagnostics",
-      "router_system_details"
-    ]
+    "do_not_duplicate": ["wan_lte_diagnostics", "traffic_history", "failover_details", "lte_radio_diagnostics", "router_system_details"]
   },
-  "primary_views": [
-    "overview",
-    "wan",
-    "failover",
-    "traffic",
-    "diagnostics"
-  ],
+  "primary_views": ["overview", "wan", "failover", "traffic", "diagnostics"],
   "secondary_views": ["system"]
 }
