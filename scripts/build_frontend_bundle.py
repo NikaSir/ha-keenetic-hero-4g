@@ -21,6 +21,7 @@ SOURCES = [
     FRONTEND / "keenetic-app-v043.js",
     FRONTEND / "keenetic-app-v044.js",
     FRONTEND / "keenetic-app-v045.js",
+    FRONTEND / "keenetic-app-v050.js",
 ]
 
 RUNTIME_IMPORT_RE = re.compile(
@@ -65,7 +66,7 @@ def build() -> str:
     parts = [
         "// GENERATED FILE. DO NOT EDIT DIRECTLY.",
         "// Keenetic Hero 4G+ self-contained Home Assistant panel bundle.",
-        "// Current v0.4.x sources and CSS are composed at build time only.",
+        "// Current v0.5.x sources and CSS are composed at build time only.",
         "// Runtime dependency on prior UI modules is forbidden.",
         "",
     ]
