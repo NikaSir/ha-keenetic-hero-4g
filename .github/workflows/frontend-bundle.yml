@@ -71,10 +71,9 @@ jobs:
           grep -q 'grid-template-columns: 84px minmax(0, 1fr) 84px' custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
 
       - name: Commit generated bundle when changed
-        if: github.event_name == 'push'
         shell: bash
         env:
-          TARGET_BRANCH: ${{ github.ref_name }}
+          TARGET_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
         run: |
           BUNDLE=custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js
           if [ -z "$(git status --porcelain -- "$BUNDLE")" ]; then
@@ -87,7 +86,8 @@ jobs:
           git commit -m "build: refresh Keenetic UI v0.4.4 autonomous bundle"
           git push origin "HEAD:${TARGET_BRANCH}"
 
-      - name: Verify committed bundle on pull request
-        if: github.event_name == 'pull_request'
+      - name: Verify bundle is current
         shell: bash
-        run: git diff --exit-code -- custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js
+        run: |
+          python scripts/build_frontend_bundle.py --check
+          git diff --exit-code -- custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js
