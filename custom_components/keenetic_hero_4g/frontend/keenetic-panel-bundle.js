@@ -1,6 +1,7 @@
 // GENERATED FILE. DO NOT EDIT DIRECTLY.
 // Keenetic Hero 4G+ self-contained Home Assistant panel bundle.
-// Historical UI modules and CSS are composed at build time only.
+// Current v0.4.x sources and CSS are composed at build time only.
+// Runtime dependency on prior UI modules is forbidden.
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-panel.js
 (() => {
@@ -896,10 +897,104 @@ if (!customElements.get("keenetic-hero-panel")) {
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-panel.js
 
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v023.js
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-overview-v040.js
 (() => {
-const APP_SHELL_VERSION = "0.2.3";
-const PARENT_ROUTE = "/dashboard-infrastructure/overview";
+const BASE_V040 = customElements.get("keenetic-hero-panel");
+
+function escV040(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+if (BASE_V040) {
+  BASE_V040.prototype._renderOverview = function () {
+    const internet = this._internet();
+    const active = this._activeWan();
+    const eth = this._connection("ethernet_connected");
+    const lte = this._connection("lte_connected");
+    const telemetry = this._telemetry();
+    const signal = this._lteSignal();
+    const lastSwitch = this._stateObj("last_wan_switch")?.state;
+    const switches = this._display("wan_switches_today", "0");
+
+    const activeRole = active === "ethernet" ? "ethernet" : active === "lte" ? "lte" : null;
+    const activeIcon = activeRole === "ethernet" ? "mdi:ethernet" : activeRole === "lte" ? "mdi:signal-4g" : "mdi:close-network-outline";
+    const activeLabel = activeRole === "ethernet" ? "Ethernet" : activeRole === "lte" ? "LTE / 4G" : "Нет активного канала";
+    const activeSub = activeRole === "ethernet"
+      ? `${this._display("ethernet_link_speed", "—")} · ↓ ${this._display("ethernet_rx_mbps", "—")} · ↑ ${this._display("ethernet_tx_mbps", "—")}`
+      : activeRole === "lte"
+        ? `${this._display("lte_operator", "—")} · ${this._display("lte_network_type", "—")} · ${this._display("lte_primary_band", "—")}`
+        : "Оба WAN-канала недоступны или состояние недостоверно";
+    const activeTone = activeRole ? (internet.online === false ? "bad" : activeRole === "lte" ? "blue" : "ok") : "bad";
+    const reserveLabel = activeRole === "ethernet"
+      ? (lte.state === "up" ? "LTE · Резерв готов" : lte.state === "down" ? "LTE · Недоступен" : "LTE · Неизвестно")
+      : activeRole === "lte"
+        ? (eth.state === "up" ? "Ethernet · Резерв готов" : eth.state === "down" ? "Ethernet · Недоступен" : "Ethernet · Неизвестно")
+        : "Резервного канала нет";
+
+    return `<section class="view overview v040-overview">
+      ${!telemetry.trusted ? `<div class="integrity-banner ${escV040(telemetry.tone)}"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><div><strong>${escV040(telemetry.label)}</strong><span>${escV040(telemetry.detail)}. WAN не трактуется как нормальный до восстановления телеметрии.</span></div></div>` : ""}
+
+      <article class="card v040-hero">
+        <div class="v040-hero-head">
+          <div><span class="label">Интернет</span><div class="hero-value ${escV040(internet.tone)}"><span class="status-dot"></span>${escV040(internet.label)}</div><small>Основной канал · ${escV040(activeRole === "ethernet" ? "Ethernet" : activeRole === "lte" ? "LTE" : "Нет")}</small></div>
+          <div class="v040-fresh ${escV040(telemetry.tone)}"><ha-icon icon="mdi:clock-outline"></ha-icon>${escV040(telemetry.age === null ? "Свежесть неизвестна" : `Обновлено ${Math.round(telemetry.age)} с назад`)}</div>
+        </div>
+
+        <div class="v040-live-map ${escV040(activeTone)}">
+          <div class="v040-router"><ha-icon icon="mdi:router-network"></ha-icon><strong>Keenetic</strong></div>
+          <div class="v040-flow"><span></span><span></span><span></span></div>
+          <div class="v040-active-node"><ha-icon icon="${activeIcon}"></ha-icon><strong>${escV040(activeLabel)}</strong><small>${escV040(activeSub)}</small></div>
+          <div class="v040-flow"><span></span><span></span><span></span></div>
+          <div class="v040-internet"><ha-icon icon="mdi:web"></ha-icon><strong>Интернет</strong></div>
+        </div>
+
+        <div class="v040-reserve ${activeRole ? "" : "bad"}"><span>Резервный канал</span><strong>${escV040(reserveLabel)}</strong>${activeRole === "ethernet" ? `<small>${escV040(this._display("lte_operator", "—"))} · ${escV040(this._display("lte_primary_band", "—"))} · RSRP ${escV040(this._display("lte_rsrp", "—"))}</small>` : ""}${activeRole === "lte" ? `<small>WAN IP ${escV040(this._display("ethernet_wan_ipv4", "—"))} · Link ${escV040(this._display("ethernet_link_speed", "—"))}</small>` : ""}</div>
+
+        <div class="v040-kpis">${this._metric(activeRole === "lte" ? "lte_ping" : "ethernet_ping", "Ping")}${this._metric(activeRole === "lte" ? "lte_packet_loss" : "ethernet_packet_loss", "Потеря пакетов")}<div class="metric"><span>Телеметрия</span><strong>${escV040(telemetry.age === null ? "—" : `${Math.round(telemetry.age)} с`)}</strong></div></div>
+      </article>
+
+      <article class="card v040-section">
+        <div class="section-heading"><div><ha-icon icon="mdi:wan"></ha-icon><h2>Каналы</h2></div></div>
+        <div class="v040-channel-grid">
+          <div class="v040-channel ${active === "ethernet" ? "selected" : ""}"><div class="card-title"><div><ha-icon icon="mdi:ethernet"></ha-icon><strong>Ethernet</strong></div>${this._statusPill(active === "ethernet" ? "Активен" : eth.label, active === "ethernet" ? "ok" : eth.tone)}</div><div class="big-rates"><span><small>RX</small>${escV040(this._display("ethernet_rx_mbps", "—"))}</span><span><small>TX</small>${escV040(this._display("ethernet_tx_mbps", "—"))}</span></div><div class="mini-grid">${this._metric("ethernet_wan_ipv4", "WAN IP")}${this._metric("ethernet_link_speed", "Link")}${this._metric("ethernet_interface_uptime", "Uptime")}${this._metric("ethernet_packet_loss", "Loss")}</div></div>
+          <div class="v040-channel ${active === "lte" ? "selected" : ""}"><div class="card-title"><div><ha-icon icon="mdi:signal-4g"></ha-icon><strong>LTE</strong></div>${this._statusPill(active === "lte" ? "Активен" : lte.state === "up" ? "Резерв готов" : lte.label, active === "lte" ? "ok" : lte.tone)}</div><div class="signal-summary"><span>Сигнал</span><strong class="${escV040(signal.tone)}">${escV040(signal.label)}</strong><small>${escV040(this._display("lte_operator", "—"))} · ${escV040(this._display("lte_network_type", "—"))}</small></div><div class="mini-grid">${this._metric("lte_primary_band", "Band")}${this._metric("lte_rsrp", "RSRP")}${this._metric("lte_sinr", "SINR")}${this._metric("lte_time_today", "LTE сегодня")}</div></div>
+        </div>
+      </article>
+
+      <article class="card v040-section"><div class="section-heading"><div><ha-icon icon="mdi:swap-horizontal-bold"></ha-icon><h2>Резервирование</h2></div>${this._statusPill(`${switches} сегодня`, Number(switches) > 0 ? "warn" : "neutral", "mdi:counter")}</div><div class="failover-main"><div><span>Последнее переключение</span><strong>${escV040(this._switchDirection())}</strong></div><div><span>Когда</span><strong>${lastSwitch && !this._isUnknownState(lastSwitch) ? escV040(formatAgo(lastSwitch)) : "Неизвестно"}</strong></div></div><div class="reason"><span>Причина</span><strong>${escV040(this._reason())}</strong></div></article>
+
+      <article class="card v040-section"><div class="section-heading"><div><ha-icon icon="mdi:chart-timeline-variant"></ha-icon><h2>Трафик</h2></div></div><div class="v040-traffic-grid"><div><span>Текущая скорость</span><strong>↓ ${escV040(this._display("active_rx_mbps", "—"))} · ↑ ${escV040(this._display("active_tx_mbps", "—"))}</strong><small>${escV040(activeRole === "ethernet" ? "Ethernet активен" : activeRole === "lte" ? "LTE активен" : "Нет активного канала")}</small></div><div><span>Трафик сегодня</span><strong>${escV040(this._display("ethernet_total_daily", "—"))}</strong><small>Ethernet · LTE ${escV040(this._display("lte_total_daily", "—"))}</small></div><div><span>Трафик за месяц</span><strong>${escV040(this._display("ethernet_total_monthly", "—"))}</strong><small>Ethernet · LTE ${escV040(this._display("lte_total_monthly", "—"))}</small></div></div></article>
+    </section>`;
+  };
+
+  const renderBaseV040 = BASE_V040.prototype._render;
+  BASE_V040.prototype._render = function (...args) {
+    renderBaseV040.apply(this, args);
+    const root = this.shadowRoot;
+    if (!root || root.querySelector("style[data-keenetic-v040]")) return;
+    const style = document.createElement("style");
+    style.dataset.keeneticV040 = "true";
+    style.textContent = `
+      .v040-overview{gap:12px}.v040-hero,.v040-section{padding:14px}.v040-hero-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.v040-hero-head small{color:var(--kp-muted);font-size:10px}.v040-fresh{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:6px 8px;border-radius:999px;background:color-mix(in srgb,var(--kp-grey) 8%,transparent)}.v040-fresh.ok{color:var(--kp-green);background:color-mix(in srgb,var(--kp-green) 9%,transparent)}.v040-fresh.bad{color:var(--kp-red);background:color-mix(in srgb,var(--kp-red) 9%,transparent)}.v040-fresh.warn{color:var(--kp-yellow)}.v040-fresh ha-icon{--mdc-icon-size:14px}
+      .v040-live-map{margin:15px 0 10px;display:grid;grid-template-columns:minmax(68px,1fr) 36px minmax(92px,1.3fr) 36px minmax(64px,.9fr);align-items:center;gap:3px}.v040-router,.v040-active-node,.v040-internet{min-width:0;text-align:center;border-radius:16px;padding:10px 6px;background:color-mix(in srgb,var(--primary-text-color) 3%,transparent)}.v040-router ha-icon,.v040-active-node ha-icon,.v040-internet ha-icon{--mdc-icon-size:28px;display:block;margin:0 auto 4px}.v040-router strong,.v040-active-node strong,.v040-active-node small,.v040-internet strong{display:block}.v040-router strong,.v040-internet strong{font-size:10px}.v040-active-node strong{font-size:13px}.v040-active-node small{margin-top:3px;color:var(--kp-muted);font-size:8px;line-height:1.25}.v040-live-map.ok .v040-active-node,.v040-live-map.ok .v040-internet{color:var(--kp-green);background:color-mix(in srgb,var(--kp-green) 8%,transparent)}.v040-live-map.blue .v040-active-node,.v040-live-map.blue .v040-internet{color:var(--kp-blue);background:color-mix(in srgb,var(--kp-blue) 8%,transparent)}.v040-live-map.bad .v040-active-node,.v040-live-map.bad .v040-internet{color:var(--kp-red);background:color-mix(in srgb,var(--kp-red) 7%,transparent)}
+      .v040-flow{display:flex;align-items:center;justify-content:center;gap:2px;overflow:hidden}.v040-flow span{width:6px;height:6px;border-radius:50%;background:var(--kp-green);animation:v040-flow 1.2s linear infinite}.v040-live-map.blue .v040-flow span{background:var(--kp-blue)}.v040-live-map.bad .v040-flow span{background:var(--kp-red);animation:none;opacity:.4}.v040-flow span:nth-child(2){animation-delay:.2s}.v040-flow span:nth-child(3){animation-delay:.4s}@keyframes v040-flow{0%,100%{opacity:.2;transform:translateX(0)}50%{opacity:1;transform:translateX(2px)}}
+      .v040-reserve{margin:5px 0 10px;padding:8px 10px;border-radius:13px;background:color-mix(in srgb,var(--kp-blue) 6%,transparent)}.v040-reserve span,.v040-reserve strong,.v040-reserve small{display:block}.v040-reserve span{font-size:8px;color:var(--kp-muted)}.v040-reserve strong{font-size:11px}.v040-reserve small{margin-top:2px;font-size:8px;color:var(--kp-muted)}.v040-reserve.bad{background:color-mix(in srgb,var(--kp-red) 6%,transparent);color:var(--kp-red)}.v040-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.v040-channel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.v040-channel{border:1px solid var(--kp-border);border-radius:16px;padding:10px;background:color-mix(in srgb,var(--primary-text-color) 2%,transparent)}.v040-channel.selected{border-color:color-mix(in srgb,var(--kp-blue) 55%,var(--kp-border));background:color-mix(in srgb,var(--kp-blue) 5%,transparent)}.v040-traffic-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}.v040-traffic-grid>div{min-width:0;padding:9px;border-radius:13px;background:color-mix(in srgb,var(--primary-text-color) 3.5%,transparent)}.v040-traffic-grid span,.v040-traffic-grid strong,.v040-traffic-grid small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.v040-traffic-grid span{font-size:8px;color:var(--kp-muted)}.v040-traffic-grid strong{margin-top:2px;font-size:11px}.v040-traffic-grid small{margin-top:2px;font-size:8px;color:var(--kp-muted)}
+      @media(max-width:430px){.v040-live-map{grid-template-columns:66px 24px minmax(82px,1fr) 24px 58px}.v040-flow span{width:4px;height:4px}.v040-router,.v040-active-node,.v040-internet{padding:8px 4px}.v040-router ha-icon,.v040-active-node ha-icon,.v040-internet ha-icon{--mdc-icon-size:24px}.v040-channel-grid{grid-template-columns:1fr}.v040-traffic-grid{grid-template-columns:1fr}}
+    `;
+    root.append(style);
+  };
+}
+})();
+// END custom_components/keenetic_hero_4g/frontend/keenetic-overview-v040.js
+
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v040.js
+(() => {
+const APP_SHELL_VERSION = "0.4.1";
 const BASE_COMPONENT = customElements.get("keenetic-hero-panel");
 
 if (BASE_COMPONENT) {
@@ -907,175 +1002,38 @@ if (BASE_COMPONENT) {
     return "";
   };
 
-  // The NikaS app shell owns primary navigation. The specialized panel renders
-  // only device content; this prevents a floating bar from overlapping content.
   BASE_COMPONENT.prototype._renderNav = function () {
     return "";
-  };
-
-  // WAN/LTE is one primary application screen. Inside it, use the same large
-  // two-segment selector pattern as the Stark SolarPower panel so wired WAN and
-  // LTE diagnostics are not presented as one long sensor page.
-  const baseRenderWan = BASE_COMPONENT.prototype._renderWan;
-  BASE_COMPONENT.prototype._renderWan = function (...args) {
-    if (!this._wanTransport) {
-      this._wanTransport = this._activeWan?.() || "ethernet";
-    }
-    if (!["ethernet", "lte"].includes(this._wanTransport)) {
-      this._wanTransport = "ethernet";
-    }
-
-    const ethernet = this._connection?.("ethernet_connected") || {
-      label: "Состояние неизвестно",
-      tone: "unknown",
-    };
-    const lte = this._connection?.("lte_connected") || {
-      label: "Состояние неизвестно",
-      tone: "unknown",
-    };
-    const selected = this._wanTransport;
-
-    let html = baseRenderWan.apply(this, args);
-    html = html.replace(
-      '<section class="view">',
-      `<section class="view wan-detail-view wan-transport-${selected}">
-        <div class="wan-segment-switch" role="tablist" aria-label="Канал WAN">
-          <button type="button" class="wan-segment ${selected === "ethernet" ? "active" : ""}" data-wan-transport="ethernet" role="tab" aria-selected="${selected === "ethernet"}">
-            <div class="wan-segment-title"><ha-icon icon="mdi:ethernet"></ha-icon><strong>Провод</strong></div>
-            <span class="wan-segment-state ${ethernet.tone}"><i></i>${ethernet.label}</span>
-          </button>
-          <button type="button" class="wan-segment ${selected === "lte" ? "active" : ""}" data-wan-transport="lte" role="tab" aria-selected="${selected === "lte"}">
-            <div class="wan-segment-title"><ha-icon icon="mdi:signal-4g"></ha-icon><strong>LTE</strong></div>
-            <span class="wan-segment-state ${lte.tone}"><i></i>${lte.label}</span>
-          </button>
-        </div>`,
-    );
-    html = html.replace(
-      '<article class="card detail-card">',
-      '<article class="card detail-card wan-ethernet-detail">',
-    );
-    html = html.replace(
-      '<article class="card detail-card">',
-      '<article class="card detail-card wan-lte-detail">',
-    );
-    return html;
-  };
-
-  const baseAttachInteractions = BASE_COMPONENT.prototype._attachInteractions;
-  BASE_COMPONENT.prototype._attachInteractions = function (...args) {
-    baseAttachInteractions.apply(this, args);
-    this.shadowRoot?.querySelectorAll("[data-wan-transport]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const transport = button.dataset.wanTransport;
-        if (!["ethernet", "lte"].includes(transport) || transport === this._wanTransport) {
-          return;
-        }
-        this._wanTransport = transport;
-        this._scheduleRender?.();
-      });
-    });
   };
 
   const baseRender = BASE_COMPONENT.prototype._render;
   BASE_COMPONENT.prototype._render = function (...args) {
     baseRender.apply(this, args);
     const root = this.shadowRoot;
-    if (!root || root.querySelector("style[data-nikas-v023-content]")) return;
+    if (!root || root.querySelector("style[data-nikas-v040-content]")) return;
     const style = document.createElement("style");
-    style.dataset.nikasV023Content = "true";
+    style.dataset.nikasV040Content = "true";
     style.textContent = `
       .shell {
         width: min(100%, 1100px) !important;
         margin: 0 auto !important;
         padding: 12px max(12px, env(safe-area-inset-right)) 16px max(12px, env(safe-area-inset-left)) !important;
       }
-      .wan-segment-switch {
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-        margin: 0 0 2px;
-      }
-      .wan-segment {
-        min-width: 0;
-        min-height: 72px;
-        border: 1px solid var(--kp-border);
-        border-radius: 18px;
-        background: var(--kp-surface);
-        color: var(--primary-text-color);
-        display: grid;
-        align-content: center;
-        gap: 5px;
-        padding: 10px 12px;
-        text-align: left;
-        font: inherit;
-        -webkit-tap-highlight-color: transparent;
-      }
-      .wan-segment.active {
-        border-color: var(--kp-blue);
-        background: color-mix(in srgb, var(--kp-blue) 8%, var(--kp-surface));
-        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--kp-blue) 22%, transparent);
-      }
-      .wan-segment-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        min-width: 0;
-      }
-      .wan-segment-title ha-icon {
-        --mdc-icon-size: 22px;
-        color: var(--kp-blue);
-      }
-      .wan-segment-title strong {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-size: 14px;
-      }
-      .wan-segment-state {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: var(--kp-muted);
-        font-size: 10px;
-        font-weight: 650;
-      }
-      .wan-segment-state i {
-        width: 7px;
-        height: 7px;
-        flex: 0 0 7px;
-        border-radius: 50%;
-        background: var(--kp-grey);
-      }
-      .wan-segment-state.ok i { background: var(--kp-green); }
-      .wan-segment-state.warn i { background: var(--kp-yellow); }
-      .wan-segment-state.bad i { background: var(--kp-red); }
-      .wan-transport-ethernet .wan-lte-detail { display: none !important; }
-      .wan-transport-lte .wan-ethernet-detail { display: none !important; }
-      .wan-detail-view .wan-ethernet-detail,
-      .wan-detail-view .wan-lte-detail {
-        grid-column: 1 / -1;
-      }
-      @media (max-width: 390px) {
-        .wan-segment-switch { gap: 8px; }
-        .wan-segment { min-height: 68px; padding: 9px 10px; }
-      }
     `;
     root.append(style);
   };
 }
 
-function navigateExplicit(path) {
-  if (!path) return;
-  history.pushState(null, "", path);
-  window.dispatchEvent(new Event("location-changed"));
+function openHomeAssistantMenu(target) {
+  target.dispatchEvent(
+    new CustomEvent("hass-toggle-menu", {
+      bubbles: true,
+      composed: true,
+    }),
+  );
 }
 
-class KeeneticHeroAppPanelV023 extends HTMLElement {
+class KeeneticHeroAppPanelV040 extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -1153,7 +1111,7 @@ class KeeneticHeroAppPanelV023 extends HTMLElement {
     if (!nav) return;
     const items = [
       ["overview", "mdi:view-dashboard-outline", "Обзор"],
-      ["wan", "mdi:wan", "WAN/LTE"],
+      ["wan", "mdi:wan", "Каналы"],
       ["failover", "mdi:swap-horizontal-bold", "Failover"],
       ["traffic", "mdi:chart-timeline-variant", "Трафик"],
       ["diagnostics", "mdi:stethoscope", "Диагн."],
@@ -1198,7 +1156,7 @@ class KeeneticHeroAppPanelV023 extends HTMLElement {
         .nika-header {
           min-height: 56px;
           display: grid;
-          grid-template-columns: minmax(76px, auto) 1fr 52px;
+          grid-template-columns: 52px 1fr 52px;
           align-items: center;
           gap: 4px;
           padding: max(4px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) 4px max(8px, env(safe-area-inset-left));
@@ -1206,7 +1164,7 @@ class KeeneticHeroAppPanelV023 extends HTMLElement {
           border-bottom: 1px solid var(--shell-border);
           z-index: 2;
         }
-        .back, .refresh {
+        .menu, .refresh {
           min-width: 44px;
           min-height: 44px;
           border: 0;
@@ -1216,14 +1174,13 @@ class KeeneticHeroAppPanelV023 extends HTMLElement {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 3px;
           padding: 0 8px;
           font: inherit;
           -webkit-tap-highlight-color: transparent;
         }
-        .back { justify-self: start; font-size: 13px; font-weight: 650; }
+        .menu { justify-self: start; }
         .refresh { justify-self: end; }
-        .back ha-icon, .refresh ha-icon { --mdc-icon-size: 23px; }
+        .menu ha-icon, .refresh ha-icon { --mdc-icon-size: 24px; }
         .title { min-width: 0; text-align: center; line-height: 1.1; }
         .title strong {
           display: block;
@@ -1290,15 +1247,11 @@ class KeeneticHeroAppPanelV023 extends HTMLElement {
           font-size: 9px;
           font-weight: 700;
         }
-        @media (max-width: 390px) {
-          .nika-header { grid-template-columns: 50px 1fr 50px; }
-          .back span { display: none; }
-        }
       </style>
       <div id="nika-app-shell">
         <header class="nika-header" aria-label="Keenetic">
-          <button type="button" class="back" id="nika-back" aria-label="Назад в Инфраструктуру">
-            <ha-icon icon="mdi:arrow-left"></ha-icon><span>Назад</span>
+          <button type="button" class="menu" id="nika-menu" aria-label="Открыть меню Home Assistant">
+            <ha-icon icon="mdi:menu"></ha-icon>
           </button>
           <div class="title">
             <strong>Keenetic Hero 4G+</strong>
@@ -1312,8 +1265,8 @@ class KeeneticHeroAppPanelV023 extends HTMLElement {
         <nav class="nika-tabbar" id="nika-tabbar" aria-label="Разделы Keenetic"></nav>
       </div>`;
 
-    this.shadowRoot.getElementById("nika-back")?.addEventListener("click", () => {
-      navigateExplicit(this._panel?.config?.parent_route || PARENT_ROUTE);
+    this.shadowRoot.getElementById("nika-menu")?.addEventListener("click", (event) => {
+      openHomeAssistantMenu(event.currentTarget);
     });
     this.shadowRoot.getElementById("nika-refresh")?.addEventListener("click", () => {
       this._child?._loadBootstrap?.(false);
@@ -1322,955 +1275,280 @@ class KeeneticHeroAppPanelV023 extends HTMLElement {
   }
 }
 
-if (!customElements.get("keenetic-hero-app-panel-v023")) {
-  customElements.define("keenetic-hero-app-panel-v023", KeeneticHeroAppPanelV023);
+if (!customElements.get("keenetic-hero-app-panel-v040")) {
+  customElements.define("keenetic-hero-app-panel-v040", KeeneticHeroAppPanelV040);
 }
 })();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v023.js
+// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v040.js
 
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v024.js
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v041.js
 (() => {
-const APP_SHELL_VERSION = "0.2.4";
-const BASE_COMPONENT = customElements.get("keenetic-hero-panel");
-const V023_COMPONENT = customElements.get("keenetic-hero-app-panel-v023");
-
-function routeLabel(connection, isActive, transport) {
-  if (isActive) return "Активен";
-  if (connection?.state === "up") {
-    return transport === "lte" ? "Резерв готов" : "Основной готов";
-  }
-  if (connection?.state === "down") return "Недоступен";
-  return "Состояние неизвестно";
-}
-
-if (BASE_COMPONENT) {
-  const baseRenderOverview = BASE_COMPONENT.prototype._renderOverview;
-  BASE_COMPONENT.prototype._renderOverview = function (...args) {
-    const active = this._activeWan?.();
-    const ethernet = this._connection?.("ethernet_connected") || {
-      state: "unknown",
-      tone: "unknown",
-    };
-    const lte = this._connection?.("lte_connected") || {
-      state: "unknown",
-      tone: "unknown",
-    };
-
-    const selector = `<div class="overview-wan-switch" role="group" aria-label="WAN каналы">
-      <button type="button" class="overview-wan-button ${active === "ethernet" ? "route-active" : ""}" data-overview-wan="ethernet" aria-pressed="${active === "ethernet"}">
-        <div class="overview-wan-title"><ha-icon icon="mdi:ethernet"></ha-icon><strong>Провод</strong></div>
-        <div class="overview-wan-meta">
-          <span class="overview-route-state ${active === "ethernet" ? "active" : ethernet.tone}"><i></i>${routeLabel(ethernet, active === "ethernet", "ethernet")}</span>
-          <small>Открыть WAN/LTE</small>
-        </div>
-      </button>
-      <button type="button" class="overview-wan-button ${active === "lte" ? "route-active" : ""}" data-overview-wan="lte" aria-pressed="${active === "lte"}">
-        <div class="overview-wan-title"><ha-icon icon="mdi:signal-4g"></ha-icon><strong>LTE</strong></div>
-        <div class="overview-wan-meta">
-          <span class="overview-route-state ${active === "lte" ? "active" : lte.tone}"><i></i>${routeLabel(lte, active === "lte", "lte")}</span>
-          <small>Открыть WAN/LTE</small>
-        </div>
-      </button>
-    </div>`;
-
-    let html = baseRenderOverview.apply(this, args);
-    html = html.replace('<div class="wan-pair">', `${selector}<div class="wan-pair">`);
-    return html;
-  };
-
-  const baseAttachInteractions = BASE_COMPONENT.prototype._attachInteractions;
-  BASE_COMPONENT.prototype._attachInteractions = function (...args) {
-    baseAttachInteractions.apply(this, args);
-    this.shadowRoot?.querySelectorAll("[data-overview-wan]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const transport = button.dataset.overviewWan;
-        if (!["ethernet", "lte"].includes(transport)) return;
-        this._wanTransport = transport;
-        history.replaceState(null, "", `${location.pathname}${location.search}#wan`);
-        this._view = "wan";
-        this._scheduleRender?.();
-        this._loadViewData?.();
-      });
-    });
-  };
-
-  const baseRender = BASE_COMPONENT.prototype._render;
-  BASE_COMPONENT.prototype._render = function (...args) {
-    baseRender.apply(this, args);
-    const root = this.shadowRoot;
-    if (!root || root.querySelector("style[data-nikas-v024-overview]")) return;
-
-    const style = document.createElement("style");
-    style.dataset.nikasV024Overview = "true";
-    style.textContent = `
-      .overview-wan-switch {
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        margin: 0;
-      }
-      .overview-wan-button {
-        min-width: 0;
-        min-height: 70px;
-        border: 1px solid var(--kp-border);
-        border-radius: 18px;
-        background: var(--kp-surface);
-        color: var(--primary-text-color);
-        display: grid;
-        align-content: center;
-        gap: 5px;
-        padding: 10px 12px;
-        text-align: left;
-        font: inherit;
-        -webkit-tap-highlight-color: transparent;
-      }
-      .overview-wan-button.route-active {
-        border-color: var(--kp-blue);
-        background: color-mix(in srgb, var(--kp-blue) 8%, var(--kp-surface));
-        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--kp-blue) 24%, transparent);
-      }
-      .overview-wan-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        min-width: 0;
-      }
-      .overview-wan-title ha-icon {
-        --mdc-icon-size: 22px;
-        color: var(--kp-blue);
-      }
-      .overview-wan-title strong {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-size: 14px;
-      }
-      .overview-wan-meta {
-        min-width: 0;
-      }
-      .overview-wan-meta small {
-        display: block;
-        margin-top: 2px;
-        color: var(--kp-muted);
-        font-size: 8px;
-      }
-      .overview-route-state {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: var(--kp-muted);
-        font-size: 10px;
-        font-weight: 700;
-      }
-      .overview-route-state i {
-        width: 7px;
-        height: 7px;
-        flex: 0 0 7px;
-        border-radius: 50%;
-        background: var(--kp-grey);
-      }
-      .overview-route-state.active {
-        color: var(--kp-blue);
-      }
-      .overview-route-state.active i { background: var(--kp-blue); }
-      .overview-route-state.ok i { background: var(--kp-green); }
-      .overview-route-state.warn i { background: var(--kp-yellow); }
-      .overview-route-state.bad i { background: var(--kp-red); }
-      @media (max-width: 390px) {
-        .overview-wan-switch { gap: 8px; }
-        .overview-wan-button { min-height: 66px; padding: 9px 10px; }
-      }
-    `;
-    root.append(style);
-  };
-}
-
-class KeeneticHeroAppPanelV024 extends V023_COMPONENT {
-  connectedCallback() {
-    super.connectedCallback();
-    this._updateVersionLabel();
-  }
-
-  _renderShell() {
-    super._renderShell();
-    this._updateVersionLabel();
-  }
-
-  _updateVersionLabel() {
-    const subtitle = this.shadowRoot?.querySelector(".title span");
-    if (subtitle) subtitle.textContent = `Network Control Center · UI v${APP_SHELL_VERSION}`;
-  }
-}
-
-if (!customElements.get("keenetic-hero-app-panel-v024")) {
-  customElements.define("keenetic-hero-app-panel-v024", KeeneticHeroAppPanelV024);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v024.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v025.js
-(() => {
-const APP_SHELL_VERSION = "0.2.5";
-const BASE_COMPONENT = customElements.get("keenetic-hero-panel");
-const V024_COMPONENT = customElements.get("keenetic-hero-app-panel-v024");
-
-if (BASE_COMPONENT) {
-  const v024RenderOverview = BASE_COMPONENT.prototype._renderOverview;
-  BASE_COMPONENT.prototype._renderOverview = function (...args) {
-    const active = this._activeWan?.();
-
-    // Default Overview detail follows the factual active WAN. Once the user
-    // explicitly selects another branch, keep that diagnostic selection until
-    // the panel is recreated. If active WAN is unknown, do not invent one.
-    if (!this._overviewTransportTouched) {
-      this._overviewTransport = ["ethernet", "lte"].includes(active) ? active : null;
-    }
-    if (!["ethernet", "lte"].includes(this._overviewTransport)) {
-      this._overviewTransport = null;
-    }
-    const selected = this._overviewTransport;
-
-    let html = v024RenderOverview.apply(this, args);
-
-    // v0.2.4 marks the factual active route. v0.2.5 adds an independent
-    // selected state: factual activity and diagnostic selection are separate.
-    let buttonIndex = 0;
-    html = html.replace(
-      /class="overview-wan-button(?: route-active)?"/g,
-      () => {
-        const transport = buttonIndex++ === 0 ? "ethernet" : "lte";
-        const classes = ["overview-wan-button"];
-        if (active === transport) classes.push("route-active");
-        if (selected === transport) classes.push("selected");
-        return `class="${classes.join(" ")}"`;
-      },
-    );
-
-    const unknownHint = selected
-      ? ""
-      : `<div class="overview-wan-unknown"><ha-icon icon="mdi:help-circle-outline"></ha-icon><span>Активный WAN неизвестен. Выберите Провод или LTE для просмотра деталей.</span></div>`;
-
-    html = html.replace(
-      '<div class="wan-pair">',
-      `${unknownHint}<div class="wan-pair overview-wan-detail ${selected ? `selected-${selected}` : "selected-unknown"}">`,
-    );
-    return html;
-  };
-
-  const v024AttachInteractions = BASE_COMPONENT.prototype._attachInteractions;
-  BASE_COMPONENT.prototype._attachInteractions = function (...args) {
-    v024AttachInteractions.apply(this, args);
-
-    // v0.2.4 buttons navigated into the WAN/LTE screen. Clone them to remove
-    // those handlers and make them an in-place Overview detail selector.
-    this.shadowRoot?.querySelectorAll("[data-overview-wan]").forEach((button) => {
-      const clone = button.cloneNode(true);
-      button.replaceWith(clone);
-      clone.addEventListener("click", () => {
-        const transport = clone.dataset.overviewWan;
-        if (!["ethernet", "lte"].includes(transport)) return;
-        this._overviewTransportTouched = true;
-        this._overviewTransport = transport;
-        this._scheduleRender?.();
-      });
-    });
-  };
-
-  const v024Render = BASE_COMPONENT.prototype._render;
-  BASE_COMPONENT.prototype._render = function (...args) {
-    v024Render.apply(this, args);
-    const root = this.shadowRoot;
-    if (!root || root.querySelector("style[data-nikas-v025-overview]")) return;
-
-    const style = document.createElement("style");
-    style.dataset.nikasV025Overview = "true";
-    style.textContent = `
-      .overview-wan-button.route-active:not(.selected) {
-        border-color: var(--kp-border) !important;
-        background: var(--kp-surface) !important;
-        box-shadow: none !important;
-      }
-      .overview-wan-button.selected {
-        border-color: var(--kp-blue) !important;
-        background: color-mix(in srgb, var(--kp-blue) 8%, var(--kp-surface)) !important;
-        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--kp-blue) 24%, transparent) !important;
-      }
-      .overview-wan-detail {
-        grid-template-columns: minmax(0, 1fr) !important;
-      }
-      .overview-wan-detail.selected-ethernet .channel-card:nth-child(2),
-      .overview-wan-detail.selected-lte .channel-card:nth-child(1),
-      .overview-wan-detail.selected-unknown .channel-card {
-        display: none !important;
-      }
-      .overview-wan-detail .channel-card {
-        width: 100%;
-        min-height: 0;
-      }
-      .overview-wan-unknown {
-        grid-column: 1 / -1;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        min-height: 48px;
-        padding: 9px 11px;
-        border: 1px solid var(--kp-border);
-        border-radius: 14px;
-        color: var(--kp-muted);
-        background: var(--kp-surface);
-        font-size: 10px;
-      }
-      .overview-wan-unknown ha-icon {
-        --mdc-icon-size: 20px;
-        color: var(--kp-grey);
-      }
-    `;
-    root.append(style);
-  };
-}
-
-class KeeneticHeroAppPanelV025 extends V024_COMPONENT {
-  connectedCallback() {
-    super.connectedCallback();
-    this._updateVersionLabel025();
-  }
-
-  _renderShell() {
-    super._renderShell();
-    this._updateVersionLabel025();
-  }
-
-  _updateVersionLabel025() {
-    const subtitle = this.shadowRoot?.querySelector(".title span");
-    if (subtitle) subtitle.textContent = `Network Control Center · UI v${APP_SHELL_VERSION}`;
-  }
-}
-
-if (!customElements.get("keenetic-hero-app-panel-v025")) {
-  customElements.define("keenetic-hero-app-panel-v025", KeeneticHeroAppPanelV025);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v025.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v026.js
-(() => {
-const APP_SHELL_VERSION = "0.2.6";
-const BASE_COMPONENT = customElements.get("keenetic-hero-panel");
-const V025_COMPONENT = customElements.get("keenetic-hero-app-panel-v025");
-
-if (BASE_COMPONENT) {
-  // Period buttons must be symmetric. The base implementation cached each
-  // period for the lifetime of the panel, so 24h -> 7d -> 30d fetched new data
-  // while 30d -> 7d -> 24h reused stale cached results. Always refresh the
-  // selected period and use a request generation so late responses cannot
-  // overwrite the current period/loading state.
-  BASE_COMPONENT.prototype._loadTrafficHistory = async function () {
-    if (!this._hass || !this._bootstrap) return;
-
-    const period = this._trafficPeriod;
-    const spec = {
-      "24h": { ms: 24 * 3600e3, bucket: "5minute" },
-      "7d": { ms: 7 * 24 * 3600e3, bucket: "hour" },
-      "30d": { ms: 30 * 24 * 3600e3, bucket: "day" },
-    }[period];
-    if (!spec) return;
-
-    const series = [...this._historyIds("ethernet"), ...this._historyIds("lte")];
-    if (!series.length) return;
-
-    this._trafficRequestGeneration = (this._trafficRequestGeneration || 0) + 1;
-    const generation = this._trafficRequestGeneration;
-    this._trafficLoadingPeriod = period;
-    this._trafficLoading = true;
-    this._trafficError = null;
-    this._scheduleRender();
-
-    try {
-      const now = new Date();
-      const start = new Date(now.getTime() - spec.ms);
-      const statisticIds = [...new Set(series.map((item) => item.entityId))];
-      const result = await this._hass.callWS({
-        type: "recorder/statistics_during_period",
-        start_time: start.toISOString(),
-        end_time: now.toISOString(),
-        statistic_ids: statisticIds,
-        period: spec.bucket,
-        types: ["mean"],
-      });
-
-      // Cache by period for rendering, but never use the cache to suppress a
-      // later user-requested refresh of that period.
-      this._trafficHistory[period] = result || {};
-    } catch (err) {
-      if (generation === this._trafficRequestGeneration) {
-        this._trafficError = err?.message || String(err);
-      }
-    } finally {
-      if (generation === this._trafficRequestGeneration) {
-        this._trafficLoadingPeriod = null;
-        this._trafficLoading = false;
-        this._scheduleRender();
-      }
-    }
-  };
-}
-
-class KeeneticHeroAppPanelV026 extends V025_COMPONENT {
-  connectedCallback() {
-    super.connectedCallback();
-    this._updateVersionLabel();
-  }
-
-  _renderShell() {
-    super._renderShell();
-    this._updateVersionLabel();
-  }
-
-  _updateVersionLabel() {
-    const subtitle = this.shadowRoot?.querySelector(".title span");
-    if (subtitle) subtitle.textContent = `Network Control Center · UI v${APP_SHELL_VERSION}`;
-  }
-}
-
-if (!customElements.get("keenetic-hero-app-panel-v026")) {
-  customElements.define("keenetic-hero-app-panel-v026", KeeneticHeroAppPanelV026);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v026.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v027.js
-(() => {
-const APP_SHELL_VERSION = "0.2.7";
-const BASE_COMPONENT = customElements.get("keenetic-hero-panel");
-const V026_COMPONENT = customElements.get("keenetic-hero-app-panel-v026");
-
-function trafficTimeoutMs(period) {
-  if (period === "30d") return 10000;
-  if (period === "7d") return 8000;
-  return 6000;
-}
-
-if (BASE_COMPONENT) {
-  // Recorder can occasionally leave a long-range statistics request pending for
-  // a long time. A primary mobile panel must never become trapped in Loading.
-  // Each click starts an independent logical generation; older responses are
-  // ignored, and the current generation has a finite UI timeout.
-  BASE_COMPONENT.prototype._loadTrafficHistory = async function () {
-    if (!this._hass || !this._bootstrap) return;
-
-    const period = this._trafficPeriod;
-    const spec = {
-      "24h": { ms: 24 * 3600e3, bucket: "5minute" },
-      "7d": { ms: 7 * 24 * 3600e3, bucket: "hour" },
-      "30d": { ms: 30 * 24 * 3600e3, bucket: "day" },
-    }[period];
-    if (!spec) return;
-
-    const series = [...this._historyIds("ethernet"), ...this._historyIds("lte")];
-    if (!series.length) return;
-
-    this._trafficRequestGeneration = (this._trafficRequestGeneration || 0) + 1;
-    const generation = this._trafficRequestGeneration;
-    const timeoutMs = trafficTimeoutMs(period);
-
-    this._trafficLoadingPeriod = period;
-    this._trafficLoading = true;
-    this._trafficError = null;
-    this._scheduleRender();
-
-    let timeoutId = null;
-    try {
-      const now = new Date();
-      const start = new Date(now.getTime() - spec.ms);
-      const statisticIds = [...new Set(series.map((item) => item.entityId))];
-
-      const recorderRequest = this._hass.callWS({
-        type: "recorder/statistics_during_period",
-        start_time: start.toISOString(),
-        end_time: now.toISOString(),
-        statistic_ids: statisticIds,
-        period: spec.bucket,
-        types: ["mean"],
-      });
-
-      const timeoutRequest = new Promise((_, reject) => {
-        timeoutId = window.setTimeout(() => {
-          reject(new Error(`Recorder не ответил за ${Math.round(timeoutMs / 1000)} сек`));
-        }, timeoutMs);
-      });
-
-      const result = await Promise.race([recorderRequest, timeoutRequest]);
-
-      if (generation === this._trafficRequestGeneration) {
-        this._trafficHistory[period] = result || {};
-        this._trafficError = null;
-      }
-    } catch (err) {
-      if (generation === this._trafficRequestGeneration) {
-        this._trafficError = err?.message || String(err);
-      }
-    } finally {
-      if (timeoutId !== null) window.clearTimeout(timeoutId);
-      if (generation === this._trafficRequestGeneration) {
-        this._trafficLoadingPeriod = null;
-        this._trafficLoading = false;
-        this._scheduleRender();
-      }
-    }
-  };
-}
-
-class KeeneticHeroAppPanelV027 extends V026_COMPONENT {
-  connectedCallback() {
-    super.connectedCallback();
-    this._updateVersionLabelV027();
-  }
-
-  _renderShell() {
-    super._renderShell();
-    this._updateVersionLabelV027();
-  }
-
-  _updateVersionLabelV027() {
-    const subtitle = this.shadowRoot?.querySelector(".title span");
-    if (subtitle) subtitle.textContent = `Network Control Center · UI v${APP_SHELL_VERSION}`;
-  }
-}
-
-if (!customElements.get("keenetic-hero-app-panel-v027")) {
-  customElements.define("keenetic-hero-app-panel-v027", KeeneticHeroAppPanelV027);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v027.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v028.js
-(() => {
-const APP_SHELL_VERSION = "0.2.8";
-const BOOTSTRAP_TIMEOUT_MS = 5000;
-const V027_COMPONENT = customElements.get("keenetic-hero-app-panel-v027");
-
-class KeeneticHeroAppPanelV028 extends V027_COMPONENT {
-  set panel(value) {
-    const fallback = value?.config?.bootstrap_fallback;
-    if (!this._bootstrap && fallback) {
-      this._bootstrap = fallback;
-      this._bootstrapError = null;
-    }
-
-    this._panel = value;
-    if (!location.hash && value?.config?.preferred_view) {
-      this._view = value.config.preferred_view;
-    }
-    this._scheduleRender?.();
-  }
-
-  async _loadBootstrap(silent = false) {
-    if (!this._hass || this._bootstrapLoading) return;
-
-    this._bootstrapLoading = true;
-    if (!silent) this._bootstrapError = null;
-
-    let timeoutId = null;
-    try {
-      const config = this._panel?.config || {};
-      const request = this._hass.callWS({
-        type: "keenetic_hero_4g/panel/bootstrap",
-        ...(config.entry_id ? { entry_id: config.entry_id } : {}),
-      });
-      const timeout = new Promise((_, reject) => {
-        timeoutId = window.setTimeout(
-          () => reject(new Error("Bootstrap Keenetic не ответил за 5 сек")),
-          BOOTSTRAP_TIMEOUT_MS,
-        );
-      });
-
-      const result = await Promise.race([request, timeout]);
-      this._bootstrap = result;
-      this._bootstrapError = null;
-      this._loadViewData?.();
-    } catch (err) {
-      this._bootstrapError = err?.message || String(err);
-      // Keep a previously supplied registration snapshot. A transient
-      // WebSocket problem must never blank the whole application shell.
-      if (!this._bootstrap) {
-        const fallback = this._panel?.config?.bootstrap_fallback;
-        if (fallback) this._bootstrap = fallback;
-      }
-    } finally {
-      if (timeoutId !== null) window.clearTimeout(timeoutId);
-      this._bootstrapLoading = false;
-      this._scheduleRender?.();
-    }
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this._updateVersionLabelV028();
-  }
-
-  _renderShell() {
-    super._renderShell();
-    this._updateVersionLabelV028();
-  }
-
-  _updateVersionLabelV028() {
-    const subtitle = this.shadowRoot?.querySelector(".title span");
-    if (subtitle) subtitle.textContent = `Network Control Center · UI v${APP_SHELL_VERSION}`;
-  }
-}
-
-if (!customElements.get("keenetic-hero-app-panel-v028")) {
-  customElements.define("keenetic-hero-app-panel-v028", KeeneticHeroAppPanelV028);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v028.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v029.js
-(() => {
-const APP_SHELL_VERSION_V029 = "0.2.9";
-const V028_COMPONENT = customElements.get("keenetic-hero-app-panel-v028");
-
-class KeeneticHeroAppPanelV029 extends V028_COMPONENT {
-  connectedCallback() {
-    super.connectedCallback();
-    this._updateVersionLabelV029();
-  }
-
-  _renderShell() {
-    super._renderShell();
-    this._updateVersionLabelV029();
-  }
-
-  _updateVersionLabelV029() {
-    const subtitle = this.shadowRoot?.querySelector(".title span");
-    if (subtitle) subtitle.textContent = `Network Control Center · UI v${APP_SHELL_VERSION_V029}`;
-  }
-}
-
-if (!customElements.get("keenetic-hero-app-panel-v029")) {
-  customElements.define("keenetic-hero-app-panel-v029", KeeneticHeroAppPanelV029);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v029.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v030.js
-(() => {
-const APP_SHELL_VERSION_V030 = "0.3.0";
-const BOOTSTRAP_TIMEOUT_V030_MS = 5000;
-const BASE_COMPONENT_V030 = customElements.get("keenetic-hero-panel");
-const V029_COMPONENT = customElements.get("keenetic-hero-app-panel-v029");
-
-function bootstrapFallbackV030(panel) {
-  return (
-    panel?.config?.bootstrap_fallback ||
-    panel?.config?.config?.bootstrap_fallback ||
-    panel?.bootstrap_fallback ||
-    null
+const BASE_COMPONENT = customElements.get("keenetic-hero-app-panel-v040");
+
+function openHomeAssistantMenu(target) {
+  target.dispatchEvent(
+    new CustomEvent("hass-toggle-menu", {
+      bubbles: true,
+      composed: true,
+    }),
   );
 }
 
-if (BASE_COMPONENT_V030) {
-  BASE_COMPONENT_V030.prototype._loadBootstrap = async function (silent = false) {
-    if (!this._hass || this._bootstrapLoading) return;
+if (BASE_COMPONENT && !customElements.get("keenetic-hero-app-panel-v041")) {
+  class KeeneticHeroAppPanelV041 extends BASE_COMPONENT {
+    _renderShell() {
+      super._renderShell();
+      const root = this.shadowRoot;
+      const oldButton = root?.getElementById("nika-back");
+      if (!oldButton || oldButton.dataset.haMenuButton === "true") return;
 
-    this._bootstrapLoading = true;
-    if (!silent) this._bootstrapError = null;
+      const menuButton = oldButton.cloneNode(true);
+      menuButton.dataset.haMenuButton = "true";
+      menuButton.id = "nika-menu";
+      menuButton.className = "back";
+      menuButton.setAttribute("aria-label", "Открыть меню Home Assistant");
+      menuButton.innerHTML = '<ha-icon icon="mdi:menu"></ha-icon>';
+      oldButton.replaceWith(menuButton);
 
-    let timeoutId = null;
-    try {
-      const config = this._panel?.config || {};
-      const request = this._hass.callWS({
-        type: "keenetic_hero_4g/panel/bootstrap",
-        ...(config.entry_id ? { entry_id: config.entry_id } : {}),
-      });
-      const timeout = new Promise((_, reject) => {
-        timeoutId = window.setTimeout(
-          () => reject(new Error("Bootstrap Keenetic не ответил за 5 сек")),
-          BOOTSTRAP_TIMEOUT_V030_MS,
-        );
-      });
+      menuButton.addEventListener("click", () => openHomeAssistantMenu(menuButton));
 
-      const result = await Promise.race([request, timeout]);
-      this._bootstrap = result;
-      this._bootstrapError = null;
-      this._loadViewData?.();
-    } catch (err) {
-      const fallback = bootstrapFallbackV030(this._panel);
-      if (!this._bootstrap && fallback) {
-        this._bootstrap = fallback;
-        this._bootstrapError = null;
-      } else if (!this._bootstrap) {
-        this._bootstrapError = err?.message || String(err);
-      }
-    } finally {
-      if (timeoutId !== null) window.clearTimeout(timeoutId);
-      this._bootstrapLoading = false;
+      const version = root?.querySelector(".title span");
+      if (version) version.textContent = "Network Control Center · UI v0.4.1";
+    }
+  }
+
+  customElements.define("keenetic-hero-app-panel-v041", KeeneticHeroAppPanelV041);
+}
+})();
+// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v041.js
+
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
+(() => {
+function installLegacyTimeHelpers() {
+  if (typeof globalThis.formatAgo !== "function") {
+    globalThis.formatAgo = (dateValue) => {
+      if (!dateValue) return "Неизвестно";
+      const date = new Date(dateValue);
+      if (Number.isNaN(date.getTime())) return "Неизвестно";
+      const seconds = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000));
+      if (seconds < 60) return `${seconds} сек назад`;
+      const minutes = Math.round(seconds / 60);
+      if (minutes < 60) return `${minutes} мин назад`;
+      const hours = Math.round(minutes / 60);
+      if (hours < 24) return `${hours} ч назад`;
+      return `${Math.round(hours / 24)} дн назад`;
+    };
+  }
+}
+
+installLegacyTimeHelpers();
+
+const CORE_COMPONENT = customElements.get("keenetic-hero-panel");
+if (CORE_COMPONENT && !CORE_COMPONENT.prototype.__nikaFailoverTimeoutV042) {
+  CORE_COMPONENT.prototype.__nikaFailoverTimeoutV042 = true;
+  const loadFailoverHistoryBase = CORE_COMPONENT.prototype._loadFailoverHistory;
+
+  CORE_COMPONENT.prototype._loadFailoverHistory = async function (...args) {
+    if (this._failoverTimedOutV042) return;
+    let timer;
+    const timeout = new Promise((resolve) => {
+      timer = window.setTimeout(() => resolve("timeout"), 8000);
+    });
+    const work = Promise.resolve(loadFailoverHistoryBase.apply(this, args)).then(() => "done");
+    const result = await Promise.race([work, timeout]);
+    window.clearTimeout(timer);
+    if (result === "timeout") {
+      this._failoverTimedOutV042 = true;
+      this._failoverLoading = false;
+      this._failoverError = "HA Recorder не ответил за 8 с";
       this._scheduleRender?.();
     }
   };
-
-  BASE_COMPONENT_V030.prototype._loadViewData = function () {
-    // Stabilisation build: Traffic must not perform Recorder requests.
-    if (this._view === "failover") this._loadFailoverHistory?.();
-  };
-
-  BASE_COMPONENT_V030.prototype._renderTraffic = function () {
-    return `<section class="view">
-      <article class="card traffic-summary">
-        <div class="section-heading"><div><ha-icon icon="mdi:chart-timeline-variant"></ha-icon><h2>Трафик</h2></div></div>
-        <div class="traffic-totals">
-          <div><span>Ethernet сегодня</span><strong>${this._display("ethernet_total_daily", "Неизвестно")}</strong><small>месяц ${this._display("ethernet_total_monthly", "—")}</small></div>
-          <div><span>LTE сегодня</span><strong>${this._display("lte_total_daily", "Неизвестно")}</strong><small>месяц ${this._display("lte_total_monthly", "—")}</small></div>
-        </div>
-      </article>
-
-      <article class="card detail-card">
-        <div class="section-heading"><div><ha-icon icon="mdi:speedometer"></ha-icon><h2>Сейчас</h2></div></div>
-        <div class="detail-grid">
-          ${this._metric("ethernet_rx_mbps", "Ethernet RX")}
-          ${this._metric("ethernet_tx_mbps", "Ethernet TX")}
-          ${this._metric("lte_rx_mbps", "LTE RX")}
-          ${this._metric("lte_tx_mbps", "LTE TX")}
-        </div>
-      </article>
-
-      <article class="card detail-card">
-        <div class="section-heading"><div><ha-icon icon="mdi:counter"></ha-icon><h2>Накопительные счётчики</h2></div></div>
-        <div class="detail-grid">
-          ${this._metric("ethernet_rx_total_gib", "Ethernet RX всего")}
-          ${this._metric("ethernet_tx_total_gib", "Ethernet TX всего")}
-          ${this._metric("lte_rx_total_gb", "LTE RX всего")}
-          ${this._metric("lte_tx_total_gb", "LTE TX всего")}
-        </div>
-      </article>
-
-      <p class="hint">История трафика временно отключена. Периоды 24 ч / 7 дн / 30 дн вернутся отдельным изменением после стабилизации панели.</p>
-    </section>`;
-  };
 }
 
-class KeeneticHeroAppPanelV030 extends V029_COMPONENT {
-  _upgradePredefinedPropertyV030(name) {
-    if (!Object.prototype.hasOwnProperty.call(this, name)) return;
-    const value = this[name];
-    delete this[name];
-    this[name] = value;
-  }
-
-  set panel(value) {
-    this._panel = value;
-    this._ensureChild?.();
-    if (this._child) {
-      this._child.panel = value;
-      const fallback = bootstrapFallbackV030(value);
-      if (!this._child._bootstrap && fallback) {
-        this._child._bootstrap = fallback;
-        this._child._bootstrapError = null;
-        this._child._scheduleRender?.();
-      }
+const BASE_COMPONENT = customElements.get("keenetic-hero-app-panel-v041");
+if (BASE_COMPONENT && !customElements.get("keenetic-hero-app-panel-v042")) {
+  class KeeneticHeroAppPanelV042 extends BASE_COMPONENT {
+    _renderShell() {
+      super._renderShell();
+      const version = this.shadowRoot?.querySelector(".title span");
+      if (version) version.textContent = "Network Control Center · UI v0.4.2";
     }
   }
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    // Home Assistant may set these properties before custom-element upgrade.
-    // Replay own properties through setters after the shell/child exists.
-    this._upgradePredefinedPropertyV030("panel");
-    this._upgradePredefinedPropertyV030("hass");
-    this._upgradePredefinedPropertyV030("route");
-
-    if (this._panel && this._child) {
-      const fallback = bootstrapFallbackV030(this._panel);
-      if (!this._child._bootstrap && fallback) {
-        this._child._bootstrap = fallback;
-        this._child._bootstrapError = null;
-        this._child._scheduleRender?.();
-      }
-    }
-
-    this._updateVersionLabelV030();
-  }
-
-  _renderShell() {
-    super._renderShell();
-    this._updateVersionLabelV030();
-  }
-
-  _updateVersionLabelV030() {
-    const subtitle = this.shadowRoot?.querySelector(".title span");
-    if (subtitle) subtitle.textContent = `Network Control Center · UI v${APP_SHELL_VERSION_V030}`;
-  }
-}
-
-if (!customElements.get("keenetic-hero-app-panel-v030")) {
-  customElements.define("keenetic-hero-app-panel-v030", KeeneticHeroAppPanelV030);
+  customElements.define("keenetic-hero-app-panel-v042", KeeneticHeroAppPanelV042);
 }
 })();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v030.js
+// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
 
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v031.js
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v043.js
 (() => {
-const APP_SHELL_VERSION_V031 = "0.3.1";
-const V030_COMPONENT = customElements.get("keenetic-hero-app-panel-v030");
-
-class KeeneticHeroAppPanelV031 extends V030_COMPONENT {
-  connectedCallback() {
-    super.connectedCallback();
-    this._applyTemplateV031();
-  }
-
-  _renderShell() {
-    super._renderShell();
-    this._applyTemplateV031();
-  }
-
-  _applyTemplateV031() {
-    const root = this.shadowRoot;
-    if (!root) return;
-
-    const subtitle = root.querySelector(".title span");
-    if (subtitle) {
-      subtitle.textContent = `Network Control Center · UI v${APP_SHELL_VERSION_V031}`;
-    }
-
-    if (root.querySelector("style[data-nikas-v031-template]")) return;
-    const style = document.createElement("style");
-    style.dataset.nikasV031Template = "true";
-    style.textContent = `
-      /* NikaS Integration Panel Template v1.0
-         Header = 52px | minmax(0,1fr) | 52px. */
-      .nika-header {
-        grid-template-columns: 52px minmax(0, 1fr) 52px !important;
-        column-gap: 4px !important;
-        min-height: 60px !important;
-        padding-left: max(8px, env(safe-area-inset-left)) !important;
-        padding-right: max(8px, env(safe-area-inset-right)) !important;
-      }
-      .back,
-      .refresh {
-        width: 52px !important;
-        min-width: 52px !important;
-        min-height: 44px !important;
-        padding: 0 !important;
-        justify-self: center !important;
-        justify-content: center !important;
-      }
-      .back span { display: none !important; }
-      .back ha-icon,
-      .refresh ha-icon { --mdc-icon-size: 24px !important; }
-
-      .title {
-        width: 100%;
-        min-width: 0 !important;
-        justify-self: center;
-        text-align: center !important;
-        line-height: 1.1 !important;
-      }
-      .title strong {
-        display: block;
-        font-size: 17px !important;
-        font-weight: 750 !important;
-        line-height: 1.12 !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .title span {
-        display: block;
-        margin-top: 2px !important;
-        font-size: 9px !important;
-        font-weight: 600 !important;
-        line-height: 1.15 !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      /* Common NikaS card rhythm. */
-      #app-content .view {
-        gap: 14px !important;
-      }
-      #app-content .card {
-        border-radius: 22px !important;
-        box-shadow: 0 2px 10px color-mix(in srgb, #000 5%, transparent) !important;
-      }
-      #app-content .hero-card,
-      #app-content .channel-card,
-      #app-content .failover-strip,
-      #app-content .detail-card,
-      #app-content .traffic-summary,
-      #app-content .failover-hero,
-      #app-content .event-card,
-      #app-content .system-hero,
-      #app-content .diagnostics-card,
-      #app-content .diagnostic-actions,
-      #app-content .integrity-card {
-        padding: 16px !important;
-      }
-
-      /* Full-width, edge-attached Bottom Tab Bar. */
-      .nika-tabbar {
-        width: 100% !important;
-        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-        gap: 2px !important;
-        padding-left: max(6px, env(safe-area-inset-left)) !important;
-        padding-right: max(6px, env(safe-area-inset-right)) !important;
-      }
-      .nika-tabbar button {
-        min-width: 0 !important;
-        min-height: 56px !important;
-        padding: 4px 2px !important;
-      }
-      .nika-tabbar span {
-        width: 100%;
-        max-width: 100%;
-        font-size: 9px !important;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      /* Mobile content: vertical scroll only. */
-      #app-content,
-      keenetic-hero-panel {
-        width: 100%;
-        min-width: 0;
-        max-width: 100%;
-        overflow-x: hidden;
-      }
-
-      /* Desktop is an adaptation of the same information hierarchy. */
-      #app-content > keenetic-hero-panel {
-        max-width: 1280px;
-        margin: 0 auto;
-      }
-
-      /* NikaS narrow-mobile header = 48px | 1fr | 48px. */
-      @media (max-width: 390px) {
-        .nika-header {
-          grid-template-columns: 48px minmax(0, 1fr) 48px !important;
-        }
-        .back,
-        .refresh {
-          width: 48px !important;
-          min-width: 48px !important;
-        }
-        .title strong { font-size: 16px !important; }
-        .title span { font-size: 8.5px !important; }
-      }
-    `;
-    root.append(style);
-  }
+const CORE_COMPONENT = customElements.get("keenetic-hero-panel");
+if (CORE_COMPONENT && !CORE_COMPONENT.prototype.__nikaRecorderDisabledV043) {
+  CORE_COMPONENT.prototype.__nikaRecorderDisabledV043 = true;
+  CORE_COMPONENT.prototype._loadFailoverHistory = async function () {
+    this._failoverLoading = false;
+    this._failoverHistory = [];
+    this._failoverError = "История HA Recorder временно отключена в UI v0.4.3";
+    this._scheduleRender?.();
+  };
 }
 
-if (!customElements.get("keenetic-hero-app-panel-v031")) {
-  customElements.define("keenetic-hero-app-panel-v031", KeeneticHeroAppPanelV031);
+const BASE_COMPONENT = customElements.get("keenetic-hero-app-panel-v042");
+if (BASE_COMPONENT && !customElements.get("keenetic-hero-app-panel-v043")) {
+  class KeeneticHeroAppPanelV043 extends BASE_COMPONENT {
+    _renderShell() {
+      super._renderShell();
+      const version = this.shadowRoot?.querySelector(".title span");
+      if (version) version.textContent = "Network Control Center · UI v0.4.3";
+    }
+  }
+  customElements.define("keenetic-hero-app-panel-v043", KeeneticHeroAppPanelV043);
 }
 })();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v031.js
+// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v043.js
+
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
+(() => {
+const BASE_COMPONENT_V044 = customElements.get("keenetic-hero-app-panel-v043");
+const PARENT_ROUTE_V044 = "/dashboard-infrastructure/overview";
+
+function navigateExplicitV044(path) {
+  if (!path) return;
+  history.pushState(null, "", path);
+  window.dispatchEvent(new Event("location-changed"));
+}
+
+if (BASE_COMPONENT_V044 && !customElements.get("keenetic-hero-app-panel-v044")) {
+  class KeeneticHeroAppPanelV044 extends BASE_COMPONENT_V044 {
+    _renderShell() {
+      super._renderShell();
+      const root = this.shadowRoot;
+      if (!root) return;
+
+      // NikaS navigation contract: explicit Back exits the specialized app.
+      const currentLeft = root.getElementById("nika-menu") || root.getElementById("nika-back");
+      if (currentLeft && currentLeft.dataset.nikasBackV044 !== "true") {
+        const back = currentLeft.cloneNode(false);
+        back.id = "nika-back";
+        back.className = "back";
+        back.dataset.nikasBackV044 = "true";
+        back.setAttribute("type", "button");
+        back.setAttribute("aria-label", "Назад в Инфраструктуру");
+        back.innerHTML = '<ha-icon icon="mdi:arrow-left"></ha-icon><span>Назад</span>';
+        currentLeft.replaceWith(back);
+        back.addEventListener("click", () => {
+          navigateExplicitV044(this._panel?.config?.parent_route || PARENT_ROUTE_V044);
+        });
+      }
+
+      const version = root.querySelector(".title span");
+      if (version) version.textContent = "Network Control Center · UI v0.4.4";
+
+      if (!root.querySelector("style[data-nikas-shell-v044]")) {
+        const style = document.createElement("style");
+        style.dataset.nikasShellV044 = "true";
+        style.textContent = `
+          :host {
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+          }
+          #nika-app-shell {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow-x: hidden;
+          }
+          .nika-header {
+            width: 100%;
+            min-width: 0;
+            grid-template-columns: 84px minmax(0, 1fr) 84px !important;
+            gap: 0 !important;
+          }
+          .nika-header .back,
+          .nika-header .refresh {
+            width: 84px;
+            min-width: 44px;
+            min-height: 44px;
+          }
+          .nika-header .back {
+            justify-self: start;
+            justify-content: flex-start;
+            padding: 0 6px;
+          }
+          .nika-header .refresh {
+            justify-self: end;
+            justify-content: flex-end;
+            padding: 0 6px;
+          }
+          .nika-header .title {
+            min-width: 0;
+            width: 100%;
+            justify-self: center;
+            text-align: center;
+          }
+          .nika-header .title strong,
+          .nika-header .title span {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          #app-content {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow-x: hidden;
+          }
+          .nika-tabbar {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+            gap: 0 !important;
+            padding-left: max(4px, env(safe-area-inset-left)) !important;
+            padding-right: max(4px, env(safe-area-inset-right)) !important;
+          }
+          .nika-tabbar button {
+            min-width: 0;
+            min-height: 56px;
+            padding-left: 1px;
+            padding-right: 1px;
+          }
+          .nika-tabbar span {
+            width: 100%;
+            max-width: 100%;
+            font-size: clamp(8px, 2.15vw, 9px);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          @media (max-width: 390px) {
+            .nika-header {
+              grid-template-columns: 52px minmax(0, 1fr) 52px !important;
+            }
+            .nika-header .back,
+            .nika-header .refresh {
+              width: 52px;
+              justify-content: center;
+              padding: 0;
+            }
+            .nika-header .back span {
+              display: none !important;
+            }
+          }
+          @media (max-width: 350px) {
+            .nika-header .title strong { font-size: 15px; }
+            .nika-header .title span { font-size: 8px; }
+            .nika-tabbar ha-icon { --mdc-icon-size: 20px; }
+          }
+        `;
+        root.append(style);
+      }
+    }
+  }
+
+  customElements.define("keenetic-hero-app-panel-v044", KeeneticHeroAppPanelV044);
+}
+})();
+// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js

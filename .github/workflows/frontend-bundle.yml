@@ -1,54 +1,93 @@
 name: Frontend bundle
 
 on:
+  push:
+    branches:
+      - "ui/header-tabbar-*"
+    paths:
+      - "custom_components/keenetic_hero_4g/frontend/**"
+      - "custom_components/keenetic_hero_4g/panel_runtime.py"
+      - "custom_components/keenetic_hero_4g/panel_contract.json"
+      - "custom_components/keenetic_hero_4g/const.py"
+      - "scripts/build_frontend_bundle.py"
+      - ".github/workflows/frontend-bundle.yml"
   pull_request:
     paths:
       - "custom_components/keenetic_hero_4g/frontend/**"
-      - "custom_components/keenetic_hero_4g/__init__.py"
-      - "custom_components/keenetic_hero_4g/panel.py"
       - "custom_components/keenetic_hero_4g/panel_runtime.py"
       - "custom_components/keenetic_hero_4g/panel_contract.json"
+      - "custom_components/keenetic_hero_4g/const.py"
+      - "scripts/build_frontend_bundle.py"
       - ".github/workflows/frontend-bundle.yml"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   bundle:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - name: Check out source branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
-      - name: Verify current JavaScript syntax
-        run: |
-          node --check custom_components/keenetic_hero_4g/frontend/keenetic-panel.js
-          node --check custom_components/keenetic_hero_4g/frontend/keenetic-overview-v040.js
-          node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v040.js
-          node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v041.js
-          node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
-          node --check custom_components/keenetic_hero_4g/frontend/keenetic-app-v043.js
+      - name: Build autonomous frontend bundle
+        run: python scripts/build_frontend_bundle.py
 
-      - name: Verify production module registration
+      - name: Verify production bundle syntax and dependency contract
         shell: bash
         run: |
-          grep -q 'from .panel_runtime import async_register_native_panel, async_unregister_native_panel' custom_components/keenetic_hero_4g/__init__.py
-          if grep -q 'panel_v030' custom_components/keenetic_hero_4g/__init__.py; then
-            echo "Legacy panel_v030 must not be in the runtime startup path."
+          node --check custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js
+          if grep -nE '^[[:space:]]*(import|export|await[[:space:]]+import)[[:space:](]' custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js; then
+            echo "Production panel bundle must not contain runtime module dependencies."
             exit 1
           fi
-          grep -q 'PANEL_VERSION = "0.4.3"' custom_components/keenetic_hero_4g/const.py
-          grep -q '_frontend_slug' custom_components/keenetic_hero_4g/panel_runtime.py
-          grep -q 'keenetic-app-{slug}.js' custom_components/keenetic_hero_4g/panel_runtime.py
-          grep -q '"version": "0.4.3"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"module": "keenetic-app-v043.js"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"web_component": "keenetic-hero-app-panel-v043"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"failover_recorder_history_enabled": false' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q 'История HA Recorder временно отключена' custom_components/keenetic_hero_4g/frontend/keenetic-app-v043.js
-          echo "Production UI v0.4.3 no-infinite-loading contract OK"
+          if grep -q 'keenetic-panel.css?v=' custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js; then
+            echo "Production panel bundle must contain its own CSS."
+            exit 1
+          fi
+
+      - name: Verify UI v0.4.4 registration contract
+        shell: bash
+        run: |
+          grep -q 'PANEL_VERSION = "0.4.4"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'keenetic-panel-bundle.js' custom_components/keenetic_hero_4g/panel_runtime.py
+          grep -q '"version": "0.4.4"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"web_component": "keenetic-hero-app-panel-v044"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"runtime_previous_version_imports": false' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q 'mdi:arrow-left' custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
+          grep -q 'grid-template-columns: 84px minmax(0, 1fr) 84px' custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
+
+      - name: Commit generated bundle when changed
+        shell: bash
+        env:
+          TARGET_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
+        run: |
+          BUNDLE=custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js
+          if [ -z "$(git status --porcelain -- "$BUNDLE")" ]; then
+            echo "Bundle already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$BUNDLE"
+          git commit -m "build: refresh Keenetic UI v0.4.4 autonomous bundle"
+          git push origin "HEAD:${TARGET_BRANCH}"
+
+      - name: Verify bundle is current
+        shell: bash
+        run: |
+          python scripts/build_frontend_bundle.py --check
+          git diff --exit-code -- custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js

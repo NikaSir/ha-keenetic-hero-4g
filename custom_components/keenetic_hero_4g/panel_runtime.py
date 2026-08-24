@@ -12,13 +12,16 @@ def _frontend_slug() -> str:
 
 
 def _select_frontend() -> None:
+    """Select the current component from one self-contained production bundle."""
     slug = _frontend_slug()
     _panel.PANEL_COMPONENT = f"keenetic-hero-app-panel-{slug}"
-    _panel.PANEL_MODULE = f"{_panel.PANEL_STATIC_URL}/keenetic-app-{slug}.js?v={PANEL_VERSION}"
+    _panel.PANEL_MODULE = (
+        f"{_panel.PANEL_STATIC_URL}/keenetic-panel-bundle.js?v={PANEL_VERSION}"
+    )
 
 
 async def async_register_native_panel(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Register the panel using the physical frontend matching PANEL_VERSION."""
+    """Register the current Keenetic app shell from the autonomous bundle."""
     _select_frontend()
     await _panel.async_register_native_panel(hass, entry)
 
