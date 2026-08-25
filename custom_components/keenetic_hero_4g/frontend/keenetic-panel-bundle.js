@@ -2,6 +2,7 @@
 // Keenetic Hero 4G+ self-contained Home Assistant panel bundle.
 // Current v0.5.x sources and CSS are composed at build time only.
 // Runtime dependency on prior UI modules is forbidden.
+// Binary artwork is delivered from frontend/assets; Base64 data URIs are forbidden.
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-panel.js
 (() => {
@@ -1849,7 +1850,7 @@ if (BASE_COMPONENT_V045 && !customElements.get("keenetic-hero-app-panel-v045")) 
 (() => {
 const CORE_COMPONENT_V050 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V050 = customElements.get("keenetic-hero-app-panel-v045");
-const KEENETIC_ROOM_V050 = "data:image/webp;base64,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 ";
+const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.5.2";
 
 function escV050(value) {
   return String(value ?? "")
@@ -2064,7 +2065,7 @@ if (BASE_COMPONENT_V050 && !customElements.get("keenetic-hero-app-panel-v050")) 
 (() => {
 const CORE_COMPONENT_V051 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V051 = customElements.get("keenetic-hero-app-panel-v050");
-const HERO_ASSET_V051 = "/keenetic_hero_4g_static/keenetic-room-v051.webp?v=0.5.1";
+const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.5.2";
 
 if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) {
   CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051 = true;
@@ -2133,3 +2134,43 @@ if (BASE_COMPONENT_V051 && !customElements.get("keenetic-hero-app-panel-v051")) 
 }
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v051.js
+
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
+(() => {
+const BASE_COMPONENT_V052 = customElements.get("keenetic-hero-app-panel-v051");
+const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.5.2";
+const CORE_COMPONENT_V052 = customElements.get("keenetic-hero-panel");
+
+if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV052) {
+  CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV052 = true;
+  const renderBaseV052 = CORE_COMPONENT_V052.prototype._render;
+
+  CORE_COMPONENT_V052.prototype._render = function (...args) {
+    renderBaseV052.apply(this, args);
+    const root = this.shadowRoot;
+    if (!root || root.querySelector("style[data-keenetic-v052]")) return;
+
+    const style = document.createElement("style");
+    style.dataset.keeneticV052 = "true";
+    style.textContent = `
+      .v050-scene {
+        background-image: url("${HERO_ASSET_V052}") !important;
+      }
+    `;
+    root.append(style);
+  };
+}
+
+if (BASE_COMPONENT_V052 && !customElements.get("keenetic-hero-app-panel-v052")) {
+  class KeeneticHeroAppPanelV052 extends BASE_COMPONENT_V052 {
+    _renderShell() {
+      super._renderShell();
+      const version = this.shadowRoot?.querySelector(".title span");
+      if (version) version.textContent = "Network Control Center · UI v0.5.2";
+    }
+  }
+
+  customElements.define("keenetic-hero-app-panel-v052", KeeneticHeroAppPanelV052);
+}
+})();
+// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
