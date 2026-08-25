@@ -1,5 +1,12 @@
 # Changelog
 
+## UI v0.7.0 / v1.00_b033 — 2026-08-25
+
+- Fixed the Bottom Tab Bar transition race that could leave the panel stalled when opening the second `Каналы` view on iOS.
+- View changes now stop the old ResizeObserver/frame cycle, render the child view, then perform one deferred transform-canvas measurement.
+- Preserved the selected scale across views while resetting each newly opened view to its top-left origin.
+- Kept the accepted iPhone top/bottom safe areas, S8 OMNI tab-bar geometry and router path occlusion unchanged.
+
 ## UI v0.6.9 / v1.00_b032 — 2026-08-25
 
 - Restored the iPhone bottom safe-area inset below the fixed Bottom Tab Bar.
