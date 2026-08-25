@@ -1,5 +1,12 @@
 # Changelog
 
+## UI v0.6.6 / v1.00_b029 — 2026-08-25
+
+- Restored the iOS top safe area that had been overridden by the compact v0.6.3 Header geometry.
+- Moved the complete specialized-panel Header below the iPhone notch / Dynamic Island while keeping its title geometrically centered.
+- Added the system top inset to Header height instead of taking space from the 44 px menu and refresh touch targets.
+- Kept desktop geometry, central-content zoom, fixed Bottom Tab Bar and live WAN/LTE behavior unchanged.
+
 ## UI v0.6.5 / v1.00_b028 — 2026-08-25
 
 - Aligned the router with the live Cable/LAN and LTE connection paths and reduced the three topology cards without changing their factual states.
