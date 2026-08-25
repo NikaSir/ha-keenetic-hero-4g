@@ -10,8 +10,8 @@ FRONTEND = ROOT / "custom_components" / "keenetic_hero_4g" / "frontend"
 OUTPUT = FRONTEND / "keenetic-panel-bundle.js"
 CSS_SOURCE = FRONTEND / "keenetic-panel.css"
 
-# Current production dependency graph only. Historical v0.2/v0.3 modules remain
-# in Git as source history but must not be executed by the current bundle.
+# Current production dependency graph only. Historical source files may remain in
+# Git, but the generated runtime bundle must be autonomous and asset-clean.
 SOURCES = [
     FRONTEND / "keenetic-panel.js",
     FRONTEND / "keenetic-overview-v040.js",
@@ -23,18 +23,32 @@ SOURCES = [
     FRONTEND / "keenetic-app-v045.js",
     FRONTEND / "keenetic-app-v050.js",
     FRONTEND / "keenetic-app-v051.js",
+    FRONTEND / "keenetic-app-v052.js",
 ]
 
 RUNTIME_IMPORT_RE = re.compile(
     r"^\s*(?:await\s+)?import(?:\s*\(\s*)?\s*[\"']\./[^\"']+[\"']\s*\)?\s*;?\s*$",
     re.MULTILINE,
 )
+LEGACY_INLINE_HERO_RE = re.compile(
+    r'const KEENETIC_ROOM_V050 = "data:image/webp;base64,[^"]+";'
+)
+HERO_ASSET_URL = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.5.2"
 CSS_LINK = '<link rel="stylesheet" href="/keenetic_hero_4g_static/keenetic-panel.css?v=${encodeURIComponent(PANEL_VERSION)}">'
 
 
 def _clean(path: Path) -> str:
     text = path.read_text(encoding="utf-8")
     text = RUNTIME_IMPORT_RE.sub("", text).strip()
+
+    # v0.5.0 historically embedded the room artwork as Base64. Keep source
+    # history readable, but never ship that payload in the production bundle.
+    if path.name == "keenetic-app-v050.js":
+        text, count = LEGACY_INLINE_HERO_RE.subn(
+            f'const KEENETIC_ROOM_V050 = "{HERO_ASSET_URL}";', text
+        )
+        if count != 1:
+            raise SystemExit("Legacy inline hero payload was not found exactly once")
 
     if path.name == "keenetic-panel.js":
         css_literal = json.dumps(CSS_SOURCE.read_text(encoding="utf-8"), ensure_ascii=False)
@@ -69,6 +83,7 @@ def build() -> str:
         "// Keenetic Hero 4G+ self-contained Home Assistant panel bundle.",
         "// Current v0.5.x sources and CSS are composed at build time only.",
         "// Runtime dependency on prior UI modules is forbidden.",
+        "// Binary artwork is delivered from frontend/assets; Base64 data URIs are forbidden.",
         "",
     ]
     for path in SOURCES:
@@ -81,6 +96,8 @@ def build() -> str:
         raise SystemExit("Generated production bundle contains a runtime module dependency")
     if "keenetic-panel.css?v=" in bundle:
         raise SystemExit("Generated production bundle contains an external panel stylesheet reference")
+    if "data:image/" in bundle or "base64," in bundle:
+        raise SystemExit("Generated production bundle contains an inline Base64 image")
     return bundle
 
 
