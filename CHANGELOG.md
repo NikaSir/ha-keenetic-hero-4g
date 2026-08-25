@@ -1,5 +1,13 @@
 # Changelog
 
+## UI v0.7.2 / v1.00_b035 — 2026-08-25
+
+- Reintroduced content-only zoom on top of the proven b034 native-scroll navigation path.
+- Removed ResizeObserver, transform translation state and global click capture from the active zoom implementation.
+- Bound two-finger pinch only to the scaled work surface; Header and Bottom Tab Bar remain outside all gesture listeners.
+- Added permanent `− / % / +` controls; the percentage button resets to 100%, and the selected 75–200% scale persists per client.
+- View changes use one cancellable post-render measurement frame with no observer feedback loop.
+
 ## UI v0.7.1 / v1.00_b034 — 2026-08-25
 
 - Temporarily disabled the transform-owned canvas, pinch/pan gesture handlers and ResizeObserver measurement loop after the iOS tab stall persisted in b033.
