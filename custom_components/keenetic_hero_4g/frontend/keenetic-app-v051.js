@@ -1,6 +1,6 @@
 const CORE_COMPONENT_V051 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V051 = customElements.get("keenetic-hero-app-panel-v050");
-const HERO_ASSET_V051 = "/keenetic_hero_4g_static/keenetic-room-v051.webp?v=0.5.1";
+const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.5.2";
 
 if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) {
   CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051 = true;
