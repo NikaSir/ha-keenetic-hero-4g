@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel version: 0.6.7
+Panel version: 0.6.8
 
-Integration build: 1.0.0-b030
+Integration build: 1.0.0-b031
 
 Standard: NikaS Specialized Panel UI Standard v1.3
 
@@ -57,14 +57,15 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - Ethernet/LTE active state, rates, ping, loss, failover and radio values remain factual and read-only.
 - `unknown`, `unavailable`, stale or untrusted data never appear healthy and are never fabricated as zero.
 - Domain cards, local room/router artwork and dynamic SVG topology remain unchanged by the shell migration.
+- Cable, LAN and LTE paths remain behind the router bitmap and disappear at its visible silhouette instead of crossing the top or front face.
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.6.7` and component `keenetic-hero-app-panel-v067`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.6.8` and component `keenetic-hero-app-panel-v068`.
 - Historical modules are build-time inputs only; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
 
 ## Release gate
 
-UI v0.6.7 / b030 is accepted after the native shell, focal pinch, transform pan at 100% and enlarged scale, two-finger reset, 97–103% snap, gesture guard, telemetry rebuild stability and cold-load checks pass on the real iPhone Pro Max / KN-2311 environment.
+UI v0.6.8 / b031 is accepted after the router cleanly occludes all three connection paths and the native shell, focal pinch, transform pan at 100% and enlarged scale, two-finger reset, 97–103% snap, gesture guard, telemetry rebuild stability and cold-load checks pass on the real iPhone Pro Max / KN-2311 environment.

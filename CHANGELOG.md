@@ -1,5 +1,11 @@
 # Changelog
 
+## UI v0.6.8 / v1.00_b031 — 2026-08-25
+
+- Moved the dynamic Cable, LAN and LTE connection layer behind the photorealistic router layer.
+- Connection paths now disappear naturally at the router silhouette instead of crossing its visible top and front faces.
+- Preserved the accepted room/router artwork, topology geometry, factual WAN/LTE states and NikaS v1.3 canvas zoom behavior.
+
 ## UI v0.6.7 / v1.00_b030 — 2026-08-25
 
 - Migrated Keenetic to NikaS Specialized Panel UI Standard v1.3 without changing domain cards, artwork or WAN/LTE semantics.
