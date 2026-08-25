@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "panel": "keenetic",
+  "panel_version": "0.5.2",
+  "static_route": "/keenetic_hero_4g_static/",
+  "assets_directory": "frontend/assets",
+  "assets": [
+    {
+      "path": "frontend/assets/keenetic-room-v052.webp",
+      "url": "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.5.2",
+      "role": "overview_hero_background",
+      "format": "webp"
+    }
+  ]
+}
