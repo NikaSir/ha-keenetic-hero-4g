@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel version: 0.6.8
+Panel version: 0.6.9
 
-Integration build: 1.0.0-b031
+Integration build: 1.0.0-b032
 
 Standard: NikaS Specialized Panel UI Standard v1.3
 
@@ -20,6 +20,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - Refresh is the only global right-rail action; menu and Refresh keep approximately 44 × 44 pt touch targets.
 - Header, menu, Refresh and fixed Bottom Tab Bar remain at native scale.
 - Bottom Tab Bar is full-width, edge-attached, safe-area-aware and contains exactly `Обзор / Каналы / Failover / Трафик / Диагн.`.
+- Bottom Tab Bar keeps its 54 px controls and adds the iPhone bottom safe-area inset below them, matching the accepted S8 OMNI shell geometry.
 - Final work content remains reachable above the Bottom Tab Bar; no horizontal page overflow is introduced at 430 px or 390 px.
 
 ## 2. Transform-owned work canvas
@@ -61,11 +62,11 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.6.8` and component `keenetic-hero-app-panel-v068`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.6.9` and component `keenetic-hero-app-panel-v069`.
 - Historical modules are build-time inputs only; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
 
 ## Release gate
 
-UI v0.6.8 / b031 is accepted after the router cleanly occludes all three connection paths and the native shell, focal pinch, transform pan at 100% and enlarged scale, two-finger reset, 97–103% snap, gesture guard, telemetry rebuild stability and cold-load checks pass on the real iPhone Pro Max / KN-2311 environment.
+UI v0.6.9 / b032 is accepted after the Bottom Tab Bar clears the iPhone Home Indicator with the same effective geometry as S8 OMNI, the router cleanly occludes all three connection paths, and the native shell/zoom checks pass on the real iPhone Pro Max / KN-2311 environment.

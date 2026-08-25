@@ -1,5 +1,11 @@
 # Changelog
 
+## UI v0.6.9 / v1.00_b032 — 2026-08-25
+
+- Restored the iPhone bottom safe-area inset below the fixed Bottom Tab Bar.
+- Kept the accepted 54 px tab controls, 21 px icons and 9 px labels while matching the effective S8 OMNI shell height above the Home Indicator.
+- Preserved the native-scale Header/Bottom Tab Bar, transform-owned work-canvas zoom and router path occlusion from b031.
+
 ## UI v0.6.8 / v1.00_b031 — 2026-08-25
 
 - Moved the dynamic Cable, LAN and LTE connection layer behind the photorealistic router layer.
