@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.5.2"
+    "version": "0.6.0"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -71,13 +71,19 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v052",
+    "web_component": "keenetic-hero-app-panel-v060",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
     "assets_manifest": "panel_manifest.json",
-    "hero_artwork_format": "local_static_webp",
-    "hero_artwork_path": "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp",
+    "hero_artwork_format": "layered_local_assets",
+    "hero_artwork_path": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg",
+    "hero_layers": {
+      "room": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg",
+      "router": "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg",
+      "connections": "dynamic_svg_dom",
+      "telemetry": "live_hass_html"
+    },
     "external_image_dependency": false,
     "inline_base64_assets_allowed": false,
     "cache_busting": "query_panel_version",
@@ -95,9 +101,11 @@
   },
   "view_patterns": {
     "overview": {
-      "hero_style": "immersive_room_router",
-      "hero_background": "local_static_webp",
-      "hero_mobile_min_height_px": 420,
+      "hero_style": "layered_room_router",
+      "hero_background": "local_static_svg",
+      "hero_router_layer": "local_static_svg",
+      "connection_layer": "dynamic_svg",
+      "hero_mobile_min_height_px": 438,
       "dynamic_overlays_from_hass_states": true,
       "preserve_network_topology": true,
       "active_path_only": true,
@@ -105,13 +113,14 @@
       "reserve_channel_separate": true,
       "reserve_badge_separate": true,
       "kpi_overlay": ["ping", "packet_loss", "telemetry_age"],
-      "overview_sections": ["hero", "channels", "last_switch"],
+      "overview_sections": ["hero", "channels"],
       "items": ["ethernet", "lte"],
       "labels": ["Провод", "LTE"],
       "default_selected_from_role": "active_wan",
       "active_branch_indicator": true,
       "single_channel_detail_visible": true,
       "unknown_active_wan_has_no_fabricated_default": true,
+      "mobile_channel_grid": "3x2",
       "device_selector": false,
       "device_control": false
     },
