@@ -2,6 +2,8 @@ await import("./keenetic-app-v060.js?v=0.6.1");
 
 const CORE_COMPONENT_V061 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V061 = customElements.get("keenetic-hero-app-panel-v060");
+const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.6.1";
+const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.6.1";
 
 function _v061LabelCard(kind, title, subtitle, icon) {
   const card = document.createElement("div");
@@ -18,6 +20,10 @@ function _v061EnhanceScene(root) {
   if (!scene) return;
 
   scene.classList.add("v061-topology-scene");
+  scene.style.backgroundImage = `url("${ROOM_ASSET_V061}")`;
+  const router = scene.querySelector(".v060-router");
+  if (router && router.getAttribute("src") !== ROUTER_ASSET_V061) router.setAttribute("src", ROUTER_ASSET_V061);
+
   scene.querySelectorAll(".v050-path,.v050-reserve-badge,.v060-flow-layer").forEach((el) => {
     el.hidden = true;
   });
@@ -54,12 +60,21 @@ function _v061EnhanceScene(root) {
 
   const reserveText = root.querySelector(".v050-reserve-strip strong")?.textContent || "";
   const lteCard = scene.querySelector(".v061-lte");
-  if (lteCard && cableActive) {
+  if (lteCard) {
     const subtitle = lteCard.querySelector("span");
-    if (subtitle) subtitle.textContent = /недоступ/i.test(reserveText) ? "Недоступен" : "Резерв готов";
+    if (subtitle) {
+      subtitle.textContent = lteActive ? "Активен" : /недоступ/i.test(reserveText) ? "Недоступен" : "Резерв готов";
+    }
   }
 
-  const ethernetHead = root.querySelector(".v050-channel:first-of-type .v050-channel-head strong");
+  const cableCard = scene.querySelector(".v061-cable");
+  if (cableCard) {
+    const subtitle = cableCard.querySelector("span");
+    if (subtitle) subtitle.textContent = cableActive ? "100.0 Mbit/s" : lteActive ? "Резерв" : "Недоступен";
+  }
+
+  const ethernet = root.querySelectorAll(".v050-channel")[0];
+  const ethernetHead = ethernet?.querySelector(".v050-channel-head strong");
   if (ethernetHead) ethernetHead.textContent = "Кабель (Ethernet)";
 }
 
@@ -68,6 +83,7 @@ function _v061InstallStyles(root) {
   const style = document.createElement("style");
   style.dataset.keeneticV061 = "true";
   style.textContent = `
+    .v050-path[hidden],.v050-reserve-badge[hidden],.v060-flow-layer[hidden]{display:none!important}
     .v061-topology-layer{position:absolute;inset:0;z-index:4;pointer-events:none}
     .v061-flow-svg{width:100%;height:100%;overflow:visible}
     .v061-flow-line,.v061-flow-glow{fill:none;stroke-linecap:round;stroke-linejoin:round}
