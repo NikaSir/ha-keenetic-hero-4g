@@ -8,6 +8,7 @@ on:
       - "ui/b020-*"
       - "fix/b021-*"
       - "refactor/b022-*"
+      - "ui/b023-*"
     paths:
       - "custom_components/keenetic_hero_4g/frontend/**"
       - "custom_components/keenetic_hero_4g/panel_runtime.py"
@@ -69,36 +70,44 @@ jobs:
             exit 1
           fi
 
-      - name: Verify UI v0.5.2 frontend assets contract
+      - name: Verify UI v0.6.0 layered hero contract
         shell: bash
         run: |
-          grep -q 'PANEL_VERSION = "0.5.2"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'PANEL_VERSION = "0.6.0"' custom_components/keenetic_hero_4g/const.py
           grep -q 'keenetic-panel-bundle.js' custom_components/keenetic_hero_4g/panel_runtime.py
-          grep -q '"version": "0.5.2"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"web_component": "keenetic-hero-app-panel-v052"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"version": "0.6.0"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"web_component": "keenetic-hero-app-panel-v060"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"hero_artwork_format": "layered_local_assets"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"connections": "dynamic_svg_dom"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"assets_directory": "frontend/assets"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"assets_manifest": "panel_manifest.json"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"inline_base64_assets_allowed": false' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"hero_artwork_path": "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"websocket_refresh": "background_only"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"structural_polling_seconds": 0' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q 'CustomEvent("hass-toggle-menu"' custom_components/keenetic_hero_4g/frontend/keenetic-app-v045.js
-          test -s custom_components/keenetic_hero_4g/frontend/assets/keenetic-room-v052.webp
-          test ! -e custom_components/keenetic_hero_4g/frontend/keenetic-room-v051.webp
-          grep -q '/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.5.2' custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
-          grep -q 'keenetic-hero-app-panel-v052' custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
-          grep -q 'keenetic-app-v052.js' scripts/build_frontend_bundle.py
+          test -s custom_components/keenetic_hero_4g/frontend/assets/keenetic-hero-room-v060.svg
+          test -s custom_components/keenetic_hero_4g/frontend/assets/keenetic-hero-router-v060.svg
+          grep -q '<svg' custom_components/keenetic_hero_4g/frontend/assets/keenetic-hero-room-v060.svg
+          grep -q '<svg' custom_components/keenetic_hero_4g/frontend/assets/keenetic-hero-router-v060.svg
+          grep -q '/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.6.0' custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js
+          grep -q '/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.6.0' custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js
+          grep -q 'v060-flow-svg' custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js
+          grep -q 'keenetic-hero-app-panel-v060' custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js
+          grep -q 'keenetic-app-v060.js' scripts/build_frontend_bundle.py
           python - <<'PY'
           import json
           from pathlib import Path
 
           root = Path("custom_components/keenetic_hero_4g")
           manifest = json.loads((root / "panel_manifest.json").read_text(encoding="utf-8"))
-          assert manifest["panel_version"] == "0.5.2"
+          assert manifest["panel_version"] == "0.6.0"
           assert manifest["assets_directory"] == "frontend/assets"
+          roles = {asset["role"] for asset in manifest["assets"]}
+          assert roles == {"overview_hero_background", "overview_router_layer"}
           for asset in manifest["assets"]:
               path = root / asset["path"]
               assert path.is_file() and path.stat().st_size > 0, path
+              assert asset["url"].endswith("?v=0.6.0"), asset
           PY
 
       - name: Commit generated bundle when changed
@@ -114,7 +123,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$BUNDLE"
-          git commit -m "build: refresh Keenetic UI v0.5.2 autonomous bundle"
+          git commit -m "build: refresh Keenetic UI v0.6.0 autonomous bundle"
           git push origin "HEAD:${TARGET_BRANCH}"
 
       - name: Verify bundle is current
