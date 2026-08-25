@@ -8,11 +8,11 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.6.4"
+    "version": "0.6.5"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
-    "version": "1.4",
+    "version": "1.5",
     "header": {
       "menu": {
         "icon": "mdi:menu",
@@ -54,6 +54,21 @@
       "safe_area_owner": "home_assistant_host",
       "safe_area_applied_once": true
     },
+    "content_zoom": {
+      "enabled": true,
+      "scope": "central_work_area_only",
+      "gesture": "two_finger_pinch",
+      "gesture_origin": "touch_midpoint",
+      "header_fixed": true,
+      "bottom_navigation_fixed": true,
+      "controls_fixed": true,
+      "controls": ["decrease", "percentage", "increase", "reset"],
+      "min_percent": 85,
+      "max_percent": 180,
+      "button_step_percent": 10,
+      "pan_when_zoomed": true,
+      "persistence": "localStorage"
+    },
     "secondary_views": ["system"],
     "bootstrap": {
       "registration_snapshot_fallback": true,
@@ -73,7 +88,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v064",
+    "web_component": "keenetic-hero-app-panel-v065",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",

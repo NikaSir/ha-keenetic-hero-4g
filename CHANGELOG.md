@@ -1,5 +1,13 @@
 # Changelog
 
+## UI v0.6.5 / v1.00_b028 — 2026-08-25
+
+- Aligned the router with the live Cable/LAN and LTE connection paths and reduced the three topology cards without changing their factual states.
+- Added NikaS content-only zoom: two-finger pinch around the gesture midpoint plus fixed on-screen decrease, increase and reset controls.
+- Kept Header, Bottom Tab Bar and zoom controls outside the scaled work area; zoomed content supports horizontal and vertical panning.
+- Added an 85–180% zoom range, 10% button steps and local persistence across tabs and panel restarts.
+- Preserved the UI v0.6.4 photorealistic local background, read-only WAN/LTE behavior and autonomous frontend bundle.
+
 ## UI v0.6.4 / v1.00_b027 — 2026-08-25
 
 - Replaced the flat illustrated hero room with a warm photorealistic living-room background prepared specifically for the mobile overview composition.
