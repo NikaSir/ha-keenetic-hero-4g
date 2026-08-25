@@ -1,5 +1,12 @@
 # Changelog
 
+## UI v0.6.4 / v1.00_b027 — 2026-08-25
+
+- Replaced the flat illustrated hero room with a warm photorealistic living-room background prepared specifically for the mobile overview composition.
+- Kept the room bitmap free of the router, connection lines, labels and telemetry so every live UI element remains an independent layer.
+- Optimized the new local 820×820 WebP background to approximately 33 KB; no external image dependency or Base64 payload was introduced.
+- Preserved the accepted UI v0.6.3 geometry, transparent router layer, WAN/LTE semantics, fast bootstrap and autonomous production bundle.
+
 ## UI v0.6.3 / v1.00_b026 — 2026-08-25
 
 - Aligned the live iPhone overview with the accepted target composition without changing read-only WAN/LTE semantics.
