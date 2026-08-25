@@ -13,6 +13,7 @@ on:
       - "ui/b025-*"
       - "ui/b026-*"
       - "ui/b027-*"
+      - "ui/b028-*"
     paths:
       - "custom_components/keenetic_hero_4g/frontend/**"
       - "custom_components/keenetic_hero_4g/panel_runtime.py"
@@ -74,13 +75,13 @@ jobs:
             exit 1
           fi
 
-      - name: Verify UI v0.6.4 photorealistic room contract
+      - name: Verify UI v0.6.5 content zoom contract
         shell: bash
         run: |
-          grep -q 'PANEL_VERSION = "0.6.4"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'PANEL_VERSION = "0.6.5"' custom_components/keenetic_hero_4g/const.py
           grep -q 'keenetic-panel-bundle.js' custom_components/keenetic_hero_4g/panel_runtime.py
-          grep -q '"version": "0.6.4"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"web_component": "keenetic-hero-app-panel-v064"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"version": "0.6.5"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"web_component": "keenetic-hero-app-panel-v065"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"hero_artwork_format": "layered_local_assets"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"connections": "dynamic_svg_dom"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"room": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp"' custom_components/keenetic_hero_4g/panel_contract.json
@@ -89,6 +90,10 @@ jobs:
           grep -q '"router_blocks_path_visual": true' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"status_primary_label_ethernet": "Ethernet"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"safe_area_applied_once": true' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"scope": "central_work_area_only"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"gesture": "two_finger_pinch"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"min_percent": 85' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"max_percent": 180' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"center_internet_cloud": false' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"outlet_artwork": false' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"inline_base64_assets_allowed": false' custom_components/keenetic_hero_4g/panel_contract.json
@@ -98,6 +103,10 @@ jobs:
           test -s custom_components/keenetic_hero_4g/frontend/assets/keenetic-hero-router-v063.webp
           grep -q 'keenetic-hero-room-v064.webp' custom_components/keenetic_hero_4g/frontend/keenetic-app-v064.js
           grep -q 'keenetic-hero-app-panel-v064' custom_components/keenetic_hero_4g/frontend/keenetic-app-v064.js
+          grep -q 'keenetic-hero-app-panel-v065' custom_components/keenetic_hero_4g/frontend/keenetic-app-v065.js
+          grep -q 'nikas.keenetic.contentZoom.v1' custom_components/keenetic_hero_4g/frontend/keenetic-app-v065.js
+          grep -q 'touch-action:pan-x pan-y' custom_components/keenetic_hero_4g/frontend/keenetic-app-v065.js
+          grep -q 'nika-zoom-dock' custom_components/keenetic_hero_4g/frontend/keenetic-app-v065.js
           grep -q 'keenetic-hero-router-v063.webp' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'v063-flow-layer' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'v063-cable-line' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
@@ -106,21 +115,21 @@ jobs:
           grep -q 'replace(/Кабель/gi, "Ethernet")' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'keenetic-hero-app-panel-v063' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'padding-bottom:4px!important' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
-          grep -q 'keenetic-app-v064.js' scripts/build_frontend_bundle.py
+          grep -q 'keenetic-app-v065.js' scripts/build_frontend_bundle.py
           python - <<'PY'
           import json
           from pathlib import Path
 
           root = Path("custom_components/keenetic_hero_4g")
           manifest = json.loads((root / "panel_manifest.json").read_text(encoding="utf-8"))
-          assert manifest["panel_version"] == "0.6.4"
+          assert manifest["panel_version"] == "0.6.5"
           assert manifest["assets_directory"] == "frontend/assets"
           roles = {asset["role"] for asset in manifest["assets"]}
           assert roles == {"overview_hero_background", "overview_router_layer"}
           for asset in manifest["assets"]:
               path = root / asset["path"]
               assert path.is_file() and path.stat().st_size > 0, path
-              assert asset["url"].endswith("?v=0.6.4"), asset
+              assert asset["url"].endswith("?v=0.6.5"), asset
           PY
 
       - name: Commit generated bundle when changed
@@ -136,7 +145,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$BUNDLE"
-          git commit -m "build: refresh Keenetic UI v0.6.4 autonomous bundle"
+          git commit -m "build: refresh Keenetic UI v0.6.5 autonomous bundle"
           git push origin "HEAD:${TARGET_BRANCH}"
 
       - name: Verify bundle is current
