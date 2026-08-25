@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.7.1"
+    "version": "0.7.2"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -64,35 +64,35 @@
       "safe_area_applied_once": true
     },
     "content_zoom": {
-      "enabled": false,
+      "enabled": true,
       "scope": "central_work_area_only",
-      "engine": "native_scroll_stability_mode",
-      "transform": "none",
+      "engine": "isolated_native_scroll_scale",
+      "transform": "scale_only",
       "single_viewport_per_panel_instance": true,
-      "gesture": "disabled",
-      "gesture_origin": "disabled",
+      "gesture": "two_finger_pinch",
+      "gesture_origin": "touch_midpoint",
       "header_fixed": true,
       "bottom_navigation_fixed": true,
-      "permanent_controls": false,
-      "controls": [],
-      "min_percent": 100,
-      "max_percent": 100,
-      "pan_when_zoomed": false,
+      "permanent_controls": true,
+      "controls": ["decrease", "current_percent_reset", "increase"],
+      "min_percent": 75,
+      "max_percent": 200,
+      "pan_when_zoomed": true,
       "pan_at_100_percent": false,
       "native_overflow_position": true,
-      "reset_gesture": "disabled",
+      "reset_gesture": "current_percent_button",
       "reset_target": "100_percent_origin",
       "snap_to_100_percent": {
         "min_percent": 100,
         "max_percent": 100
       },
-      "reset_feedback": "disabled",
+      "reset_feedback": "current_percent_label",
       "gesture_click_guard_ms": 0,
       "cancel_entity_hold_on_gesture": false,
       "responsive_layout_before_zoom": true,
       "idempotent_reconciliation": true,
-      "persistence": "disabled",
-      "persistence_scope": "none"
+      "persistence": "localStorage",
+      "persistence_scope": "panel_client"
     },
     "secondary_views": ["system"],
     "bootstrap": {
@@ -113,7 +113,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v071",
+    "web_component": "keenetic-hero-app-panel-v072",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",

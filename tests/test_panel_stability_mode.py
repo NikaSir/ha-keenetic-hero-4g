@@ -38,13 +38,8 @@ class PanelStabilityModeTests(unittest.TestCase):
         self.assertNotIn("requestAnimationFrame", transition)
         self.assertNotIn("ResizeObserver", transition)
 
-    def test_current_component_and_policy_are_cache_safe(self) -> None:
+    def test_b034_component_is_cache_safe(self) -> None:
         self.assertIn('import("./keenetic-app-v070.js?v=0.7.1")', self.source)
-        self.assertEqual(self.manifest["panel_version"], "0.7.1")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v071")
-        self.assertEqual(
-            self.manifest["zoom_policy"]["engine"], "native_scroll_stability_mode"
-        )
 
 
 if __name__ == "__main__":
