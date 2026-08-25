@@ -1,5 +1,15 @@
 # Changelog
 
+## UI v0.6.3 / v1.00_b026 — 2026-08-25
+
+- Aligned the live iPhone overview with the accepted target composition without changing read-only WAN/LTE semantics.
+- Removed duplicate top and bottom safe-area padding inside the Home Assistant-hosted app shell; Header and Bottom Tab Bar now consume the safe area exactly once.
+- Restored the accepted warm room background and added a transparent, photorealistic 53 KB WebP router layer while keeping all artwork local to the integration.
+- Restored the target mobile rhythm: 10 px content rails, compact Header, 438 px hero, larger KPI tiles and LTE reserve strip.
+- Rebuilt the live topology with separate LTE, Cable and LAN cards: Cable/LAN use a solid green active path, LTE reserve uses animated blue dots, and no inactive grey branch is rendered.
+- Kept factual naming: the status sentence reports `Ethernet`, the topology uses the operational label `Кабель`, and the channel detail remains `Кабель (Ethernet)`.
+- Preserved the b019 fast bootstrap, cached role mapping, five-second background WebSocket timeout and self-contained frontend bundle.
+
 ## UI v0.4.4 / v1.00_b018 — 2026-08-24
 
 - Restored the mandatory NikaS specialized-panel Header contract: explicit `← Назад` on the left, `Keenetic Hero 4G+` geometrically centered, and one global Refresh action on the right.
