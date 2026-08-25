@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.6.3"
+    "version": "0.6.4"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -73,15 +73,15 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v063",
+    "web_component": "keenetic-hero-app-panel-v064",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
     "assets_manifest": "panel_manifest.json",
     "hero_artwork_format": "layered_local_assets",
-    "hero_artwork_path": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg",
+    "hero_artwork_path": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp",
     "hero_layers": {
-      "room": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg",
+      "room": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp",
       "router": "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp",
       "connections": "dynamic_svg_dom",
       "telemetry": "live_hass_html"
@@ -104,7 +104,7 @@
   "view_patterns": {
     "overview": {
       "hero_style": "layered_room_router",
-      "hero_background": "local_static_svg",
+      "hero_background": "local_static_webp",
       "hero_router_layer": "local_static_webp",
       "connection_layer": "dynamic_svg",
       "hero_mobile_min_height_px": 438,
@@ -126,7 +126,7 @@
         "router_blocks_path_visual": true
       },
       "composition": {
-        "room_asset": "keenetic-hero-room-v060.svg",
+        "room_asset": "keenetic-hero-room-v064.webp",
         "router_asset": "keenetic-hero-router-v063.webp",
         "router_scale_mobile_percent": 53,
         "router_vertical_percent": 52.5,
