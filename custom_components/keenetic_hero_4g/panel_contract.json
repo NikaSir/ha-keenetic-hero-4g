@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.6.0"
+    "version": "0.6.1"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -71,7 +71,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v060",
+    "web_component": "keenetic-hero-app-panel-v061",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
@@ -112,10 +112,19 @@
       "inactive_grey_branches": false,
       "reserve_channel_separate": true,
       "reserve_badge_separate": true,
+      "topology": {
+        "upper_left": "lte_reserve",
+        "lower_left": "ethernet_cable",
+        "right": "lan",
+        "center_internet_cloud": false,
+        "outlet_artwork": false,
+        "cable_label": "Кабель",
+        "lan_label": "LAN"
+      },
       "kpi_overlay": ["ping", "packet_loss", "telemetry_age"],
       "overview_sections": ["hero", "channels"],
       "items": ["ethernet", "lte"],
-      "labels": ["Провод", "LTE"],
+      "labels": ["Кабель", "LTE"],
       "default_selected_from_role": "active_wan",
       "active_branch_indicator": true,
       "single_channel_detail_visible": true,
@@ -127,7 +136,7 @@
     "wan": {
       "selector": "contextual_segmented",
       "items": ["ethernet", "lte"],
-      "labels": ["Провод", "LTE"],
+      "labels": ["Кабель", "LTE"],
       "single_detail_visible": true,
       "device_selector": false
     },
