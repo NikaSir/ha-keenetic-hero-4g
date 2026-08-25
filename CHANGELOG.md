@@ -1,5 +1,15 @@
 # Changelog
 
+## UI v0.6.7 / v1.00_b030 — 2026-08-25
+
+- Migrated Keenetic to NikaS Specialized Panel UI Standard v1.3 without changing domain cards, artwork or WAN/LTE semantics.
+- Replaced native overflow/scroll-position zoom with one transform-owned `translate3d(x,y,0) scale(s)` work canvas so iOS cannot rubber-band the panel back to an edge or origin.
+- Added focal two-finger pinch and one-finger canvas pan at both 100% and enlarged scales; scale now follows the required 75–200% range.
+- Removed permanent zoom controls; two stationary two-finger taps reset scale and translation to 100%/origin, while a completed 97–103% pinch snaps to 100%.
+- Added the transient `Масштаб 100%` confirmation, per-client scale persistence and rebuild-safe transform state across telemetry updates.
+- Added gesture guards that cancel pending entity holds and suppress post-pinch/pan clicks for 700 ms while preserving intentional stationary hold → native Home Assistant more-info.
+- Preserved the iPhone safe area, native HA menu, geometrically centered Header, fixed full-width Bottom Tab Bar, local layered artwork and autonomous bundle delivery.
+
 ## UI v0.6.6 / v1.00_b029 — 2026-08-25
 
 - Restored the iOS top safe area that had been overridden by the compact v0.6.3 Header geometry.

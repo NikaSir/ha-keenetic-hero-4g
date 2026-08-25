@@ -8,15 +8,23 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.6.6"
+    "version": "0.6.7"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
-    "version": "1.5",
+    "version": "1.3",
+    "standards": {
+      "shell": "1.3",
+      "zoom": "1.3",
+      "integration_ui": "1.4",
+      "frontend_delivery": "1.1"
+    },
     "header": {
       "menu": {
         "icon": "mdi:menu",
         "action": "hass-toggle-menu",
+        "event_bubbles": true,
+        "event_composed": true,
         "min_touch_target_px": 44
       },
       "title": "Keenetic Hero 4G+",
@@ -58,17 +66,33 @@
     "content_zoom": {
       "enabled": true,
       "scope": "central_work_area_only",
+      "engine": "transform_owned_canvas",
+      "transform": "translate3d_pan_then_scale",
+      "single_viewport_per_panel_instance": true,
       "gesture": "two_finger_pinch",
       "gesture_origin": "touch_midpoint",
       "header_fixed": true,
       "bottom_navigation_fixed": true,
-      "controls_fixed": true,
-      "controls": ["decrease", "percentage", "increase", "reset"],
-      "min_percent": 85,
-      "max_percent": 180,
-      "button_step_percent": 10,
+      "permanent_controls": false,
+      "controls": [],
+      "min_percent": 75,
+      "max_percent": 200,
       "pan_when_zoomed": true,
-      "persistence": "localStorage"
+      "pan_at_100_percent": true,
+      "native_overflow_position": false,
+      "reset_gesture": "two_finger_double_tap",
+      "reset_target": "100_percent_origin",
+      "snap_to_100_percent": {
+        "min_percent": 97,
+        "max_percent": 103
+      },
+      "reset_feedback": "Масштаб 100%",
+      "gesture_click_guard_ms": 700,
+      "cancel_entity_hold_on_gesture": true,
+      "responsive_layout_before_zoom": true,
+      "idempotent_reconciliation": true,
+      "persistence": "localStorage",
+      "persistence_scope": "panel_client"
     },
     "secondary_views": ["system"],
     "bootstrap": {
@@ -89,7 +113,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v066",
+    "web_component": "keenetic-hero-app-panel-v067",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
