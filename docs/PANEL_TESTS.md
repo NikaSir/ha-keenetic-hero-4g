@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel version: 0.7.0
+Panel version: 0.7.1
 
-Integration build: 1.0.0-b033
+Integration build: 1.0.0-b034
 
 Standard: NikaS Specialized Panel UI Standard v1.3
 
@@ -23,34 +23,24 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - Bottom Tab Bar keeps its 54 px controls and adds the iPhone bottom safe-area inset below them, matching the accepted S8 OMNI shell geometry.
 - Final work content remains reachable above the Bottom Tab Bar; no horizontal page overflow is introduced at 430 px or 390 px.
 
-## 2. Transform-owned work canvas
+## 2. Temporary stability mode
 
 - Exactly one `#app-content`, one direct `#nika-zoom-stage` and one direct `#nika-zoom-surface` exist after initial load, tab changes and repeated HA state updates.
-- Only the work canvas scales; Header and Bottom Tab Bar remain outside it.
-- Canvas position is represented only by `translate3d(x,y,0) scale(s)`; native `scrollLeft`, `scrollTop`, CSS `zoom` and browser rubber-band offsets are not used as state.
-- Responsive mobile/tablet/desktop layout is resolved before the user transform is applied.
-- Scale is limited to 75–200%, defaults to 100% and persists locally for this panel/client.
-- At less than 100%, the native-width work canvas is centered horizontally.
-- Changing any Bottom Tab Bar view stops the previous ResizeObserver/animation-frame measurement, renders the new child view, then performs exactly one deferred canvas measurement from the new view origin.
+- Transform, pinch/pan gesture handling and ResizeObserver measurement are disabled in b034.
+- The central work area uses native vertical scrolling; Header and Bottom Tab Bar remain fixed outside it.
+- Each Bottom Tab Bar action directly changes the child view and returns the work area to its top-left origin.
+- Responsive mobile/tablet/desktop layout remains active at native 100% scale.
 
 ## 3. iPhone gestures
 
-- Two-finger pinch preserves the content point below the live midpoint between the fingers.
-- At 100%, one finger moves the canvas vertically to content below the fold and the released position remains stable.
-- At 150–200%, one finger pans the canvas horizontally and vertically; all edges remain clamped to the viewport.
-- No permanent `− / % / +` controls are rendered.
-- Two consecutive stationary two-finger taps within 360 ms reset scale and translation to 100%/origin.
-- A completed pinch between 97% and 103% snaps to exactly 100%.
-- Reset and snap briefly show `Масштаб 100%` outside the scaled canvas.
-- The same logical transform survives normal telemetry updates and unavailable/available transitions.
+- Pinch-to-zoom, canvas pan, reset gesture and gesture click guard are temporarily disabled.
+- One-finger vertical scrolling remains available in the work area.
+- Native Header and Bottom Tab Bar interactions remain available and do not enter a gesture state.
 
-## 4. Interaction guard
+## 4. Interaction
 
-- Starting a two-finger gesture immediately cancels pending entity holds.
-- Crossing the 5 px one-finger pan threshold dispatches `pointercancel` to the touched factual entity.
-- Clicks generated after pinch/pan are suppressed for 700 ms.
-- Pinch and pan never open native Home Assistant more-info/history.
 - A stationary intentional hold outside a gesture still opens native more-info.
+- Bottom Tab Bar clicks are not intercepted by canvas gesture guards.
 
 ## 5. Loading and factual semantics
 
@@ -63,11 +53,11 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.0` and component `keenetic-hero-app-panel-v070`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.1` and component `keenetic-hero-app-panel-v071`.
 - Historical modules are build-time inputs only; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
 
 ## Release gate
 
-UI v0.7.0 / b033 is accepted after all five Bottom Tab Bar views switch without a stalled UI or loading state, while safe-area geometry, router path occlusion and native shell/zoom checks continue to pass on the real iPhone Pro Max / KN-2311 environment.
+UI v0.7.1 / b034 is accepted after all five Bottom Tab Bar views switch repeatedly without a stalled UI, while native vertical scrolling, safe-area geometry and router path occlusion continue to pass on the real iPhone Pro Max / KN-2311 environment.
