@@ -22,17 +22,18 @@ class PanelZoomContractTests(unittest.TestCase):
     def test_zoom_is_scoped_between_fixed_navigation_layers(self) -> None:
         zoom = self.contract["app_shell"]["content_zoom"]
         self.assertEqual(zoom["scope"], "central_work_area_only")
-        self.assertEqual(zoom["engine"], "transform_owned_canvas")
+        self.assertFalse(zoom["enabled"])
+        self.assertEqual(zoom["engine"], "native_scroll_stability_mode")
         self.assertTrue(zoom["header_fixed"])
         self.assertTrue(zoom["bottom_navigation_fixed"])
         self.assertTrue(zoom["single_viewport_per_panel_instance"])
 
     def test_zoom_limits_and_persistence_are_locked(self) -> None:
         zoom = self.contract["app_shell"]["content_zoom"]
-        self.assertEqual(zoom["min_percent"], 75)
-        self.assertEqual(zoom["max_percent"], 200)
-        self.assertEqual(zoom["persistence"], "localStorage")
-        self.assertEqual(zoom["persistence_scope"], "panel_client")
+        self.assertEqual(zoom["min_percent"], 100)
+        self.assertEqual(zoom["max_percent"], 100)
+        self.assertEqual(zoom["persistence"], "disabled")
+        self.assertEqual(zoom["persistence_scope"], "none")
 
     def test_pinch_uses_two_touches_and_the_live_midpoint(self) -> None:
         self.assertIn("event.touches.length >= 2", self.source)
@@ -53,14 +54,14 @@ class PanelZoomContractTests(unittest.TestCase):
         zoom = self.contract["app_shell"]["content_zoom"]
         self.assertFalse(zoom["permanent_controls"])
         self.assertEqual(zoom["controls"], [])
-        self.assertEqual(zoom["reset_gesture"], "two_finger_double_tap")
+        self.assertEqual(zoom["reset_gesture"], "disabled")
         self.assertIn('root.querySelectorAll(".nika-zoom-dock")', self.source)
         self.assertIn("CANVAS_DOUBLE_TAP_DELAY_MS_V067 = 360", self.source)
 
     def test_snap_reset_feedback_and_origin_are_locked(self) -> None:
         zoom = self.contract["app_shell"]["content_zoom"]
-        self.assertEqual(zoom["snap_to_100_percent"], {"min_percent": 97, "max_percent": 103})
-        self.assertEqual(zoom["reset_feedback"], "Масштаб 100%")
+        self.assertEqual(zoom["snap_to_100_percent"], {"min_percent": 100, "max_percent": 100})
+        self.assertEqual(zoom["reset_feedback"], "disabled")
         self.assertIn('toast.textContent = "Масштаб 100%"', self.source)
         self.assertIn("state.scale = 1", self.source)
         self.assertIn("state.x = 0", self.source)
@@ -68,8 +69,8 @@ class PanelZoomContractTests(unittest.TestCase):
 
     def test_gestures_cancel_more_info_and_guard_generated_clicks(self) -> None:
         zoom = self.contract["app_shell"]["content_zoom"]
-        self.assertTrue(zoom["cancel_entity_hold_on_gesture"])
-        self.assertEqual(zoom["gesture_click_guard_ms"], 700)
+        self.assertFalse(zoom["cancel_entity_hold_on_gesture"])
+        self.assertEqual(zoom["gesture_click_guard_ms"], 0)
         self.assertIn('new PointerEvent("pointercancel"', self.source)
         self.assertIn("event.stopImmediatePropagation()", self.source)
 
@@ -82,12 +83,12 @@ class PanelZoomContractTests(unittest.TestCase):
     def test_delivery_manifest_matches_shell_and_zoom_policy(self) -> None:
         self.assertEqual(self.manifest["route"], "/dashboard-keenetic")
         self.assertEqual(self.manifest["entry_module"], "keenetic-panel-bundle.js")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v070")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v071")
         self.assertEqual(
             self.manifest["ha_menu_event"],
             {"type": "hass-toggle-menu", "bubbles": True, "composed": True},
         )
-        self.assertEqual(self.manifest["zoom_policy"]["engine"], "transform_owned_canvas")
+        self.assertEqual(self.manifest["zoom_policy"]["engine"], "native_scroll_stability_mode")
         self.assertFalse(self.manifest["zoom_policy"]["permanent_controls"])
 
 

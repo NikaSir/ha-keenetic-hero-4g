@@ -1,5 +1,11 @@
 # Changelog
 
+## UI v0.7.1 / v1.00_b034 — 2026-08-25
+
+- Temporarily disabled the transform-owned canvas, pinch/pan gesture handlers and ResizeObserver measurement loop after the iOS tab stall persisted in b033.
+- Restored direct Bottom Tab Bar switching with ordinary native vertical scrolling in the central work area.
+- Kept the Header, Bottom Tab Bar, top/bottom safe areas, artwork and router path occlusion unchanged.
+
 ## UI v0.7.0 / v1.00_b033 — 2026-08-25
 
 - Fixed the Bottom Tab Bar transition race that could leave the panel stalled when opening the second `Каналы` view on iOS.

@@ -36,7 +36,7 @@ class PanelTabTransitionTests(unittest.TestCase):
         self.assertLess(render, deferred)
         self.assertLess(deferred, measured)
 
-    def test_current_component_is_cache_safe(self) -> None:
+    def test_b033_component_is_cache_safe(self) -> None:
         self.assertIn('import("./keenetic-app-v069.js?v=0.7.0")', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v070"', self.source)
 
