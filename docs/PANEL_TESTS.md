@@ -1,111 +1,70 @@
 # Native panel acceptance tests
 
-Panel: Keenetic Hero 4G+  
-Panel version: 0.4.4  
-Integration build: 1.0.0-b018  
-Standard: Home Assistant NikaS specialized panel UI v1.2  
-Target device: KN-2311  
-Primary viewport: iPhone Pro Max portrait (430 × 932 CSS px)
+Panel: Keenetic Hero 4G+
 
-## 1. App-shell / viewport gate
+Panel version: 0.6.7
 
-At 430 × 932 CSS px:
+Integration build: 1.0.0-b030
 
-- no horizontal scrolling anywhere in the specialized panel;
-- Header has three semantic zones: explicit Back / centered title / Refresh;
-- Header side rails are symmetric `84px | minmax(0,1fr) | 84px` so the title is geometrically centered against the viewport, not merely centered between unequal buttons;
-- left Header control is `mdi:arrow-left` + `Назад` and explicitly navigates to `/dashboard-infrastructure/overview`;
-- browser history is never used as the Back contract;
-- right Header control is one global Refresh action;
-- Back and Refresh touch targets are at least 44 × 44 px;
-- title `Keenetic Hero 4G+` remains on one line or ellipsizes inside the center rail without moving the center point;
-- subtitle is `Network Control Center · UI v0.4.4` and remains secondary;
-- at <=390 px the Header switches to symmetric 52 px rails and hides only the Back text while preserving the arrow and explicit navigation;
-- Header, app shell and content are constrained to `width/max-width: 100%` with horizontal overflow suppressed;
-- Bottom Tab Bar is full-width, edge-attached, outside the vertical scroll region and safe-area aware;
-- Bottom Tab Bar contains exactly five equal-width cells: `Обзор / Каналы / Failover / Трафик / Диагн.`;
-- each Bottom Tab Bar item has at least a 44 px touch target; preferred button height is 56 px;
-- active tab uses accent icon/text plus a light accent surface inside the common bar;
-- no floating outer side/bottom gap exists around the Tab Bar;
-- at 430 px and 390 px each tab label stays inside its equal track; truncation may only occur as ellipsis inside the cell, never by horizontal page overflow;
-- final content can scroll completely above the Tab Bar;
-- iOS bottom safe area is added below Tab Bar content rather than overlapping it.
+Standard: NikaS Specialized Panel UI Standard v1.3
 
-## 2. Loading / bootstrap gate
+Target device: KN-2311
 
-- shell Header and Bottom Tab Bar remain present during loading;
-- panel never remains indefinitely on a blank `Загрузка Keenetic…` state;
-- registration bootstrap fallback is used when the live bootstrap WebSocket is delayed;
-- bootstrap WebSocket has a finite UI timeout;
-- fallback excludes host and integration unique-id;
-- later successful bootstrap refresh replaces fallback data;
-- no fake healthy values are created from missing telemetry.
+Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
-## 3. Overview — Ethernet active, LTE standby
+## 1. Native shell and safe area
 
-Expected:
+- Header remains completely below the Dynamic Island/notch and consumes the effective top safe area exactly once.
+- The permanent left Header control is only the Home Assistant menu `☰`; it dispatches `hass-toggle-menu` with bubbling/composed semantics.
+- Title `Keenetic Hero 4G+` is geometrically centered between symmetric side rails.
+- Refresh is the only global right-rail action; menu and Refresh keep approximately 44 × 44 pt touch targets.
+- Header, menu, Refresh and fixed Bottom Tab Bar remain at native scale.
+- Bottom Tab Bar is full-width, edge-attached, safe-area-aware and contains exactly `Обзор / Каналы / Failover / Трафик / Диагн.`.
+- Final work content remains reachable above the Bottom Tab Bar; no horizontal page overflow is introduced at 430 px or 390 px.
 
-- Hero answers Internet state and factual active WAN first;
-- compact network topology remains visible;
-- `Провод | LTE` remains contextual inspection and never performs router control;
-- factual active route remains visually distinguishable from the inspected channel;
-- LTE reserve state remains visible;
-- missing/unknown values remain `Неизвестно` / `Нет данных`, never fabricated zero.
+## 2. Transform-owned work canvas
 
-## 4. Failover — Ethernet -> LTE -> Ethernet
+- Exactly one `#app-content`, one direct `#nika-zoom-stage` and one direct `#nika-zoom-surface` exist after initial load, tab changes and repeated HA state updates.
+- Only the work canvas scales; Header and Bottom Tab Bar remain outside it.
+- Canvas position is represented only by `translate3d(x,y,0) scale(s)`; native `scrollLeft`, `scrollTop`, CSS `zoom` and browser rubber-band offsets are not used as state.
+- Responsive mobile/tablet/desktop layout is resolved before the user transform is applied.
+- Scale is limited to 75–200%, defaults to 100% and persists locally for this panel/client.
+- At less than 100%, the native-width work canvas is centered horizontally.
 
-Expected:
+## 3. iPhone gestures
 
-- Ethernet failure changes active WAN to LTE only from factual router state;
-- LTE becomes active;
-- last switch timestamp, direction, factual reason, switches today and LTE time today update;
-- recovery returns active WAN to Ethernet and LTE to reserve-ready;
-- router/telemetry loss alone never proves Ethernet failure;
-- direct HA Recorder history remains disabled in the current stabilization line and cannot block the app shell.
+- Two-finger pinch preserves the content point below the live midpoint between the fingers.
+- At 100%, one finger moves the canvas vertically to content below the fold and the released position remains stable.
+- At 150–200%, one finger pans the canvas horizontally and vertically; all edges remain clamped to the viewport.
+- No permanent `− / % / +` controls are rendered.
+- Two consecutive stationary two-finger taps within 360 ms reset scale and translation to 100%/origin.
+- A completed pinch between 97% and 103% snaps to exactly 100%.
+- Reset and snap briefly show `Масштаб 100%` outside the scaled canvas.
+- The same logical transform survives normal telemetry updates and unavailable/available transitions.
 
-## 5. WAN/LTE screen
+## 4. Interaction guard
 
-- selector remains `Провод | LTE`;
-- only one detailed transport is visible at a time;
-- Ethernet and LTE raw metrics remain available;
-- contextual selector does not alter Header Back semantics;
-- long press on factual entity-backed values opens native Home Assistant more-info.
+- Starting a two-finger gesture immediately cancels pending entity holds.
+- Crossing the 5 px one-finger pan threshold dispatches `pointercancel` to the touched factual entity.
+- Clicks generated after pinch/pan are suppressed for 700 ms.
+- Pinch and pan never open native Home Assistant more-info/history.
+- A stationary intentional hold outside a gesture still opens native more-info.
 
-## 6. Traffic stabilization mode
+## 5. Loading and factual semantics
 
-For UI v0.4.4:
+- Shell Header and Bottom Tab Bar remain present during loading.
+- Registration snapshot fallback is used if the background bootstrap WebSocket is delayed; the panel never remains indefinitely blank.
+- Ethernet/LTE active state, rates, ping, loss, failover and radio values remain factual and read-only.
+- `unknown`, `unavailable`, stale or untrusted data never appear healthy and are never fabricated as zero.
+- Domain cards, local room/router artwork and dynamic SVG topology remain unchanged by the shell migration.
 
-- `24 ч / 7 дн / 30 дн` controls remain absent;
-- Traffic screen makes no Recorder traffic-history request;
-- current Ethernet/LTE RX/TX remain visible;
-- daily/monthly factual counters remain visible where available;
-- accumulated Ethernet/LTE counters remain visible;
-- Traffic screen cannot block the entire app shell;
-- Recorder-backed charts are explicitly deferred to a separate future change.
+## 6. Frontend delivery
 
-## 7. Diagnostics / trust semantics
-
-- `unknown` / `unavailable` are never rendered as normal/OK/zero;
-- stale or failed RCI telemetry is visibly distinguished from actual WAN down;
-- Diagnostics exposes factual source type and entity state;
-- technical LTE radio values remain available without overloading Overview.
-
-## 8. Frontend production bundle
-
-- Home Assistant `module_url` points to one self-contained `keenetic-panel-bundle.js?v=0.4.4`;
-- registered component is `keenetic-hero-app-panel-v044`;
-- production frontend contains no runtime import/export/dynamic-import dependency on previous UI versions;
-- historical modules participate only at build time;
-- panel CSS is embedded in the production bundle;
-- `python scripts/build_frontend_bundle.py --check` passes;
-- `node --check` passes for the generated bundle;
-- cold-cache local load works;
-- cold-cache Home Assistant Cloud / Nabu Casa load works;
-- first open after full Home Assistant restart works;
-- repeated open/close works;
-- no `Unable to load custom panel`;
-- no `Configuration error`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.6.7` and component `keenetic-hero-app-panel-v067`.
+- Historical modules are build-time inputs only; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
+- Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
+- `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
 
 ## Release gate
 
-UI v0.4.4 / b018 is accepted only after the Header/Tab Bar geometry, 430/390 px viewport fit, bootstrap, Overview, WAN/LTE, Traffic stabilization and cold-load gates pass on the real iPhone Pro Max / KN-2311 environment.
+UI v0.6.7 / b030 is accepted after the native shell, focal pinch, transform pan at 100% and enlarged scale, two-finger reset, 97–103% snap, gesture guard, telemetry rebuild stability and cold-load checks pass on the real iPhone Pro Max / KN-2311 environment.
