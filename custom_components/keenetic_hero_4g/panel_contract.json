@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.5.0"
+    "version": "0.5.1"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -71,10 +71,11 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v050",
+    "web_component": "keenetic-hero-app-panel-v051",
     "includes_styles": true,
     "includes_hero_artwork": true,
-    "hero_artwork_format": "embedded_webp_data_uri",
+    "hero_artwork_format": "local_static_webp",
+    "hero_artwork_path": "/keenetic_hero_4g_static/keenetic-room-v051.webp",
     "external_image_dependency": false,
     "cache_busting": "query_panel_version",
     "runtime_previous_version_imports": false,
@@ -92,7 +93,8 @@
   "view_patterns": {
     "overview": {
       "hero_style": "immersive_room_router",
-      "hero_background": "embedded_webp",
+      "hero_background": "local_static_webp",
+      "hero_mobile_min_height_px": 420,
       "dynamic_overlays_from_hass_states": true,
       "preserve_network_topology": true,
       "active_path_only": true,
