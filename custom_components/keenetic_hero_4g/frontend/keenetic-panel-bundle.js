@@ -1850,7 +1850,7 @@ if (BASE_COMPONENT_V045 && !customElements.get("keenetic-hero-app-panel-v045")) 
 (() => {
 const CORE_COMPONENT_V050 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V050 = customElements.get("keenetic-hero-app-panel-v045");
-const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.6.8";
+const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.6.9";
 
 function escV050(value) {
   return String(value ?? "")
@@ -3992,3 +3992,37 @@ if (BASE_COMPONENT_V068 && !customElements.get("keenetic-hero-app-panel-v068")) 
 }
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v068.js
+
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v069.js
+(() => {
+const BASE_COMPONENT_V069 = customElements.get("keenetic-hero-app-panel-v068");
+
+function _v069InstallBottomSafeArea(root) {
+  if (!root || root.querySelector("style[data-nikas-bottom-safe-area-v069]")) return;
+  const style = document.createElement("style");
+  style.dataset.nikasBottomSafeAreaV069 = "true";
+  style.textContent = `
+    /* Keep the native tab controls above the iPhone Home Indicator. */
+    .nika-tabbar{
+      padding-bottom:calc(4px + env(safe-area-inset-bottom,0px))!important;
+    }
+  `;
+  root.append(style);
+}
+
+if (BASE_COMPONENT_V069 && !customElements.get("keenetic-hero-app-panel-v069")) {
+  class KeeneticHeroAppPanelV069 extends BASE_COMPONENT_V069 {
+    _renderShell() {
+      super._renderShell();
+      const root = this.shadowRoot;
+      if (!root) return;
+      _v069InstallBottomSafeArea(root);
+      const version = root.querySelector(".title span");
+      if (version) version.textContent = "Network Control Center · UI v0.6.9";
+    }
+  }
+
+  customElements.define("keenetic-hero-app-panel-v069", KeeneticHeroAppPanelV069);
+}
+})();
+// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v069.js

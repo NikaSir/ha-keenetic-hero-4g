@@ -17,6 +17,7 @@ on:
       - "ui/b029-*"
       - "ui/b030-*"
       - "ui/b031-*"
+      - "ui/b032-*"
     paths:
       - "custom_components/keenetic_hero_4g/frontend/**"
       - "custom_components/keenetic_hero_4g/panel_runtime.py"
@@ -78,13 +79,13 @@ jobs:
             exit 1
           fi
 
-      - name: Verify UI v0.6.8 topology and transform-canvas contract
+      - name: Verify UI v0.6.9 safe-area, topology and canvas contract
         shell: bash
         run: |
-          grep -q 'PANEL_VERSION = "0.6.8"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'PANEL_VERSION = "0.6.9"' custom_components/keenetic_hero_4g/const.py
           grep -q 'keenetic-panel-bundle.js' custom_components/keenetic_hero_4g/panel_runtime.py
-          grep -q '"version": "0.6.8"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"web_component": "keenetic-hero-app-panel-v068"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"version": "0.6.9"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"web_component": "keenetic-hero-app-panel-v069"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"hero_artwork_format": "layered_local_assets"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"connections": "dynamic_svg_dom"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"room": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp"' custom_components/keenetic_hero_4g/panel_contract.json
@@ -130,6 +131,8 @@ jobs:
           grep -q 'keenetic-hero-app-panel-v068' custom_components/keenetic_hero_4g/frontend/keenetic-app-v068.js
           grep -q '.v063-flow-layer{z-index:2!important}' custom_components/keenetic_hero_4g/frontend/keenetic-app-v068.js
           grep -q '.v060-router{z-index:3!important}' custom_components/keenetic_hero_4g/frontend/keenetic-app-v068.js
+          grep -q 'keenetic-hero-app-panel-v069' custom_components/keenetic_hero_4g/frontend/keenetic-app-v069.js
+          grep -q 'padding-bottom:calc(4px + env(safe-area-inset-bottom,0px))!important' custom_components/keenetic_hero_4g/frontend/keenetic-app-v069.js
           grep -q 'keenetic-hero-router-v063.webp' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'v063-flow-layer' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'v063-cable-line' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
@@ -138,18 +141,18 @@ jobs:
           grep -q 'replace(/Кабель/gi, "Ethernet")' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'keenetic-hero-app-panel-v063' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'padding-bottom:4px!important' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
-          grep -q 'keenetic-app-v068.js' scripts/build_frontend_bundle.py
+          grep -q 'keenetic-app-v069.js' scripts/build_frontend_bundle.py
           python - <<'PY'
           import json
           from pathlib import Path
 
           root = Path("custom_components/keenetic_hero_4g")
           manifest = json.loads((root / "panel_manifest.json").read_text(encoding="utf-8"))
-          assert manifest["panel_version"] == "0.6.8"
+          assert manifest["panel_version"] == "0.6.9"
           assert manifest["schema_version"] == 2
           assert manifest["route"] == "/dashboard-keenetic"
           assert manifest["entry_module"] == "keenetic-panel-bundle.js"
-          assert manifest["web_component"] == "keenetic-hero-app-panel-v068"
+          assert manifest["web_component"] == "keenetic-hero-app-panel-v069"
           assert manifest["ha_menu_event"] == {
               "type": "hass-toggle-menu", "bubbles": True, "composed": True
           }
@@ -161,7 +164,7 @@ jobs:
           for asset in manifest["assets"]:
               path = root / asset["path"]
               assert path.is_file() and path.stat().st_size > 0, path
-              assert asset["url"].endswith("?v=0.6.8"), asset
+              assert asset["url"].endswith("?v=0.6.9"), asset
           PY
 
       - name: Commit generated bundle when changed
@@ -177,7 +180,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$BUNDLE"
-          git commit -m "build: refresh Keenetic UI v0.6.8 autonomous bundle"
+          git commit -m "build: refresh Keenetic UI v0.6.9 autonomous bundle"
           git push origin "HEAD:${TARGET_BRANCH}"
 
       - name: Verify bundle is current
