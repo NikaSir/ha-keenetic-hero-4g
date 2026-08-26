@@ -6,11 +6,9 @@ Custom Home Assistant integration for **Keenetic Hero 4G+ (KN-2311)**. The integ
 
 ## Status
 
-- `v1.00_b001` — accepted first RCI telemetry build.
-- `v1.00_b002` — current validation build for WAN diagnostics and failover accounting.
-- native panel `v0.1.0` — separate draft validation line in `feature/native-panel-v1`.
-
-`b002` has already passed live Ethernet -> LTE -> Ethernet failover testing on the target KN-2311. The remaining b002 acceptance item is live validation of the direct RCI Ethernet/LTE ping and packet-loss probes.
+- integration build `v1.00_b038` / manifest `1.0.0-b038`;
+- native panel `v0.7.5`, aligned with NikaS Specialized Panel UI Standard v1.6;
+- final acceptance still requires the documented iPhone Pro Max phone checks.
 
 Existing SNMP/template entities may remain installed during comparison testing. Temporary `_2` or `_old` entity IDs are not part of the integration's final entity model.
 
@@ -32,6 +30,8 @@ Views:
 - **Diagnostics** — source provenance, data age, raw unknown/unavailable states and technical values.
 
 The panel is registered by the integration itself and ships its frontend assets inside `custom_components/keenetic_hero_4g`. It never performs browser-side RCI/SNMP access or router writes. Long press on factual metrics opens native Home Assistant more-info.
+
+Repository identity is `docs/icon.svg`; the packaged integration ships matching 256×256 light/dark icons in `custom_components/keenetic_hero_4g/brand/`.
 
 Reliability rule: `unknown` / `unavailable` is not normal. Router telemetry failure is not interpreted as proof that Ethernet WAN is down, and missing ping/loss is never converted to `0 ms` / `0%`.
 

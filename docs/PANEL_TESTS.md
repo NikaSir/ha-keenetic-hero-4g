@@ -2,11 +2,11 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel version: 0.7.4
+Panel version: 0.7.5
 
-Integration build: 1.0.0-b037
+Integration build: 1.0.0-b038
 
-Standard: NikaS Specialized Panel UI Standard v1.5
+Standard: NikaS Specialized Panel UI Standard v1.6
 
 Target device: KN-2311
 
@@ -18,6 +18,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - The permanent left Header control is only the Home Assistant menu `☰`; it dispatches `hass-toggle-menu` with bubbling/composed semantics.
 - Title `Keenetic Hero 4G+` is geometrically centered between symmetric side rails.
 - Refresh is the only global right-rail action; menu and Refresh keep approximately 44 × 44 pt touch targets.
+- Header uses 52px side rails (48px narrow), 16px plaque radius, 25px icons and 23/14 text (21/13 narrow).
 - Header, menu, Refresh and fixed Bottom Tab Bar remain at native scale.
 - Bottom Tab Bar is full-width, edge-attached, safe-area-aware and contains exactly `Обзор / Каналы / Failover / Трафик / Диагн.`.
 - Bottom Tab Bar keeps minimum 52 px controls, 28 px `ha-icon` pictograms and 12 px / 700 labels, and adds the iPhone bottom safe-area inset below them.
@@ -58,11 +59,20 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.4` and component `keenetic-hero-app-panel-v074`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.5` and component `keenetic-hero-app-panel-v075`.
 - Historical modules are build-time inputs only; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
 
+## 7. Stable live-update acceptance
+
+- Wait for several telemetry cycles on every tab while repeatedly scrolling up/down; content, artwork, Header and Bottom Tab Bar must remain visually continuous.
+- Verify inertial scrolling and pinch while telemetry arrives. No active tab, image, shell or zoom viewport may be recreated.
+- Switch every tab at least ten times. Existing tab containers must only toggle `hidden` / `inert` and retain their DOM identity.
+- Verify that no common two-level connection/freshness plaque is present: Keenetic keeps Internet reachability, active WAN and LTE reserve as separate domain facts until explicitly requested.
+- Verify that meaningful text remains 12–25px at 390px and 430px widths without truncating critical state labels.
+- Minimize and reopen the Companion App; scroll, active tab and fixed-shell continuity must remain valid.
+
 ## Release gate
 
-UI v0.7.4 / b037 is accepted after the central `Failover` tab opens repeatedly without a stalled UI at 75%, 100%, 150% and 200%; pinch midpoint, gesture-only reset, persistence, native vertical scroll at 100%, bounded pan above 100%, safe areas and router path occlusion must continue to pass on the real iPhone Pro Max / KN-2311 environment.
+UI v0.7.5 / b038 is accepted after all stable live-update checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; pinch midpoint, persistence, native scroll, bounded pan, safe areas and router path occlusion must continue to pass on the real iPhone Pro Max / KN-2311 environment.

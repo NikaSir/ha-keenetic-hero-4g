@@ -265,7 +265,7 @@ class KeeneticHeroPanel extends HTMLElement {
     }
     const normalized = String(value).toLowerCase();
     if (["on", "up", "true", "1", "connected"].includes(normalized)) {
-      return { label: "Онлайн", tone: "ok", online: true };
+      return { label: "Доступен", tone: "ok", online: true };
     }
     if (["off", "down", "false", "0", "disconnected"].includes(normalized)) {
       return { label: "Нет доступа", tone: "bad", online: false };

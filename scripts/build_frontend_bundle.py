@@ -39,6 +39,7 @@ SOURCES = [
     FRONTEND / "keenetic-app-v072.js",
     FRONTEND / "keenetic-app-v073.js",
     FRONTEND / "keenetic-app-v074.js",
+    FRONTEND / "keenetic-app-v075.js",
 ]
 
 RUNTIME_IMPORT_RE = re.compile(
@@ -48,7 +49,7 @@ RUNTIME_IMPORT_RE = re.compile(
 LEGACY_INLINE_HERO_RE = re.compile(
     r'const KEENETIC_ROOM_V050 = "data:image/webp;base64,[^"]+";'
 )
-HERO_ASSET_URL = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.4"
+HERO_ASSET_URL = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.5"
 CSS_LINK = '<link rel="stylesheet" href="/keenetic_hero_4g_static/keenetic-panel.css?v=${encodeURIComponent(PANEL_VERSION)}">'
 
 

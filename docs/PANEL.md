@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel version: **0.7.4**
+Panel version: **0.7.5**
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -20,7 +20,11 @@ The first screen must answer, without opening Keenetic Web UI:
 
 ## Home Assistant NikaS app shell
 
-Panel 0.7.4 follows **NikaS Specialized Panel UI Standard v1.6**.
+Panel 0.7.5 follows **NikaS Specialized Panel UI Standard v1.6**.
+
+The content DOM is mounted once. Home Assistant state cycles are coalesced through `requestAnimationFrame` and patch only changed text, classes and attributes. Header, Bottom Tab Bar, zoom viewport and all tab containers keep their identity; tab selection uses `hidden` and `inert` without a blank frame.
+
+The optional common connection/freshness indicator is not enabled for Keenetic. Internet reachability, active WAN and LTE reserve remain separate domain facts; they are not converted into a shared transport indicator without a dedicated request.
 
 ### Header
 

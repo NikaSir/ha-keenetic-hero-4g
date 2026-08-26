@@ -1,5 +1,15 @@
 # Changelog
 
+## UI v0.7.5 / v1.00_b038 — 2026-08-26
+
+- Internet reachability now says `Доступен`; the generic `Онлайн` transport label is not used when the shared two-level indicator is disabled.
+
+- Replaces live full-DOM rendering with one-time view mounting and `requestAnimationFrame` point patches.
+- Keeps every tab container, the Header, zoom viewport and Bottom Tab Bar as persistent DOM nodes; tabs switch with `hidden` and `inert`.
+- Adopts NikaS Specialized Panel UI Standard v1.6 Header typography (23/14, 21/13 narrow) and the 12–25px meaningful-text range.
+- Explicitly keeps the optional common connection/freshness indicator disabled; removes the former paired overview pills while preserving factual Internet, active-WAN and reserve telemetry.
+- Preloads and decodes image elements and never reassigns an unchanged `src` or reconnects an existing event handler.
+
 ## UI v0.7.4 / v1.00_b037 — 2026-08-26
 
 - Implements NIKAS Specialized Panel UI Standard v1.5.

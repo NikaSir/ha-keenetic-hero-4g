@@ -17,7 +17,7 @@ The route is considered a stable cross-integration API after panel acceptance.
 
 Required semantic roles:
 
-- `internet_connectivity` -> Internet: Online / unavailable / unknown;
+- `internet_connectivity` -> Интернет: Доступен / недоступен / нет данных;
 - `active_wan` -> Ethernet / LTE / unknown;
 - `lte_connected` -> reserve ready / active / down / unknown;
 - `wan_switches_today` -> count;
@@ -27,7 +27,7 @@ Conceptual presentation:
 
 ```text
 Keenetic Hero 4G+
-Интернет     Онлайн
+Интернет     Доступен
 WAN          Ethernet
 LTE          Резерв готов
 Переключений сегодня 0

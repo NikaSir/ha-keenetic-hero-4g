@@ -78,9 +78,11 @@ class PanelZoomContractTests(unittest.TestCase):
         self.assertIn('viewport.dataset.standardZoomV074!=="true"', self.source)
 
     def test_delivery_manifest_matches_shell_and_zoom_policy(self) -> None:
+        self.assertEqual(self.contract["app_shell"]["version"], "1.6")
+        self.assertEqual(self.manifest["zoom_policy"]["standard"], "1.6")
         self.assertEqual(self.manifest["route"], "/dashboard-keenetic")
         self.assertEqual(self.manifest["entry_module"], "keenetic-panel-bundle.js")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v074")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v075")
         self.assertEqual(
             self.manifest["ha_menu_event"],
             {"type": "hass-toggle-menu", "bubbles": True, "composed": True},
