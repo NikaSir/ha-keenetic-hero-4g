@@ -2,11 +2,11 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel version: 0.7.5
+Panel version: 0.7.6
 
-Integration build: 1.0.0-b038
+Integration build: 1.0.0-b039
 
-Standard: NikaS Specialized Panel UI Standard v1.5
+Standard: NikaS Specialized Panel UI Standard v1.6
 
 Target device: KN-2311
 
@@ -19,6 +19,8 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - Title `Keenetic Hero 4G+` is geometrically centered between symmetric side rails.
 - Refresh is the only global right-rail action; menu and Refresh keep approximately 44 × 44 pt touch targets.
 - Header, menu, Refresh and fixed Bottom Tab Bar remain at native scale.
+- Menu and Refresh render as matching 44 × 44 px, radius-16 plaques with 25 px `ha-icon` glyphs and remain fully visible below the Dynamic Island.
+- The height-locked shell prevents the Home Assistant outer document from scrolling; short views fill the work row instead of moving either menu.
 - Bottom Tab Bar is full-width, edge-attached, safe-area-aware and contains exactly `Обзор / Каналы / Failover / Трафик / Диагн.`.
 - Bottom Tab Bar keeps minimum 52 px controls, 28 px `ha-icon` pictograms and 12 px / 700 labels, and adds the iPhone bottom safe-area inset below them.
 - Final work content remains reachable above the Bottom Tab Bar; no horizontal page overflow is introduced at 430 px or 390 px.
@@ -58,7 +60,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.5` and component `keenetic-hero-app-panel-v075`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.6` and component `keenetic-hero-app-panel-v076`.
 - Historical modules are build-time inputs only; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
@@ -67,11 +69,12 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 - Wait for several telemetry cycles on every tab while repeatedly scrolling up/down; content, artwork, Header and Bottom Tab Bar must remain visually continuous.
 - Verify inertial scrolling and pinch while telemetry arrives. No active tab, image, shell or zoom viewport may be recreated.
-- Switch every tab at least ten times. Existing tab containers must only toggle `hidden` / `inert` and retain their DOM identity.
-- Verify polling failure and recovery: `Локально · Данные актуальны` changes to `Нет связи · Данные устарели` when retained values exist, then recovers without a loading frame.
+- Switch every tab at least ten times. Each view is created only on first visit; returning to it must reuse the same subtree and only toggle `hidden` / `inert`.
+- Verify polling failure and recovery: `Локально · Данные актуальны` changes to `Локально · Данные устарели` when retained values exist, then recovers without a loading frame. `Нет связи` is reserved for an actual known transport outage.
 - Verify the channel/freshness indicator uses 16 px / 700 and 13 px / 600 text respectively and never shrinks below 13 px.
+- Verify all meaningful content stays within 12–25 px; only redundant schematic annotations may use the documented 9–10 px exception.
 - Minimize and reopen the Companion App; scroll, active tab and fixed-shell continuity must remain valid.
 
 ## Release gate
 
-UI v0.7.5 / b038 is accepted after all stable live-update checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; pinch midpoint, persistence, native scroll, bounded pan, safe areas and router path occlusion must continue to pass on the real iPhone Pro Max / KN-2311 environment.
+UI v0.7.6 / b039 is accepted after all NikaS v1.6 checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; the corrected two-finger double-tap reset, fixed Header/Bottom Tab Bar, outer-scroll lock, typography, pinch midpoint, persistence, bounded pan, safe areas and router path occlusion must pass on the real iPhone Pro Max / KN-2311 environment.

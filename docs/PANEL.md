@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel version: **0.7.5**
+Panel version: **0.7.6**
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -20,11 +20,13 @@ The first screen must answer, without opening Keenetic Web UI:
 
 ## Home Assistant NikaS app shell
 
-Panel 0.7.5 follows **NikaS Specialized Panel UI Standard v1.5** plus the mandatory stable-update rule.
+Panel 0.7.6 follows **NikaS Specialized Panel UI Standard v1.6** from the canonical `ha-contract-generated-ui` repository.
 
-The content DOM is mounted once. Home Assistant state cycles are coalesced through `requestAnimationFrame` and patch only changed text, classes and attributes. Header, Bottom Tab Bar, zoom viewport and all tab containers keep their identity; tab selection uses `hidden` and `inert` without a blank frame.
+The shell and first work view are mounted once. Other views are created on first visit and retained in a stable DOM cache. Home Assistant state cycles are coalesced through `requestAnimationFrame` and patch only changed text, classes and attributes. Header, Bottom Tab Bar, zoom viewport and visited tab containers keep their identity; tab selection uses `hidden` and `inert` without a blank frame.
 
-This panel explicitly includes the optional two-level connection indicator. Its channel line uses the factual labels `Локально / Облако / Резерв / Нет связи / Нет данных`; freshness uses `Данные актуальны / Данные устарели / Нет данных`. A failed current poll immediately makes retained values stale. Typography is fixed at 16 px / 700 and 13 px / 600.
+This panel explicitly includes the optional two-level connection indicator. Its channel line uses the factual labels `Локально / Облако / Резерв / Нет связи / Нет данных`; freshness uses `Данные актуальны / Данные устарели / Нет данных`. A failed current poll immediately makes retained values stale without relabelling a known local/cloud path as a transport outage. The stable surface is tinted by the primary state and uses 16 px / 700 plus 13 px / 600 typography.
+
+On phones the integration owns a height-locked three-row application shell. Only `#app-content` scrolls or scales; the outer Home Assistant page, Header and Bottom Tab Bar do not participate in content movement. Meaningful panel text stays within 12–25 px.
 
 ### Header
 

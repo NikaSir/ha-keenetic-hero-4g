@@ -40,6 +40,7 @@ SOURCES = [
     FRONTEND / "keenetic-app-v073.js",
     FRONTEND / "keenetic-app-v074.js",
     FRONTEND / "keenetic-app-v075.js",
+    FRONTEND / "keenetic-app-v076.js",
 ]
 
 RUNTIME_IMPORT_RE = re.compile(
@@ -49,13 +50,18 @@ RUNTIME_IMPORT_RE = re.compile(
 LEGACY_INLINE_HERO_RE = re.compile(
     r'const KEENETIC_ROOM_V050 = "data:image/webp;base64,[^"]+";'
 )
-HERO_ASSET_URL = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.5"
+ASSET_QUERY_RE = re.compile(
+    r"(/keenetic_hero_4g_static/assets/[A-Za-z0-9._-]+(?:webp|svg))\?v=[0-9.]+"
+)
+PANEL_VERSION = "0.7.6"
+HERO_ASSET_URL = f"/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v={PANEL_VERSION}"
 CSS_LINK = '<link rel="stylesheet" href="/keenetic_hero_4g_static/keenetic-panel.css?v=${encodeURIComponent(PANEL_VERSION)}">'
 
 
 def _clean(path: Path) -> str:
     text = path.read_text(encoding="utf-8")
     text = RUNTIME_IMPORT_RE.sub("", text).strip()
+    text = ASSET_QUERY_RE.sub(rf"\1?v={PANEL_VERSION}", text)
 
     # v0.5.0 historically embedded the room artwork as Base64. Keep source
     # history readable, but never ship that payload in the production bundle.

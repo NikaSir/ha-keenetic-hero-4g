@@ -10,6 +10,7 @@ INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 CONTRACT = INTEGRATION / "panel_contract.json"
 PANEL_MANIFEST = INTEGRATION / "panel_manifest.json"
 ZOOM_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v074.js"
+STANDARD_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v076.js"
 
 
 class PanelZoomContractTests(unittest.TestCase):
@@ -18,6 +19,7 @@ class PanelZoomContractTests(unittest.TestCase):
         cls.contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
         cls.manifest = json.loads(PANEL_MANIFEST.read_text(encoding="utf-8"))
         cls.source = ZOOM_SOURCE.read_text(encoding="utf-8")
+        cls.standard_source = STANDARD_SOURCE.read_text(encoding="utf-8")
 
     def test_zoom_is_scoped_between_fixed_navigation_layers(self) -> None:
         zoom = self.contract["app_shell"]["content_zoom"]
@@ -64,6 +66,8 @@ class PanelZoomContractTests(unittest.TestCase):
         self.assertEqual(zoom["reset_feedback"], "Масштаб 100%")
         self.assertIn('toast.textContent="Масштаб 100%"', self.source)
         self.assertIn("scale:1,x:0,y:0", self.source)
+        self.assertIn("this._completedMultiTouchV076 = this._standardPinchV074", self.standard_source)
+        self.assertIn('surface.style.transform = "none"', self.standard_source)
 
     def test_gestures_cancel_more_info_and_guard_generated_clicks(self) -> None:
         zoom = self.contract["app_shell"]["content_zoom"]
@@ -80,7 +84,7 @@ class PanelZoomContractTests(unittest.TestCase):
     def test_delivery_manifest_matches_shell_and_zoom_policy(self) -> None:
         self.assertEqual(self.manifest["route"], "/dashboard-keenetic")
         self.assertEqual(self.manifest["entry_module"], "keenetic-panel-bundle.js")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v075")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v076")
         self.assertEqual(
             self.manifest["ha_menu_event"],
             {"type": "hass-toggle-menu", "bubbles": True, "composed": True},

@@ -8,14 +8,16 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.7.5"
+    "version": "0.7.6"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
-    "version": "1.5",
+    "version": "1.6",
+    "canonical_source": "NikaSir/ha-contract-generated-ui",
+    "canonical_revision": "0cafa26faa145cc4d63e9c9ae7ecd668884d6f95",
     "standards": {
-      "shell": "1.5",
-      "zoom": "1.5",
+      "shell": "1.6",
+      "zoom": "1.6",
       "integration_ui": "1.4",
       "frontend_delivery": "1.1"
     },
@@ -36,8 +38,11 @@
       "control_size_px": 44,
       "control_radius_px": 16,
       "control_icon_px": 25,
-      "title_px": 21,
-      "subtitle_px": 12,
+      "title_px": 23,
+      "title_px_narrow": 21,
+      "subtitle_px": 14,
+      "subtitle_px_narrow": 13,
+      "control_shadow": "0 7px 20px rgba(23,45,76,.08)",
       "show_brand_icon": false,
       "actions": ["refresh"],
       "safe_area_top": true
@@ -61,6 +66,10 @@
       "label_px": 12,
       "label_weight": 700,
       "active_primary_percent": 11,
+      "padding_top_px": 6,
+      "padding_bottom_px_before_safe_area": 6,
+      "item_radius_px": 16,
+      "icon_label_gap_px": 3,
       "max_primary_items": 5,
       "items": ["overview", "wan", "failover", "traffic", "diagnostics"]
     },
@@ -72,7 +81,11 @@
       "header_title_must_remain_geometrically_centered": true,
       "tab_labels_must_fit_or_ellipsis_inside_equal_tracks": true,
       "safe_area_owner": "specialized_panel_shell",
-      "safe_area_applied_once": true
+      "safe_area_applied_once": true,
+      "height_locked_phone_shell": true,
+      "outer_home_assistant_scroll": false,
+      "scroll_chaining_to_outer_document": false,
+      "short_views_fill_work_row": true
     },
     "content_zoom": {
       "enabled": true,
@@ -107,7 +120,10 @@
       "responsive_layout_before_zoom": true,
       "idempotent_reconciliation": true,
       "persistence": "localStorage",
-      "persistence_scope": "panel_client_device"
+      "persistence_scope": "panel_client_device",
+      "normalize_transform_at_100_percent": true,
+      "reset_native_scroll_to_origin": true,
+      "tab_change_resets_scroll_and_clamps": true
     },
     "secondary_views": ["system"],
     "bootstrap": {
@@ -132,6 +148,7 @@
       "shadow_root_inner_html_after_mount": false,
       "replace_children_after_mount": false,
       "persistent_view_containers": true,
+      "lazy_view_dom_cache": true,
       "view_switch": ["hidden", "inert", "class"],
       "header_dom_persistent": true,
       "bottom_navigation_dom_persistent": true,
@@ -154,13 +171,26 @@
       "secondary_font_px": 13,
       "secondary_font_weight": 600,
       "minimum_font_px": 13,
-      "maximum_font_px": 16
+      "maximum_font_px": 16,
+      "surface": "stable_two_line_status_tinted",
+      "main_status_drives_surface_tint": true,
+      "surface_tint_percent": 10,
+      "surface_border_tint_percent": 30,
+      "current_freshness_tone": "neutral",
+      "animations": false,
+      "aria_live": "polite"
+    },
+    "typography": {
+      "meaningful_min_px": 12,
+      "meaningful_max_px": 25,
+      "schematic_annotation_exception_px": [9, 10],
+      "header_uses_explicit_pair": true
     }
   },
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v075",
+    "web_component": "keenetic-hero-app-panel-v076",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
