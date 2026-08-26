@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.7.4"
+    "version": "0.7.5"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -123,12 +123,44 @@
       "keep_cached_mapping_on_timeout": true,
       "fallback_excludes_host_and_unique_id": true,
       "replay_pre_upgrade_properties": true
+    },
+    "stable_updates": {
+      "required": true,
+      "dom_shell_mount": "once",
+      "hass_update": "point_patch",
+      "update_batching": "requestAnimationFrame",
+      "shadow_root_inner_html_after_mount": false,
+      "replace_children_after_mount": false,
+      "persistent_view_containers": true,
+      "view_switch": ["hidden", "inert", "class"],
+      "header_dom_persistent": true,
+      "bottom_navigation_dom_persistent": true,
+      "zoom_viewport_dom_persistent": true,
+      "structural_update_during_scroll_or_gesture": false,
+      "unchanged_image_src_reassigned": false,
+      "event_handlers_rebound": false
+    },
+    "connection_indicator": {
+      "enabled_by_request": true,
+      "primary_states": ["Локально", "Облако", "Резерв", "Нет связи", "Нет данных"],
+      "secondary_states": ["Данные актуальны", "Данные устарели", "Нет данных"],
+      "online_label_forbidden": true,
+      "reserve_only_when_active": true,
+      "failed_poll_marks_saved_data_stale": true,
+      "default_stale_after_missed_intervals": 3,
+      "category_change_only": true,
+      "primary_font_px": 16,
+      "primary_font_weight": 700,
+      "secondary_font_px": 13,
+      "secondary_font_weight": 600,
+      "minimum_font_px": 13,
+      "maximum_font_px": 16
     }
   },
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v074",
+    "web_component": "keenetic-hero-app-panel-v075",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",

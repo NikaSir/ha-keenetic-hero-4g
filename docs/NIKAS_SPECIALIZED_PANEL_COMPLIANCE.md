@@ -2,14 +2,17 @@
 
 **Audit date:** 2026-08-26
 **Standard:** NikaS Specialized Panel UI Standard v1.5
-**Audited production path:** `panel_runtime.py` + `PANEL_VERSION=0.7.4` → `keenetic-panel-bundle.js?v=0.7.4` → `keenetic-hero-app-panel-v074`
-**Scope:** implemented in UI v0.7.4; phone field acceptance remains required
+**Audited production path:** `panel_runtime.py` + `PANEL_VERSION=0.7.5` → `keenetic-panel-bundle.js?v=0.7.5` → `keenetic-hero-app-panel-v075`
+**Scope:** implemented in UI v0.7.5; phone field acceptance remains required
 
 | Area | Result | Evidence |
 |---|---|---|
 | Integration-owned fixed shell | PASS | `frontend/keenetic-app-v040.js` owns a three-row shell; Header and `.nika-tabbar` are outside `#app-content`/zoom surface. |
 | Native HA menu | PASS | `frontend/keenetic-app-v045.js` restores `mdi:menu` and dispatches bubbling/composed `hass-toggle-menu`. |
-| One production entry / cache busting | PASS | `panel_runtime.py` selects one `keenetic-panel-bundle.js?v=0.7.4`; `panel.py` serves local assets. |
+| One production entry / cache busting | PASS | `panel_runtime.py` selects one `keenetic-panel-bundle.js?v=0.7.5`; `panel.py` serves local assets. |
+| Stable live updates | PASS | v075 mounts every view once, batches HA cycles through `requestAnimationFrame` and patches existing nodes without post-mount `innerHTML` or `replaceChildren`. |
+| Persistent shell and tabs | PASS | Header, Bottom Tab Bar, zoom viewport and per-view containers keep DOM identity; view selection toggles `hidden` and `inert`. |
+| Requested connection indicator | PASS | v075 separates acquisition channel from freshness, updates only category transitions and uses 16/700 plus 13/600 typography. |
 | Scale 75–200% and focal pinch | PASS | Final `frontend/keenetic-app-v074.js` clamps 0.75–2.0 and maintains the content point under the live midpoint. |
 | Native vertical scroll at 100% | PASS | v074 uses vertical native overflow, explicitly hides horizontal overflow and sets `touch-action:pan-y` at or below 100%. |
 | Origin fixed at 100%; no custom one-finger pan | PASS | v074 clamps transform x/y to zero at or below 100% and creates a pan candidate only above 100%. |

@@ -1,5 +1,13 @@
 # Changelog
 
+## UI v0.7.5 / v1.00_b038 — 2026-08-26
+
+- Replaces live full-DOM rendering with one-time view mounting and `requestAnimationFrame` point patches.
+- Keeps every tab container, the Header, zoom viewport and Bottom Tab Bar as persistent DOM nodes; tabs switch with `hidden` and `inert`.
+- Updates the requested two-level connection indicator only when its semantic category changes; failed polling immediately marks retained values stale.
+- Locks indicator typography to 16 px / 700 for the channel and 13 px / 600 for freshness, with no sub-13 px fallback.
+- Preloads and decodes image elements and never reassigns an unchanged `src` or reconnects an existing event handler.
+
 ## UI v0.7.4 / v1.00_b037 — 2026-08-26
 
 - Implements NIKAS Specialized Panel UI Standard v1.5.

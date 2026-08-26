@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel version: 0.7.4
+Panel version: 0.7.5
 
-Integration build: 1.0.0-b037
+Integration build: 1.0.0-b038
 
 Standard: NikaS Specialized Panel UI Standard v1.5
 
@@ -58,11 +58,20 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.4` and component `keenetic-hero-app-panel-v074`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.5` and component `keenetic-hero-app-panel-v075`.
 - Historical modules are build-time inputs only; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
 
+## 7. Stable live-update acceptance
+
+- Wait for several telemetry cycles on every tab while repeatedly scrolling up/down; content, artwork, Header and Bottom Tab Bar must remain visually continuous.
+- Verify inertial scrolling and pinch while telemetry arrives. No active tab, image, shell or zoom viewport may be recreated.
+- Switch every tab at least ten times. Existing tab containers must only toggle `hidden` / `inert` and retain their DOM identity.
+- Verify polling failure and recovery: `Локально · Данные актуальны` changes to `Нет связи · Данные устарели` when retained values exist, then recovers without a loading frame.
+- Verify the channel/freshness indicator uses 16 px / 700 and 13 px / 600 text respectively and never shrinks below 13 px.
+- Minimize and reopen the Companion App; scroll, active tab and fixed-shell continuity must remain valid.
+
 ## Release gate
 
-UI v0.7.4 / b037 is accepted after the central `Failover` tab opens repeatedly without a stalled UI at 75%, 100%, 150% and 200%; pinch midpoint, gesture-only reset, persistence, native vertical scroll at 100%, bounded pan above 100%, safe areas and router path occlusion must continue to pass on the real iPhone Pro Max / KN-2311 environment.
+UI v0.7.5 / b038 is accepted after all stable live-update checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; pinch midpoint, persistence, native scroll, bounded pan, safe areas and router path occlusion must continue to pass on the real iPhone Pro Max / KN-2311 environment.
