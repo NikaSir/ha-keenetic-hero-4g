@@ -20,7 +20,7 @@ The first screen must answer, without opening Keenetic Web UI:
 
 ## Home Assistant NikaS app shell
 
-Panel 0.7.4 follows **NikaS Specialized Panel UI Standard v1.5**.
+Panel 0.7.4 follows **NikaS Specialized Panel UI Standard v1.6**.
 
 ### Header
 
