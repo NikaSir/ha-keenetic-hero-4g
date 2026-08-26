@@ -1,5 +1,11 @@
 # Changelog
 
+## UI v0.7.3 / v1.00_b036 — 2026-08-26
+
+- Fixed the central `Failover` tab freeze caused by the disabled Recorder-history override scheduling a new render after every render.
+- The disabled-history notice is now committed once per panel instance; subsequent view render hooks return without scheduling work.
+- Kept the b035 isolated pinch/screen-control zoom, native scrolling, shell geometry and factual Failover KPIs unchanged.
+
 ## UI v0.7.2 / v1.00_b035 — 2026-08-25
 
 - Reintroduced content-only zoom on top of the proven b034 native-scroll navigation path.
