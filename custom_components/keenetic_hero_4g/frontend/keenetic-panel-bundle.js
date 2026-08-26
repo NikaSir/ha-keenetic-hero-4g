@@ -1850,7 +1850,7 @@ if (BASE_COMPONENT_V045 && !customElements.get("keenetic-hero-app-panel-v045")) 
 (() => {
 const CORE_COMPONENT_V050 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V050 = customElements.get("keenetic-hero-app-panel-v045");
-const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.4";
+const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.6";
 
 function escV050(value) {
   return String(value ?? "")
@@ -2065,7 +2065,7 @@ if (BASE_COMPONENT_V050 && !customElements.get("keenetic-hero-app-panel-v050")) 
 (() => {
 const CORE_COMPONENT_V051 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V051 = customElements.get("keenetic-hero-app-panel-v050");
-const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.5.2";
+const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.7.6";
 
 if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) {
   CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051 = true;
@@ -2138,7 +2138,7 @@ if (BASE_COMPONENT_V051 && !customElements.get("keenetic-hero-app-panel-v051")) 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
 (() => {
 const BASE_COMPONENT_V052 = customElements.get("keenetic-hero-app-panel-v051");
-const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.5.2";
+const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.7.6";
 const CORE_COMPONENT_V052 = customElements.get("keenetic-hero-panel");
 
 if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV052) {
@@ -2179,8 +2179,8 @@ if (BASE_COMPONENT_V052 && !customElements.get("keenetic-hero-app-panel-v052")) 
 (() => {
 const CORE_COMPONENT_V060 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V060 = customElements.get("keenetic-hero-app-panel-v052");
-const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.6.0";
-const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.6.0";
+const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.7.6";
+const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.7.6";
 
 function _v060CreateMetricCell(label, value, className = "") {
   const span = document.createElement("span");
@@ -2397,8 +2397,8 @@ if (BASE_COMPONENT_V060 && !customElements.get("keenetic-hero-app-panel-v060")) 
 (() => {
 const CORE_COMPONENT_V061 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V061 = customElements.get("keenetic-hero-app-panel-v060");
-const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.6.1";
-const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.6.1";
+const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.7.6";
+const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.7.6";
 
 function _v061LabelCard(kind, title, subtitle, icon) {
   const card = document.createElement("div");
@@ -2557,8 +2557,8 @@ if (BASE_COMPONENT_V061 && !customElements.get("keenetic-hero-app-panel-v061")) 
 (() => {
 const CORE_COMPONENT_V062 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V062 = customElements.get("keenetic-hero-app-panel-v061");
-const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=0.6.2";
-const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.6.2";
+const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=0.7.6";
+const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.7.6";
 
 function _v062EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -2701,8 +2701,8 @@ if (BASE_COMPONENT_V062 && !customElements.get("keenetic-hero-app-panel-v062")) 
 (() => {
 const CORE_COMPONENT_V063 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V063 = customElements.get("keenetic-hero-app-panel-v062");
-const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.6.3";
-const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.6.3";
+const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.7.6";
+const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.7.6";
 
 function _v063EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -2901,7 +2901,7 @@ if (BASE_COMPONENT_V063 && !customElements.get("keenetic-hero-app-panel-v063")) 
 (() => {
 const CORE_COMPONENT_V064 = customElements.get("keenetic-hero-panel");
 const BASE_COMPONENT_V064 = customElements.get("keenetic-hero-app-panel-v063");
-const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.6.4";
+const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.6";
 
 function _v064InstallRoom(root) {
   if (!root) return;
@@ -4754,3 +4754,851 @@ if (BASE_COMPONENT_V074 && !customElements.get("keenetic-hero-app-panel-v074")) 
 }
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v074.js
+
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v075.js
+(() => {
+const CORE_COMPONENT_V075 = customElements.get("keenetic-hero-panel");
+const BASE_COMPONENT_V075 = customElements.get("keenetic-hero-app-panel-v074");
+const STABLE_VIEWS_V075 = ["overview", "wan", "failover", "traffic", "diagnostics", "system"];
+const DYNAMIC_CLASSES_V075 = new Set([
+  "ok", "bad", "warn", "unknown", "neutral", "blue", "selected", "active",
+  "metric-unknown", "active-ethernet", "active-lte", "active-none", "missing",
+  "unavailable",
+]);
+
+function fragmentV075(html) {
+  const template = document.createElement("template");
+  template.innerHTML = html;
+  return template.content;
+}
+
+function bodyV075(panel, view) {
+  if (view === "overview") return panel._renderOverview();
+  if (view === "wan") return panel._renderWan();
+  if (view === "traffic") return panel._renderTraffic();
+  if (view === "failover") return panel._renderFailover();
+  if (view === "system") return panel._renderSystem();
+  return panel._renderDiagnostics();
+}
+
+function stableClassesV075(element) {
+  return [...element.classList].filter(
+    (name) => !DYNAMIC_CLASSES_V075.has(name) && !/^v06[0-8]-/.test(name),
+  );
+}
+
+function directLabelV075(element) {
+  for (const child of element.children) {
+    if ((child.tagName === "SMALL" || child.classList.contains("label")) && child.children.length === 0) {
+      return child.textContent.trim();
+    }
+  }
+  return "";
+}
+
+function nodeKeyV075(element) {
+  if (element.id) return `${element.tagName}#${element.id}`;
+  for (const name of ["entity", "view", "period"]) {
+    if (element.dataset?.[name]) return `${element.tagName}[${name}=${element.dataset[name]}]`;
+  }
+  const classes = stableClassesV075(element);
+  if (classes.length) return `${element.tagName}.${classes.join(".")}`;
+  const label = directLabelV075(element);
+  return label ? `${element.tagName}[label=${label}]` : element.tagName;
+}
+
+function syncClassesV075(current, desired) {
+  const preserved = [...current.classList].filter(
+    (name) => (/^v06[0-8]-/.test(name) || /^v075-/.test(name)) && !DYNAMIC_CLASSES_V075.has(name),
+  );
+  const next = new Set([...desired.classList, ...preserved]);
+  const value = [...next].join(" ");
+  if (current.getAttribute("class") !== value) current.setAttribute("class", value);
+}
+
+function syncAttributesV075(current, desired) {
+  syncClassesV075(current, desired);
+  for (const attribute of desired.attributes) {
+    if (attribute.name === "class" || attribute.name === "style" || attribute.name === "src") continue;
+    if (current.getAttribute(attribute.name) !== attribute.value) current.setAttribute(attribute.name, attribute.value);
+  }
+  if (desired.hasAttribute("src")) {
+    const nextSrc = desired.getAttribute("src");
+    if (current.getAttribute("src") !== nextSrc) current.setAttribute("src", nextSrc);
+  }
+}
+
+function syncDirectTextV075(current, desired) {
+  const currentText = [...current.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE);
+  const desiredText = [...desired.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE);
+  desiredText.forEach((node, index) => {
+    if (currentText[index] && currentText[index].nodeValue !== node.nodeValue) {
+      currentText[index].nodeValue = node.nodeValue;
+    }
+  });
+}
+
+function morphV075(current, desired) {
+  if (current.closest?.(".v050-online-pill,.v050-fresh-pill")) return;
+  if (current.matches?.(".v050-kpi") && current.querySelector("span")?.textContent.trim() === "Телеметрия") return;
+  syncAttributesV075(current, desired);
+  syncDirectTextV075(current, desired);
+  const currentChildren = [...current.children];
+  const used = new Set();
+  for (const wanted of desired.children) {
+    const key = nodeKeyV075(wanted);
+    let match = currentChildren.find(
+      (candidate) => !used.has(candidate) && nodeKeyV075(candidate) === key,
+    );
+    if (!match) {
+      match = currentChildren.find(
+        (candidate) => !used.has(candidate) && candidate.tagName === wanted.tagName,
+      );
+    }
+    if (!match) continue;
+    used.add(match);
+    morphV075(match, wanted);
+  }
+}
+
+function setDirectTextV075(element, value) {
+  if (!element) return;
+  const text = [...element.childNodes].find(
+    (node) => node.nodeType === Node.TEXT_NODE && node.nodeValue.trim(),
+  );
+  if (text && text.nodeValue !== value) text.nodeValue = value;
+  else if (!text) element.append(document.createTextNode(value));
+}
+
+function indicatorCategoryV075(panel) {
+  const telemetry = panel._telemetry?.() || {};
+  const configured = panel._bootstrap?.telemetry || {};
+  const age = Number(telemetry.age);
+  const hasAge = telemetry.age !== null && telemetry.age !== undefined && Number.isFinite(age);
+  const failed = configured.last_update_success === false;
+  const scanInterval = Math.max(1, Number(configured.scan_interval_seconds || 30));
+  const staleAfter = scanInterval * 3;
+  const declaredChannel = String(configured.active_data_channel || configured.data_channel || "local").toLowerCase();
+
+  let connection = { label: "Локально", tone: "ok" };
+  if (failed) connection = { label: "Нет связи", tone: "bad" };
+  else if (declaredChannel === "cloud") connection = { label: "Облако", tone: "ok" };
+  else if (declaredChannel === "reserve" || declaredChannel === "backup") connection = { label: "Резерв", tone: "warn" };
+  else if (!["local", "lan", "api", "rci", "snmp"].includes(declaredChannel)) connection = { label: "Нет данных", tone: "unknown" };
+
+  let freshness = { label: "Нет данных", tone: "unknown" };
+  if (hasAge && (failed || age > staleAfter)) freshness = { label: "Данные устарели", tone: "warn" };
+  else if (hasAge) freshness = { label: "Данные актуальны", tone: "ok" };
+  return { connection, freshness, key: `${connection.label}:${freshness.label}` };
+}
+
+function patchIndicatorV075(panel, slot) {
+  const category = indicatorCategoryV075(panel);
+  if (slot.dataset.telemetryCategoryV075 === category.key) return;
+  slot.dataset.telemetryCategoryV075 = category.key;
+
+  const primary = slot.querySelector(".v050-online-pill");
+  if (primary) {
+    primary.classList.add("connection-primary");
+    primary.classList.remove("ok", "bad", "warn", "unknown", "neutral");
+    primary.classList.add(category.connection.tone);
+    setDirectTextV075(primary, category.connection.label);
+  }
+  const secondary = slot.querySelector(".v050-fresh-pill");
+  if (secondary) {
+    secondary.classList.add("connection-secondary");
+    secondary.classList.remove("ok", "bad", "warn", "unknown", "neutral");
+    secondary.classList.add(category.freshness.tone);
+    setDirectTextV075(secondary, category.freshness.label);
+  }
+}
+
+function patchTopologyV075(panel, slot) {
+  const scene = slot.querySelector(".v050-scene");
+  if (!scene) return;
+  const active = panel._activeWan?.();
+  scene.classList.toggle("v061-cable-active", active === "ethernet");
+  scene.classList.toggle("v061-lte-active", active === "lte");
+  scene.classList.toggle("v061-no-wan", active !== "ethernet" && active !== "lte");
+
+  const lte = panel._connection?.("lte_connected") || {};
+  const cable = panel._connection?.("ethernet_connected") || {};
+  const lteSubtitle = scene.querySelector(".v061-lte span");
+  const cableSubtitle = scene.querySelector(".v061-cable span");
+  if (lteSubtitle) lteSubtitle.textContent = active === "lte" ? "Активен" : lte.state === "up" ? "Резерв готов" : lte.label || "Нет данных";
+  if (cableSubtitle) cableSubtitle.textContent = active === "ethernet" ? panel._display("ethernet_link_speed", "—") : cable.state === "up" ? "Резерв" : cable.label || "Нет данных";
+
+  const signalCell = slot.querySelector(".v060-signal-cell strong");
+  const operatorCell = slot.querySelector(".v060-operator-cell strong");
+  if (signalCell) signalCell.textContent = panel._lteSignal?.().label || "—";
+  if (operatorCell) operatorCell.textContent = panel._display("lte_operator", "—");
+}
+
+function ensureIntegrityPlaceholderV075(panel, slot) {
+  if (slot.dataset.viewV075 !== "overview") return;
+  let banner = slot.querySelector(":scope .integrity-banner");
+  if (!banner) {
+    banner = document.createElement("div");
+    banner.className = "integrity-banner v075-integrity-placeholder";
+    banner.innerHTML = '<ha-icon icon="mdi:alert-circle-outline"></ha-icon><div><strong></strong><span></span></div>';
+    slot.querySelector(".v050-overview")?.prepend(banner);
+  }
+  const telemetry = panel._telemetry?.() || {};
+  banner.hidden = Boolean(telemetry.trusted);
+  banner.classList.remove("ok", "bad", "warn", "unknown");
+  banner.classList.add(telemetry.tone || "unknown");
+  const strong = banner.querySelector("strong");
+  const detail = banner.querySelector("span");
+  if (strong) strong.textContent = telemetry.label || "Нет данных";
+  if (detail) detail.textContent = `${telemetry.detail || "Состояние телеметрии не определено"}. WAN не трактуется как нормальный до восстановления телеметрии.`;
+}
+
+function patchSlotV075(panel, slot, view) {
+  const desired = document.createElement("div");
+  desired.append(fragmentV075(bodyV075(panel, view)));
+  morphV075(slot, desired);
+  if (view === "overview") {
+    patchIndicatorV075(panel, slot);
+    patchTopologyV075(panel, slot);
+    ensureIntegrityPlaceholderV075(panel, slot);
+  }
+}
+
+function installStableStyleV075(root) {
+  if (!root || root.querySelector("style[data-keenetic-stable-dom-v075]")) return;
+  const style = document.createElement("style");
+  style.dataset.keeneticStableDomV075 = "true";
+  style.textContent = `
+    .v075-view-slot[hidden],.v075-integrity-placeholder[hidden]{display:none!important}
+    .v075-view-slot{display:block;min-height:100%}
+    .connection-primary{font-size:16px!important;font-weight:700!important;max-width:min(58%,260px);white-space:normal;line-height:1.15}
+    .connection-secondary{font-size:13px!important;font-weight:600!important;max-width:min(68%,300px);white-space:normal;line-height:1.2}
+    .connection-primary.warn{color:var(--kp-yellow)!important}
+    @media(max-width:430px){
+      .v050-online-pill.connection-primary{font-size:16px!important;padding:8px 11px!important}
+      .v050-fresh-pill.connection-secondary{font-size:13px!important;padding:7px 10px!important;top:56px!important}
+    }
+  `;
+  root.append(style);
+}
+
+function preloadImagesV075(root) {
+  root.querySelectorAll("img").forEach((image) => {
+    if (image.dataset.preloadedV075 === "true") return;
+    image.dataset.preloadedV075 = "true";
+    image.decode?.().catch(() => {});
+  });
+  [
+    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.6",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.7.6",
+  ].forEach((url) => {
+    const image = new Image();
+    image.src = url;
+    image.decode?.().catch(() => {});
+  });
+}
+
+if (CORE_COMPONENT_V075 && !CORE_COMPONENT_V075.prototype.__nikaStableDomV075) {
+  CORE_COMPONENT_V075.prototype.__nikaStableDomV075 = true;
+  const renderBaseV075 = CORE_COMPONENT_V075.prototype._render;
+  const hassDescriptorV075 = Object.getOwnPropertyDescriptor(CORE_COMPONENT_V075.prototype, "hass");
+
+  CORE_COMPONENT_V075.prototype._bindStableInteractionsV075 = function (scope) {
+    scope.querySelectorAll("[data-view]:not([data-stable-bound-v075])").forEach((element) => {
+      element.dataset.stableBoundV075 = "true";
+      element.addEventListener("click", () => {
+        const view = element.dataset.view;
+        if (!view) return;
+        history.replaceState(null, "", `${location.pathname}${location.search}#${view}`);
+        this._view = view;
+        this._scheduleRender?.();
+        this._loadViewData?.();
+      });
+    });
+    scope.querySelectorAll("[data-period]:not([data-stable-bound-v075])").forEach((element) => {
+      element.dataset.stableBoundV075 = "true";
+      element.addEventListener("click", () => {
+        this._trafficPeriod = element.dataset.period || "24h";
+        this._scheduleRender?.();
+        this._loadTrafficHistory?.();
+      });
+    });
+    scope.querySelectorAll("[data-entity]:not([data-stable-bound-v075])").forEach((element) => {
+      element.dataset.stableBoundV075 = "true";
+      let timer = 0;
+      let fired = false;
+      const clear = () => { window.clearTimeout(timer); timer = 0; };
+      const open = () => {
+        const entityId = element.dataset.entity;
+        if (!entityId) return;
+        fired = true;
+        this.dispatchEvent(new CustomEvent("hass-more-info", { detail: { entityId }, bubbles: true, composed: true }));
+      };
+      element.addEventListener("pointerdown", () => { fired = false; clear(); timer = window.setTimeout(open, 550); });
+      ["pointerup", "pointercancel", "pointerleave"].forEach((name) => element.addEventListener(name, clear));
+      element.addEventListener("click", (event) => { if (fired) event.preventDefault(); });
+      element.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") open(); });
+    });
+  };
+
+  CORE_COMPONENT_V075.prototype._attachInteractions = function () {
+    this._bindStableInteractionsV075(this.shadowRoot);
+  };
+
+  CORE_COMPONENT_V075.prototype._showStableViewV075 = function (view) {
+    for (const [name, slot] of this._stableSlotsV075) {
+      const active = name === view;
+      slot.classList.toggle("v075-active-view", active);
+      slot.hidden = !active;
+      slot.inert = !active;
+      slot.setAttribute("aria-hidden", active ? "false" : "true");
+    }
+  };
+
+  CORE_COMPONENT_V075.prototype._mountStableDomV075 = function (requestedView) {
+    const main = this.shadowRoot?.querySelector(".shell>main");
+    if (!main) return false;
+    installStableStyleV075(this.shadowRoot);
+    this._stableSlotsV075 = new Map();
+
+    const overview = document.createElement("div");
+    overview.className = "v075-view-slot";
+    overview.dataset.viewV075 = "overview";
+    while (main.firstChild) overview.append(main.firstChild);
+    main.append(overview);
+    this._stableSlotsV075.set("overview", overview);
+
+    for (const view of STABLE_VIEWS_V075.slice(1)) {
+      const slot = document.createElement("div");
+      slot.className = "v075-view-slot";
+      slot.dataset.viewV075 = view;
+      slot.append(fragmentV075(bodyV075(this, view)));
+      main.append(slot);
+      this._stableSlotsV075.set(view, slot);
+    }
+
+    this._stableMainV075 = main;
+    this._view = requestedView;
+    this._showStableViewV075(requestedView);
+    this._bindStableInteractionsV075(main);
+    patchIndicatorV075(this, overview);
+    ensureIntegrityPlaceholderV075(this, overview);
+    preloadImagesV075(main);
+    this._stableMountedV075 = true;
+    return true;
+  };
+
+  CORE_COMPONENT_V075.prototype._patchStableDomV075 = function () {
+    if (!this._stableMountedV075) return;
+    const activeView = this._view;
+    for (const [view, slot] of this._stableSlotsV075) patchSlotV075(this, slot, view);
+    this._view = activeView;
+    this._showStableViewV075(activeView);
+  };
+
+  CORE_COMPONENT_V075.prototype._scheduleRender = function () {
+    if (this._renderQueuedV075) return;
+    this._renderQueuedV075 = true;
+    window.requestAnimationFrame(() => {
+      this._renderQueuedV075 = false;
+      this._render();
+    });
+  };
+
+  CORE_COMPONENT_V075.prototype._maybeRefreshIndicatorV075 = function () {
+    const interval = Math.max(1, Number(this._bootstrap?.telemetry?.scan_interval_seconds || 30)) * 1000;
+    const now = Date.now();
+    if (this._bootstrapLoading || now < Number(this._nextIndicatorRefreshV075 || 0)) return;
+    this._nextIndicatorRefreshV075 = now + interval;
+    this._loadBootstrap?.(true);
+  };
+
+  CORE_COMPONENT_V075.prototype._render = function (...args) {
+    if (this._stableMountedV075) {
+      this._patchStableDomV075();
+      return;
+    }
+    if (!this._hass || !this._bootstrap) return;
+    const requestedView = this._view;
+    this._view = "overview";
+    renderBaseV075.apply(this, args);
+    this._view = requestedView;
+    this._mountStableDomV075(requestedView);
+  };
+
+  if (hassDescriptorV075?.set) {
+    Object.defineProperty(CORE_COMPONENT_V075.prototype, "hass", {
+      configurable: true,
+      enumerable: hassDescriptorV075.enumerable,
+      set(value) {
+        if (!this._stableMountedV075) {
+          hassDescriptorV075.set.call(this, value);
+          return;
+        }
+        this._hass = value;
+        this._scheduleRender();
+        this._maybeRefreshIndicatorV075();
+      },
+    });
+  }
+}
+
+if (BASE_COMPONENT_V075 && !customElements.get("keenetic-hero-app-panel-v075")) {
+  class KeeneticHeroAppPanelV075 extends BASE_COMPONENT_V075 {
+    _ensureChild() {
+      if (!this.isConnected) return;
+      const target =
+        this.shadowRoot?.getElementById("nika-zoom-surface") ||
+        this.shadowRoot?.getElementById("app-content");
+      if (!this._child) this._child = document.createElement("keenetic-hero-panel");
+      if (target && this._child.parentElement !== target) target.append(this._child);
+      if (this._panel && this._stablePanelSentV075 !== this._panel) {
+        this._stablePanelSentV075 = this._panel;
+        this._child.panel = this._panel;
+      }
+      if (this._route && this._stableRouteSentV075 !== this._route) {
+        this._stableRouteSentV075 = this._route;
+        this._child.route = this._route;
+      }
+      if (this._hass && this._panel) this._child.hass = this._hass;
+    }
+
+    _renderTabBar() {
+      const nav = this.shadowRoot?.getElementById("nika-tabbar");
+      if (!nav) return;
+      if (!nav.querySelector("[data-view]")) super._renderTabBar();
+      const active = this._activeView === "system" ? "diagnostics" : this._activeView;
+      nav.querySelectorAll("[data-view]").forEach((button) => {
+        const selected = button.dataset.view === active;
+        button.classList.toggle("active", selected);
+        button.setAttribute("aria-current", selected ? "page" : "false");
+      });
+    }
+
+    _renderShell() {
+      super._renderShell();
+      const version = this.shadowRoot?.querySelector(".title span");
+      if (version) version.textContent = "Network Control Center · UI v0.7.5";
+    }
+  }
+
+  customElements.define("keenetic-hero-app-panel-v075", KeeneticHeroAppPanelV075);
+}
+})();
+// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v075.js
+
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v076.js
+(() => {
+const CORE_COMPONENT_V076 = customElements.get("keenetic-hero-panel");
+const BASE_COMPONENT_V076 = customElements.get("keenetic-hero-app-panel-v075");
+const INDICATOR_TONES_V076 = ["ok", "warn", "bad", "unknown", "neutral"];
+const STABLE_VIEWS_V076 = ["overview", "wan", "failover", "traffic", "diagnostics", "system"];
+const PERSISTENT_ASSETS_V076 = [
+  "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.6",
+  "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.7.6",
+];
+const PRELOADED_ASSETS_V076 = PERSISTENT_ASSETS_V076.map((url) => {
+  const image = new Image();
+  image.src = url;
+  image.decode?.().catch(() => {});
+  return image;
+});
+
+function fragmentV076(html) {
+  const template = document.createElement("template");
+  template.innerHTML = html;
+  return template.content;
+}
+
+function bodyV076(panel, view) {
+  if (view === "overview") return panel._renderOverview();
+  if (view === "wan") return panel._renderWan();
+  if (view === "traffic") return panel._renderTraffic();
+  if (view === "failover") return panel._renderFailover();
+  if (view === "system") return panel._renderSystem();
+  return panel._renderDiagnostics();
+}
+
+function ensureStableViewV076(panel, view) {
+  if (!STABLE_VIEWS_V076.includes(view) || panel._stableSlotsV075?.has(view)) return;
+  const slot = document.createElement("div");
+  slot.className = "v075-view-slot";
+  slot.dataset.viewV075 = view;
+  slot.append(fragmentV076(bodyV076(panel, view)));
+  panel._stableMainV075?.append(slot);
+  panel._stableSlotsV075.set(view, slot);
+  panel._bindStableInteractionsV075(slot);
+  slot.querySelectorAll("img").forEach((image) => image.decode?.().catch(() => {}));
+}
+
+function setDirectTextV076(element, value) {
+  if (!element) return;
+  const text = [...element.childNodes].find(
+    (node) => node.nodeType === Node.TEXT_NODE && node.nodeValue.trim(),
+  );
+  if (text && text.nodeValue !== value) text.nodeValue = value;
+  else if (!text) element.append(document.createTextNode(value));
+}
+
+function indicatorCategoryV076(panel) {
+  const telemetry = panel._telemetry?.() || {};
+  const configured = panel._bootstrap?.telemetry || {};
+  const age = Number(telemetry.age);
+  const hasSample = telemetry.age !== null && telemetry.age !== undefined && Number.isFinite(age);
+  const failedPoll = configured.last_update_success === false;
+  const scanInterval = Math.max(1, Number(configured.scan_interval_seconds || 30));
+  const staleAfter = scanInterval * 3;
+  const declared = String(
+    configured.active_data_channel || configured.data_channel || "local",
+  ).toLowerCase();
+  const transportUnavailable =
+    configured.connection_available === false ||
+    configured.transport_available === false ||
+    ["none", "offline", "disconnected"].includes(declared);
+
+  let connection = { label: "Нет данных", tone: "unknown" };
+  if (transportUnavailable) connection = { label: "Нет связи", tone: "bad" };
+  else if (["local", "lan", "api", "rci", "modbus", "snmp", "mqtt", "zigbee2mqtt", "tuya_local"].includes(declared)) {
+    connection = { label: "Локально", tone: "ok" };
+  } else if (["cloud", "remote", "tuya_cloud"].includes(declared)) {
+    connection = { label: "Облако", tone: "ok" };
+  } else if (["reserve", "backup", "fallback"].includes(declared)) {
+    connection = { label: "Резерв", tone: "warn" };
+  }
+
+  let freshness = { label: "Нет данных", tone: "unknown" };
+  if (hasSample && (failedPoll || age > staleAfter)) {
+    freshness = { label: "Данные устарели", tone: "warn" };
+  } else if (hasSample) {
+    freshness = { label: "Данные актуальны", tone: "neutral" };
+  }
+  return { connection, freshness, key: `${connection.label}:${freshness.label}` };
+}
+
+function patchIndicatorV076(panel) {
+  const slot = panel._stableSlotsV075?.get("overview");
+  if (!slot) return;
+  const primary = slot.querySelector(".v050-online-pill");
+  const secondary = slot.querySelector(".v050-fresh-pill");
+  if (!primary || !secondary) return;
+  const category = indicatorCategoryV076(panel);
+  if (slot.dataset.telemetryCategoryV076 === category.key) return;
+  slot.dataset.telemetryCategoryV076 = category.key;
+
+  primary.classList.add("connection-primary", "connection-surface-v076");
+  primary.classList.remove(...INDICATOR_TONES_V076);
+  primary.classList.add(category.connection.tone);
+  setDirectTextV076(primary, category.connection.label);
+  primary.setAttribute("role", "status");
+  primary.setAttribute("aria-live", "polite");
+  primary.setAttribute("aria-atomic", "true");
+  primary.setAttribute("aria-label", `${category.connection.label} · ${category.freshness.label}`);
+
+  secondary.classList.add("connection-secondary", "connection-surface-v076");
+  secondary.classList.remove(...INDICATOR_TONES_V076);
+  secondary.classList.add(category.freshness.tone);
+  secondary.setAttribute("aria-hidden", "true");
+  setDirectTextV076(secondary, category.freshness.label);
+}
+
+function installContentStandardV076(root) {
+  if (!root || root.querySelector("style[data-nikas-content-standard-v076]")) return;
+  const style = document.createElement("style");
+  style.dataset.nikasContentStandardV076 = "true";
+  style.textContent = `
+    .v075-view-slot[hidden],.v075-integrity-placeholder[hidden]{display:none!important}
+    .v075-view-slot{display:block;min-height:100%}
+    /* NikaS v1.6: meaningful panel text remains inside the 12–25 px envelope. */
+    .v050-status-copy h1,.hero-value{font-size:25px!important}
+    .eyebrow,.telemetry-chip,.hero-top small,.rate-row,.node,.branch b,.router-node,
+    .integrity-banner span,.pill,.big-rates small,.metric span,.metric strong,.metric small,
+    .signal-summary span,.signal-summary small,.failover-main span,.reason span,.failover-main small,
+    .detail-grid .metric span,.signal-banner span,.signal-banner small,.hint,.period,
+    .traffic-totals span,.traffic-totals small,.live-rate,.chart-legend,
+    .failover-kpis span,.failover-kpis small,.event span,.system-meta,
+    .integrity-card span,.integrity-card>small,.diag-row strong,.diag-row small,.source-tag,
+    .diagnostic-actions span,.v050-kicker,.v050-path-node strong,.v050-path-node small,
+    .v050-reserve-badge strong,.v050-reserve-badge span,.v050-kpi span,.v050-kpi strong,
+    .v050-reserve-strip div strong,.v050-reserve-strip div span,
+    .v050-channel-grid small,.v050-channel-grid strong,.v050-lte-grid small,.v050-lte-grid strong,
+    .v050-signal-line span,.v050-signal-line small,.v061-topology-card strong,.v061-topology-card span,
+    .v061-lte strong,.v061-lte span,.v061-cable strong,.v061-cable span,.v061-lan strong,.v061-lan span{
+      font-size:12px!important;
+    }
+    .v050-kpi span,.v050-path-node small,.v050-reserve-badge span,
+    .v050-reserve-strip div span,.v050-channel-grid small,.v050-lte-grid small{
+      line-height:1.18!important;
+    }
+
+    /* One quiet, status-tinted two-line connection surface. */
+    .v050-online-pill.connection-primary,.v050-fresh-pill.connection-secondary{
+      right:10px!important;
+      width:164px!important;
+      max-width:calc(100% - 20px)!important;
+      box-sizing:border-box!important;
+      margin:0!important;
+      border-color:color-mix(in srgb,var(--indicator-tone,var(--kp-grey)) 30%,transparent)!important;
+      background:color-mix(in srgb,var(--indicator-tone,var(--kp-grey)) 10%,var(--kp-surface))!important;
+      box-shadow:none!important;
+      backdrop-filter:none!important;
+      animation:none!important;
+      transition:none!important;
+      justify-content:flex-start!important;
+      white-space:normal!important;
+    }
+    .v050-online-pill.connection-primary{
+      top:10px!important;
+      min-height:38px!important;
+      padding:8px 12px 4px!important;
+      border-radius:17px 17px 0 0!important;
+      border-bottom:0!important;
+      font-size:16px!important;
+      font-weight:700!important;
+      line-height:1.15!important;
+    }
+    .v050-fresh-pill.connection-secondary{
+      top:48px!important;
+      min-height:31px!important;
+      padding:2px 12px 8px!important;
+      border-radius:0 0 17px 17px!important;
+      border-top:0!important;
+      font-size:13px!important;
+      font-weight:600!important;
+      line-height:1.2!important;
+    }
+    .v050-fresh-pill.connection-secondary ha-icon{display:none!important}
+    .v050-online-pill.connection-primary .status-dot{
+      width:10px!important;
+      min-width:10px!important;
+      height:10px!important;
+      box-shadow:none!important;
+    }
+    .v050-online-pill.connection-primary.ok{--indicator-tone:var(--kp-green);color:var(--kp-green)!important}
+    .v050-online-pill.connection-primary.warn{--indicator-tone:var(--kp-yellow);color:var(--kp-yellow)!important}
+    .v050-online-pill.connection-primary.bad{--indicator-tone:var(--kp-red);color:var(--kp-red)!important}
+    .v050-online-pill.connection-primary.unknown{--indicator-tone:var(--kp-grey);color:var(--kp-grey)!important}
+    .v050-online-pill.connection-primary.ok+.v050-fresh-pill{--indicator-tone:var(--kp-green)}
+    .v050-online-pill.connection-primary.warn+.v050-fresh-pill{--indicator-tone:var(--kp-yellow)}
+    .v050-online-pill.connection-primary.bad+.v050-fresh-pill{--indicator-tone:var(--kp-red)}
+    .v050-online-pill.connection-primary.unknown+.v050-fresh-pill{--indicator-tone:var(--kp-grey)}
+    .v050-fresh-pill.connection-secondary.neutral{color:var(--secondary-text-color)!important}
+    .v050-fresh-pill.connection-secondary.warn{color:var(--kp-yellow)!important}
+    .v050-fresh-pill.connection-secondary.unknown{color:var(--kp-grey)!important}
+
+    @media(max-width:430px){
+      .v050-status-copy{max-width:56%!important}
+      .v050-online-pill.connection-primary,.v050-fresh-pill.connection-secondary{width:156px!important}
+    }
+  `;
+  root.append(style);
+}
+
+if (CORE_COMPONENT_V076 && !CORE_COMPONENT_V076.prototype.__nikaStandardV076) {
+  CORE_COMPONENT_V076.prototype.__nikaStandardV076 = true;
+  const patchStableBaseV076 = CORE_COMPONENT_V076.prototype._patchStableDomV075;
+  const showStableBaseV076 = CORE_COMPONENT_V076.prototype._showStableViewV075;
+
+  CORE_COMPONENT_V076.prototype._mountStableDomV075 = function (...args) {
+    const requestedView = args[0] || "overview";
+    const main = this.shadowRoot?.querySelector(".shell>main");
+    if (!main) return false;
+    installContentStandardV076(this.shadowRoot);
+    this._stableSlotsV075 = new Map();
+
+    const overview = document.createElement("div");
+    overview.className = "v075-view-slot";
+    overview.dataset.viewV075 = "overview";
+    while (main.firstChild) overview.append(main.firstChild);
+    main.append(overview);
+    this._stableSlotsV075.set("overview", overview);
+    this._stableMainV075 = main;
+    ensureStableViewV076(this, requestedView);
+    this._view = requestedView;
+    this._stableMountedV075 = true;
+    patchStableBaseV076.call(this);
+    this._bindStableInteractionsV075(main);
+    main.querySelectorAll("img").forEach((image) => image.decode?.().catch(() => {}));
+    patchIndicatorV076(this);
+    return true;
+  };
+
+  CORE_COMPONENT_V076.prototype._patchStableDomV075 = function (...args) {
+    ensureStableViewV076(this, this._view);
+    patchStableBaseV076.apply(this, args);
+    installContentStandardV076(this.shadowRoot);
+    patchIndicatorV076(this);
+  };
+
+  CORE_COMPONENT_V076.prototype._showStableViewV075 = function (view) {
+    ensureStableViewV076(this, view);
+    showStableBaseV076.call(this, view);
+  };
+}
+
+function installShellStandardV076(root) {
+  if (!root || root.querySelector("style[data-nikas-shell-standard-v076]")) return;
+  const style = document.createElement("style");
+  style.dataset.nikasShellStandardV076 = "true";
+  style.textContent = `
+    :host{
+      display:block!important;
+      width:100%!important;
+      height:100dvh!important;
+      min-height:0!important;
+      max-height:100dvh!important;
+      overflow:hidden!important;
+      overscroll-behavior:none!important;
+    }
+    #nika-app-shell{
+      width:100%!important;
+      height:100%!important;
+      min-height:0!important;
+      max-height:100%!important;
+      display:grid!important;
+      grid-template-rows:auto minmax(0,1fr) auto!important;
+      overflow:hidden!important;
+      overscroll-behavior:none!important;
+    }
+    .nika-header{
+      position:relative!important;
+      inset:auto!important;
+      transform:none!important;
+      display:grid!important;
+      grid-template-columns:52px minmax(0,1fr) 52px!important;
+      min-height:calc(62px + env(safe-area-inset-top,0px))!important;
+      padding:env(safe-area-inset-top,0px) max(8px,env(safe-area-inset-right,0px)) 0 max(8px,env(safe-area-inset-left,0px))!important;
+      align-items:center!important;
+      gap:0!important;
+      z-index:4!important;
+    }
+    .nika-header .menu,.nika-header .refresh{
+      width:44px!important;
+      min-width:44px!important;
+      height:44px!important;
+      min-height:44px!important;
+      padding:0!important;
+      border-radius:16px!important;
+      border:1px solid var(--shell-border,var(--divider-color))!important;
+      background:var(--card-background-color)!important;
+      box-shadow:0 7px 20px rgba(23,45,76,.08)!important;
+      display:grid!important;
+      place-items:center!important;
+    }
+    .nika-header .menu{grid-column:1!important;justify-self:start!important;color:var(--primary-text-color)!important}
+    .nika-header .refresh{grid-column:3!important;justify-self:end!important;color:var(--primary-color)!important}
+    .nika-header .menu ha-icon,.nika-header .refresh ha-icon{--mdc-icon-size:25px!important}
+    .nika-header .title{grid-column:2!important;grid-row:1!important;text-align:center!important;min-width:0!important}
+    .nika-header .title strong{font-size:23px!important;font-weight:800!important;line-height:1.08!important}
+    .nika-header .title span{font-size:14px!important;font-weight:560!important;line-height:1.15!important;color:var(--secondary-text-color)!important}
+    #app-content{
+      position:relative!important;
+      min-width:0!important;
+      min-height:0!important;
+      height:auto!important;
+      max-height:none!important;
+      overflow-x:hidden!important;
+      overscroll-behavior-x:none!important;
+      overscroll-behavior-y:none!important;
+      -webkit-overflow-scrolling:touch!important;
+      scroll-behavior:auto!important;
+    }
+    #app-content.native-scroll-v074{overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important}
+    #app-content.zoomed-v074{overflow:hidden!important;overscroll-behavior:none!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important}
+    #nika-zoom-stage{min-width:100%!important;min-height:100%!important}
+    #nika-zoom-surface{min-width:100%!important;min-height:100%!important;transform-origin:0 0!important}
+    .nika-tabbar{
+      position:relative!important;
+      inset:auto!important;
+      transform:none!important;
+      width:100%!important;
+      min-width:0!important;
+      display:grid!important;
+      grid-template-columns:repeat(5,minmax(0,1fr))!important;
+      gap:2px!important;
+      padding:6px max(6px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px))!important;
+      border-radius:0!important;
+      border-top:1px solid var(--shell-border,var(--divider-color))!important;
+      background:var(--card-background-color)!important;
+      box-shadow:0 -4px 18px rgba(23,45,76,.08)!important;
+      z-index:5!important;
+    }
+    .nika-tabbar button{
+      min-height:52px!important;
+      min-width:0!important;
+      border-radius:16px!important;
+      gap:3px!important;
+      padding:3px 2px!important;
+      color:var(--secondary-text-color)!important;
+      background:transparent!important;
+      box-shadow:none!important;
+    }
+    .nika-tabbar button.active{color:var(--primary-color)!important;background:color-mix(in srgb,var(--primary-color) 11%,transparent)!important}
+    .nika-tabbar button.active::before{display:none!important}
+    .nika-tabbar ha-icon{--mdc-icon-size:28px!important}
+    .nika-tabbar span{font-size:12px!important;font-weight:700!important;white-space:nowrap!important;line-height:1.1!important}
+    @media(max-width:680px){
+      :host{position:fixed!important;inset:0!important;width:auto!important;height:auto!important;max-height:none!important}
+      #nika-app-shell{position:absolute!important;inset:0!important;width:auto!important;height:auto!important;max-height:none!important}
+    }
+    @media(max-width:390px){
+      .nika-header{grid-template-columns:48px minmax(0,1fr) 48px!important;min-height:calc(60px + env(safe-area-inset-top,0px))!important}
+      .nika-header .title strong{font-size:21px!important}
+      .nika-header .title span{font-size:13px!important}
+    }
+  `;
+  root.append(style);
+}
+
+if (BASE_COMPONENT_V076 && !customElements.get("keenetic-hero-app-panel-v076")) {
+  class KeeneticHeroAppPanelV076 extends BASE_COMPONENT_V076 {
+    _onStandardTouchEndV074(event) {
+      if (this._standardMultiV074 && event.touches.length === 1) {
+        this._completedMultiTouchV076 = this._standardPinchV074;
+        this._standardPinchV074 = null;
+        this._standardPanV074 = null;
+        return;
+      }
+      if (
+        this._standardMultiV074 &&
+        event.touches.length === 0 &&
+        !this._standardPinchV074 &&
+        this._completedMultiTouchV076
+      ) {
+        this._standardPinchV074 = this._completedMultiTouchV076;
+      }
+      super._onStandardTouchEndV074(event);
+      if (event.touches.length === 0) this._completedMultiTouchV076 = null;
+    }
+
+    _onStandardTouchCancelV074() {
+      this._completedMultiTouchV076 = null;
+      super._onStandardTouchCancelV074();
+    }
+
+    _applyStandardZoomV074(value, options = {}) {
+      super._applyStandardZoomV074(value, options);
+      if (this._standardStateV074?.scale === 1) {
+        this._standardStateV074.x = 0;
+        this._standardStateV074.y = 0;
+        const surface = this.shadowRoot?.getElementById("nika-zoom-surface");
+        if (surface && surface.style.transform !== "none") surface.style.transform = "none";
+      }
+    }
+
+    _renderShell() {
+      super._renderShell();
+      const root = this.shadowRoot;
+      installShellStandardV076(root);
+      const menuIcon = root?.querySelector("#nika-menu ha-icon");
+      const refreshIcon = root?.querySelector("#nika-refresh ha-icon");
+      if (menuIcon?.getAttribute("icon") !== "mdi:menu") menuIcon?.setAttribute("icon", "mdi:menu");
+      if (refreshIcon?.getAttribute("icon") !== "mdi:refresh") refreshIcon?.setAttribute("icon", "mdi:refresh");
+      const version = root?.querySelector(".title span");
+      if (version) version.textContent = "Network Control Center · UI v0.7.6";
+    }
+  }
+
+  customElements.define("keenetic-hero-app-panel-v076", KeeneticHeroAppPanelV076);
+}
+})();
+// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v076.js

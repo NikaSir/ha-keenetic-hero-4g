@@ -4,7 +4,7 @@
 
 - `main` is the canonical stable source branch and the normal HACS installation source.
 - Development happens in feature branches and pull requests.
-- Every accepted build is traceable to an immutable Git tag derived from the committed Home Assistant manifest version.
+- Every accepted build is traceable to a reviewed branch, pull request and commit.
 - Release artifacts must be produced from committed source, never from an uncommitted local working tree.
 
 ## Distribution model
@@ -13,7 +13,7 @@
 - HACS owns the installed files under `/config/custom_components/keenetic_hero_4g/` after the one-time migration.
 - Manual ZIP/folder replacement is reserved for controlled feature-branch validation or recovery, not routine household updates.
 - The existing Home Assistant Config Entry is preserved during migration between manual and HACS file delivery.
-- Temporary short-SHA branches are not a release mechanism.
+- Temporary short-SHA branches are not a release mechanism. GitHub Releases and Git tags are not used as an update channel.
 
 ## Version lineage
 
@@ -23,9 +23,7 @@ The Home Assistant manifest uses a semantic version representation of the projec
 
 - project/changelog build: `v1.00_b008`;
 - manifest version: `1.0.0-b008`;
-- immutable Git/HACS tag: `v1.0.0-b008`.
-
-The tag is generated deterministically as `v<manifest.version>` by `scripts/release_tag.py`.
+- traceable source: reviewed PR and its immutable merge commit.
 
 ## Release gate
 
@@ -39,15 +37,14 @@ Before an accepted build is merged/published for normal HACS installation:
 6. No router credentials, SNMP communities, cookies, tokens, private identifiers, or private diagnostics are present in tracked files or release artifacts.
 7. `main` contains only the reviewed and accepted implementation.
 
-Release tags are immutable. `.github/workflows/release-tag.yml` publishes the missing tag from protected `main`. If the same tag already exists at another commit, the workflow fails instead of moving the tag.
+GitHub Releases and automatic release tags are prohibited. The committed integration/UI version identifies the build; the pull request and merge commit provide traceability.
 
 ## Update flow
 
 1. Develop and review in a feature branch/PR.
 2. Run CI plus required live validation.
 3. Merge the accepted build to `main`.
-4. The release-tag workflow publishes `v<manifest.version>` for that accepted main commit.
-5. HACS uses the stable repository/tag lineage for routine delivery.
-6. Keep manual installation instructions only as a recovery/test path.
+4. HACS uses the stable `main` branch and committed manifest version for routine delivery.
+5. Keep manual installation instructions only as a recovery/test path.
 
 See `docs/HACS_MIGRATION.md` for the one-time transition from the current manually copied component directory.

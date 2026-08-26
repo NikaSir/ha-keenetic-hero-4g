@@ -1,5 +1,24 @@
 # Changelog
 
+## UI v0.7.6 / v1.00_b039 — 2026-08-26
+
+- Rebuilds the panel against the repository-owned NikaS Specialized Panel UI Standard v1.6.
+- Locks the phone shell to the viewport so only the single work viewport scrolls; Header and Bottom Tab Bar remain stationary and native-scale on long and short views.
+- Updates Header to the 23/14 px reference pair (21/13 px narrow) and gives Menu and Refresh identical 44×44 reference plaques.
+- Corrects the two-finger double-tap recognizer so releasing the first finger no longer discards the completed gesture; reset returns scale, transform and native scroll to 100%/origin.
+- Converts visited tabs to lazy stable DOM caching while preserving point-patched telemetry and the field-confirmed no-flicker update path.
+- Reworks the optional connection indicator as one fixed-size, two-line, status-tinted surface with 16/700 and 13/600 text; failed polling marks retained data stale without falsely changing the known transport.
+- Enforces the 12–25 px meaningful typography envelope and deterministic v0.7.6 asset cache keys.
+- Removes the obsolete automatic Git-tag publication workflow; builds are published only through traceable branches, commits and pull requests.
+
+## UI v0.7.5 / v1.00_b038 — 2026-08-26
+
+- Replaces live full-DOM rendering with one-time view mounting and `requestAnimationFrame` point patches.
+- Keeps every tab container, the Header, zoom viewport and Bottom Tab Bar as persistent DOM nodes; tabs switch with `hidden` and `inert`.
+- Updates the requested two-level connection indicator only when its semantic category changes; failed polling immediately marks retained values stale.
+- Locks indicator typography to 16 px / 700 for the channel and 13 px / 600 for freshness, with no sub-13 px fallback.
+- Preloads and decodes image elements and never reassigns an unchanged `src` or reconnects an existing event handler.
+
 ## UI v0.7.4 / v1.00_b037 — 2026-08-26
 
 - Implements NIKAS Specialized Panel UI Standard v1.5.
