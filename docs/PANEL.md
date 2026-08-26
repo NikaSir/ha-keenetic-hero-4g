@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel version: **0.2.6**  
+Panel version: **0.7.4**
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -20,23 +20,23 @@ The first screen must answer, without opening Keenetic Web UI:
 
 ## Home Assistant NikaS app shell
 
-Panel 0.2.6 follows **Home Assistant NikaS Integration Dashboard UI Standard v1.2**.
+Panel 0.7.4 follows **NikaS Specialized Panel UI Standard v1.5**.
 
 ### Header
 
-- explicit `mdi:arrow-left` Back on the left;
+- permanent `mdi:menu` Home Assistant menu on the left; it dispatches `hass-toggle-menu`;
 - title `Keenetic Hero 4G+` geometrically centered against the viewport;
 - no decorative router/brand icon beside the title;
 - compact secondary UI/version subtitle;
 - one global Refresh action on the right;
-- Back is an explicit navigate to `/dashboard-infrastructure/overview`, not browser history.
+- any parent-section transition belongs inside the work area, never in the permanent left Header slot.
 
 ### Bottom navigation
 
 The bottom Tab Bar is a dedicated app-shell row outside the vertical scroll region and is the only primary section switcher:
 
 1. `Обзор`
-2. `WAN/LTE`
+2. `Каналы`
 3. `Failover`
 4. `Трафик`
 5. `Диагн.`

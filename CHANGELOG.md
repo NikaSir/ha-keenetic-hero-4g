@@ -1,5 +1,12 @@
 # Changelog
 
+## UI v0.7.4 / v1.00_b037 — 2026-08-26
+
+- Implements NIKAS Specialized Panel UI Standard v1.5.
+- Uses native vertical-only scrolling at 100% and bounded axis-specific pan only above 100%.
+- Removes permanent zoom controls and restores snap, two-finger reset, toast and gesture guards.
+- Aligns Header and Bottom Tab Bar with the UPS reference geometry.
+
 ## UI v0.7.3 / v1.00_b036 — 2026-08-26
 
 - Fixed the central `Failover` tab freeze caused by the disabled Recorder-history override scheduling a new render after every render.
