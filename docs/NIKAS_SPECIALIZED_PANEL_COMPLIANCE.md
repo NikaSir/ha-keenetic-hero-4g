@@ -35,3 +35,16 @@ Complete the phone field checks below. Keep the approved README/integration iden
 ## Phone verification still required
 
 Long Diagnostics scrolling at 100%; no horizontal/top-edge displacement; pan axes at >100%; bounds after release/resize/tab change; pinch without snap-back; tap/hold behavior; fixed Header/tab bar; Home Indicator clearance.
+
+
+<!-- v1.6-adoption -->
+## v1.6 adoption delta — 2026-08-26
+
+This section is normative. Earlier PASS evidence was collected against v1.5.
+
+- **Indicator policy:** the common two-level indicator is **NOT ENABLED** by the shared standard. Existing WAN/LTE/failover visualization remains domain content and must not be relabelled automatically.
+- A future common indicator requires a separate explicit task and must distinguish the factual active path from merely available LTE reserve.
+- **Stable DOM:** router polling and topology changes patch existing nodes without redrawing images, viewport or shell.
+- **Fixed chrome:** Header and Bottom Tab Bar retain screen coordinates during short views, upward scroll, inertia and boundary pull.
+- **Typography:** enforce the LIDER 9–25px scale and 12px meaningful-text floor.
+- **Brand:** repository and packaged integration identity remain mandatory.
