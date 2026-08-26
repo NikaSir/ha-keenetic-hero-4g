@@ -1,7 +1,7 @@
 # NikaS specialized-panel compliance — Keenetic Hero 4G+
 
 **Audit date:** 2026-08-26
-**Standard:** NikaS Specialized Panel UI Standard v1.4
+**Standard:** NikaS Specialized Panel UI Standard v1.5
 **Audited production path:** `panel_runtime.py` + `PANEL_VERSION=0.7.3` → `keenetic-panel-bundle.js?v=0.7.3` → `keenetic-hero-app-panel-v073`
 **Scope:** audit only; runtime deliberately unchanged in this PR
 
@@ -16,7 +16,7 @@
 | Pan only above 100% / overflowing axes | GAP | v0.7.2 relies on native two-axis overflow scrolling at every scale. It does not gate one-finger horizontal/vertical pan per scale and per overflowing axis. |
 | 97–103% snap | GAP | `frontend/keenetic-app-v072.js::_onSafeZoomTouchEndV072` only persists the current value; it has no 97–103% snap. |
 | Two-finger double-tap reset and toast | GAP | Effective v0.7.2 has no double-tap detector and no `Масштаб 100%` toast. |
-| No permanent zoom buttons | GAP | `v072::_installSafeZoomControlsV072` adds permanent `− / 100% / +` controls, expressly prohibited by v1.4. |
+| No permanent zoom buttons | GAP | `v072::_installSafeZoomControlsV072` adds permanent `− / 100% / +` controls, expressly prohibited by v1.5. |
 | Scale persistence granularity | PARTIAL | `SAFE_ZOOM_STORAGE_V072` persists per client/panel, but not per peer. Keenetic currently has one peer device, so this is sufficient until peer selection exists. |
 | Tab reset and clamp | PARTIAL | Base `v040::_setView` scrolls to top, but effective `v072::_setView` calls `super`, remeasures only, and does not explicitly reset horizontal scroll or transform offset. Native top reset is inherited; full origin/clamp contract is not explicit. |
 | Resize clamp | GAP | Effective v0.7.2 removed observer/window resize handling (“no observer loop”) and only schedules measure during install/tab change. No current viewport-resize remeasure/clamp is installed. |
