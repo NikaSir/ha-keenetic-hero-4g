@@ -83,7 +83,7 @@ class PanelZoomContractTests(unittest.TestCase):
     def test_delivery_manifest_matches_shell_and_zoom_policy(self) -> None:
         self.assertEqual(self.manifest["route"], "/dashboard-keenetic")
         self.assertEqual(self.manifest["entry_module"], "keenetic-panel-bundle.js")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v072")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v073")
         self.assertEqual(
             self.manifest["ha_menu_event"],
             {"type": "hass-toggle-menu", "bubbles": True, "composed": True},

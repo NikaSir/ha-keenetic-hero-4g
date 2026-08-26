@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel version: 0.7.2
+Panel version: 0.7.3
 
-Integration build: 1.0.0-b035
+Integration build: 1.0.0-b036
 
 Standard: NikaS Specialized Panel UI Standard v1.3
 
@@ -52,14 +52,15 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - `unknown`, `unavailable`, stale or untrusted data never appear healthy and are never fabricated as zero.
 - Domain cards, local room/router artwork and dynamic SVG topology remain unchanged by the shell migration.
 - Cable, LAN and LTE paths remain behind the router bitmap and disappear at its visible silhouette instead of crossing the top or front face.
+- Opening the central `Failover` tab commits the disabled Recorder-history notice once; repeated render hooks do not schedule another render and do not call Recorder.
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.2` and component `keenetic-hero-app-panel-v072`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.3` and component `keenetic-hero-app-panel-v073`.
 - Historical modules are build-time inputs only; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
 
 ## Release gate
 
-UI v0.7.2 / b035 is accepted after all five Bottom Tab Bar views switch repeatedly without a stalled UI at 75%, 100%, 150% and 200%; pinch midpoint, screen controls, persistence, native scroll, safe areas and router path occlusion must pass on the real iPhone Pro Max / KN-2311 environment.
+UI v0.7.3 / b036 is accepted after the central `Failover` tab opens repeatedly without a stalled UI at 75%, 100%, 150% and 200%; pinch midpoint, screen controls, persistence, native scroll, safe areas and router path occlusion must continue to pass on the real iPhone Pro Max / KN-2311 environment.

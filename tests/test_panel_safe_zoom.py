@@ -49,10 +49,8 @@ class PanelSafeZoomTests(unittest.TestCase):
         self.assertIn("queueMicrotask(() => this._scheduleSafeZoomMeasureV072())", self.source)
         self.assertNotIn("_observeNikaZoomSurface", self.source)
 
-    def test_current_delivery_is_cache_safe(self) -> None:
+    def test_b035_delivery_is_cache_safe(self) -> None:
         self.assertIn('import("./keenetic-app-v071.js?v=0.7.2")', self.source)
-        self.assertEqual(self.manifest["panel_version"], "0.7.2")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v072")
         self.assertEqual(self.manifest["zoom_policy"]["engine"], "isolated_native_scroll_scale")
 
 
