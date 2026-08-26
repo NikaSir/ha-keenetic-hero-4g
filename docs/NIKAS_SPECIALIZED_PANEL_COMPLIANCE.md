@@ -25,8 +25,8 @@
 | Bottom Tab geometry | GAP | Base/final layers use `21–22px` icons and `9px` labels, not `28px` and `12px`. Active 11% colour and safe area are present; bar is full-width and fixed. |
 | Click/hold protection | GAP | Effective v0.7.2 pinch handlers do not cancel pending entity holds or add a post-pinch click guard. |
 | Repository icon | PASS | README displays `docs/icon.svg`. |
-| Integration icon assets | PARTIAL | `custom_components/keenetic_hero_4g/brand/icon.png` and `dark_icon.png` are valid 256×256 RGBA assets. Logo variants are absent. The repo does not demonstrate publication through the currently supported HA/HACS brand-display path; verify/publish assets for domain `keenetic_hero_4g` upstream as required. |
-| HACS packaging | PASS | `hacs.json` is configured and local brand assets are shipped. Packaging alone does not prove HA/HACS will display them. |
+| Integration icon assets | PASS | `custom_components/keenetic_hero_4g/brand/icon.png` and `dark_icon.png` are valid 256×256 RGBA assets and satisfy the HACS minimum. Logo variants are optional unless a wordmark surface requires them. |
+| HACS packaging | PASS | `hacs.json` is configured and the local brand assets ship with the integration. |
 
 ## Required runtime follow-up
 
@@ -36,7 +36,7 @@
 4. Re-measure/clamp on resize and reset scroll/offsets on every tab change.
 5. Add pinch hold-cancellation and post-gesture click guard without delaying intentional holds.
 6. Consolidate Header/Bottom Tab geometry in one final layer.
-7. Verify the supported HA/HACS brand publication path; add approved missing logo variants only if required.
+7. Keep the approved README/integration identity aligned; add logo variants only if a future surface requires them.
 
 ## Phone verification still required
 
