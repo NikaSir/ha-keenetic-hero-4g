@@ -10,6 +10,9 @@ SOURCE = INTEGRATION / "frontend" / "keenetic-app-v081.js"
 BASE_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
 RUNTIME = INTEGRATION / "panel_runtime.py"
 
+# Keep this contract test outside the frontend bundle inputs so repository
+# validation can run against the final generated bundle commit without a rebuild loop.
+
 
 class PanelHeaderReturnV081Tests(unittest.TestCase):
     @classmethod
