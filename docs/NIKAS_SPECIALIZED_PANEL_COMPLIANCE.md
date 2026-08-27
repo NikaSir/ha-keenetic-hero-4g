@@ -1,7 +1,7 @@
 # NikaS specialized-panel compliance — Keenetic Hero 4G+
 
 **Audit date:** 2026-08-27
-**Standard:** NikaS Specialized Panel UI Standard v1.6
+**Standard:** NikaS Specialized Panel UI Standard v1.7
 **Canonical revision checked:** `NikaSir/ha-contract-generated-ui@c05b707d533aa1afc5d051d2bb4528c4d08f8eda`
 **Audited production path:** `panel_runtime.py` + panel metadata `0.8.4` → autonomous bundle → `keenetic-hero-app-panel-v084`
 **Scope:** b046 composition refinement layered on the b045 stable runtime after phone-image audit; repeat phone field acceptance is required

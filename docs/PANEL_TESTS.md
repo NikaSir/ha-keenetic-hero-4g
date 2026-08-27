@@ -6,7 +6,7 @@ Panel metadata version: 0.8.4
 
 Integration build: 1.0.0-b046
 
-Standard: NikaS Specialized Panel UI Standard v1.6
+Standard: NikaS Specialized Panel UI Standard v1.7
 
 Target device: KN-2311
 
@@ -86,4 +86,4 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## Release gate
 
-Build b046 is a phone-validation candidate. It is accepted only after all NikaS v1.6 checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the refined Cable/LTE/LAN composition must pass on the real iPhone Pro Max / KN-2311 environment.
+Build b046 is a phone-validation candidate. It is accepted only after all NikaS v1.7 checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the refined Cable/LTE/LAN composition must pass on the real iPhone Pro Max / KN-2311 environment.

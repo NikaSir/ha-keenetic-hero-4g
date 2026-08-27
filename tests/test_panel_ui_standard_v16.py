@@ -30,14 +30,14 @@ class PanelUiStandardV16Tests(unittest.TestCase):
             (INTEGRATION / "panel_manifest.json").read_text(encoding="utf-8")
         )
 
-    def test_canonical_standard_snapshot_is_v16(self) -> None:
-        self.assertIn("NikaS Specialized Panel UI Standard v1.6", self.standard)
-        self.assertEqual(self.contract["app_shell"]["version"], "1.6")
+    def test_canonical_standard_snapshot_is_v17(self) -> None:
+        self.assertIn("NikaS Specialized Panel UI Standard v1.7", self.standard)
+        self.assertEqual(self.contract["app_shell"]["version"], "1.7")
         self.assertEqual(
-            self.contract["app_shell"]["canonical_revision"],
-            "c05b707d533aa1afc5d051d2bb4528c4d08f8eda",
+            self.contract["app_shell"]["canonical_sha256"],
+            "22c0cec7fa61b8210fc40e3f053242335f8e502984cbb8a4fb93c33a93bd3706",
         )
-        self.assertEqual(self.manifest["zoom_policy"]["standard"], "1.6")
+        self.assertEqual(self.manifest["zoom_policy"]["standard"], "1.7")
 
     def test_phone_shell_owns_the_only_scroll_viewport(self) -> None:
         viewport = self.contract["app_shell"]["viewport_fit"]

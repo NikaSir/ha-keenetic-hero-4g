@@ -12,12 +12,12 @@
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
-    "version": "1.6",
+    "version": "1.7",
     "canonical_source": "NikaSir/ha-contract-generated-ui",
-    "canonical_revision": "c05b707d533aa1afc5d051d2bb4528c4d08f8eda",
+    "canonical_sha256": "22c0cec7fa61b8210fc40e3f053242335f8e502984cbb8a4fb93c33a93bd3706",
     "standards": {
-      "shell": "1.6",
-      "zoom": "1.6",
+      "shell": "1.7",
+      "zoom": "1.7",
       "integration_ui": "1.4",
       "frontend_delivery": "1.1"
     },
@@ -31,6 +31,8 @@
       },
       "title": "Keenetic Hero 4G+",
       "title_surface_action": "return_to_source_nikas_panel",
+      "source_route_handoff_key": "nikas.specialized.source_route.v1",
+      "browser_history_back_allowed": false,
       "return_sources": ["/dashboard-house", "/dashboard-actions", "/dashboard-infrastructure"],
       "title_alignment": "viewport_center",
       "minimum_height_px": 62,

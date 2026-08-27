@@ -11,7 +11,7 @@
     "composed": true
   },
   "zoom_policy": {
-    "standard": "1.6",
+    "standard": "1.7",
     "engine": "native_vertical_at_100_transform_pan_above_100",
     "min_percent": 75,
     "max_percent": 200,
@@ -24,6 +24,9 @@
     "pan_axes": "overflow_only"
   },
   "shell_policy": {
+    "header_center_action": "return_to_source_base_panel",
+    "source_route_handoff_key": "nikas.specialized.source_route.v1",
+    "browser_history_back_allowed": false,
     "host_position": "normal_home_assistant_panel_flow",
     "height_locked": true,
     "work_viewport_vertical_scroll": true,

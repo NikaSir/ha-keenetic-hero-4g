@@ -3647,7 +3647,9 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v081.js
 (() => {
-const UI_VERSION_V081 = "0.8.1";
+const UI_VERSION_V081 = "0.8.4";
+const SOURCE_ROUTE_KEY_V081 = "nikas.specialized.source_route.v1";
+const RETURN_ROUTE_KEY_V081 = "nikas.keenetic.return_route.v1";
 const DEFAULT_RETURN_ROUTE_V081 = "/dashboard-infrastructure/overview";
 const SAFE_RETURN_PREFIXES_V081 = [
   "/dashboard-house",
@@ -3680,15 +3682,30 @@ function sourceRouteV081(value) {
   return SOURCE_ROUTES_V081[key] || null;
 }
 
+function acceptReturnRouteV081(value) {
+  const route = normalizeReturnRouteV081(value);
+  if (!route) return null;
+  try { sessionStorage.setItem(RETURN_ROUTE_KEY_V081, route); } catch (_error) {}
+  return route;
+}
+
 function resolveReturnRouteV081(panel) {
   const params = new URLSearchParams(window.location.search);
   for (const key of ["return_to", "from"]) {
-    const candidate = normalizeReturnRouteV081(params.get(key));
+    const candidate = acceptReturnRouteV081(params.get(key));
     if (candidate) return candidate;
   }
 
   const explicitSource = sourceRouteV081(params.get("source"));
-  if (explicitSource) return explicitSource;
+  if (explicitSource) return acceptReturnRouteV081(explicitSource);
+
+  try {
+    const handedOff = acceptReturnRouteV081(sessionStorage.getItem(SOURCE_ROUTE_KEY_V081));
+    sessionStorage.removeItem(SOURCE_ROUTE_KEY_V081);
+    if (handedOff) return handedOff;
+    const saved = acceptReturnRouteV081(sessionStorage.getItem(RETURN_ROUTE_KEY_V081));
+    if (saved) return saved;
+  } catch (_error) {}
 
   const stateCandidates = [
     window.history.state?.nikasReturnRoute,
@@ -3696,15 +3713,15 @@ function resolveReturnRouteV081(panel) {
     window.history.state?.returnRoute,
   ];
   for (const value of stateCandidates) {
-    const candidate = normalizeReturnRouteV081(value);
+    const candidate = acceptReturnRouteV081(value);
     if (candidate) return candidate;
   }
 
-  const referrer = normalizeReturnRouteV081(document.referrer);
+  const referrer = acceptReturnRouteV081(document.referrer);
   if (referrer) return referrer;
 
-  const configured = normalizeReturnRouteV081(panel?.config?.parent_route);
-  return configured || DEFAULT_RETURN_ROUTE_V081;
+  const configured = acceptReturnRouteV081(panel?.config?.parent_route);
+  return configured || acceptReturnRouteV081(DEFAULT_RETURN_ROUTE_V081);
 }
 
 function returnLabelV081(route) {

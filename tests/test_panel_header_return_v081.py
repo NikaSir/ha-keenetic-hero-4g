@@ -26,7 +26,7 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
     def test_current_ui_version_and_component_are_explicit(self) -> None:
         self.assertIn('FRONTEND_UI_VERSION = "0.8.4"', self.runtime)
         self.assertIn('FRONTEND_COMPONENT_SLUG = "v084"', self.runtime)
-        self.assertIn('const UI_VERSION_V081 = "0.8.1"', self.source)
+        self.assertIn('const UI_VERSION_V081 = "0.8.4"', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v081"', self.source)
         self.assertIn('const UI_VERSION_V084 = "0.8.4"', self.current)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v084"', self.current)

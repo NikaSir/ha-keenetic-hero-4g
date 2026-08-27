@@ -20,7 +20,7 @@ The first screen must answer, without opening Keenetic Web UI:
 
 ## Home Assistant NikaS app shell
 
-The current panel follows **NikaS Specialized Panel UI Standard v1.6** from the canonical `ha-contract-generated-ui` repository.
+The current panel follows **NikaS Specialized Panel UI Standard v1.7** from the canonical `ha-contract-generated-ui` repository.
 
 The shell and first work view are mounted once. Other views are created on first visit and retained in a stable DOM cache. Home Assistant state cycles are coalesced through `requestAnimationFrame` and patch only changed text, classes and attributes. Header, Bottom Tab Bar, zoom viewport and visited tab containers keep their identity; tab selection uses `hidden` and `inert` without a blank frame.
 
