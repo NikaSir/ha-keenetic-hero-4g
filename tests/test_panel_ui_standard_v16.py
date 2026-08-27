@@ -8,8 +8,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
-SOURCE = INTEGRATION / "frontend" / "keenetic-app-v077.js"
-DELIVERY_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v078.js"
+SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
+DELIVERY_SOURCE = SOURCE
 INDICATOR_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v076.js"
 STANDARD = ROOT / "docs" / "NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md"
 MENU_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v045.js"
@@ -46,13 +46,13 @@ class PanelUiStandardV16Tests(unittest.TestCase):
         self.assertFalse(viewport["fixed_host_override"])
         self.assertFalse(viewport["outer_home_assistant_scroll"])
         self.assertFalse(viewport["scroll_chaining_to_outer_document"])
-        self.assertIn("height:100dvh!important", self.source)
-        self.assertIn("grid-template-rows:auto minmax(0,1fr) auto!important", self.source)
-        self.assertIn("overscroll-behavior-y:none!important", self.source)
-        self.assertIn("position:relative!important", self.source)
+        self.assertIn("height:100dvh", self.source)
+        self.assertIn("grid-template-rows:auto minmax(0,1fr) auto", self.source)
+        self.assertIn("overscroll-behavior-y:none", self.source)
+        self.assertIn("#zoom-surface-v080{position:relative", self.source)
         self.assertNotIn(":host{position:fixed!important;inset:0!important", self.source)
-        self.assertIn("overflow-y:auto!important", self.source)
-        self.assertIn("touch-action:pan-y!important", self.source)
+        self.assertIn("overflow-x:hidden;overflow-y:auto", self.source)
+        self.assertIn("touch-action:pan-y", self.source)
 
     def test_header_actions_match_reference_plaques(self) -> None:
         header = self.contract["app_shell"]["header"]
@@ -60,15 +60,14 @@ class PanelUiStandardV16Tests(unittest.TestCase):
         self.assertEqual(header["subtitle_px"], 14)
         self.assertEqual(header["title_px_narrow"], 21)
         self.assertEqual(header["subtitle_px_narrow"], 13)
-        self.assertIn("width:44px!important", self.source)
-        self.assertIn("height:44px!important", self.source)
-        self.assertIn("border-radius:16px!important", self.source)
-        self.assertIn("box-shadow:0 7px 20px rgba(23,45,76,.08)!important", self.source)
-        self.assertIn('"mdi:menu"', self.indicator_source)
-        self.assertIn('"mdi:refresh"', self.indicator_source)
-        self.assertIn('new CustomEvent("hass-toggle-menu"', self.menu_source)
-        self.assertIn("bubbles: true", self.menu_source)
-        self.assertIn("composed: true", self.menu_source)
+        self.assertIn("width:44px;height:44px", self.source)
+        self.assertIn("border-radius:16px", self.source)
+        self.assertIn("box-shadow:0 7px 20px rgba(23,45,76,.08)", self.source)
+        self.assertIn('icon="mdi:menu"', self.source)
+        self.assertIn('icon="mdi:refresh"', self.source)
+        self.assertIn('new CustomEvent("hass-toggle-menu"', self.source)
+        self.assertIn("bubbles: true", self.source)
+        self.assertIn("composed: true", self.source)
 
     def test_bottom_bar_uses_v16_geometry_outside_canvas(self) -> None:
         navigation = self.contract["app_shell"]["bottom_navigation"]
@@ -76,9 +75,9 @@ class PanelUiStandardV16Tests(unittest.TestCase):
         self.assertEqual(navigation["padding_bottom_px_before_safe_area"], 6)
         self.assertEqual(navigation["item_radius_px"], 16)
         self.assertEqual(navigation["icon_label_gap_px"], 3)
-        self.assertIn("calc(6px + var(--nika-safe-bottom-v077))", self.source)
-        self.assertIn("--nika-safe-bottom-v077:var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px))", self.source)
-        self.assertIn(".nika-tabbar ha-icon{--mdc-icon-size:28px!important}", self.indicator_source)
+        self.assertIn("calc(6px + var(--safe-bottom))", self.source)
+        self.assertIn("--safe-bottom:var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px))", self.source)
+        self.assertIn(".tabbar-v080 ha-icon{--mdc-icon-size:28px}", self.source)
 
     def test_indicator_is_stable_two_line_tinted_surface(self) -> None:
         indicator = self.contract["app_shell"]["connection_indicator"]
@@ -96,12 +95,13 @@ class PanelUiStandardV16Tests(unittest.TestCase):
         typography = self.contract["app_shell"]["typography"]
         self.assertEqual(typography["meaningful_min_px"], 12)
         self.assertEqual(typography["meaningful_max_px"], 25)
-        self.assertIn("font-size:25px!important", self.source)
-        self.assertIn("font-size:12px!important", self.source)
+        self.assertIn("font-size:23px", self.source)
+        self.assertIn("font-size:12px", self.source)
         self.assertIsNone(re.search(r"font-size:(?:[0-9]|1[01])px", self.source))
-        self.assertEqual(self.manifest["panel_version"], "0.7.8")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v078")
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v078"', self.delivery_source)
+        self.assertEqual(self.manifest["panel_version"], "0.8.0")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v080")
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v080"', self.delivery_source)
+        self.assertNotIn("UI v0.", self.delivery_source)
 
 
 if __name__ == "__main__":
