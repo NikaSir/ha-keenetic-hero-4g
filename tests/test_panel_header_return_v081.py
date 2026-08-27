@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v081.js"
 BASE_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
-CONST = INTEGRATION / "const.py"
+RUNTIME = INTEGRATION / "panel_runtime.py"
 
 
 class PanelHeaderReturnV081Tests(unittest.TestCase):
@@ -16,10 +16,11 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.source = SOURCE.read_text(encoding="utf-8")
         cls.base = BASE_SOURCE.read_text(encoding="utf-8")
-        cls.const = CONST.read_text(encoding="utf-8")
+        cls.runtime = RUNTIME.read_text(encoding="utf-8")
 
     def test_current_ui_version_and_component_are_explicit(self) -> None:
-        self.assertIn('PANEL_VERSION = "0.8.1"', self.const)
+        self.assertIn('FRONTEND_UI_VERSION = "0.8.1"', self.runtime)
+        self.assertIn('FRONTEND_COMPONENT_SLUG = "v081"', self.runtime)
         self.assertIn('const UI_VERSION_V081 = "0.8.1"', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v081"', self.source)
         self.assertIn('<strong>Keenetic Hero 4G+</strong><span>UI v${UI_VERSION_V081}</span>', self.source)
