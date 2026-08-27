@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel version: **0.7.7**
+Panel version: **0.7.8**
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -20,13 +20,15 @@ The first screen must answer, without opening Keenetic Web UI:
 
 ## Home Assistant NikaS app shell
 
-Panel 0.7.7 follows **NikaS Specialized Panel UI Standard v1.6** from the canonical `ha-contract-generated-ui` repository.
+Panel 0.7.8 follows **NikaS Specialized Panel UI Standard v1.6** from the canonical `ha-contract-generated-ui` repository.
 
 The shell and first work view are mounted once. Other views are created on first visit and retained in a stable DOM cache. Home Assistant state cycles are coalesced through `requestAnimationFrame` and patch only changed text, classes and attributes. Header, Bottom Tab Bar, zoom viewport and visited tab containers keep their identity; tab selection uses `hidden` and `inert` without a blank frame.
 
 This panel explicitly includes the optional two-level connection indicator. Its channel line uses the factual labels `Локально / Облако / Резерв / Нет связи / Нет данных`; freshness uses `Данные актуальны / Данные устарели / Нет данных`. A failed current poll immediately makes retained values stale without relabelling a known local/cloud path as a transport outage. The stable surface is tinted by the primary state and uses 16 px / 700 plus 13 px / 600 typography.
 
 On phones the integration owns a height-locked three-row application shell in the Home Assistant panel's normal layout flow. Only `#app-content` scrolls or scales; the outer Home Assistant page, Header and Bottom Tab Bar do not participate in content movement. The runtime must not escape the HA panel container with a fixed-position host. Meaningful panel text uses a semantic hierarchy within 12–25 px rather than flattening labels and values to one size.
+
+UI 0.7.8 binds gestures only after the viewport, stage, surface and child panel all exist. It measures the active persistent view after mount and whenever that view changes size, so the stage owns the real content height required by native 100% scrolling. Cable and LAN topology cards are positioned above the router path and sized for the mandatory 12 px minimum text.
 
 ### Header
 

@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel version: 0.7.7
+Panel version: 0.7.8
 
-Integration build: 1.0.0-b040
+Integration build: 1.0.0-b041
 
 Standard: NikaS Specialized Panel UI Standard v1.6
 
@@ -33,6 +33,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - Above 100%, one-finger pan is enabled only on axes whose scaled content overflows; release, resize and view changes clamp position to measured bounds.
 - Scale is 75–200%, persists per panel/config-entry device/client, and 97–103% snaps to exactly 100% when the gesture ends.
 - ResizeObserver and window/visual-viewport resize handling remeasure and clamp the single canvas without creating another viewport.
+- Initialization must retry until `app-content`, `nika-zoom-stage`, `nika-zoom-surface` and the child panel exist; the active persistent view supplies the stage's real content height.
 - Each Bottom Tab Bar action directly changes the child view, returns the viewport to origin and schedules one cancellable post-render measurement frame.
 - Responsive mobile/tablet/desktop layout is resolved before user scale is applied.
 
@@ -61,7 +62,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.7` and component `keenetic-hero-app-panel-v077`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.8` and component `keenetic-hero-app-panel-v078`.
 - Historical modules are build-time inputs only; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
@@ -78,4 +79,4 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## Release gate
 
-UI v0.7.7 / b040 is accepted after all NikaS v1.6 checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, the corrected two-finger double-tap reset, fixed Header/Bottom Tab Bar, semantic typography, persistence, bounded pan, exactly-once safe areas and router path occlusion must pass on the real iPhone Pro Max / KN-2311 environment.
+UI v0.7.8 / b041 is accepted after all NikaS v1.6 checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, the corrected two-finger double-tap reset, fixed Header/Bottom Tab Bar, semantic typography, persistence, bounded pan, exactly-once safe areas and the rebalanced Cable/LAN/router composition must pass on the real iPhone Pro Max / KN-2311 environment.
