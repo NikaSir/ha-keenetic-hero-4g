@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v083.js"
+TUNING = INTEGRATION / "frontend" / "keenetic-app-v084.js"
 SHELL = INTEGRATION / "frontend" / "keenetic-app-v080.js"
 STABLE = INTEGRATION / "frontend" / "keenetic-app-v075.js"
 BUILD = ROOT / "scripts" / "build_frontend_bundle.py"
@@ -17,10 +18,11 @@ MANIFEST = INTEGRATION / "manifest.json"
 # generated-bundle head can be revalidated without starting a rebuild loop.
 
 
-class PanelOverviewV083Tests(unittest.TestCase):
+class PanelOverviewV084Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.source = SOURCE.read_text(encoding="utf-8")
+        cls.tuning = TUNING.read_text(encoding="utf-8")
         cls.shell = SHELL.read_text(encoding="utf-8")
         cls.stable = STABLE.read_text(encoding="utf-8")
         cls.build = BUILD.read_text(encoding="utf-8")
@@ -101,13 +103,26 @@ class PanelOverviewV083Tests(unittest.TestCase):
         self.assertIn('this._child.addEventListener("keenetic-view-request"', self.shell)
         self.assertIn("this._setView(view, true)", self.shell)
 
-    def test_delivery_version_is_v083_and_package_is_b045(self) -> None:
+    def test_phone_composition_refinement_is_static_and_balanced(self) -> None:
+        self.assertIn("min-height:320px!important", self.tuning)
+        self.assertIn("top:36.5%!important", self.tuning)
+        self.assertIn("top:61%!important", self.tuning)
+        self.assertIn("top:65.5%!important", self.tuning)
+        self.assertIn("grid-template-columns:repeat(6,minmax(0,1fr))", self.tuning)
+        self.assertIn(".v083-metric.wide,.v083-metric:nth-child(8){grid-column:span 3}", self.tuning)
+        self.assertIn('"M500 228 L500 295"', self.tuning)
+        self.assertNotIn("top:32.5%!important", self.tuning)
+        self.assertNotIn("_patchStableDomV075", self.tuning)
+        self.assertNotIn("shadowRoot.innerHTML", self.tuning)
+
+    def test_delivery_version_is_v084_and_package_is_b046(self) -> None:
         self.assertIn('FRONTEND / "keenetic-app-v083.js"', self.build)
+        self.assertIn('FRONTEND / "keenetic-app-v084.js"', self.build)
         self.assertNotIn('FRONTEND / "keenetic-app-v082.js"', self.build)
-        self.assertIn('PANEL_VERSION = "0.8.3"', self.build)
-        self.assertIn('FRONTEND_UI_VERSION = "0.8.3"', self.runtime)
-        self.assertIn('FRONTEND_COMPONENT_SLUG = "v083"', self.runtime)
-        self.assertIn('"version": "1.0.0-b045"', self.manifest)
+        self.assertIn('PANEL_VERSION = "0.8.4"', self.build)
+        self.assertIn('FRONTEND_UI_VERSION = "0.8.4"', self.runtime)
+        self.assertIn('FRONTEND_COMPONENT_SLUG = "v084"', self.runtime)
+        self.assertIn('"version": "1.0.0-b046"', self.manifest)
 
 
 if __name__ == "__main__":

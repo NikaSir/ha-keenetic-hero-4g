@@ -235,13 +235,15 @@ jobs:
       - name: Verify clean panel shell, scroll, zoom and NikaS v1.6 contract
         shell: bash
         run: |
-          grep -q 'PANEL_VERSION = "0.8.3"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'PANEL_VERSION = "0.8.4"' custom_components/keenetic_hero_4g/const.py
           grep -q 'keenetic-panel-bundle.js' custom_components/keenetic_hero_4g/panel_runtime.py
           grep -q 'keenetic-app-v080.js' scripts/build_frontend_bundle.py
           grep -q 'keenetic-app-v083.js' scripts/build_frontend_bundle.py
+          grep -q 'keenetic-app-v084.js' scripts/build_frontend_bundle.py
           if grep -q 'FRONTEND / "keenetic-app-v082.js"' scripts/build_frontend_bundle.py; then exit 1; fi
           grep -q 'keenetic-hero-app-panel-v080' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
           grep -q 'keenetic-hero-app-panel-v083' custom_components/keenetic_hero_4g/frontend/keenetic-app-v083.js
+          grep -q 'keenetic-hero-app-panel-v084' custom_components/keenetic_hero_4g/frontend/keenetic-app-v084.js
           grep -q 'overflow-x:hidden;overflow-y:auto' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
           grep -q 'touch-action:pan-y' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
           grep -q 'event.touches.length >= 2' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
@@ -250,6 +252,7 @@ jobs:
           grep -q 'keenetic-view-request' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
           grep -q 'this._childObserver = null' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
           grep -q 'element.textContent !== value' custom_components/keenetic_hero_4g/frontend/keenetic-app-v083.js
+          grep -q 'grid-template-columns:repeat(6,minmax(0,1fr))' custom_components/keenetic_hero_4g/frontend/keenetic-app-v084.js
           grep -q 'font-size:16px!important' custom_components/keenetic_hero_4g/frontend/keenetic-app-v076.js
           grep -q 'font-size:13px!important' custom_components/keenetic_hero_4g/frontend/keenetic-app-v076.js
           if grep -q 'UI v0.' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js; then exit 1; fi

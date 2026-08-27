@@ -6,8 +6,8 @@ Custom Home Assistant integration for **Keenetic Hero 4G+ (KN-2311)**. The integ
 
 ## Status
 
-- integration candidate: `v1.00_b045`;
-- native panel candidate: `UI v0.8.3`;
+- integration candidate: `v1.00_b046`;
+- native panel candidate: `UI v0.8.4`;
 - publication model: reviewed branch/PR without GitHub Release or automatic tag.
 
 The current candidate keeps the previously validated read-only RCI telemetry and rebuilds the mobile Overview/runtime update path. Final acceptance requires Companion App checks for scroll, pinch, two-finger reset, more-info holds and repeated tab switching on the target KN-2311 panel.

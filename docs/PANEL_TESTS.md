@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel metadata version: 0.8.3
+Panel metadata version: 0.8.4
 
-Integration build: 1.0.0-b045
+Integration build: 1.0.0-b046
 
 Standard: NikaS Specialized Panel UI Standard v1.6
 
@@ -67,7 +67,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.8.3` and component `keenetic-hero-app-panel-v083`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.8.4` and component `keenetic-hero-app-panel-v084`.
 - Superseded shell/zoom modules v066–v078 are excluded; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
@@ -78,11 +78,12 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - Verify inertial scrolling and pinch while telemetry arrives. No active tab, image, shell or zoom viewport may be recreated.
 - Switch every tab at least ten times. Each view is created only on first visit; returning to it must reuse the same subtree and only toggle `hidden` / `inert`.
 - Verify polling failure and recovery: `Локально · Данные актуальны` changes to `Нет связи · Данные устарели`, then recovers without a loading frame.
-- Verify the phone hero is approximately 340 px high at 430 CSS px, contains no empty lower floor band, and shows the full `Резервный канал` caption without reducing its 12 px text.
+- Verify the phone hero is approximately 320 px high at 430 CSS px, contains no empty lower floor band, keeps a visible gap between the connection indicator and LTE card, and shows the full `Резервный канал` caption without reducing its 12 px text.
+- Verify the active-channel final row uses equal WAN IP and Uptime halves and the compact reserve-channel row becomes fully reachable above the Bottom Tab Bar.
 - Verify the channel/freshness indicator uses 16 px / 700 and 13 px / 600 text respectively and never shrinks below 13 px.
 - Verify all meaningful content stays within 12–25 px; only redundant schematic annotations may use the documented 9–10 px exception.
 - Minimize and reopen the Companion App; scroll, active tab and fixed-shell continuity must remain valid.
 
 ## Release gate
 
-Build b045 is a phone-validation candidate. It is accepted only after all NikaS v1.6 checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the compact Cable/LTE/LAN composition must pass on the real iPhone Pro Max / KN-2311 environment.
+Build b046 is a phone-validation candidate. It is accepted only after all NikaS v1.6 checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the refined Cable/LTE/LAN composition must pass on the real iPhone Pro Max / KN-2311 environment.

@@ -1,5 +1,14 @@
 # Changelog
 
+## UI v0.8.4 / v1.00_b046 — 2026-08-27
+
+- Shortens the phone hero from 340 px to 320 px while preserving the full Cable/LTE/LAN topology and router artwork.
+- Moves the LTE reserve card down into a clear visual gap below the connection indicator and retunes all three SVG path anchors.
+- Keeps Cable, router and LAN at their accepted absolute visual level while removing the remaining empty floor band.
+- Reflows the final active-channel metric row into equal WAN IP and Uptime halves instead of leaving a two-thirds empty span.
+- Compacts the reserve, metric and reserve-channel surfaces so the reserve row clears the fixed Bottom Tab Bar sooner.
+- Publishes a distinct UI/cache key for repeat phone validation without merging the draft PR.
+
 ## UI v0.8.3 / v1.00_b045 — 2026-08-27
 
 - Replaces the b044 double Overview hook with one differential point patch and prevents unchanged topology text or attributes from being rewritten.

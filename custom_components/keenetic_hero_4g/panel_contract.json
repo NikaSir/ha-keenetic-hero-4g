@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.8.3"
+    "version": "0.8.4"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -203,7 +203,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v083",
+    "web_component": "keenetic-hero-app-panel-v084",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
@@ -239,7 +239,7 @@
       "hero_background": "local_static_webp",
       "hero_router_layer": "local_static_webp",
       "connection_layer": "dynamic_svg",
-      "hero_mobile_min_height_px": 340,
+      "hero_mobile_min_height_px": 320,
       "dynamic_overlays_from_hass_states": true,
       "preserve_network_topology": true,
       "active_path_only": false,
@@ -267,10 +267,10 @@
         "room_asset": "keenetic-hero-room-v064.webp",
         "router_asset": "keenetic-hero-router-v063.webp",
         "router_scale_mobile_percent": 47,
-        "router_vertical_percent": 61.5,
-        "lte_card_top_percent": 32.5,
-        "cable_card_top_percent": 57.5,
-        "lan_card_top_percent": 57.5,
+        "router_vertical_percent": 65.5,
+        "lte_card_top_percent": 36.5,
+        "cable_card_top_percent": 61,
+        "lan_card_top_percent": 61,
         "status_primary_label_ethernet": "Ethernet",
         "active_ethernet_path_style": "solid_green",
         "reserve_lte_path_style": "static_dashed_blue"
@@ -283,7 +283,7 @@
       "active_branch_indicator": true,
       "single_channel_detail_visible": true,
       "unknown_active_wan_has_no_fabricated_default": true,
-      "mobile_channel_grid": "3_columns_8_metrics",
+      "mobile_channel_grid": "6_tracks_3_3_2_metrics",
       "active_metric_more_info": true,
       "device_selector": false,
       "device_control": false
