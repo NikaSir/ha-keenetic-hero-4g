@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 CONTRACT = INTEGRATION / "panel_contract.json"
-SOURCE = INTEGRATION / "frontend" / "keenetic-app-v077.js"
+SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
 
 
 class PanelHeaderSafeAreaTests(unittest.TestCase):
@@ -26,22 +26,22 @@ class PanelHeaderSafeAreaTests(unittest.TestCase):
 
     def test_header_content_starts_below_the_system_inset(self) -> None:
         self.assertIn(
-            "--nika-safe-top-v077:var(--safe-area-inset-top,env(safe-area-inset-top,0px))",
+            "--safe-top:var(--safe-area-inset-top,env(safe-area-inset-top,0px))",
             self.source,
         )
         self.assertIn(
-            "min-height:calc(62px + var(--nika-safe-top-v077))!important",
+            "min-height:calc(62px + var(--safe-top))",
             self.source,
         )
         self.assertIn(
-            "padding:var(--nika-safe-top-v077) max(8px,var(--nika-safe-right-v077))",
+            "padding:var(--safe-top) max(8px,var(--safe-right))",
             self.source,
         )
 
     def test_safe_area_does_not_wrap_the_zoom_surface(self) -> None:
-        start = self.source.index("#nika-zoom-stage")
-        end = self.source.index(".nika-tabbar", start)
-        self.assertNotIn("--nika-safe-", self.source[start:end])
+        start = self.source.index("#zoom-stage-v080")
+        end = self.source.index(".tabbar-v080", start)
+        self.assertNotIn("safe-top", self.source[start:end])
 
 
 if __name__ == "__main__":

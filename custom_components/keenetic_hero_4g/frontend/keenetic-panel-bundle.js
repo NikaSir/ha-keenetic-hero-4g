@@ -995,7 +995,6 @@ if (BASE_V040) {
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v040.js
 (() => {
-const APP_SHELL_VERSION = "0.4.1";
 const BASE_COMPONENT = customElements.get("keenetic-hero-panel");
 
 if (BASE_COMPONENT) {
@@ -1024,540 +1023,12 @@ if (BASE_COMPONENT) {
     root.append(style);
   };
 }
-
-function openHomeAssistantMenu(target) {
-  target.dispatchEvent(
-    new CustomEvent("hass-toggle-menu", {
-      bubbles: true,
-      composed: true,
-    }),
-  );
-}
-
-class KeeneticHeroAppPanelV040 extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: "open" });
-    this._hass = null;
-    this._panel = null;
-    this._route = null;
-    this._child = null;
-    this._activeView = this._viewFromLocation();
-    this._hashListener = () => {
-      this._activeView = this._viewFromLocation();
-      this._renderTabBar();
-    };
-  }
-
-  set hass(value) {
-    this._hass = value;
-    this._ensureChild();
-    if (this._child) this._child.hass = value;
-  }
-
-  set panel(value) {
-    this._panel = value;
-    this._ensureChild();
-    if (this._child) this._child.panel = value;
-  }
-
-  set route(value) {
-    this._route = value;
-    this._ensureChild();
-    if (this._child) this._child.route = value;
-  }
-
-  connectedCallback() {
-    this._renderShell();
-    this._ensureChild();
-    window.addEventListener("hashchange", this._hashListener);
-  }
-
-  disconnectedCallback() {
-    window.removeEventListener("hashchange", this._hashListener);
-  }
-
-  _viewFromLocation() {
-    const value = (location.hash || "#overview").slice(1).toLowerCase();
-    return ["overview", "wan", "failover", "traffic", "diagnostics", "system"].includes(value)
-      ? value
-      : "overview";
-  }
-
-  _ensureChild() {
-    if (!this.isConnected) return;
-    if (!this._child) {
-      this._child = document.createElement("keenetic-hero-panel");
-      this.shadowRoot.getElementById("app-content")?.appendChild(this._child);
-    }
-    if (this._hass) this._child.hass = this._hass;
-    if (this._panel) this._child.panel = this._panel;
-    if (this._route) this._child.route = this._route;
-  }
-
-  _setView(view) {
-    history.replaceState(null, "", `${location.pathname}${location.search}#${view}`);
-    this._activeView = view;
-    if (this._child) {
-      this._child._view = view;
-      this._child._scheduleRender?.();
-      this._child._loadViewData?.();
-    }
-    this._renderTabBar();
-    this.shadowRoot.getElementById("app-content")?.scrollTo({ top: 0, behavior: "auto" });
-  }
-
-  _renderTabBar() {
-    const nav = this.shadowRoot.getElementById("nika-tabbar");
-    if (!nav) return;
-    const items = [
-      ["overview", "mdi:view-dashboard-outline", "Обзор"],
-      ["wan", "mdi:wan", "Каналы"],
-      ["failover", "mdi:swap-horizontal-bold", "Failover"],
-      ["traffic", "mdi:chart-timeline-variant", "Трафик"],
-      ["diagnostics", "mdi:stethoscope", "Диагн."],
-    ];
-    const active = this._activeView === "system" ? "diagnostics" : this._activeView;
-    nav.innerHTML = items
-      .map(
-        ([view, icon, label]) => `<button type="button" data-view="${view}" class="${active === view ? "active" : ""}" aria-current="${active === view ? "page" : "false"}">
-          <ha-icon icon="${icon}"></ha-icon><span>${label}</span>
-        </button>`,
-      )
-      .join("");
-    nav.querySelectorAll("[data-view]").forEach((button) => {
-      button.addEventListener("click", () => this._setView(button.dataset.view));
-    });
-  }
-
-  _renderShell() {
-    if (this.shadowRoot.getElementById("nika-app-shell")) return;
-    this.shadowRoot.innerHTML = `
-      <style>
-        :host {
-          display: block;
-          height: 100dvh;
-          min-height: 100%;
-          color: var(--primary-text-color);
-          background: var(--primary-background-color);
-          --shell-surface: var(--ha-card-background, var(--card-background-color, #fff));
-          --shell-border: color-mix(in srgb, var(--primary-text-color) 10%, transparent);
-          --shell-muted: var(--secondary-text-color, #6b7280);
-          --shell-accent: var(--primary-color, #03a9f4);
-        }
-        * { box-sizing: border-box; }
-        #nika-app-shell {
-          height: 100%;
-          min-height: 0;
-          display: grid;
-          grid-template-rows: auto minmax(0, 1fr) auto;
-          overflow: hidden;
-          background: var(--primary-background-color);
-        }
-        .nika-header {
-          min-height: 56px;
-          display: grid;
-          grid-template-columns: 52px 1fr 52px;
-          align-items: center;
-          gap: 4px;
-          padding: max(4px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) 4px max(8px, env(safe-area-inset-left));
-          background: var(--shell-surface);
-          border-bottom: 1px solid var(--shell-border);
-          z-index: 2;
-        }
-        .menu, .refresh {
-          min-width: 44px;
-          min-height: 44px;
-          border: 0;
-          border-radius: 14px;
-          background: transparent;
-          color: var(--primary-text-color);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0 8px;
-          font: inherit;
-          -webkit-tap-highlight-color: transparent;
-        }
-        .menu { justify-self: start; }
-        .refresh { justify-self: end; }
-        .menu ha-icon, .refresh ha-icon { --mdc-icon-size: 24px; }
-        .title { min-width: 0; text-align: center; line-height: 1.1; }
-        .title strong {
-          display: block;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          font-size: 17px;
-          font-weight: 750;
-        }
-        .title span {
-          display: block;
-          margin-top: 2px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          color: var(--shell-muted);
-          font-size: 9px;
-          font-weight: 600;
-          letter-spacing: .02em;
-        }
-        #app-content {
-          min-height: 0;
-          overflow-y: auto;
-          overscroll-behavior-y: contain;
-          -webkit-overflow-scrolling: touch;
-        }
-        keenetic-hero-panel { display: block; min-height: 100%; }
-        .nika-tabbar {
-          width: 100%;
-          display: grid;
-          grid-template-columns: repeat(5, minmax(0, 1fr));
-          gap: 2px;
-          padding: 6px max(6px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left));
-          background: var(--shell-surface);
-          border-top: 1px solid var(--shell-border);
-          box-shadow: 0 -3px 14px color-mix(in srgb, #000 8%, transparent);
-          z-index: 3;
-        }
-        .nika-tabbar button {
-          min-width: 0;
-          min-height: 56px;
-          border: 0;
-          border-radius: 14px;
-          background: transparent;
-          color: var(--shell-muted);
-          display: grid;
-          place-items: center;
-          align-content: center;
-          gap: 2px;
-          padding: 4px 2px;
-          font: inherit;
-          -webkit-tap-highlight-color: transparent;
-        }
-        .nika-tabbar button.active {
-          color: var(--shell-accent);
-          background: color-mix(in srgb, var(--shell-accent) 11%, transparent);
-        }
-        .nika-tabbar ha-icon { --mdc-icon-size: 22px; }
-        .nika-tabbar span {
-          max-width: 100%;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          font-size: 9px;
-          font-weight: 700;
-        }
-      </style>
-      <div id="nika-app-shell">
-        <header class="nika-header" aria-label="Keenetic">
-          <button type="button" class="menu" id="nika-menu" aria-label="Открыть меню Home Assistant">
-            <ha-icon icon="mdi:menu"></ha-icon>
-          </button>
-          <div class="title">
-            <strong>Keenetic Hero 4G+</strong>
-            <span>Network Control Center · UI v${APP_SHELL_VERSION}</span>
-          </div>
-          <button type="button" class="refresh" id="nika-refresh" aria-label="Обновить">
-            <ha-icon icon="mdi:refresh"></ha-icon>
-          </button>
-        </header>
-        <div id="app-content"></div>
-        <nav class="nika-tabbar" id="nika-tabbar" aria-label="Разделы Keenetic"></nav>
-      </div>`;
-
-    this.shadowRoot.getElementById("nika-menu")?.addEventListener("click", (event) => {
-      openHomeAssistantMenu(event.currentTarget);
-    });
-    this.shadowRoot.getElementById("nika-refresh")?.addEventListener("click", () => {
-      this._child?._loadBootstrap?.(false);
-    });
-    this._renderTabBar();
-  }
-}
-
-if (!customElements.get("keenetic-hero-app-panel-v040")) {
-  customElements.define("keenetic-hero-app-panel-v040", KeeneticHeroAppPanelV040);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v040.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v041.js
-(() => {
-const BASE_COMPONENT = customElements.get("keenetic-hero-app-panel-v040");
-
-function openHomeAssistantMenu(target) {
-  target.dispatchEvent(
-    new CustomEvent("hass-toggle-menu", {
-      bubbles: true,
-      composed: true,
-    }),
-  );
-}
-
-if (BASE_COMPONENT && !customElements.get("keenetic-hero-app-panel-v041")) {
-  class KeeneticHeroAppPanelV041 extends BASE_COMPONENT {
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      const oldButton = root?.getElementById("nika-back");
-      if (!oldButton || oldButton.dataset.haMenuButton === "true") return;
-
-      const menuButton = oldButton.cloneNode(true);
-      menuButton.dataset.haMenuButton = "true";
-      menuButton.id = "nika-menu";
-      menuButton.className = "back";
-      menuButton.setAttribute("aria-label", "Открыть меню Home Assistant");
-      menuButton.innerHTML = '<ha-icon icon="mdi:menu"></ha-icon>';
-      oldButton.replaceWith(menuButton);
-
-      menuButton.addEventListener("click", () => openHomeAssistantMenu(menuButton));
-
-      const version = root?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.4.1";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v041", KeeneticHeroAppPanelV041);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v041.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
-(() => {
-function installLegacyTimeHelpers() {
-  if (typeof globalThis.formatAgo !== "function") {
-    globalThis.formatAgo = (dateValue) => {
-      if (!dateValue) return "Неизвестно";
-      const date = new Date(dateValue);
-      if (Number.isNaN(date.getTime())) return "Неизвестно";
-      const seconds = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000));
-      if (seconds < 60) return `${seconds} сек назад`;
-      const minutes = Math.round(seconds / 60);
-      if (minutes < 60) return `${minutes} мин назад`;
-      const hours = Math.round(minutes / 60);
-      if (hours < 24) return `${hours} ч назад`;
-      return `${Math.round(hours / 24)} дн назад`;
-    };
-  }
-}
-
-installLegacyTimeHelpers();
-
-const CORE_COMPONENT = customElements.get("keenetic-hero-panel");
-if (CORE_COMPONENT && !CORE_COMPONENT.prototype.__nikaFailoverTimeoutV042) {
-  CORE_COMPONENT.prototype.__nikaFailoverTimeoutV042 = true;
-  const loadFailoverHistoryBase = CORE_COMPONENT.prototype._loadFailoverHistory;
-
-  CORE_COMPONENT.prototype._loadFailoverHistory = async function (...args) {
-    if (this._failoverTimedOutV042) return;
-    let timer;
-    const timeout = new Promise((resolve) => {
-      timer = window.setTimeout(() => resolve("timeout"), 8000);
-    });
-    const work = Promise.resolve(loadFailoverHistoryBase.apply(this, args)).then(() => "done");
-    const result = await Promise.race([work, timeout]);
-    window.clearTimeout(timer);
-    if (result === "timeout") {
-      this._failoverTimedOutV042 = true;
-      this._failoverLoading = false;
-      this._failoverError = "HA Recorder не ответил за 8 с";
-      this._scheduleRender?.();
-    }
-  };
-}
-
-const BASE_COMPONENT = customElements.get("keenetic-hero-app-panel-v041");
-if (BASE_COMPONENT && !customElements.get("keenetic-hero-app-panel-v042")) {
-  class KeeneticHeroAppPanelV042 extends BASE_COMPONENT {
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.4.2";
-    }
-  }
-  customElements.define("keenetic-hero-app-panel-v042", KeeneticHeroAppPanelV042);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v042.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v043.js
-(() => {
-const CORE_COMPONENT = customElements.get("keenetic-hero-panel");
-if (CORE_COMPONENT && !CORE_COMPONENT.prototype.__nikaRecorderDisabledV043) {
-  CORE_COMPONENT.prototype.__nikaRecorderDisabledV043 = true;
-  CORE_COMPONENT.prototype._loadFailoverHistory = async function () {
-    this._failoverLoading = false;
-    this._failoverHistory = [];
-    this._failoverError = "История HA Recorder временно отключена в UI v0.4.3";
-    this._scheduleRender?.();
-  };
-}
-
-const BASE_COMPONENT = customElements.get("keenetic-hero-app-panel-v042");
-if (BASE_COMPONENT && !customElements.get("keenetic-hero-app-panel-v043")) {
-  class KeeneticHeroAppPanelV043 extends BASE_COMPONENT {
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.4.3";
-    }
-  }
-  customElements.define("keenetic-hero-app-panel-v043", KeeneticHeroAppPanelV043);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v043.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
-(() => {
-const BASE_COMPONENT_V044 = customElements.get("keenetic-hero-app-panel-v043");
-const PARENT_ROUTE_V044 = "/dashboard-infrastructure/overview";
-
-function navigateExplicitV044(path) {
-  if (!path) return;
-  history.pushState(null, "", path);
-  window.dispatchEvent(new Event("location-changed"));
-}
-
-if (BASE_COMPONENT_V044 && !customElements.get("keenetic-hero-app-panel-v044")) {
-  class KeeneticHeroAppPanelV044 extends BASE_COMPONENT_V044 {
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      if (!root) return;
-
-      // NikaS navigation contract: explicit Back exits the specialized app.
-      const currentLeft = root.getElementById("nika-menu") || root.getElementById("nika-back");
-      if (currentLeft && currentLeft.dataset.nikasBackV044 !== "true") {
-        const back = currentLeft.cloneNode(false);
-        back.id = "nika-back";
-        back.className = "back";
-        back.dataset.nikasBackV044 = "true";
-        back.setAttribute("type", "button");
-        back.setAttribute("aria-label", "Назад в Инфраструктуру");
-        back.innerHTML = '<ha-icon icon="mdi:arrow-left"></ha-icon><span>Назад</span>';
-        currentLeft.replaceWith(back);
-        back.addEventListener("click", () => {
-          navigateExplicitV044(this._panel?.config?.parent_route || PARENT_ROUTE_V044);
-        });
-      }
-
-      const version = root.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.4.4";
-
-      if (!root.querySelector("style[data-nikas-shell-v044]")) {
-        const style = document.createElement("style");
-        style.dataset.nikasShellV044 = "true";
-        style.textContent = `
-          :host {
-            width: 100%;
-            max-width: 100%;
-            overflow: hidden;
-          }
-          #nika-app-shell {
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-            overflow-x: hidden;
-          }
-          .nika-header {
-            width: 100%;
-            min-width: 0;
-            grid-template-columns: 84px minmax(0, 1fr) 84px !important;
-            gap: 0 !important;
-          }
-          .nika-header .back,
-          .nika-header .refresh {
-            width: 84px;
-            min-width: 44px;
-            min-height: 44px;
-          }
-          .nika-header .back {
-            justify-self: start;
-            justify-content: flex-start;
-            padding: 0 6px;
-          }
-          .nika-header .refresh {
-            justify-self: end;
-            justify-content: flex-end;
-            padding: 0 6px;
-          }
-          .nika-header .title {
-            min-width: 0;
-            width: 100%;
-            justify-self: center;
-            text-align: center;
-          }
-          .nika-header .title strong,
-          .nika-header .title span {
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-          #app-content {
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-            overflow-x: hidden;
-          }
-          .nika-tabbar {
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-            grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-            gap: 0 !important;
-            padding-left: max(4px, env(safe-area-inset-left)) !important;
-            padding-right: max(4px, env(safe-area-inset-right)) !important;
-          }
-          .nika-tabbar button {
-            min-width: 0;
-            min-height: 56px;
-            padding-left: 1px;
-            padding-right: 1px;
-          }
-          .nika-tabbar span {
-            width: 100%;
-            max-width: 100%;
-            font-size: clamp(8px, 2.15vw, 9px);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-          @media (max-width: 390px) {
-            .nika-header {
-              grid-template-columns: 52px minmax(0, 1fr) 52px !important;
-            }
-            .nika-header .back,
-            .nika-header .refresh {
-              width: 52px;
-              justify-content: center;
-              padding: 0;
-            }
-            .nika-header .back span {
-              display: none !important;
-            }
-          }
-          @media (max-width: 350px) {
-            .nika-header .title strong { font-size: 15px; }
-            .nika-header .title span { font-size: 8px; }
-            .nika-tabbar ha-icon { --mdc-icon-size: 20px; }
-          }
-        `;
-        root.append(style);
-      }
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v044", KeeneticHeroAppPanelV044);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v044.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v045.js
 (() => {
 const CORE_COMPONENT_V045 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V045 = customElements.get("keenetic-hero-app-panel-v044");
 const BOOTSTRAP_CACHE_KEY_V045 = "keenetic_hero_4g:panel_bootstrap:v2";
 const BOOTSTRAP_TIMEOUT_MS_V045 = 5000;
 
@@ -1713,144 +1184,13 @@ function openHomeAssistantMenuV045(target) {
     }),
   );
 }
-
-if (BASE_COMPONENT_V045 && !customElements.get("keenetic-hero-app-panel-v045")) {
-  class KeeneticHeroAppPanelV045 extends BASE_COMPONENT_V045 {
-    set hass(value) {
-      this._hass = value;
-      this._ensureChild();
-    }
-
-    set panel(value) {
-      this._panel = value;
-      this._ensureChild();
-    }
-
-    set route(value) {
-      this._route = value;
-      this._ensureChild();
-    }
-
-    _ensureChild() {
-      if (!this.isConnected) return;
-      if (!this._child) {
-        this._child = document.createElement("keenetic-hero-panel");
-        this.shadowRoot.getElementById("app-content")?.appendChild(this._child);
-      }
-      // Panel config first: it contains the privacy-safe registration fallback.
-      if (this._panel) this._child.panel = this._panel;
-      if (this._route) this._child.route = this._route;
-      if (this._hass && this._panel) this._child.hass = this._hass;
-    }
-
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      if (!root) return;
-
-      const currentLeft = root.getElementById("nika-back") || root.getElementById("nika-menu");
-      if (currentLeft && currentLeft.dataset.nikasMenuV045 !== "true") {
-        const menu = currentLeft.cloneNode(false);
-        menu.id = "nika-menu";
-        menu.className = "menu";
-        menu.dataset.nikasMenuV045 = "true";
-        menu.setAttribute("type", "button");
-        menu.setAttribute("aria-label", "Открыть меню Home Assistant");
-        menu.innerHTML = '<ha-icon icon="mdi:menu"></ha-icon>';
-        currentLeft.replaceWith(menu);
-        menu.addEventListener("click", () => openHomeAssistantMenuV045(menu));
-      }
-
-      const version = root.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.4.5";
-
-      if (!root.querySelector("style[data-nikas-shell-v045]")) {
-        const style = document.createElement("style");
-        style.dataset.nikasShellV045 = "true";
-        style.textContent = `
-          .nika-header {
-            grid-template-columns: 64px minmax(0, 1fr) 64px !important;
-          }
-          .nika-header .menu,
-          .nika-header .refresh {
-            width: 64px;
-            min-width: 44px;
-            min-height: 44px;
-          }
-          .nika-header .menu {
-            justify-self: start;
-            justify-content: flex-start;
-            padding: 0 8px;
-          }
-          .nika-header .refresh {
-            justify-self: end;
-            justify-content: flex-end;
-            padding: 0 8px;
-          }
-          .nika-tabbar {
-            gap: 0 !important;
-            padding-top: 4px !important;
-            padding-bottom: calc(4px + env(safe-area-inset-bottom)) !important;
-            box-shadow: 0 -2px 10px color-mix(in srgb, #000 7%, transparent) !important;
-          }
-          .nika-tabbar button {
-            position: relative;
-            min-width: 0;
-            min-height: 54px !important;
-            border-radius: 0 !important;
-            background: transparent !important;
-            overflow: visible;
-            isolation: isolate;
-          }
-          .nika-tabbar button.active {
-            background: transparent !important;
-          }
-          .nika-tabbar button.active::before {
-            content: "";
-            position: absolute;
-            z-index: -1;
-            left: 50%;
-            top: 2px;
-            width: min(112px, calc(100% - 10px));
-            height: 50px;
-            transform: translateX(-50%);
-            border-radius: 16px;
-            background: color-mix(in srgb, var(--shell-accent) 11%, transparent);
-          }
-          .nika-tabbar ha-icon {
-            --mdc-icon-size: 21px;
-          }
-          .nika-tabbar span {
-            font-size: 9px;
-            font-weight: 700;
-          }
-          @media (max-width: 390px) {
-            .nika-header {
-              grid-template-columns: 52px minmax(0, 1fr) 52px !important;
-            }
-            .nika-header .menu,
-            .nika-header .refresh {
-              width: 52px;
-              justify-content: center;
-              padding: 0;
-            }
-          }
-        `;
-        root.append(style);
-      }
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v045", KeeneticHeroAppPanelV045);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v045.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v050.js
 (() => {
 const CORE_COMPONENT_V050 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V050 = customElements.get("keenetic-hero-app-panel-v045");
-const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.8";
+const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.0";
 
 function escV050(value) {
   return String(value ?? "")
@@ -2045,27 +1385,13 @@ if (CORE_COMPONENT_V050 && !CORE_COMPONENT_V050.prototype.__nikaOverviewV050) {
     root.append(style);
   };
 }
-
-if (BASE_COMPONENT_V050 && !customElements.get("keenetic-hero-app-panel-v050")) {
-  class KeeneticHeroAppPanelV050 extends BASE_COMPONENT_V050 {
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      if (!root) return;
-      const version = root.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.5.0";
-    }
-  }
-  customElements.define("keenetic-hero-app-panel-v050", KeeneticHeroAppPanelV050);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v050.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v051.js
 (() => {
 const CORE_COMPONENT_V051 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V051 = customElements.get("keenetic-hero-app-panel-v050");
-const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.7.8";
+const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.8.0";
 
 if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) {
   CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051 = true;
@@ -2120,25 +1446,12 @@ if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) 
     root.append(style);
   };
 }
-
-if (BASE_COMPONENT_V051 && !customElements.get("keenetic-hero-app-panel-v051")) {
-  class KeeneticHeroAppPanelV051 extends BASE_COMPONENT_V051 {
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.5.1";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v051", KeeneticHeroAppPanelV051);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v051.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
 (() => {
-const BASE_COMPONENT_V052 = customElements.get("keenetic-hero-app-panel-v051");
-const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.7.8";
+const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.8.0";
 const CORE_COMPONENT_V052 = customElements.get("keenetic-hero-panel");
 
 if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV052) {
@@ -2160,27 +1473,14 @@ if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV0
     root.append(style);
   };
 }
-
-if (BASE_COMPONENT_V052 && !customElements.get("keenetic-hero-app-panel-v052")) {
-  class KeeneticHeroAppPanelV052 extends BASE_COMPONENT_V052 {
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.5.2";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v052", KeeneticHeroAppPanelV052);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js
 (() => {
 const CORE_COMPONENT_V060 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V060 = customElements.get("keenetic-hero-app-panel-v052");
-const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.7.8";
-const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.7.8";
+const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.8.0";
+const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.8.0";
 
 function _v060CreateMetricCell(label, value, className = "") {
   const span = document.createElement("span");
@@ -2378,27 +1678,14 @@ if (CORE_COMPONENT_V060 && !CORE_COMPONENT_V060.prototype.__nikaLayeredHeroV060)
     _v060EnhanceScene(root);
   };
 }
-
-if (BASE_COMPONENT_V060 && !customElements.get("keenetic-hero-app-panel-v060")) {
-  class KeeneticHeroAppPanelV060 extends BASE_COMPONENT_V060 {
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.6.0";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v060", KeeneticHeroAppPanelV060);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v061.js
 (() => {
 const CORE_COMPONENT_V061 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V061 = customElements.get("keenetic-hero-app-panel-v060");
-const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.7.8";
-const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.7.8";
+const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.8.0";
+const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.8.0";
 
 function _v061LabelCard(kind, title, subtitle, icon) {
   const card = document.createElement("div");
@@ -2539,26 +1826,14 @@ if (CORE_COMPONENT_V061 && !CORE_COMPONENT_V061.prototype.__nikaAcceptedTopology
     _v061EnhanceScene(root);
   };
 }
-
-if (BASE_COMPONENT_V061 && !customElements.get("keenetic-hero-app-panel-v061")) {
-  class KeeneticHeroAppPanelV061 extends BASE_COMPONENT_V061 {
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.6.1";
-    }
-  }
-  customElements.define("keenetic-hero-app-panel-v061", KeeneticHeroAppPanelV061);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v061.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v062.js
 (() => {
 const CORE_COMPONENT_V062 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V062 = customElements.get("keenetic-hero-app-panel-v061");
-const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=0.7.8";
-const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.7.8";
+const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=0.8.0";
+const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.8.0";
 
 function _v062EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -2683,26 +1958,14 @@ if (CORE_COMPONENT_V062 && !CORE_COMPONENT_V062.prototype.__nikaHeroCompositionV
     _v062EnhanceScene(root);
   };
 }
-
-if (BASE_COMPONENT_V062 && !customElements.get("keenetic-hero-app-panel-v062")) {
-  class KeeneticHeroAppPanelV062 extends BASE_COMPONENT_V062 {
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.6.2";
-    }
-  }
-  customElements.define("keenetic-hero-app-panel-v062", KeeneticHeroAppPanelV062);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v062.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
 (() => {
 const CORE_COMPONENT_V063 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V063 = customElements.get("keenetic-hero-app-panel-v062");
-const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.7.8";
-const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.7.8";
+const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.8.0";
+const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.8.0";
 
 function _v063EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -2880,28 +2143,13 @@ if (CORE_COMPONENT_V063 && !CORE_COMPONENT_V063.prototype.__nikaTargetGeometryV0
     _v063EnhanceScene(root);
   };
 }
-
-if (BASE_COMPONENT_V063 && !customElements.get("keenetic-hero-app-panel-v063")) {
-  class KeeneticHeroAppPanelV063 extends BASE_COMPONENT_V063 {
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      if (!root) return;
-      _v063InstallShellStyles(root);
-      const version = root.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.6.3";
-    }
-  }
-  customElements.define("keenetic-hero-app-panel-v063", KeeneticHeroAppPanelV063);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v064.js
 (() => {
 const CORE_COMPONENT_V064 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V064 = customElements.get("keenetic-hero-app-panel-v063");
-const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.8";
+const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.0";
 
 function _v064InstallRoom(root) {
   if (!root) return;
@@ -2933,24 +2181,12 @@ if (CORE_COMPONENT_V064 && !CORE_COMPONENT_V064.prototype.__nikaPhotorealisticRo
     _v064InstallRoom(this.shadowRoot);
   };
 }
-
-if (BASE_COMPONENT_V064 && !customElements.get("keenetic-hero-app-panel-v064")) {
-  class KeeneticHeroAppPanelV064 extends BASE_COMPONENT_V064 {
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.6.4";
-    }
-  }
-  customElements.define("keenetic-hero-app-panel-v064", KeeneticHeroAppPanelV064);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v064.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v065.js
 (() => {
 const CORE_COMPONENT_V065 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V065 = customElements.get("keenetic-hero-app-panel-v064");
 const ZOOM_STORAGE_KEY_V065 = "nikas.keenetic.contentZoom.v1";
 const ZOOM_MIN_V065 = 0.85;
 const ZOOM_MAX_V065 = 1.8;
@@ -3023,940 +2259,12 @@ if (CORE_COMPONENT_V065 && !CORE_COMPONENT_V065.prototype.__nikaHeroAlignmentV06
     _v065InstallHeroStyles(this.shadowRoot);
   };
 }
-
-if (BASE_COMPONENT_V065 && !customElements.get("keenetic-hero-app-panel-v065")) {
-  class KeeneticHeroAppPanelV065 extends BASE_COMPONENT_V065 {
-    constructor() {
-      super();
-      this._nikaZoomScale = _v065ReadZoom();
-      this._nikaZoomGesture = null;
-      this._nikaZoomResizeObserver = null;
-      this._nikaZoomCollapseTimer = null;
-      this._nikaZoomTouchStart = (event) => this._onNikaZoomTouchStart(event);
-      this._nikaZoomTouchMove = (event) => this._onNikaZoomTouchMove(event);
-      this._nikaZoomTouchEnd = () => this._onNikaZoomTouchEnd();
-    }
-
-    connectedCallback() {
-      super.connectedCallback();
-      this._installNikaZoom();
-      requestAnimationFrame(() => this._applyNikaZoom(this._nikaZoomScale));
-    }
-
-    disconnectedCallback() {
-      this._teardownNikaZoom();
-      super.disconnectedCallback();
-    }
-
-    _ensureChild() {
-      if (!this.isConnected) return;
-      const target =
-        this.shadowRoot.getElementById("nika-zoom-surface") ||
-        this.shadowRoot.getElementById("app-content");
-      if (!this._child) {
-        this._child = document.createElement("keenetic-hero-panel");
-      }
-      if (target && this._child.parentElement !== target) target.appendChild(this._child);
-      if (this._panel) this._child.panel = this._panel;
-      if (this._route) this._child.route = this._route;
-      if (this._hass && this._panel) this._child.hass = this._hass;
-      this._observeNikaZoomSurface();
-      requestAnimationFrame(() => this._applyNikaZoom(this._nikaZoomScale));
-    }
-
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      if (!root) return;
-
-      const version = root.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.6.5";
-
-      if (!root.querySelector("style[data-nikas-zoom-v065]")) {
-        const style = document.createElement("style");
-        style.dataset.nikasZoomV065 = "true";
-        style.textContent = `
-          #nika-app-shell{position:relative}
-          #app-content{
-            position:relative;
-            overflow:auto!important;
-            overscroll-behavior:contain;
-            touch-action:pan-x pan-y;
-            scrollbar-width:none;
-          }
-          #app-content::-webkit-scrollbar{display:none}
-          #nika-zoom-stage{position:relative;min-width:100%;min-height:100%}
-          #nika-zoom-surface{
-            position:absolute;
-            left:0;
-            top:0;
-            transform-origin:0 0;
-            will-change:transform;
-          }
-          #nika-zoom-surface>keenetic-hero-panel{display:block}
-          .nika-zoom-dock{
-            position:absolute;
-            z-index:20;
-            left:max(10px,env(safe-area-inset-left));
-            bottom:calc(66px + env(safe-area-inset-bottom));
-            display:flex;
-            align-items:center;
-            gap:6px;
-            pointer-events:none;
-          }
-          .nika-zoom-toggle,.nika-zoom-panel{
-            pointer-events:auto;
-            border:1px solid color-mix(in srgb,var(--primary-text-color) 12%,transparent);
-            background:color-mix(in srgb,var(--card-background-color,#fff) 92%,transparent);
-            box-shadow:0 5px 18px color-mix(in srgb,#000 14%,transparent);
-            backdrop-filter:blur(14px);
-          }
-          .nika-zoom-toggle{
-            width:42px;
-            height:42px;
-            border-radius:15px;
-            display:grid;
-            place-items:center;
-            padding:0;
-            color:var(--shell-accent);
-          }
-          .nika-zoom-toggle ha-icon{--mdc-icon-size:21px}
-          .nika-zoom-panel{
-            min-height:42px;
-            display:flex;
-            align-items:center;
-            gap:2px;
-            padding:3px;
-            border-radius:15px;
-          }
-          .nika-zoom-panel[hidden]{display:none}
-          .nika-zoom-panel button{
-            width:36px;
-            height:34px;
-            border:0;
-            border-radius:11px;
-            display:grid;
-            place-items:center;
-            padding:0;
-            background:transparent;
-            color:var(--primary-text-color);
-            font:700 17px/1 system-ui,sans-serif;
-          }
-          .nika-zoom-panel button:active{background:color-mix(in srgb,var(--shell-accent) 12%,transparent)}
-          .nika-zoom-panel ha-icon{--mdc-icon-size:18px}
-          .nika-zoom-value{
-            min-width:48px;
-            text-align:center;
-            color:var(--primary-text-color);
-            font:700 11px/1 system-ui,sans-serif;
-          }
-        `;
-        root.append(style);
-      }
-
-      const content = root.getElementById("app-content");
-      if (content && !root.getElementById("nika-zoom-stage")) {
-        const stage = document.createElement("div");
-        stage.id = "nika-zoom-stage";
-        const surface = document.createElement("div");
-        surface.id = "nika-zoom-surface";
-        while (content.firstChild) surface.appendChild(content.firstChild);
-        stage.appendChild(surface);
-        content.appendChild(stage);
-      }
-
-      const shell = root.getElementById("nika-app-shell");
-      if (shell && !root.querySelector(".nika-zoom-dock")) {
-        const dock = document.createElement("div");
-        dock.className = "nika-zoom-dock";
-        dock.innerHTML = `
-          <button type="button" class="nika-zoom-toggle" aria-label="Масштаб панели" aria-expanded="false">
-            <ha-icon icon="mdi:magnify-plus-outline"></ha-icon>
-          </button>
-          <div class="nika-zoom-panel" hidden aria-label="Управление масштабом">
-            <button type="button" data-zoom-action="out" aria-label="Уменьшить">−</button>
-            <span class="nika-zoom-value" aria-live="polite">100%</span>
-            <button type="button" data-zoom-action="in" aria-label="Увеличить">+</button>
-            <button type="button" data-zoom-action="reset" aria-label="Сбросить масштаб">
-              <ha-icon icon="mdi:backup-restore"></ha-icon>
-            </button>
-          </div>`;
-        shell.appendChild(dock);
-      }
-
-      this._installNikaZoom();
-      this._updateNikaZoomLabel();
-    }
-
-    _installNikaZoom() {
-      const content = this.shadowRoot?.getElementById("app-content");
-      if (!content) return;
-      if (content.dataset.nikasZoomBound !== "true") {
-        content.dataset.nikasZoomBound = "true";
-        content.addEventListener("touchstart", this._nikaZoomTouchStart, { passive: false });
-        content.addEventListener("touchmove", this._nikaZoomTouchMove, { passive: false });
-        content.addEventListener("touchend", this._nikaZoomTouchEnd, { passive: true });
-        content.addEventListener("touchcancel", this._nikaZoomTouchEnd, { passive: true });
-      }
-
-      const toggle = this.shadowRoot.querySelector(".nika-zoom-toggle");
-      const panel = this.shadowRoot.querySelector(".nika-zoom-panel");
-      const dock = this.shadowRoot.querySelector(".nika-zoom-dock");
-      if (dock && dock.dataset.nikasZoomControlsBound !== "true") {
-        dock.dataset.nikasZoomControlsBound = "true";
-        toggle?.addEventListener("click", () => {
-          const expanded = panel?.hasAttribute("hidden") ?? true;
-          if (panel) panel.toggleAttribute("hidden", !expanded);
-          toggle.setAttribute("aria-expanded", String(expanded));
-          if (expanded) this._scheduleNikaZoomCollapse();
-        });
-        panel?.querySelectorAll("[data-zoom-action]").forEach((button) => {
-          button.addEventListener("click", () => {
-            const action = button.dataset.zoomAction;
-            if (action === "reset") {
-              this._setNikaZoomFromControl(1, true);
-            } else {
-              const delta = action === "in" ? ZOOM_STEP_V065 : -ZOOM_STEP_V065;
-              this._setNikaZoomFromControl(this._nikaZoomScale + delta, false);
-            }
-            this._scheduleNikaZoomCollapse();
-          });
-        });
-      }
-
-      this._observeNikaZoomSurface();
-    }
-
-    _teardownNikaZoom() {
-      const content = this.shadowRoot?.getElementById("app-content");
-      content?.removeEventListener("touchstart", this._nikaZoomTouchStart);
-      content?.removeEventListener("touchmove", this._nikaZoomTouchMove);
-      content?.removeEventListener("touchend", this._nikaZoomTouchEnd);
-      content?.removeEventListener("touchcancel", this._nikaZoomTouchEnd);
-      if (content) delete content.dataset.nikasZoomBound;
-      this._nikaZoomResizeObserver?.disconnect();
-      this._nikaZoomResizeObserver = null;
-      clearTimeout(this._nikaZoomCollapseTimer);
-    }
-
-    _observeNikaZoomSurface() {
-      if (this._nikaZoomResizeObserver || typeof ResizeObserver === "undefined") return;
-      const surface = this.shadowRoot?.getElementById("nika-zoom-surface");
-      if (!surface) return;
-      this._nikaZoomResizeObserver = new ResizeObserver(() => {
-        requestAnimationFrame(() => this._applyNikaZoom(this._nikaZoomScale));
-      });
-      this._nikaZoomResizeObserver.observe(surface);
-    }
-
-    _nikaZoomOffsetX(scale, viewportWidth) {
-      return scale < 1 ? (viewportWidth - viewportWidth * scale) / 2 : 0;
-    }
-
-    _nikaZoomFocalPoint() {
-      const content = this.shadowRoot?.getElementById("app-content");
-      if (!content) return null;
-      const localX = content.clientWidth / 2;
-      const localY = content.clientHeight / 2;
-      const offsetX = this._nikaZoomOffsetX(this._nikaZoomScale, content.clientWidth);
-      return {
-        localX,
-        localY,
-        contentX: (content.scrollLeft + localX - offsetX) / this._nikaZoomScale,
-        contentY: (content.scrollTop + localY) / this._nikaZoomScale,
-      };
-    }
-
-    _applyNikaZoom(value, options = {}) {
-      const content = this.shadowRoot?.getElementById("app-content");
-      const stage = this.shadowRoot?.getElementById("nika-zoom-stage");
-      const surface = this.shadowRoot?.getElementById("nika-zoom-surface");
-      if (!content || !stage || !surface || content.clientWidth <= 0) return;
-
-      const scale = _v065ClampZoom(value);
-      const viewportWidth = content.clientWidth;
-      const offsetX = this._nikaZoomOffsetX(scale, viewportWidth);
-      this._nikaZoomScale = scale;
-      surface.style.width = `${viewportWidth}px`;
-      surface.style.left = `${offsetX}px`;
-      surface.style.transform = `scale(${scale})`;
-      stage.style.width = `${Math.max(viewportWidth, viewportWidth * scale)}px`;
-      stage.style.height = `${Math.max(1, surface.scrollHeight * scale)}px`;
-
-      const focal = options.focal;
-      if (focal) {
-        content.scrollLeft = Math.max(0, focal.contentX * scale + offsetX - focal.localX);
-        content.scrollTop = Math.max(0, focal.contentY * scale - focal.localY);
-      }
-      if (options.resetPosition) content.scrollLeft = 0;
-      if (options.persist) this._persistNikaZoom();
-      this._updateNikaZoomLabel();
-    }
-
-    _setNikaZoomFromControl(value, resetPosition) {
-      const focal = this._nikaZoomFocalPoint();
-      this._applyNikaZoom(value, { focal, persist: true, resetPosition });
-    }
-
-    _persistNikaZoom() {
-      try {
-        localStorage.setItem(ZOOM_STORAGE_KEY_V065, this._nikaZoomScale.toFixed(2));
-      } catch (_error) {
-        // Storage is optional; zoom remains available for the current session.
-      }
-    }
-
-    _updateNikaZoomLabel() {
-      const label = this.shadowRoot?.querySelector(".nika-zoom-value");
-      if (label) label.textContent = `${Math.round(this._nikaZoomScale * 100)}%`;
-    }
-
-    _scheduleNikaZoomCollapse() {
-      clearTimeout(this._nikaZoomCollapseTimer);
-      this._nikaZoomCollapseTimer = setTimeout(() => {
-        const panel = this.shadowRoot?.querySelector(".nika-zoom-panel");
-        const toggle = this.shadowRoot?.querySelector(".nika-zoom-toggle");
-        panel?.setAttribute("hidden", "");
-        toggle?.setAttribute("aria-expanded", "false");
-      }, 4500);
-    }
-
-    _onNikaZoomTouchStart(event) {
-      if (event.touches.length !== 2) return;
-      event.preventDefault();
-      const content = this.shadowRoot?.getElementById("app-content");
-      if (!content) return;
-      const rect = content.getBoundingClientRect();
-      const midpoint = _v065TouchMidpoint(event.touches);
-      const localX = midpoint.x - rect.left;
-      const localY = midpoint.y - rect.top;
-      const offsetX = this._nikaZoomOffsetX(this._nikaZoomScale, content.clientWidth);
-      this._nikaZoomGesture = {
-        startDistance: Math.max(1, _v065TouchDistance(event.touches)),
-        startScale: this._nikaZoomScale,
-        localX,
-        localY,
-        contentX: (content.scrollLeft + localX - offsetX) / this._nikaZoomScale,
-        contentY: (content.scrollTop + localY) / this._nikaZoomScale,
-      };
-    }
-
-    _onNikaZoomTouchMove(event) {
-      if (event.touches.length !== 2 || !this._nikaZoomGesture) return;
-      event.preventDefault();
-      const content = this.shadowRoot?.getElementById("app-content");
-      if (!content) return;
-      const rect = content.getBoundingClientRect();
-      const midpoint = _v065TouchMidpoint(event.touches);
-      const ratio = _v065TouchDistance(event.touches) / this._nikaZoomGesture.startDistance;
-      this._applyNikaZoom(this._nikaZoomGesture.startScale * ratio, {
-        focal: {
-          ...this._nikaZoomGesture,
-          localX: midpoint.x - rect.left,
-          localY: midpoint.y - rect.top,
-        },
-      });
-    }
-
-    _onNikaZoomTouchEnd() {
-      if (!this._nikaZoomGesture) return;
-      this._nikaZoomGesture = null;
-      this._persistNikaZoom();
-      this._updateNikaZoomLabel();
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v065", KeeneticHeroAppPanelV065);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v065.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v066.js
-(() => {
-const BASE_COMPONENT_V066 = customElements.get("keenetic-hero-app-panel-v065");
-
-function _v066InstallHeaderSafeArea(root) {
-  if (!root || root.querySelector("style[data-nikas-header-safe-area-v066]")) return;
-  const style = document.createElement("style");
-  style.dataset.nikasHeaderSafeAreaV066 = "true";
-  style.textContent = `
-    .nika-header{
-      min-height:calc(63px + env(safe-area-inset-top,0px))!important;
-      padding-top:calc(4px + env(safe-area-inset-top,0px))!important;
-      padding-right:max(8px,env(safe-area-inset-right,0px))!important;
-      padding-bottom:4px!important;
-      padding-left:max(8px,env(safe-area-inset-left,0px))!important;
-    }
-    @media(max-width:390px){
-      .nika-header{
-        min-height:calc(60px + env(safe-area-inset-top,0px))!important;
-      }
-    }
-  `;
-  root.append(style);
-}
-
-if (BASE_COMPONENT_V066 && !customElements.get("keenetic-hero-app-panel-v066")) {
-  class KeeneticHeroAppPanelV066 extends BASE_COMPONENT_V066 {
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      if (!root) return;
-      _v066InstallHeaderSafeArea(root);
-      const version = root.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.6.6";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v066", KeeneticHeroAppPanelV066);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v066.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v067.js
-(() => {
-const BASE_COMPONENT_V067 = customElements.get("keenetic-hero-app-panel-v066");
-const CANVAS_STORAGE_KEY_V067 = "nikas.keenetic.canvasZoom.v2";
-const LEGACY_ZOOM_STORAGE_KEY_V067 = "nikas.keenetic.contentZoom.v1";
-const CANVAS_MIN_SCALE_V067 = 0.75;
-const CANVAS_MAX_SCALE_V067 = 2;
-const CANVAS_SNAP_MIN_V067 = 0.97;
-const CANVAS_SNAP_MAX_V067 = 1.03;
-const CANVAS_PAN_THRESHOLD_PX_V067 = 5;
-const CANVAS_GESTURE_GUARD_MS_V067 = 700;
-const CANVAS_DOUBLE_TAP_DELAY_MS_V067 = 360;
-const CANVAS_TAP_DURATION_MS_V067 = 280;
-const CANVAS_TAP_MOVE_PX_V067 = 14;
-
-function _v067ClampScale(value) {
-  const numeric = Number(value);
-  if (!Number.isFinite(numeric)) return 1;
-  return Math.min(CANVAS_MAX_SCALE_V067, Math.max(CANVAS_MIN_SCALE_V067, numeric));
-}
-
-function _v067ReadScale() {
-  try {
-    const current = localStorage.getItem(CANVAS_STORAGE_KEY_V067);
-    const legacy = localStorage.getItem(LEGACY_ZOOM_STORAGE_KEY_V067);
-    return _v067ClampScale(current ?? legacy ?? 1);
-  } catch (_error) {
-    return 1;
-  }
-}
-
-function _v067Distance(first, second) {
-  return Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY);
-}
-
-function _v067Midpoint(first, second, viewport = null) {
-  const point = {
-    x: (first.clientX + second.clientX) / 2,
-    y: (first.clientY + second.clientY) / 2,
-  };
-  if (!viewport) return point;
-  const rect = viewport.getBoundingClientRect();
-  return { x: point.x - rect.left, y: point.y - rect.top };
-}
-
-function _v067PointDistance(first, second) {
-  return Math.hypot(second.x - first.x, second.y - first.y);
-}
-
-function _v067DeepElementFromPoint(root, x, y) {
-  let element = root?.elementFromPoint?.(x, y) || document.elementFromPoint(x, y);
-  const visited = new Set();
-  while (element?.shadowRoot?.elementFromPoint && !visited.has(element)) {
-    visited.add(element);
-    const inner = element.shadowRoot.elementFromPoint(x, y);
-    if (!inner || inner === element) break;
-    element = inner;
-  }
-  return element;
-}
-
-function _v067CancelEntityHold(target) {
-  const entity = target?.closest?.("[data-entity]") || target;
-  if (!entity?.dispatchEvent) return;
-  const event = typeof PointerEvent === "function"
-    ? new PointerEvent("pointercancel", { bubbles: true, composed: true })
-    : new Event("pointercancel", { bubbles: true, composed: true });
-  entity.dispatchEvent(event);
-}
-
-if (BASE_COMPONENT_V067 && !customElements.get("keenetic-hero-app-panel-v067")) {
-  class KeeneticHeroAppPanelV067 extends BASE_COMPONENT_V067 {
-    constructor() {
-      super();
-      this._nikaCanvasStateV067 = { scale: _v067ReadScale(), x: 0, y: 0 };
-      this._nikaZoomScale = this._nikaCanvasStateV067.scale;
-      this._nikaCanvasBaseWidthV067 = 1;
-      this._nikaCanvasBaseHeightV067 = 1;
-      this._nikaCanvasPanV067 = null;
-      this._nikaCanvasPinchV067 = null;
-      this._nikaCanvasTapGestureV067 = null;
-      this._nikaCanvasMultiTouchV067 = false;
-      this._nikaCanvasGuardUntilV067 = 0;
-      this._nikaLastTwoFingerTapV067 = null;
-      this._nikaCanvasResizeObserverV067 = null;
-      this._nikaCanvasResizeTargetV067 = null;
-      this._nikaCanvasResizeFrameV067 = 0;
-      this._nikaCanvasToastTimerV067 = 0;
-      this._nikaCanvasTouchStartV067 = (event) => this._onNikaCanvasTouchStartV067(event);
-      this._nikaCanvasTouchMoveV067 = (event) => this._onNikaCanvasTouchMoveV067(event);
-      this._nikaCanvasTouchEndV067 = (event) => this._onNikaCanvasTouchEndV067(event);
-      this._nikaCanvasTouchCancelV067 = () => this._onNikaCanvasTouchCancelV067();
-      this._nikaCanvasClickGuardV067 = (event) => this._onNikaCanvasClickGuardV067(event);
-      this._nikaCanvasWindowResizeV067 = () => this._scheduleNikaCanvasMeasureV067();
-    }
-
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      if (!root) return;
-
-      root.querySelectorAll(".nika-zoom-dock").forEach((element) => element.remove());
-      this._installNikaCanvasStylesV067(root);
-      this._reconcileNikaCanvasV067();
-      this._installNikaZoom();
-
-      const version = root.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.6.7";
-    }
-
-    _setView(view) {
-      history.replaceState(null, "", `${location.pathname}${location.search}#${view}`);
-      this._activeView = view;
-      if (this._child) {
-        this._child._view = view;
-        this._child._scheduleRender?.();
-        this._child._loadViewData?.();
-      }
-      this._renderTabBar();
-      this._scheduleNikaCanvasMeasureV067();
-    }
-
-    _installNikaCanvasStylesV067(root) {
-      if (root.querySelector("style[data-nikas-canvas-v067]")) return;
-      const style = document.createElement("style");
-      style.dataset.nikasCanvasV067 = "true";
-      style.textContent = `
-        /* UI v0.6.7: transform-owned canvas; iOS scroll/bounce is not state. */
-        #app-content{
-          position:relative;
-          min-height:0;
-          overflow:hidden!important;
-          overscroll-behavior:none!important;
-          overflow-anchor:none!important;
-          touch-action:none!important;
-          -webkit-overflow-scrolling:auto!important;
-        }
-        #nika-zoom-stage{
-          position:relative;
-          width:100%!important;
-          height:100%!important;
-          min-width:0!important;
-          min-height:0!important;
-          overflow:hidden!important;
-        }
-        #nika-zoom-surface{
-          position:absolute;
-          top:0;
-          left:0!important;
-          transform-origin:0 0!important;
-          will-change:transform;
-          overflow-anchor:none!important;
-        }
-        #nika-zoom-surface>keenetic-hero-panel{display:block;min-height:100%}
-        .nika-zoom-dock{display:none!important}
-        .nika-canvas-reset-toast-v067{
-          position:absolute;
-          z-index:30;
-          left:50%;
-          top:14px;
-          transform:translate(-50%,-8px);
-          opacity:0;
-          pointer-events:none;
-          white-space:nowrap;
-          padding:8px 12px;
-          border-radius:999px;
-          color:var(--primary-text-color);
-          background:color-mix(in srgb,var(--card-background-color,#fff) 94%,transparent);
-          border:1px solid color-mix(in srgb,var(--primary-text-color) 12%,transparent);
-          box-shadow:0 6px 20px color-mix(in srgb,#000 16%,transparent);
-          backdrop-filter:blur(14px);
-          font:700 12px/1 system-ui,sans-serif;
-          transition:opacity .16s ease,transform .16s ease;
-        }
-        .nika-canvas-reset-toast-v067.visible{
-          opacity:1;
-          transform:translate(-50%,0);
-        }
-        @media(prefers-reduced-motion:reduce){
-          .nika-canvas-reset-toast-v067{transition:none}
-        }
-      `;
-      root.append(style);
-    }
-
-    _reconcileNikaCanvasV067() {
-      const root = this.shadowRoot;
-      const viewport = root?.getElementById("app-content");
-      if (!viewport) return null;
-
-      root.querySelectorAll(".nika-zoom-dock").forEach((element) => element.remove());
-      let stage = viewport.querySelector(":scope > #nika-zoom-stage");
-      let surface = stage?.querySelector(":scope > #nika-zoom-surface");
-      const structuralChildren = Array.from(viewport.children).filter(
-        (element) => !element.classList.contains("nika-canvas-reset-toast-v067"),
-      );
-      const valid = stage && surface && structuralChildren.length === 1;
-
-      if (!valid) {
-        const panel = this._child || viewport.querySelector("keenetic-hero-panel");
-        stage = document.createElement("div");
-        stage.id = "nika-zoom-stage";
-        surface = document.createElement("div");
-        surface.id = "nika-zoom-surface";
-        stage.append(surface);
-        if (panel) surface.append(panel);
-        const toast = viewport.querySelector(":scope > .nika-canvas-reset-toast-v067");
-        viewport.replaceChildren(stage);
-        if (toast) viewport.append(toast);
-      }
-
-      stage.dataset.nikasCanvasStageV067 = "true";
-      surface.dataset.nikasCanvasSurfaceV067 = "true";
-      if (this._child && this._child.parentElement !== surface) surface.append(this._child);
-      return viewport;
-    }
-
-    _installNikaZoom() {
-      const viewport = this._reconcileNikaCanvasV067();
-      if (!viewport) return;
-      if (viewport.dataset.nikasCanvasBoundV067 !== "true") {
-        viewport.dataset.nikasCanvasBoundV067 = "true";
-        viewport.addEventListener("touchstart", this._nikaCanvasTouchStartV067, { passive: false });
-        viewport.addEventListener("touchmove", this._nikaCanvasTouchMoveV067, { passive: false });
-        viewport.addEventListener("touchend", this._nikaCanvasTouchEndV067, { passive: true });
-        viewport.addEventListener("touchcancel", this._nikaCanvasTouchCancelV067, { passive: true });
-        viewport.addEventListener("click", this._nikaCanvasClickGuardV067, { capture: true });
-      }
-      this._observeNikaZoomSurface();
-      this._scheduleNikaCanvasMeasureV067();
-    }
-
-    _teardownNikaZoom() {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      viewport?.removeEventListener("touchstart", this._nikaCanvasTouchStartV067);
-      viewport?.removeEventListener("touchmove", this._nikaCanvasTouchMoveV067);
-      viewport?.removeEventListener("touchend", this._nikaCanvasTouchEndV067);
-      viewport?.removeEventListener("touchcancel", this._nikaCanvasTouchCancelV067);
-      viewport?.removeEventListener("click", this._nikaCanvasClickGuardV067, { capture: true });
-      if (viewport) delete viewport.dataset.nikasCanvasBoundV067;
-      this._nikaCanvasResizeObserverV067?.disconnect();
-      this._nikaCanvasResizeObserverV067 = null;
-      this._nikaCanvasResizeTargetV067 = null;
-      window.removeEventListener("resize", this._nikaCanvasWindowResizeV067);
-      window.visualViewport?.removeEventListener("resize", this._nikaCanvasWindowResizeV067);
-      window.cancelAnimationFrame(this._nikaCanvasResizeFrameV067);
-      window.clearTimeout(this._nikaCanvasToastTimerV067);
-    }
-
-    _observeNikaZoomSurface() {
-      const surface = this.shadowRoot?.getElementById("nika-zoom-surface");
-      if (!surface || this._nikaCanvasResizeTargetV067 === surface) return;
-      this._nikaCanvasResizeObserverV067?.disconnect();
-      this._nikaCanvasResizeTargetV067 = surface;
-      if (typeof ResizeObserver === "function") {
-        this._nikaCanvasResizeObserverV067 = new ResizeObserver(() => {
-          this._scheduleNikaCanvasMeasureV067();
-        });
-        this._nikaCanvasResizeObserverV067.observe(surface);
-      }
-      window.removeEventListener("resize", this._nikaCanvasWindowResizeV067);
-      window.visualViewport?.removeEventListener("resize", this._nikaCanvasWindowResizeV067);
-      window.addEventListener("resize", this._nikaCanvasWindowResizeV067, { passive: true });
-      window.visualViewport?.addEventListener("resize", this._nikaCanvasWindowResizeV067, { passive: true });
-    }
-
-    _scheduleNikaCanvasMeasureV067() {
-      window.cancelAnimationFrame(this._nikaCanvasResizeFrameV067);
-      this._nikaCanvasResizeFrameV067 = window.requestAnimationFrame(() => {
-        this._applyNikaZoom(this._nikaCanvasStateV067.scale, { remeasure: true });
-      });
-    }
-
-    _measureNikaCanvasV067() {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      const surface = this.shadowRoot?.getElementById("nika-zoom-surface");
-      if (!viewport || !surface || viewport.clientWidth <= 0) return false;
-      const state = this._nikaCanvasStateV067;
-      const baseWidth = Math.max(1, viewport.clientWidth);
-      surface.style.width = `${baseWidth}px`;
-      const renderedHeight = surface.getBoundingClientRect().height / Math.max(state.scale, 0.01);
-      this._nikaCanvasBaseWidthV067 = baseWidth;
-      this._nikaCanvasBaseHeightV067 = Math.max(
-        1,
-        viewport.clientHeight,
-        surface.scrollHeight,
-        Number.isFinite(renderedHeight) ? renderedHeight : 0,
-      );
-      return true;
-    }
-
-    _clampNikaCanvasPositionV067() {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      if (!viewport) return;
-      const state = this._nikaCanvasStateV067;
-      const scaledWidth = this._nikaCanvasBaseWidthV067 * state.scale;
-      const scaledHeight = this._nikaCanvasBaseHeightV067 * state.scale;
-      if (scaledWidth <= viewport.clientWidth) {
-        state.x = (viewport.clientWidth - scaledWidth) / 2;
-      } else {
-        state.x = Math.min(0, Math.max(viewport.clientWidth - scaledWidth, state.x));
-      }
-      if (scaledHeight <= viewport.clientHeight) {
-        state.y = 0;
-      } else {
-        state.y = Math.min(0, Math.max(viewport.clientHeight - scaledHeight, state.y));
-      }
-    }
-
-    _applyNikaZoom(value, options = {}) {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      const stage = this.shadowRoot?.getElementById("nika-zoom-stage");
-      const surface = this.shadowRoot?.getElementById("nika-zoom-surface");
-      if (!viewport || !stage || !surface) return;
-      const state = this._nikaCanvasStateV067;
-      state.scale = _v067ClampScale(value ?? state.scale);
-      this._nikaZoomScale = state.scale;
-      if (options.remeasure || this._nikaCanvasBaseWidthV067 <= 1) {
-        if (!this._measureNikaCanvasV067()) return;
-      }
-      this._clampNikaCanvasPositionV067();
-      stage.style.width = `${Math.max(1, viewport.clientWidth)}px`;
-      stage.style.height = `${Math.max(1, viewport.clientHeight)}px`;
-      surface.style.transform = `translate3d(${state.x}px,${state.y}px,0) scale(${state.scale})`;
-      if (options.persist) this._persistNikaCanvasScaleV067();
-    }
-
-    _persistNikaCanvasScaleV067() {
-      try {
-        localStorage.setItem(CANVAS_STORAGE_KEY_V067, this._nikaCanvasStateV067.scale.toFixed(3));
-      } catch (_error) {
-        // Storage is optional; the current panel instance keeps its state.
-      }
-    }
-
-    _resetNikaCanvasV067(notify = true) {
-      const state = this._nikaCanvasStateV067;
-      state.scale = 1;
-      state.x = 0;
-      state.y = 0;
-      this._applyNikaZoom(1, { persist: true });
-      if (notify) this._showNikaCanvasResetV067();
-    }
-
-    _showNikaCanvasResetV067() {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      if (!viewport) return;
-      let toast = viewport.querySelector(":scope > .nika-canvas-reset-toast-v067");
-      if (!toast) {
-        toast = document.createElement("div");
-        toast.className = "nika-canvas-reset-toast-v067";
-        toast.setAttribute("role", "status");
-        toast.setAttribute("aria-live", "polite");
-        toast.textContent = "Масштаб 100%";
-        viewport.append(toast);
-      }
-      window.clearTimeout(this._nikaCanvasToastTimerV067);
-      window.requestAnimationFrame(() => toast.classList.add("visible"));
-      this._nikaCanvasToastTimerV067 = window.setTimeout(() => {
-        toast.classList.remove("visible");
-      }, 1250);
-    }
-
-    _beginNikaCanvasPanV067(touch, target) {
-      const state = this._nikaCanvasStateV067;
-      this._nikaCanvasPanV067 = {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-        x: state.x,
-        y: state.y,
-        target,
-        moved: false,
-      };
-    }
-
-    _onNikaCanvasTouchStartV067(event) {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      if (!viewport) return;
-      if (event.touches.length >= 2) {
-        const [first, second] = event.touches;
-        const point = _v067Midpoint(first, second, viewport);
-        const state = this._nikaCanvasStateV067;
-        this._nikaCanvasMultiTouchV067 = true;
-        this._nikaCanvasPanV067 = null;
-        this._nikaCanvasPinchV067 = {
-          distance: Math.max(1, _v067Distance(first, second)),
-          scale: state.scale,
-          contentX: (point.x - state.x) / state.scale,
-          contentY: (point.y - state.y) / state.scale,
-        };
-        this._nikaCanvasTapGestureV067 = {
-          startedAt: performance.now(),
-          midpoint: _v067Midpoint(first, second),
-          distance: _v067Distance(first, second),
-          moved: false,
-        };
-        this._nikaCanvasGuardUntilV067 = Number.POSITIVE_INFINITY;
-        Array.from(event.touches).forEach((touch) => {
-          _v067CancelEntityHold(
-            _v067DeepElementFromPoint(this.shadowRoot, touch.clientX, touch.clientY),
-          );
-        });
-        event.preventDefault();
-        return;
-      }
-      if (event.touches.length === 1 && !this._nikaCanvasMultiTouchV067) {
-        const touch = event.touches[0];
-        const target = _v067DeepElementFromPoint(this.shadowRoot, touch.clientX, touch.clientY) || event.target;
-        this._beginNikaCanvasPanV067(touch, target);
-      }
-    }
-
-    _onNikaCanvasTouchMoveV067(event) {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      if (!viewport) return;
-      if (event.touches.length >= 2 && this._nikaCanvasPinchV067) {
-        const [first, second] = event.touches;
-        const point = _v067Midpoint(first, second, viewport);
-        const currentDistance = _v067Distance(first, second);
-        const pinch = this._nikaCanvasPinchV067;
-        const state = this._nikaCanvasStateV067;
-        state.scale = _v067ClampScale(pinch.scale * currentDistance / pinch.distance);
-        state.x = point.x - pinch.contentX * state.scale;
-        state.y = point.y - pinch.contentY * state.scale;
-        this._applyNikaZoom(state.scale);
-        if (
-          this._nikaCanvasTapGestureV067 &&
-          (_v067PointDistance(
-            this._nikaCanvasTapGestureV067.midpoint,
-            _v067Midpoint(first, second),
-          ) > CANVAS_TAP_MOVE_PX_V067 ||
-            Math.abs(currentDistance - this._nikaCanvasTapGestureV067.distance) > CANVAS_TAP_MOVE_PX_V067)
-        ) {
-          this._nikaCanvasTapGestureV067.moved = true;
-        }
-        event.preventDefault();
-        return;
-      }
-
-      const pan = this._nikaCanvasPanV067;
-      if (!pan || event.touches.length !== 1) return;
-      const touch = event.touches[0];
-      const dx = touch.clientX - pan.clientX;
-      const dy = touch.clientY - pan.clientY;
-      if (!pan.moved && Math.hypot(dx, dy) < CANVAS_PAN_THRESHOLD_PX_V067) return;
-      if (!pan.moved) {
-        pan.moved = true;
-        this._nikaCanvasGuardUntilV067 = Number.POSITIVE_INFINITY;
-        _v067CancelEntityHold(pan.target);
-      }
-      const state = this._nikaCanvasStateV067;
-      state.x = pan.x + dx;
-      state.y = pan.y + dy;
-      this._applyNikaZoom(state.scale);
-      event.preventDefault();
-    }
-
-    _onNikaCanvasTouchEndV067(event) {
-      if (this._nikaCanvasMultiTouchV067 && event.touches.length === 1) {
-        this._nikaCanvasPinchV067 = null;
-        const touch = event.touches[0];
-        const target = _v067DeepElementFromPoint(this.shadowRoot, touch.clientX, touch.clientY) || event.target;
-        this._beginNikaCanvasPanV067(touch, target);
-        return;
-      }
-      if (event.touches.length !== 0) return;
-
-      const completedTap = this._nikaCanvasTapGestureV067;
-      const wasMultiTouch = this._nikaCanvasMultiTouchV067;
-      const panMoved = Boolean(this._nikaCanvasPanV067?.moved);
-      this._nikaCanvasMultiTouchV067 = false;
-      this._nikaCanvasPinchV067 = null;
-      this._nikaCanvasTapGestureV067 = null;
-      this._nikaCanvasPanV067 = null;
-
-      const state = this._nikaCanvasStateV067;
-      if (state.scale >= CANVAS_SNAP_MIN_V067 && state.scale <= CANVAS_SNAP_MAX_V067 && state.scale !== 1) {
-        this._resetNikaCanvasV067(true);
-      } else {
-        this._applyNikaZoom(state.scale, { persist: true });
-      }
-
-      const now = performance.now();
-      if (wasMultiTouch) {
-        this._nikaCanvasGuardUntilV067 = now + CANVAS_GESTURE_GUARD_MS_V067;
-        const isTwoFingerTap = completedTap && !completedTap.moved &&
-          now - completedTap.startedAt <= CANVAS_TAP_DURATION_MS_V067;
-        if (isTwoFingerTap) {
-          const previousTap = this._nikaLastTwoFingerTapV067;
-          if (
-            previousTap && now - previousTap.at <= CANVAS_DOUBLE_TAP_DELAY_MS_V067 &&
-            _v067PointDistance(previousTap.midpoint, completedTap.midpoint) <= 48
-          ) {
-            this._nikaLastTwoFingerTapV067 = null;
-            this._resetNikaCanvasV067(true);
-          } else {
-            this._nikaLastTwoFingerTapV067 = { at: now, midpoint: completedTap.midpoint };
-          }
-        } else {
-          this._nikaLastTwoFingerTapV067 = null;
-        }
-      } else if (panMoved) {
-        this._nikaCanvasGuardUntilV067 = now + CANVAS_GESTURE_GUARD_MS_V067;
-      }
-    }
-
-    _onNikaCanvasTouchCancelV067() {
-      this._nikaCanvasMultiTouchV067 = false;
-      this._nikaCanvasPinchV067 = null;
-      this._nikaCanvasTapGestureV067 = null;
-      this._nikaCanvasPanV067 = null;
-      this._applyNikaZoom(this._nikaCanvasStateV067.scale, { persist: true });
-      this._nikaCanvasGuardUntilV067 = performance.now() + CANVAS_GESTURE_GUARD_MS_V067;
-    }
-
-    _onNikaCanvasClickGuardV067(event) {
-      if (
-        this._nikaCanvasGuardUntilV067 === Number.POSITIVE_INFINITY ||
-        performance.now() < this._nikaCanvasGuardUntilV067
-      ) {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-      }
-    }
-
-    _updateNikaZoomLabel() {
-      // UI Standard v1.3 forbids persistent zoom controls.
-    }
-
-    _scheduleNikaZoomCollapse() {
-      // Legacy v0.6.5 controls are intentionally absent.
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v067", KeeneticHeroAppPanelV067);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v067.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v068.js
 (() => {
 const CORE_COMPONENT_V068 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V068 = customElements.get("keenetic-hero-app-panel-v067");
 
 function _v068InstallRouterPathOcclusion(root) {
   if (!root || root.querySelector("style[data-keenetic-v068]")) return;
@@ -3978,497 +2286,12 @@ if (CORE_COMPONENT_V068 && !CORE_COMPONENT_V068.prototype.__nikaRouterPathOcclus
     _v068InstallRouterPathOcclusion(this.shadowRoot);
   };
 }
-
-if (BASE_COMPONENT_V068 && !customElements.get("keenetic-hero-app-panel-v068")) {
-  class KeeneticHeroAppPanelV068 extends BASE_COMPONENT_V068 {
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.6.8";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v068", KeeneticHeroAppPanelV068);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v068.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v069.js
-(() => {
-const BASE_COMPONENT_V069 = customElements.get("keenetic-hero-app-panel-v068");
-
-function _v069InstallBottomSafeArea(root) {
-  if (!root || root.querySelector("style[data-nikas-bottom-safe-area-v069]")) return;
-  const style = document.createElement("style");
-  style.dataset.nikasBottomSafeAreaV069 = "true";
-  style.textContent = `
-    /* Keep the native tab controls above the iPhone Home Indicator. */
-    .nika-tabbar{
-      padding-bottom:calc(4px + env(safe-area-inset-bottom,0px))!important;
-    }
-  `;
-  root.append(style);
-}
-
-if (BASE_COMPONENT_V069 && !customElements.get("keenetic-hero-app-panel-v069")) {
-  class KeeneticHeroAppPanelV069 extends BASE_COMPONENT_V069 {
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      if (!root) return;
-      _v069InstallBottomSafeArea(root);
-      const version = root.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.6.9";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v069", KeeneticHeroAppPanelV069);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v069.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v070.js
-(() => {
-const BASE_COMPONENT_V070 = customElements.get("keenetic-hero-app-panel-v069");
-const TAB_VIEWS_V070 = new Set(["overview", "wan", "failover", "traffic", "diagnostics"]);
-
-if (BASE_COMPONENT_V070 && !customElements.get("keenetic-hero-app-panel-v070")) {
-  class KeeneticHeroAppPanelV070 extends BASE_COMPONENT_V070 {
-    _setView(view) {
-      if (!TAB_VIEWS_V070.has(view) || view === this._activeView) return;
-
-      history.replaceState(null, "", `${location.pathname}${location.search}#${view}`);
-      this._activeView = view;
-      this._renderTabBar();
-
-      // A view replacement changes the intrinsic height of the transform-owned
-      // surface. Stop the old measurement cycle before the child rebuilds so a
-      // ResizeObserver callback cannot race the render and keep iOS busy.
-      window.cancelAnimationFrame(this._nikaCanvasResizeFrameV067);
-      this._nikaCanvasResizeFrameV067 = 0;
-      this._nikaCanvasResizeObserverV067?.disconnect();
-      this._nikaCanvasResizeTargetV067 = null;
-      this._nikaCanvasPanV067 = null;
-      this._nikaCanvasPinchV067 = null;
-      this._nikaCanvasTapGestureV067 = null;
-      this._nikaCanvasMultiTouchV067 = false;
-      this._nikaCanvasGuardUntilV067 = 0;
-
-      const state = this._nikaCanvasStateV067;
-      state.x = 0;
-      state.y = 0;
-
-      const child = this._child;
-      if (!child) return;
-      child._view = view;
-      child._scheduleRender?.();
-
-      // The child render is queued as a microtask. Load optional view data only
-      // after that render, then measure the completed DOM once on the next frame.
-      queueMicrotask(() => {
-        child._loadViewData?.();
-        window.cancelAnimationFrame(this._nikaCanvasResizeFrameV067);
-        this._nikaCanvasResizeFrameV067 = window.requestAnimationFrame(() => {
-          this._observeNikaZoomSurface();
-          this._applyNikaZoom(state.scale, { remeasure: true });
-        });
-      });
-    }
-
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.7.0";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v070", KeeneticHeroAppPanelV070);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v070.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v071.js
-(() => {
-const BASE_COMPONENT_V071 = customElements.get("keenetic-hero-app-panel-v070");
-const TAB_VIEWS_V071 = new Set(["overview", "wan", "failover", "traffic", "diagnostics"]);
-
-function _v071InstallStableViewport(root) {
-  if (!root || root.querySelector("style[data-nikas-stable-viewport-v071]")) return;
-  const style = document.createElement("style");
-  style.dataset.nikasStableViewportV071 = "true";
-  style.textContent = `
-    /* Temporary stability mode: native content scroll, no transform canvas. */
-    #app-content{
-      overflow-x:hidden!important;
-      overflow-y:auto!important;
-      overscroll-behavior-y:contain!important;
-      touch-action:pan-y!important;
-      -webkit-overflow-scrolling:touch!important;
-    }
-    #nika-zoom-stage{
-      position:static!important;
-      width:100%!important;
-      height:auto!important;
-      min-height:100%!important;
-      overflow:visible!important;
-    }
-    #nika-zoom-surface{
-      position:static!important;
-      width:100%!important;
-      min-height:100%!important;
-      transform:none!important;
-      will-change:auto!important;
-    }
-  `;
-  root.append(style);
-}
-
-if (BASE_COMPONENT_V071 && !customElements.get("keenetic-hero-app-panel-v071")) {
-  class KeeneticHeroAppPanelV071 extends BASE_COMPONENT_V071 {
-    _installNikaZoom() {
-      // Disabled in b034 while the iOS tab stall is isolated.
-      this._teardownNikaZoom?.();
-    }
-
-    _applyNikaZoom() {
-      // Older connectedCallback hooks may still request one apply frame.
-      // Keep that inherited callback harmless in stability mode.
-    }
-
-    _setView(view) {
-      if (!TAB_VIEWS_V071.has(view) || view === this._activeView) return;
-
-      history.replaceState(null, "", `${location.pathname}${location.search}#${view}`);
-      this._activeView = view;
-      if (this._child) {
-        this._child._view = view;
-        this._child._scheduleRender?.();
-        this._child._loadViewData?.();
-      }
-      this._renderTabBar();
-      this.shadowRoot?.getElementById("app-content")?.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    }
-
-    _renderShell() {
-      super._renderShell();
-      this._teardownNikaZoom?.();
-      const root = this.shadowRoot;
-      _v071InstallStableViewport(root);
-      const version = root?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.7.1";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v071", KeeneticHeroAppPanelV071);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v071.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v072.js
-(() => {
-const BASE_COMPONENT_V072 = customElements.get("keenetic-hero-app-panel-v071");
-const TAB_VIEWS_V072 = new Set(["overview", "wan", "failover", "traffic", "diagnostics"]);
-const SAFE_ZOOM_STORAGE_V072 = "nikas.keenetic.safeZoom.v3";
-const SAFE_ZOOM_MIN_V072 = 0.75;
-const SAFE_ZOOM_MAX_V072 = 2;
-const SAFE_ZOOM_STEP_V072 = 0.25;
-
-function _v072ClampScale(value) {
-  const numeric = Number(value);
-  if (!Number.isFinite(numeric)) return 1;
-  return Math.min(SAFE_ZOOM_MAX_V072, Math.max(SAFE_ZOOM_MIN_V072, numeric));
-}
-
-function _v072ReadScale() {
-  try {
-    return _v072ClampScale(localStorage.getItem(SAFE_ZOOM_STORAGE_V072) ?? 1);
-  } catch (_error) {
-    return 1;
-  }
-}
-
-function _v072Distance(first, second) {
-  return Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY);
-}
-
-function _v072Midpoint(first, second, viewport) {
-  const rect = viewport.getBoundingClientRect();
-  return {
-    x: (first.clientX + second.clientX) / 2 - rect.left,
-    y: (first.clientY + second.clientY) / 2 - rect.top,
-  };
-}
-
-function _v072InstallStyles(root) {
-  if (!root || root.querySelector("style[data-nikas-safe-zoom-v072]")) return;
-  const style = document.createElement("style");
-  style.dataset.nikasSafeZoomV072 = "true";
-  style.textContent = `
-    /* UI v0.7.2: isolated zoom with native scroll and no observer loop. */
-    #app-content{
-      overflow:auto!important;
-      overscroll-behavior:contain!important;
-      touch-action:pan-x pan-y!important;
-      -webkit-overflow-scrolling:touch!important;
-    }
-    #nika-zoom-stage{
-      position:relative!important;
-      overflow:visible!important;
-      min-width:100%!important;
-      min-height:100%!important;
-    }
-    #nika-zoom-surface{
-      position:absolute!important;
-      top:0!important;
-      left:0!important;
-      min-height:0!important;
-      transform-origin:0 0!important;
-      will-change:transform!important;
-    }
-    .nika-safe-zoom-v072{
-      position:fixed;
-      z-index:40;
-      right:12px;
-      bottom:calc(70px + env(safe-area-inset-bottom,0px));
-      display:grid;
-      grid-template-columns:38px 58px 38px;
-      gap:4px;
-      padding:5px;
-      border-radius:16px;
-      border:1px solid color-mix(in srgb,var(--primary-text-color) 12%,transparent);
-      background:color-mix(in srgb,var(--card-background-color,#fff) 94%,transparent);
-      box-shadow:0 6px 22px color-mix(in srgb,#000 16%,transparent);
-      backdrop-filter:blur(14px);
-    }
-    .nika-safe-zoom-v072 button{
-      min-width:38px;
-      min-height:38px;
-      border:0;
-      border-radius:11px;
-      color:var(--primary-text-color);
-      background:color-mix(in srgb,var(--primary-color,#03a9f4) 10%,transparent);
-      font:700 15px/1 system-ui,sans-serif;
-    }
-    .nika-safe-zoom-v072 [data-safe-zoom-reset]{font-size:12px}
-  `;
-  root.append(style);
-}
-
-if (BASE_COMPONENT_V072 && !customElements.get("keenetic-hero-app-panel-v072")) {
-  class KeeneticHeroAppPanelV072 extends BASE_COMPONENT_V072 {
-    constructor() {
-      super();
-      this._safeZoomScaleV072 = _v072ReadScale();
-      this._safeZoomBaseWidthV072 = 1;
-      this._safeZoomBaseHeightV072 = 1;
-      this._safeZoomPinchV072 = null;
-      this._safeZoomFrameV072 = 0;
-      this._safeZoomTouchStartV072 = (event) => this._onSafeZoomTouchStartV072(event);
-      this._safeZoomTouchMoveV072 = (event) => this._onSafeZoomTouchMoveV072(event);
-      this._safeZoomTouchEndV072 = (event) => this._onSafeZoomTouchEndV072(event);
-    }
-
-    _installNikaZoom() {
-      const root = this.shadowRoot;
-      const viewport = root?.getElementById("app-content");
-      const surface = root?.getElementById("nika-zoom-surface");
-      if (!viewport || !surface) return;
-      this._teardownNikaZoom();
-      _v072InstallStyles(root);
-      if (surface.dataset.safeZoomBoundV072 !== "true") {
-        surface.dataset.safeZoomBoundV072 = "true";
-        surface.addEventListener("touchstart", this._safeZoomTouchStartV072, { passive: false });
-        surface.addEventListener("touchmove", this._safeZoomTouchMoveV072, { passive: false });
-        surface.addEventListener("touchend", this._safeZoomTouchEndV072, { passive: true });
-        surface.addEventListener("touchcancel", this._safeZoomTouchEndV072, { passive: true });
-      }
-      this._installSafeZoomControlsV072();
-      this._scheduleSafeZoomMeasureV072();
-    }
-
-    _teardownNikaZoom() {
-      const root = this.shadowRoot;
-      const surface = root?.getElementById("nika-zoom-surface");
-      surface?.removeEventListener("touchstart", this._safeZoomTouchStartV072);
-      surface?.removeEventListener("touchmove", this._safeZoomTouchMoveV072);
-      surface?.removeEventListener("touchend", this._safeZoomTouchEndV072);
-      surface?.removeEventListener("touchcancel", this._safeZoomTouchEndV072);
-      if (surface) delete surface.dataset.safeZoomBoundV072;
-      window.cancelAnimationFrame(this._safeZoomFrameV072);
-      this._safeZoomFrameV072 = 0;
-      this._safeZoomPinchV072 = null;
-      super._teardownNikaZoom?.();
-    }
-
-    _applyNikaZoom(value, options = {}) {
-      this._applySafeZoomV072(value, options);
-    }
-
-    _installSafeZoomControlsV072() {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      if (!viewport || viewport.querySelector(":scope > .nika-safe-zoom-v072")) return;
-      const controls = document.createElement("div");
-      controls.className = "nika-safe-zoom-v072";
-      controls.innerHTML = `
-        <button type="button" data-safe-zoom-out aria-label="Уменьшить">−</button>
-        <button type="button" data-safe-zoom-reset aria-label="Вернуть 100%">100%</button>
-        <button type="button" data-safe-zoom-in aria-label="Увеличить">+</button>
-      `;
-      controls.querySelector("[data-safe-zoom-out]")?.addEventListener("click", () => {
-        this._setSafeZoomFromControlV072(this._safeZoomScaleV072 - SAFE_ZOOM_STEP_V072);
-      });
-      controls.querySelector("[data-safe-zoom-reset]")?.addEventListener("click", () => {
-        this._resetSafeZoomV072();
-      });
-      controls.querySelector("[data-safe-zoom-in]")?.addEventListener("click", () => {
-        this._setSafeZoomFromControlV072(this._safeZoomScaleV072 + SAFE_ZOOM_STEP_V072);
-      });
-      viewport.append(controls);
-      this._updateSafeZoomLabelV072();
-    }
-
-    _scheduleSafeZoomMeasureV072() {
-      window.cancelAnimationFrame(this._safeZoomFrameV072);
-      this._safeZoomFrameV072 = window.requestAnimationFrame(() => {
-        this._safeZoomFrameV072 = 0;
-        this._applySafeZoomV072(this._safeZoomScaleV072, { remeasure: true });
-      });
-    }
-
-    _measureSafeZoomV072() {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      const surface = this.shadowRoot?.getElementById("nika-zoom-surface");
-      if (!viewport || !surface || viewport.clientWidth <= 0) return false;
-      const baseWidth = Math.max(1, viewport.clientWidth);
-      surface.style.width = `${baseWidth}px`;
-      this._safeZoomBaseWidthV072 = baseWidth;
-      this._safeZoomBaseHeightV072 = Math.max(1, viewport.clientHeight, surface.scrollHeight);
-      return true;
-    }
-
-    _applySafeZoomV072(value, options = {}) {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      const stage = this.shadowRoot?.getElementById("nika-zoom-stage");
-      const surface = this.shadowRoot?.getElementById("nika-zoom-surface");
-      if (!viewport || !stage || !surface) return;
-      const scale = _v072ClampScale(value);
-      this._safeZoomScaleV072 = scale;
-      this._nikaZoomScale = scale;
-      if (options.remeasure || this._safeZoomBaseWidthV072 <= 1) {
-        if (!this._measureSafeZoomV072()) return;
-      }
-      const scaledWidth = this._safeZoomBaseWidthV072 * scale;
-      const scaledHeight = this._safeZoomBaseHeightV072 * scale;
-      const margin = Math.max(0, (viewport.clientWidth - scaledWidth) / 2);
-      surface.style.marginLeft = `${margin}px`;
-      surface.style.transform = `scale(${scale})`;
-      stage.style.width = `${Math.max(viewport.clientWidth, margin + scaledWidth)}px`;
-      stage.style.height = `${Math.max(viewport.clientHeight, scaledHeight)}px`;
-      this._updateSafeZoomLabelV072();
-      if (options.persist) this._persistSafeZoomV072();
-    }
-
-    _setSafeZoomFromControlV072(value) {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      if (!viewport) return;
-      const focal = { x: viewport.clientWidth / 2, y: viewport.clientHeight / 2 };
-      this._applySafeZoomAroundV072(value, focal, true);
-    }
-
-    _resetSafeZoomV072() {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      this._applySafeZoomV072(1, { persist: true });
-      viewport?.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    }
-
-    _applySafeZoomAroundV072(value, focal, persist = false) {
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      if (!viewport) return;
-      if (this._safeZoomBaseWidthV072 <= 1 && !this._measureSafeZoomV072()) return;
-      const oldScale = this._safeZoomScaleV072;
-      const oldWidth = this._safeZoomBaseWidthV072 * oldScale;
-      const oldMargin = Math.max(0, (viewport.clientWidth - oldWidth) / 2);
-      const contentX = (viewport.scrollLeft + focal.x - oldMargin) / oldScale;
-      const contentY = (viewport.scrollTop + focal.y) / oldScale;
-      this._applySafeZoomV072(value, { persist });
-      const newScale = this._safeZoomScaleV072;
-      const newWidth = this._safeZoomBaseWidthV072 * newScale;
-      const newMargin = Math.max(0, (viewport.clientWidth - newWidth) / 2);
-      viewport.scrollTo({
-        left: Math.max(0, newMargin + contentX * newScale - focal.x),
-        top: Math.max(0, contentY * newScale - focal.y),
-        behavior: "auto",
-      });
-    }
-
-    _onSafeZoomTouchStartV072(event) {
-      if (event.touches.length !== 2) return;
-      const viewport = this.shadowRoot?.getElementById("app-content");
-      if (!viewport) return;
-      event.preventDefault();
-      const first = event.touches[0];
-      const second = event.touches[1];
-      this._safeZoomPinchV072 = {
-        distance: Math.max(1, _v072Distance(first, second)),
-        scale: this._safeZoomScaleV072,
-        focal: _v072Midpoint(first, second, viewport),
-      };
-    }
-
-    _onSafeZoomTouchMoveV072(event) {
-      if (!this._safeZoomPinchV072 || event.touches.length !== 2) return;
-      event.preventDefault();
-      const first = event.touches[0];
-      const second = event.touches[1];
-      const pinch = this._safeZoomPinchV072;
-      const next = pinch.scale * (_v072Distance(first, second) / pinch.distance);
-      this._applySafeZoomAroundV072(next, _v072Midpoint(first, second, this.shadowRoot.getElementById("app-content")));
-    }
-
-    _onSafeZoomTouchEndV072(event) {
-      if (!this._safeZoomPinchV072 || event.touches.length >= 2) return;
-      this._safeZoomPinchV072 = null;
-      this._persistSafeZoomV072();
-    }
-
-    _persistSafeZoomV072() {
-      try {
-        localStorage.setItem(SAFE_ZOOM_STORAGE_V072, this._safeZoomScaleV072.toFixed(2));
-      } catch (_error) {
-        // Storage may be unavailable in a private WebView.
-      }
-    }
-
-    _updateSafeZoomLabelV072() {
-      const label = this.shadowRoot?.querySelector("[data-safe-zoom-reset]");
-      if (label) label.textContent = `${Math.round(this._safeZoomScaleV072 * 100)}%`;
-    }
-
-    _setView(view) {
-      if (!TAB_VIEWS_V072.has(view) || view === this._activeView) return;
-      super._setView(view);
-      this._safeZoomBaseHeightV072 = 1;
-      queueMicrotask(() => this._scheduleSafeZoomMeasureV072());
-    }
-
-    _renderShell() {
-      super._renderShell();
-      _v072InstallStyles(this.shadowRoot);
-      this._installNikaZoom();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.7.2";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v072", KeeneticHeroAppPanelV072);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v072.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v073.js
 (() => {
 const CORE_COMPONENT_V073 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V073 = customElements.get("keenetic-hero-app-panel-v072");
 
 if (CORE_COMPONENT_V073 && !CORE_COMPONENT_V073.prototype.__nikaFailoverIdempotentV073) {
   CORE_COMPONENT_V073.prototype.__nikaFailoverIdempotentV073 = true;
@@ -4485,280 +2308,12 @@ if (CORE_COMPONENT_V073 && !CORE_COMPONENT_V073.prototype.__nikaFailoverIdempote
     this._scheduleRender?.();
   };
 }
-
-if (BASE_COMPONENT_V073 && !customElements.get("keenetic-hero-app-panel-v073")) {
-  class KeeneticHeroAppPanelV073 extends BASE_COMPONENT_V073 {
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.7.3";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v073", KeeneticHeroAppPanelV073);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v073.js
-
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v074.js
-(() => {
-const BASE_COMPONENT_V074 = customElements.get("keenetic-hero-app-panel-v073");
-const MIN_SCALE_V074 = 0.75;
-const MAX_SCALE_V074 = 2;
-const SNAP_MIN_V074 = 0.97;
-const SNAP_MAX_V074 = 1.03;
-const PAN_THRESHOLD_V074 = 7;
-const TAP_MOVE_V074 = 12;
-const TAP_DURATION_V074 = 260;
-const DOUBLE_TAP_DELAY_V074 = 360;
-const GUARD_MS_V074 = 380;
-
-const clampScaleV074 = (value) => Math.min(MAX_SCALE_V074, Math.max(MIN_SCALE_V074, Number(value) || 1));
-const distanceV074 = (a,b) => Math.hypot(b.clientX-a.clientX,b.clientY-a.clientY);
-const midpointV074 = (a,b,viewport) => { const r=viewport.getBoundingClientRect(); return {x:(a.clientX+b.clientX)/2-r.left,y:(a.clientY+b.clientY)/2-r.top}; };
-const pageMidpointV074 = (a,b) => ({x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2});
-const pointDistanceV074 = (a,b) => Math.hypot(b.x-a.x,b.y-a.y);
-
-function deepElementV074(root,x,y) {
-  let found=root?.elementFromPoint?.(x,y) || document.elementFromPoint(x,y);
-  while (found?.shadowRoot) { const nested=found.shadowRoot.elementFromPoint?.(x,y); if (!nested || nested===found) break; found=nested; }
-  return found;
-}
-function cancelHoldV074(target) {
-  const entity=target?.closest?.("[data-entity]");
-  if (!entity) return;
-  const event=typeof PointerEvent==="function"?new PointerEvent("pointercancel",{bubbles:true,composed:true}):new Event("pointercancel",{bubbles:true,composed:true});
-  entity.dispatchEvent(event);
-}
-
-if (BASE_COMPONENT_V074 && !customElements.get("keenetic-hero-app-panel-v074")) {
-  class KeeneticHeroAppPanelV074 extends BASE_COMPONENT_V074 {
-    constructor() {
-      super();
-      this._standardTouchStartV074=(event)=>this._onStandardTouchStartV074(event);
-      this._standardTouchMoveV074=(event)=>this._onStandardTouchMoveV074(event);
-      this._standardTouchEndV074=(event)=>this._onStandardTouchEndV074(event);
-      this._standardTouchCancelV074=()=>this._onStandardTouchCancelV074();
-      this._standardClickGuardV074=(event)=>this._onStandardClickGuardV074(event);
-      this._standardResizeV074=()=>this._scheduleStandardMeasureV074();
-      this._standardStateV074={scale:1,x:0,y:0};
-      this._standardLoadedKeyV074=null;
-      this._standardBaseWidthV074=1;
-      this._standardBaseHeightV074=1;
-    }
-
-    _storageKeyV074() { return `nikas.keenetic.zoom.v4:${this._panel?.config?.entry_id || "default"}`; }
-    _loadStandardStateV074() {
-      const key=this._storageKeyV074();
-      if (this._standardLoadedKeyV074===key) return;
-      this._standardLoadedKeyV074=key;
-      let scale=1;
-      try { scale=clampScaleV074(localStorage.getItem(key) || 1); } catch (_error) { scale=1; }
-      this._standardStateV074={scale,x:0,y:0};
-    }
-    _persistStandardStateV074() {
-      try { localStorage.setItem(this._storageKeyV074(),this._standardStateV074.scale.toFixed(3)); } catch (_error) { /* private WebView */ }
-    }
-
-    _installNikaZoom() {
-      const root=this.shadowRoot;
-      const viewport=root?.getElementById("app-content");
-      const surface=root?.getElementById("nika-zoom-surface");
-      if (!viewport || !surface) return;
-      this._loadStandardStateV074();
-      root.querySelectorAll(".nika-safe-zoom-v072,.nika-zoom-dock").forEach((node)=>node.remove());
-      if (viewport.dataset.standardZoomV074!=="true") {
-        viewport.dataset.standardZoomV074="true";
-        viewport.addEventListener("touchstart",this._standardTouchStartV074,{passive:false});
-        viewport.addEventListener("touchmove",this._standardTouchMoveV074,{passive:false});
-        viewport.addEventListener("touchend",this._standardTouchEndV074,{passive:true});
-        viewport.addEventListener("touchcancel",this._standardTouchCancelV074,{passive:true});
-        viewport.addEventListener("click",this._standardClickGuardV074,{capture:true});
-      }
-      this._standardResizeObserverV074?.disconnect();
-      if (typeof ResizeObserver==="function") { this._standardResizeObserverV074=new ResizeObserver(this._standardResizeV074);this._standardResizeObserverV074.observe(surface); }
-      window.removeEventListener("resize",this._standardResizeV074);
-      window.visualViewport?.removeEventListener("resize",this._standardResizeV074);
-      window.addEventListener("resize",this._standardResizeV074,{passive:true});
-      window.visualViewport?.addEventListener("resize",this._standardResizeV074,{passive:true});
-      this._scheduleStandardMeasureV074();
-    }
-
-    _teardownNikaZoom() {
-      const viewport=this.shadowRoot?.getElementById("app-content");
-      viewport?.removeEventListener("touchstart",this._standardTouchStartV074);
-      viewport?.removeEventListener("touchmove",this._standardTouchMoveV074);
-      viewport?.removeEventListener("touchend",this._standardTouchEndV074);
-      viewport?.removeEventListener("touchcancel",this._standardTouchCancelV074);
-      viewport?.removeEventListener("click",this._standardClickGuardV074,{capture:true});
-      if (viewport) delete viewport.dataset.standardZoomV074;
-      this._standardResizeObserverV074?.disconnect();
-      window.removeEventListener("resize",this._standardResizeV074);
-      window.visualViewport?.removeEventListener("resize",this._standardResizeV074);
-      cancelAnimationFrame(this._standardFrameV074);
-    }
-
-    _scheduleStandardMeasureV074() {
-      cancelAnimationFrame(this._standardFrameV074);
-      this._standardFrameV074=requestAnimationFrame(()=>this._applyStandardZoomV074(this._standardStateV074.scale,{remeasure:true}));
-    }
-    _measureStandardV074() {
-      const viewport=this.shadowRoot?.getElementById("app-content");
-      const surface=this.shadowRoot?.getElementById("nika-zoom-surface");
-      if (!viewport || !surface || viewport.clientWidth<=0) return false;
-      this._standardBaseWidthV074=Math.max(1,viewport.clientWidth);
-      surface.style.width=`${this._standardBaseWidthV074}px`;
-      const rendered=surface.getBoundingClientRect().height/Math.max(this._standardStateV074.scale,.01);
-      this._standardBaseHeightV074=Math.max(1,surface.scrollHeight,Number.isFinite(rendered)?rendered:0);
-      return true;
-    }
-    _boundsV074() {
-      const viewport=this.shadowRoot?.getElementById("app-content");
-      const s=this._standardStateV074;
-      return {minX:Math.min(0,viewport.clientWidth-this._standardBaseWidthV074*s.scale),minY:Math.min(0,viewport.clientHeight-this._standardBaseHeightV074*s.scale),overflowX:this._standardBaseWidthV074*s.scale>viewport.clientWidth+.5,overflowY:this._standardBaseHeightV074*s.scale>viewport.clientHeight+.5};
-    }
-    _clampStandardV074() {
-      const s=this._standardStateV074;
-      if (s.scale<=1) { s.x=0;s.y=0;return; }
-      const b=this._boundsV074();
-      s.x=b.overflowX?Math.min(0,Math.max(b.minX,s.x)):0;
-      s.y=b.overflowY?Math.min(0,Math.max(b.minY,s.y)):0;
-    }
-    _applyStandardZoomV074(value,options={}) {
-      const viewport=this.shadowRoot?.getElementById("app-content");
-      const stage=this.shadowRoot?.getElementById("nika-zoom-stage");
-      const surface=this.shadowRoot?.getElementById("nika-zoom-surface");
-      if (!viewport || !stage || !surface) return;
-      const s=this._standardStateV074;
-      s.scale=clampScaleV074(value??s.scale);
-      if (options.remeasure || this._standardBaseWidthV074<=1) if (!this._measureStandardV074()) return;
-      this._clampStandardV074();
-      const native=s.scale<=1;
-      viewport.classList.toggle("native-scroll-v074",native);
-      viewport.classList.toggle("zoomed-v074",!native);
-      stage.style.width=`${Math.max(viewport.clientWidth,this._standardBaseWidthV074*s.scale)}px`;
-      stage.style.height=`${Math.max(viewport.clientHeight,this._standardBaseHeightV074*s.scale)}px`;
-      surface.style.marginLeft="0";
-      surface.style.transform=native?`scale(${s.scale})`:`translate3d(${s.x}px,${s.y}px,0) scale(${s.scale})`;
-      if (!native) { viewport.scrollLeft=0;viewport.scrollTop=0; }
-      this._nikaZoomScale=s.scale;
-      if (options.persist) this._persistStandardStateV074();
-    }
-    _applyNikaZoom(value,options={}) { this._applyStandardZoomV074(value,options); }
-    _applySafeZoomV072(value,options={}) { this._applyStandardZoomV074(value,options); }
-    _scheduleSafeZoomMeasureV072() { this._scheduleStandardMeasureV074(); }
-
-    _contentPointV074(focal) {
-      const viewport=this.shadowRoot.getElementById("app-content");
-      const s=this._standardStateV074;
-      return s.scale<=1?{x:focal.x/s.scale,y:(viewport.scrollTop+focal.y)/s.scale}:{x:(focal.x-s.x)/s.scale,y:(focal.y-s.y)/s.scale};
-    }
-    _setAroundV074(value,focal,anchor) {
-      const viewport=this.shadowRoot.getElementById("app-content");
-      const s=this._standardStateV074;
-      s.scale=clampScaleV074(value);
-      if (s.scale>1) { s.x=focal.x-anchor.x*s.scale;s.y=focal.y-anchor.y*s.scale;this._applyStandardZoomV074(s.scale); }
-      else { s.x=0;s.y=0;this._applyStandardZoomV074(s.scale);viewport.scrollLeft=0;viewport.scrollTop=Math.max(0,anchor.y*s.scale-focal.y); }
-    }
-    _showResetV074() {
-      const viewport=this.shadowRoot?.getElementById("app-content");
-      if (!viewport) return;
-      let toast=viewport.querySelector(":scope > .zoom-toast-v074");
-      if (!toast) { toast=document.createElement("div");toast.className="zoom-toast-v074";toast.setAttribute("role","status");toast.textContent="Масштаб 100%";viewport.append(toast); }
-      clearTimeout(this._standardToastTimerV074);requestAnimationFrame(()=>toast.classList.add("visible"));this._standardToastTimerV074=setTimeout(()=>toast.classList.remove("visible"),1250);
-    }
-    _resetStandardV074(notify=true) {
-      const viewport=this.shadowRoot?.getElementById("app-content");
-      this._standardStateV074={scale:1,x:0,y:0};
-      viewport?.scrollTo({left:0,top:0,behavior:"auto"});
-      this._applyStandardZoomV074(1,{persist:true});
-      if (notify) this._showResetV074();
-    }
-
-    _onStandardTouchStartV074(event) {
-      const viewport=this.shadowRoot?.getElementById("app-content");
-      if (!viewport) return;
-      if (event.touches.length>=2) {
-        const [a,b]=event.touches;const focal=midpointV074(a,b,viewport);
-        this._standardMultiV074=true;this._standardPanV074=null;
-        this._standardPinchV074={distance:Math.max(1,distanceV074(a,b)),scale:this._standardStateV074.scale,anchor:this._contentPointV074(focal),startedAt:performance.now(),midpoint:pageMidpointV074(a,b),moved:false};
-        this._standardGuardUntilV074=Infinity;
-        Array.from(event.touches).forEach((touch)=>cancelHoldV074(deepElementV074(this.shadowRoot,touch.clientX,touch.clientY)));
-        event.preventDefault();
-      } else if (event.touches.length===1 && this._standardStateV074.scale>1 && !this._standardMultiV074) {
-        const t=event.touches[0];this._standardPanV074={clientX:t.clientX,clientY:t.clientY,x:this._standardStateV074.x,y:this._standardStateV074.y,target:deepElementV074(this.shadowRoot,t.clientX,t.clientY)||event.target,moved:false};
-      }
-    }
-    _onStandardTouchMoveV074(event) {
-      const viewport=this.shadowRoot?.getElementById("app-content");
-      const pinch=this._standardPinchV074;
-      if (event.touches.length>=2 && pinch) {
-        const [a,b]=event.touches;const focal=midpointV074(a,b,viewport);const current=distanceV074(a,b);
-        this._setAroundV074(pinch.scale*current/pinch.distance,focal,pinch.anchor);
-        if (pointDistanceV074(pinch.midpoint,pageMidpointV074(a,b))>TAP_MOVE_V074 || Math.abs(current-pinch.distance)>TAP_MOVE_V074) pinch.moved=true;
-        event.preventDefault();return;
-      }
-      const pan=this._standardPanV074;if (!pan || event.touches.length!==1 || this._standardStateV074.scale<=1) return;
-      const t=event.touches[0],dx=t.clientX-pan.clientX,dy=t.clientY-pan.clientY;
-      if (!pan.moved && Math.hypot(dx,dy)<PAN_THRESHOLD_V074) return;
-      if (!pan.moved) {pan.moved=true;this._standardGuardUntilV074=Infinity;cancelHoldV074(pan.target);}
-      const b=this._boundsV074();if (b.overflowX)this._standardStateV074.x=pan.x+dx;if(b.overflowY)this._standardStateV074.y=pan.y+dy;
-      this._applyStandardZoomV074(this._standardStateV074.scale);event.preventDefault();
-    }
-    _onStandardTouchEndV074(event) {
-      if (this._standardMultiV074 && event.touches.length===1) {this._standardPinchV074=null;this._standardPanV074=null;return;}
-      if (event.touches.length) return;
-      const completed=this._standardPinchV074,wasMulti=this._standardMultiV074,moved=Boolean(this._standardPanV074?.moved);
-      this._standardPinchV074=null;this._standardPanV074=null;this._standardMultiV074=false;
-      const s=this._standardStateV074;
-      if(s.scale>=SNAP_MIN_V074&&s.scale<=SNAP_MAX_V074&&s.scale!==1){s.scale=1;s.x=0;s.y=0;this._applyStandardZoomV074(1,{persist:true});this._showResetV074();}else this._applyStandardZoomV074(s.scale,{persist:true});
-      const now=performance.now();
-      if(wasMulti){this._standardGuardUntilV074=now+GUARD_MS_V074;const isTap=completed&&!completed.moved&&now-completed.startedAt<=TAP_DURATION_V074;if(isTap){const prior=this._standardTwoTapV074;if(prior&&now-prior.at<=DOUBLE_TAP_DELAY_V074&&pointDistanceV074(prior.midpoint,completed.midpoint)<=48){this._standardTwoTapV074=null;this._resetStandardV074(true);}else this._standardTwoTapV074={at:now,midpoint:completed.midpoint};}else this._standardTwoTapV074=null;}else if(moved)this._standardGuardUntilV074=now+GUARD_MS_V074;
-    }
-    _onStandardTouchCancelV074(){this._standardPinchV074=null;this._standardPanV074=null;this._standardMultiV074=false;this._applyStandardZoomV074(this._standardStateV074.scale,{persist:true});this._standardGuardUntilV074=performance.now()+GUARD_MS_V074;}
-    _onStandardClickGuardV074(event){if(this._standardGuardUntilV074===Infinity||performance.now()<Number(this._standardGuardUntilV074||0)){event.preventDefault();event.stopImmediatePropagation();}}
-
-    _setView(view) {
-      if (view===this._activeView) return;
-      super._setView(view);
-      const viewport=this.shadowRoot?.getElementById("app-content");
-      this._standardStateV074.x=0;this._standardStateV074.y=0;
-      viewport?.scrollTo({left:0,top:0,behavior:"auto"});
-      queueMicrotask(()=>this._scheduleStandardMeasureV074());
-    }
-
-    _renderShell() {
-      super._renderShell();
-      const root=this.shadowRoot;if(!root)return;
-      root.querySelectorAll(".nika-safe-zoom-v072,.nika-zoom-dock").forEach((node)=>node.remove());
-      if(!root.querySelector("style[data-nikas-standard-v074]")){
-        const style=document.createElement("style");style.dataset.nikasStandardV074="true";style.textContent=`
-          .nika-header{display:grid!important;grid-template-columns:52px minmax(0,1fr) 52px!important;min-height:calc(62px + env(safe-area-inset-top,0px))!important;padding:calc(env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) 0 max(8px,env(safe-area-inset-left,0px))!important;align-items:center!important;gap:0!important}
-          .nika-header .menu,.nika-header .refresh{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;border-radius:16px!important;border:1px solid var(--shell-border,var(--divider-color))!important;background:var(--card-background-color)!important;box-shadow:var(--ha-card-box-shadow,0 2px 8px rgba(0,0,0,.12))!important;display:grid!important;place-items:center!important}
-          .nika-header .menu{grid-column:1!important;justify-self:start!important;color:var(--primary-text-color)!important}.nika-header .refresh{grid-column:3!important;justify-self:end!important;color:var(--primary-color)!important}.nika-header .menu ha-icon,.nika-header .refresh ha-icon{--mdc-icon-size:25px!important}
-          .nika-header .title{grid-column:2!important;grid-row:1!important;text-align:center!important}.nika-header .title strong{font-size:21px!important;font-weight:800!important}.nika-header .title span{font-size:12px!important;font-weight:560!important;color:var(--secondary-text-color)!important}
-          .nika-tabbar{position:relative!important;width:100%!important;padding:4px max(4px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(4px,env(safe-area-inset-left,0px))!important;border-top:1px solid var(--shell-border,var(--divider-color))!important;background:var(--card-background-color)!important;box-shadow:0 -3px 14px rgba(0,0,0,.08)!important;gap:1px!important}
-          .nika-tabbar button{min-height:52px!important;border-radius:14px!important;color:var(--secondary-text-color)!important;background:transparent!important;box-shadow:none!important}.nika-tabbar button.active{color:var(--primary-color)!important;background:color-mix(in srgb,var(--primary-color) 11%,transparent)!important}.nika-tabbar button.active::before{display:none!important}
-          .nika-tabbar ha-icon{--mdc-icon-size:28px!important}.nika-tabbar span{font-size:12px!important;font-weight:700!important;white-space:nowrap!important}
-          #app-content.native-scroll-v074{overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important}#app-content.zoomed-v074{overflow:hidden!important;touch-action:none!important}
-          #nika-zoom-stage{position:relative!important;min-width:100%!important;min-height:100%!important;overflow:visible!important}#nika-zoom-surface{position:absolute!important;left:0!important;top:0!important;margin:0!important;transform-origin:0 0!important;will-change:transform!important}
-          .nika-safe-zoom-v072,.nika-zoom-dock{display:none!important}.zoom-toast-v074{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translate(-50%,8px);opacity:0;pointer-events:none;padding:8px 13px;border-radius:999px;background:rgba(20,24,31,.88);color:#fff;font-size:12px;font-weight:700;transition:.18s;z-index:50}.zoom-toast-v074.visible{opacity:1;transform:translate(-50%,0)}
-          @media(max-width:390px){.nika-header{grid-template-columns:48px minmax(0,1fr) 48px!important;min-height:calc(60px + env(safe-area-inset-top,0px))!important}}
-        `;root.append(style);
-      }
-      const version=root.querySelector(".title span");if(version)version.textContent="Network Control Center · UI v0.7.4";
-      this._installNikaZoom();
-    }
-  }
-  customElements.define("keenetic-hero-app-panel-v074",KeeneticHeroAppPanelV074);
-}
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v074.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v075.js
 (() => {
 const CORE_COMPONENT_V075 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V075 = customElements.get("keenetic-hero-app-panel-v074");
 const STABLE_VIEWS_V075 = ["overview", "wan", "failover", "traffic", "diagnostics", "system"];
 const DYNAMIC_CLASSES_V075 = new Set([
   "ok", "bad", "warn", "unknown", "neutral", "blue", "selected", "active",
@@ -4989,8 +2544,8 @@ function preloadImagesV075(root) {
     image.decode?.().catch(() => {});
   });
   [
-    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.8",
-    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.7.8",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.0",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.8.0",
   ].forEach((url) => {
     const image = new Image();
     image.src = url;
@@ -5142,60 +2697,17 @@ if (CORE_COMPONENT_V075 && !CORE_COMPONENT_V075.prototype.__nikaStableDomV075) {
     });
   }
 }
-
-if (BASE_COMPONENT_V075 && !customElements.get("keenetic-hero-app-panel-v075")) {
-  class KeeneticHeroAppPanelV075 extends BASE_COMPONENT_V075 {
-    _ensureChild() {
-      if (!this.isConnected) return;
-      const target =
-        this.shadowRoot?.getElementById("nika-zoom-surface") ||
-        this.shadowRoot?.getElementById("app-content");
-      if (!this._child) this._child = document.createElement("keenetic-hero-panel");
-      if (target && this._child.parentElement !== target) target.append(this._child);
-      if (this._panel && this._stablePanelSentV075 !== this._panel) {
-        this._stablePanelSentV075 = this._panel;
-        this._child.panel = this._panel;
-      }
-      if (this._route && this._stableRouteSentV075 !== this._route) {
-        this._stableRouteSentV075 = this._route;
-        this._child.route = this._route;
-      }
-      if (this._hass && this._panel) this._child.hass = this._hass;
-    }
-
-    _renderTabBar() {
-      const nav = this.shadowRoot?.getElementById("nika-tabbar");
-      if (!nav) return;
-      if (!nav.querySelector("[data-view]")) super._renderTabBar();
-      const active = this._activeView === "system" ? "diagnostics" : this._activeView;
-      nav.querySelectorAll("[data-view]").forEach((button) => {
-        const selected = button.dataset.view === active;
-        button.classList.toggle("active", selected);
-        button.setAttribute("aria-current", selected ? "page" : "false");
-      });
-    }
-
-    _renderShell() {
-      super._renderShell();
-      const version = this.shadowRoot?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.7.5";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v075", KeeneticHeroAppPanelV075);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v075.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v076.js
 (() => {
 const CORE_COMPONENT_V076 = customElements.get("keenetic-hero-panel");
-const BASE_COMPONENT_V076 = customElements.get("keenetic-hero-app-panel-v075");
 const INDICATOR_TONES_V076 = ["ok", "warn", "bad", "unknown", "neutral"];
 const STABLE_VIEWS_V076 = ["overview", "wan", "failover", "traffic", "diagnostics", "system"];
 const PERSISTENT_ASSETS_V076 = [
-  "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.7.8",
-  "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.7.8",
+  "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.0",
+  "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.8.0",
 ];
 const PRELOADED_ASSETS_V076 = PERSISTENT_ASSETS_V076.map((url) => {
   const image = new Image();
@@ -5434,707 +2946,651 @@ if (CORE_COMPONENT_V076 && !CORE_COMPONENT_V076.prototype.__nikaStandardV076) {
     showStableBaseV076.call(this, view);
   };
 }
-
-function installShellStandardV076(root) {
-  if (!root || root.querySelector("style[data-nikas-shell-standard-v076]")) return;
-  const style = document.createElement("style");
-  style.dataset.nikasShellStandardV076 = "true";
-  style.textContent = `
-    :host{
-      display:block!important;
-      width:100%!important;
-      height:100dvh!important;
-      min-height:0!important;
-      max-height:100dvh!important;
-      overflow:hidden!important;
-      overscroll-behavior:none!important;
-    }
-    #nika-app-shell{
-      width:100%!important;
-      height:100%!important;
-      min-height:0!important;
-      max-height:100%!important;
-      display:grid!important;
-      grid-template-rows:auto minmax(0,1fr) auto!important;
-      overflow:hidden!important;
-      overscroll-behavior:none!important;
-    }
-    .nika-header{
-      position:relative!important;
-      inset:auto!important;
-      transform:none!important;
-      display:grid!important;
-      grid-template-columns:52px minmax(0,1fr) 52px!important;
-      min-height:calc(62px + env(safe-area-inset-top,0px))!important;
-      padding:env(safe-area-inset-top,0px) max(8px,env(safe-area-inset-right,0px)) 0 max(8px,env(safe-area-inset-left,0px))!important;
-      align-items:center!important;
-      gap:0!important;
-      z-index:4!important;
-    }
-    .nika-header .menu,.nika-header .refresh{
-      width:44px!important;
-      min-width:44px!important;
-      height:44px!important;
-      min-height:44px!important;
-      padding:0!important;
-      border-radius:16px!important;
-      border:1px solid var(--shell-border,var(--divider-color))!important;
-      background:var(--card-background-color)!important;
-      box-shadow:0 7px 20px rgba(23,45,76,.08)!important;
-      display:grid!important;
-      place-items:center!important;
-    }
-    .nika-header .menu{grid-column:1!important;justify-self:start!important;color:var(--primary-text-color)!important}
-    .nika-header .refresh{grid-column:3!important;justify-self:end!important;color:var(--primary-color)!important}
-    .nika-header .menu ha-icon,.nika-header .refresh ha-icon{--mdc-icon-size:25px!important}
-    .nika-header .title{grid-column:2!important;grid-row:1!important;text-align:center!important;min-width:0!important}
-    .nika-header .title strong{font-size:23px!important;font-weight:800!important;line-height:1.08!important}
-    .nika-header .title span{font-size:14px!important;font-weight:560!important;line-height:1.15!important;color:var(--secondary-text-color)!important}
-    #app-content{
-      position:relative!important;
-      min-width:0!important;
-      min-height:0!important;
-      height:auto!important;
-      max-height:none!important;
-      overflow-x:hidden!important;
-      overscroll-behavior-x:none!important;
-      overscroll-behavior-y:none!important;
-      -webkit-overflow-scrolling:touch!important;
-      scroll-behavior:auto!important;
-    }
-    #app-content.native-scroll-v074{overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important}
-    #app-content.zoomed-v074{overflow:hidden!important;overscroll-behavior:none!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important}
-    #nika-zoom-stage{min-width:100%!important;min-height:100%!important}
-    #nika-zoom-surface{min-width:100%!important;min-height:100%!important;transform-origin:0 0!important}
-    .nika-tabbar{
-      position:relative!important;
-      inset:auto!important;
-      transform:none!important;
-      width:100%!important;
-      min-width:0!important;
-      display:grid!important;
-      grid-template-columns:repeat(5,minmax(0,1fr))!important;
-      gap:2px!important;
-      padding:6px max(6px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px))!important;
-      border-radius:0!important;
-      border-top:1px solid var(--shell-border,var(--divider-color))!important;
-      background:var(--card-background-color)!important;
-      box-shadow:0 -4px 18px rgba(23,45,76,.08)!important;
-      z-index:5!important;
-    }
-    .nika-tabbar button{
-      min-height:52px!important;
-      min-width:0!important;
-      border-radius:16px!important;
-      gap:3px!important;
-      padding:3px 2px!important;
-      color:var(--secondary-text-color)!important;
-      background:transparent!important;
-      box-shadow:none!important;
-    }
-    .nika-tabbar button.active{color:var(--primary-color)!important;background:color-mix(in srgb,var(--primary-color) 11%,transparent)!important}
-    .nika-tabbar button.active::before{display:none!important}
-    .nika-tabbar ha-icon{--mdc-icon-size:28px!important}
-    .nika-tabbar span{font-size:12px!important;font-weight:700!important;white-space:nowrap!important;line-height:1.1!important}
-    @media(max-width:680px){
-      :host{position:fixed!important;inset:0!important;width:auto!important;height:auto!important;max-height:none!important}
-      #nika-app-shell{position:absolute!important;inset:0!important;width:auto!important;height:auto!important;max-height:none!important}
-    }
-    @media(max-width:390px){
-      .nika-header{grid-template-columns:48px minmax(0,1fr) 48px!important;min-height:calc(60px + env(safe-area-inset-top,0px))!important}
-      .nika-header .title strong{font-size:21px!important}
-      .nika-header .title span{font-size:13px!important}
-    }
-  `;
-  root.append(style);
-}
-
-if (BASE_COMPONENT_V076 && !customElements.get("keenetic-hero-app-panel-v076")) {
-  class KeeneticHeroAppPanelV076 extends BASE_COMPONENT_V076 {
-    _onStandardTouchEndV074(event) {
-      if (this._standardMultiV074 && event.touches.length === 1) {
-        this._completedMultiTouchV076 = this._standardPinchV074;
-        this._standardPinchV074 = null;
-        this._standardPanV074 = null;
-        return;
-      }
-      if (
-        this._standardMultiV074 &&
-        event.touches.length === 0 &&
-        !this._standardPinchV074 &&
-        this._completedMultiTouchV076
-      ) {
-        this._standardPinchV074 = this._completedMultiTouchV076;
-      }
-      super._onStandardTouchEndV074(event);
-      if (event.touches.length === 0) this._completedMultiTouchV076 = null;
-    }
-
-    _onStandardTouchCancelV074() {
-      this._completedMultiTouchV076 = null;
-      super._onStandardTouchCancelV074();
-    }
-
-    _applyStandardZoomV074(value, options = {}) {
-      super._applyStandardZoomV074(value, options);
-      if (this._standardStateV074?.scale === 1) {
-        this._standardStateV074.x = 0;
-        this._standardStateV074.y = 0;
-        const surface = this.shadowRoot?.getElementById("nika-zoom-surface");
-        if (surface && surface.style.transform !== "none") surface.style.transform = "none";
-      }
-    }
-
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      installShellStandardV076(root);
-      const menuIcon = root?.querySelector("#nika-menu ha-icon");
-      const refreshIcon = root?.querySelector("#nika-refresh ha-icon");
-      if (menuIcon?.getAttribute("icon") !== "mdi:menu") menuIcon?.setAttribute("icon", "mdi:menu");
-      if (refreshIcon?.getAttribute("icon") !== "mdi:refresh") refreshIcon?.setAttribute("icon", "mdi:refresh");
-      const version = root?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.7.6";
-    }
-  }
-
-  customElements.define("keenetic-hero-app-panel-v076", KeeneticHeroAppPanelV076);
-}
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v076.js
 
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v077.js
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
 (() => {
-const BASE_COMPONENT_V077 = customElements.get("keenetic-hero-app-panel-v076");
+const MIN_SCALE_V080 = 0.75;
+const MAX_SCALE_V080 = 2;
+const SNAP_MIN_V080 = 0.97;
+const SNAP_MAX_V080 = 1.03;
+const DOUBLE_TAP_MS_V080 = 360;
+const TAP_MS_V080 = 280;
+const TAP_MOVE_V080 = 14;
+const PAN_START_V080 = 6;
+const CLICK_GUARD_MS_V080 = 380;
 
-function installContentStandardV077(root) {
-  if (!root || root.querySelector("style[data-nikas-content-standard-v077]")) return;
-  const style = document.createElement("style");
-  style.dataset.nikasContentStandardV077 = "true";
-  style.textContent = `
-    /* UI 0.7.7: restore a semantic type scale instead of flattening labels and values. */
-    :host,.shell,.v075-view-slot{
-      font-family:var(--ha-font-family-body,var(--paper-font-body1_-_font-family,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif))!important;
-    }
-    .v075-view-slot{font-size:14px!important;line-height:1.3!important}
-    .v050-status-copy h1,.hero-value{font-size:25px!important;line-height:1.04!important}
-    .v050-status-copy p,.hero-top strong,.section-heading h2{font-size:16px!important}
-    .v050-kicker,.eyebrow,.telemetry-chip,.hero-top small,.rate-row,
-    .integrity-banner span,.pill,.metric span,.metric small,.signal-summary span,
-    .signal-summary small,.failover-main span,.failover-main small,.reason span,
-    .signal-banner span,.signal-banner small,.hint,.period,.traffic-totals span,
-    .traffic-totals small,.chart-legend,.failover-kpis span,.failover-kpis small,
-    .event span,.system-meta,.integrity-card span,.integrity-card>small,
-    .diag-row small,.source-tag,.diagnostic-actions span,.v050-path-node small,
-    .v050-reserve-badge span,.v050-kpi span,.v050-reserve-strip div span,
-    .v050-channel-grid small,.v050-lte-grid small,.v050-signal-line span,
-    .v050-signal-line small,.v061-topology-card span{
-      font-size:12px!important;
-      line-height:1.2!important;
-    }
-    .card-title strong,.v050-channel-head strong,.v050-reserve-strip div strong,
-    .v050-signal-line strong,.metric strong,.signal-summary strong,
-    .failover-main strong,.reason strong,.traffic-totals strong,.live-rate,
-    .failover-kpis strong,.event strong,.integrity-card strong,.diag-row strong,
-    .v050-channel-grid strong,.v050-lte-grid strong{
-      font-size:16px!important;
-      line-height:1.18!important;
-    }
-    .big-rates>span{font-size:18px!important;line-height:1.15!important}
-    .big-rates small{font-size:12px!important;line-height:1.2!important}
-    .v061-topology-card strong,.v050-path-node strong,.v050-reserve-badge strong{
-      font-size:14px!important;
-      line-height:1.15!important;
-    }
-    .v050-kpi strong{
-      font-size:15px!important;
-      line-height:1.15!important;
-    }
-    .v050-kpi span,.v050-kpi strong,.v050-channel-grid small,.v050-channel-grid strong,
-    .v050-lte-grid small,.v050-lte-grid strong{
-      overflow:hidden!important;
-      text-overflow:ellipsis!important;
-    }
-  `;
-  root.append(style);
+const clampScaleV080 = (value) => Math.min(MAX_SCALE_V080, Math.max(MIN_SCALE_V080, Number(value) || 1));
+const distanceV080 = (a, b) => Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
+const pointDistanceV080 = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+const pageMidpointV080 = (a, b) => ({ x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 });
+
+function midpointV080(a, b, viewport) {
+  const rect = viewport.getBoundingClientRect();
+  return {
+    x: (a.clientX + b.clientX) / 2 - rect.left,
+    y: (a.clientY + b.clientY) / 2 - rect.top,
+  };
 }
 
-function installShellStandardV077(root) {
-  if (!root || root.querySelector("style[data-nikas-shell-standard-v077]")) return;
-  const style = document.createElement("style");
-  style.dataset.nikasShellStandardV077 = "true";
-  style.textContent = `
-    :host{
-      --nika-safe-top-v077:var(--safe-area-inset-top,env(safe-area-inset-top,0px));
-      --nika-safe-right-v077:var(--safe-area-inset-right,env(safe-area-inset-right,0px));
-      --nika-safe-bottom-v077:var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px));
-      --nika-safe-left-v077:var(--safe-area-inset-left,env(safe-area-inset-left,0px));
-      position:relative!important;
-      inset:auto!important;
-      display:block!important;
-      width:100%!important;
-      height:100vh!important;
-      height:100dvh!important;
-      min-height:0!important;
-      max-height:100dvh!important;
-      overflow:hidden!important;
-      overscroll-behavior:none!important;
-      font-family:var(--ha-font-family-body,var(--paper-font-body1_-_font-family,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif))!important;
-      font-size:14px!important;
-    }
-    #nika-app-shell{
-      position:relative!important;
-      inset:auto!important;
-      box-sizing:border-box!important;
-      width:100%!important;
-      height:100%!important;
-      min-height:0!important;
-      max-height:100%!important;
-      display:grid!important;
-      grid-template-rows:auto minmax(0,1fr) auto!important;
-      overflow:hidden!important;
-      overscroll-behavior:none!important;
-    }
-    .nika-header{
-      box-sizing:border-box!important;
-      grid-row:1!important;
-      width:100%!important;
-      min-width:0!important;
-      min-height:calc(62px + var(--nika-safe-top-v077))!important;
-      padding:var(--nika-safe-top-v077) max(8px,var(--nika-safe-right-v077)) 0 max(8px,var(--nika-safe-left-v077))!important;
-      display:grid!important;
-      grid-template-columns:52px minmax(0,1fr) 52px!important;
-      align-items:center!important;
-      gap:0!important;
-      transform:none!important;
-    }
-    .nika-header .menu,.nika-header .refresh{
-      grid-row:1!important;
-      box-sizing:border-box!important;
-      width:44px!important;
-      min-width:44px!important;
-      max-width:44px!important;
-      height:44px!important;
-      min-height:44px!important;
-      max-height:44px!important;
-      margin:0!important;
-      padding:0!important;
-      display:grid!important;
-      place-items:center!important;
-      align-self:center!important;
-      justify-content:center!important;
-      border:1px solid var(--shell-border,var(--divider-color))!important;
-      border-radius:16px!important;
-      background:var(--card-background-color)!important;
-      box-shadow:0 7px 20px rgba(23,45,76,.08)!important;
-      appearance:none!important;
-      -webkit-appearance:none!important;
-      font:inherit!important;
-    }
-    .nika-header .menu{grid-column:1!important;justify-self:start!important}
-    .nika-header .refresh{grid-column:3!important;justify-self:end!important}
-    .nika-header .menu ha-icon,.nika-header .refresh ha-icon{
-      display:block!important;
-      width:25px!important;
-      height:25px!important;
-      --mdc-icon-size:25px!important;
-    }
-    .nika-header .title{
-      grid-column:2!important;
-      grid-row:1!important;
-      width:100%!important;
-      min-width:0!important;
-      display:grid!important;
-      align-content:center!important;
-      justify-items:center!important;
-      text-align:center!important;
-      line-height:1!important;
-    }
-    .nika-header .title strong,.nika-header .title span{
-      display:block!important;
-      width:100%!important;
-      max-width:100%!important;
-      overflow:hidden!important;
-      text-overflow:ellipsis!important;
-      white-space:nowrap!important;
-    }
-    .nika-header .title strong{
-      margin:0!important;
-      font-size:23px!important;
-      font-weight:800!important;
-      line-height:1.08!important;
-      letter-spacing:-.02em!important;
-    }
-    .nika-header .title span{
-      margin:2px 0 0!important;
-      font-size:14px!important;
-      font-weight:560!important;
-      line-height:1.15!important;
-      letter-spacing:0!important;
-    }
-    #app-content{
-      grid-row:2!important;
-      align-self:stretch!important;
-      width:100%!important;
-      min-width:0!important;
-      min-height:0!important;
-      height:auto!important;
-      max-height:100%!important;
-      overflow-x:hidden!important;
-      overflow-y:auto!important;
-      overscroll-behavior-x:none!important;
-      overscroll-behavior-y:none!important;
-      -webkit-overflow-scrolling:touch!important;
-      touch-action:pan-y!important;
-      scrollbar-width:none!important;
-    }
-    #app-content::-webkit-scrollbar{display:none!important}
-    #app-content.native-scroll-v074{
-      overflow-x:hidden!important;
-      overflow-y:auto!important;
-      touch-action:pan-y!important;
-    }
-    #app-content.zoomed-v074{
-      overflow:hidden!important;
-      touch-action:none!important;
-    }
-    #nika-zoom-stage{
-      position:relative!important;
-      min-width:100%!important;
-      min-height:100%!important;
-      overflow:visible!important;
-    }
-    #nika-zoom-surface{
-      position:absolute!important;
-      left:0!important;
-      top:0!important;
-      min-width:100%!important;
-      min-height:100%!important;
-      margin:0!important;
-      transform-origin:0 0!important;
-    }
-    .nika-tabbar{
-      grid-row:3!important;
-      box-sizing:border-box!important;
-      padding:6px max(6px,var(--nika-safe-right-v077)) calc(6px + var(--nika-safe-bottom-v077)) max(6px,var(--nika-safe-left-v077))!important;
-      font-family:inherit!important;
-    }
-    .nika-tabbar button{font:inherit!important}
-    .nika-tabbar span{font-size:12px!important;font-weight:700!important;line-height:1.1!important}
-    @media(max-width:390px){
-      .nika-header{
-        min-height:calc(60px + var(--nika-safe-top-v077))!important;
-        grid-template-columns:48px minmax(0,1fr) 48px!important;
-      }
-      .nika-header .title strong{font-size:21px!important}
-      .nika-header .title span{font-size:13px!important}
-    }
-  `;
-  root.append(style);
-}
-
-if (BASE_COMPONENT_V077 && !customElements.get("keenetic-hero-app-panel-v077")) {
-  class KeeneticHeroAppPanelV077 extends BASE_COMPONENT_V077 {
-    connectedCallback() {
-      super.connectedCallback();
-      this._scheduleViewportReadyV077();
-    }
-
-    disconnectedCallback() {
-      cancelAnimationFrame(this._viewportReadyFrameV077);
-      this._viewportInitializedV077 = false;
-      super.disconnectedCallback();
-    }
-
-    _scheduleViewportReadyV077() {
-      if (!this.isConnected || this._viewportInitializedV077) return;
-      cancelAnimationFrame(this._viewportReadyFrameV077);
-      this._viewportReadyFrameV077 = requestAnimationFrame(() => {
-        this._viewportReadyFrameV077 = requestAnimationFrame(() => {
-          if (!this.isConnected || this._viewportInitializedV077) return;
-          this._installNikaZoom();
-          this._scheduleStandardMeasureV074();
-          this._viewportInitializedV077 = true;
-        });
-      });
-    }
-
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      installShellStandardV077(root);
-      installContentStandardV077(this._child?.shadowRoot);
-      const version = root?.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.7.7";
-    }
-
-    _ensureChild() {
-      const previousChild = this._child;
-      super._ensureChild();
-      installContentStandardV077(this._child?.shadowRoot);
-      if (this._child !== previousChild || this._viewportChildV077 !== this._child) {
-        this._viewportChildV077 = this._child;
-        this._viewportInitializedV077 = false;
-      }
-      if (this.isConnected) this._scheduleViewportReadyV077();
-    }
+function deepElementV080(root, x, y) {
+  let element = root?.elementFromPoint?.(x, y) || document.elementFromPoint(x, y);
+  const seen = new Set();
+  while (element?.shadowRoot?.elementFromPoint && !seen.has(element)) {
+    seen.add(element);
+    const inner = element.shadowRoot.elementFromPoint(x, y);
+    if (!inner || inner === element) break;
+    element = inner;
   }
-
-  customElements.define("keenetic-hero-app-panel-v077", KeeneticHeroAppPanelV077);
+  return element;
 }
-})();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v077.js
 
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v078.js
-(() => {
-const BASE_COMPONENT_V078 = customElements.get("keenetic-hero-app-panel-v077");
-const MAX_VIEWPORT_RETRIES_V078 = 24;
+function cancelEntityHoldV080(target) {
+  const entity = target?.closest?.("[data-entity]") || target;
+  if (!entity?.dispatchEvent) return;
+  const event = typeof PointerEvent === "function"
+    ? new PointerEvent("pointercancel", { bubbles: true, composed: true })
+    : new Event("pointercancel", { bubbles: true, composed: true });
+  entity.dispatchEvent(event);
+}
 
-function installContentCompositionV078(root) {
-  if (!root || root.querySelector("style[data-nikas-content-composition-v078]")) return;
+function installOverviewCompositionV080(root) {
+  if (!root || root.querySelector("style[data-keenetic-overview-v080]")) return;
   const style = document.createElement("style");
-  style.dataset.nikasContentCompositionV078 = "true";
+  style.dataset.keeneticOverviewV080 = "true";
   style.textContent = `
-    /* UI 0.7.8: rebalance the overview after the mandatory 12 px minimum type scale. */
     .v050-status-copy{
-      top:14px!important;
       left:14px!important;
-      max-width:calc(100% - 194px)!important;
+      top:14px!important;
+      max-width:calc(100% - 190px)!important;
     }
-    .v050-status-copy h1{max-width:100%!important}
+    .v050-status-copy h1{max-width:100%!important;line-height:1.04!important}
     .v061-topology-card{
-      min-width:126px!important;
-      max-width:148px!important;
-      padding:9px 10px!important;
+      min-width:116px!important;
+      max-width:136px!important;
+      min-height:58px!important;
+      padding:8px 9px!important;
       gap:7px!important;
+      border-radius:16px!important;
     }
     .v061-topology-card ha-icon{--mdc-icon-size:23px!important;flex:0 0 auto!important}
     .v061-topology-card>div{min-width:0!important}
+    .v061-topology-card strong{
+      font-size:14px!important;
+      line-height:1.12!important;
+    }
+    .v061-topology-card span{
+      margin-top:3px!important;
+      font-size:12px!important;
+      line-height:1.15!important;
+    }
     .v061-topology-card strong,.v061-topology-card span{
+      display:block!important;
       overflow:hidden!important;
       text-overflow:ellipsis!important;
       white-space:nowrap!important;
     }
-    .v061-lte{left:3%!important;top:34%!important}
-    .v061-cable{left:3%!important;top:50%!important}
-    .v061-lan{right:3%!important;top:50%!important}
-    .v060-router{top:56%!important;width:47%!important}
-    @media(max-width:430px){
-      .v050-status-copy{max-width:calc(100% - 180px)!important}
-      .v061-topology-card{min-width:116px!important;max-width:136px!important;padding:8px 9px!important}
-      .v061-lte{left:2.5%!important;top:34%!important}
-      .v061-cable{left:2.5%!important;top:49%!important}
-      .v061-lan{right:2.5%!important;top:49%!important}
-      .v060-router{top:56%!important;width:47%!important}
-    }
+    .v061-lte{left:2.6%!important;top:31%!important}
+    .v061-cable{left:2.6%!important;top:46%!important}
+    .v061-lan{right:2.6%!important;top:46%!important}
+    .v060-router{top:54%!important;width:44%!important;max-width:320px!important}
+    .v050-kpi-row{bottom:77px!important;z-index:8!important}
+    .v050-reserve-strip{bottom:10px!important;z-index:8!important}
+    .v061-topology-layer{z-index:4!important}
+    .v060-router{z-index:6!important}
     @media(max-width:390px){
-      .v050-status-copy{max-width:calc(100% - 174px)!important}
-      .v061-topology-card{min-width:110px!important;max-width:128px!important}
-      .v060-router{width:45%!important}
+      .v050-status-copy{max-width:calc(100% - 176px)!important}
+      .v061-topology-card{min-width:106px!important;max-width:122px!important;padding:7px 8px!important}
+      .v061-topology-card ha-icon{--mdc-icon-size:21px!important}
+      .v060-router{width:42%!important}
     }
   `;
   root.append(style);
 }
 
-function tuneTopologyPathsV078(root) {
+function tuneOverviewPathsV080(root) {
   if (!root) return;
   const paths = {
-    ".v061-cable-line": "M190 278 C285 278 350 294 438 316",
-    ".v061-lan-line": "M562 316 C660 294 725 278 820 278",
+    ".v061-lte-line": "M190 184 L438 304",
+    ".v061-cable-line": "M190 270 L438 316",
+    ".v061-lan-line": "M562 316 L820 270",
   };
-  for (const [selector, value] of Object.entries(paths)) {
+  for (const [selector, d] of Object.entries(paths)) {
     root.querySelectorAll(selector).forEach((path) => {
-      if (path.getAttribute("d") !== value) path.setAttribute("d", value);
+      if (path.getAttribute("d") !== d) path.setAttribute("d", d);
     });
   }
 }
 
-function contentHeightV078(panel, surface, viewport) {
-  const child = panel._child;
-  const childRoot = child?.shadowRoot;
-  const innerShell = childRoot?.querySelector(".shell");
-  const activeSlot = childRoot?.querySelector(".v075-view-slot:not([hidden])");
-  const values = [
-    viewport?.clientHeight,
-    surface?.scrollHeight,
-    child?.scrollHeight,
-    child?.offsetHeight,
-    innerShell?.scrollHeight,
-    innerShell?.offsetHeight,
-    activeSlot?.scrollHeight,
-    activeSlot?.offsetHeight,
-  ].map((value) => Number(value) || 0);
-  return Math.max(1, ...values);
-}
-
-if (BASE_COMPONENT_V078 && !customElements.get("keenetic-hero-app-panel-v078")) {
-  class KeeneticHeroAppPanelV078 extends BASE_COMPONENT_V078 {
+if (!customElements.get("keenetic-hero-app-panel-v080")) {
+  class KeeneticHeroAppPanelV080 extends HTMLElement {
     constructor() {
       super();
-      this._viewportRetryCountV078 = 0;
-      this._viewportReadyV078 = false;
-      this._viewportMeasureV078 = () => this._scheduleMeasureV078();
+      this.attachShadow({ mode: "open" });
+      this._hass = null;
+      this._panel = null;
+      this._route = null;
+      this._child = null;
+      this._activeView = this._viewFromLocation();
+      this._zoom = { scale: 1, x: 0, y: 0 };
+      this._baseWidth = 1;
+      this._baseHeight = 1;
+      this._pinch = null;
+      this._pan = null;
+      this._multiTouch = false;
+      this._lastTwoFingerTap = null;
+      this._guardUntil = 0;
+      this._storageKey = null;
+      this._hashHandler = () => this._syncHashView();
+      this._resizeHandler = () => this._scheduleMeasure();
+      this._touchStartHandler = (event) => this._onTouchStart(event);
+      this._touchMoveHandler = (event) => this._onTouchMove(event);
+      this._touchEndHandler = (event) => this._onTouchEnd(event);
+      this._touchCancelHandler = () => this._onTouchCancel();
+      this._clickGuardHandler = (event) => this._onClickGuard(event);
+    }
+
+    set hass(value) {
+      this._hass = value;
+      this._mountChild();
+      if (this._child) this._child.hass = value;
+    }
+
+    set panel(value) {
+      this._panel = value;
+      this._loadStoredScale();
+      this._mountChild();
+      if (this._child) this._child.panel = value;
+    }
+
+    set route(value) {
+      this._route = value;
+      this._mountChild();
+      if (this._child) this._child.route = value;
     }
 
     connectedCallback() {
-      super.connectedCallback();
-      this._viewportRetryCountV078 = 0;
-      this._viewportReadyV078 = false;
-      this._scheduleViewportV078();
+      this._mountShell();
+      this._mountChild();
+      window.addEventListener("hashchange", this._hashHandler);
+      window.addEventListener("resize", this._resizeHandler, { passive: true });
+      window.visualViewport?.addEventListener("resize", this._resizeHandler, { passive: true });
+      this._scheduleAfterMount();
     }
 
     disconnectedCallback() {
-      cancelAnimationFrame(this._viewportFrameV078);
-      cancelAnimationFrame(this._viewportMeasureFrameV078);
-      this._contentResizeObserverV078?.disconnect();
-      this._contentResizeObserverV078 = null;
-      this._unbindViewportEventsV078();
-      super.disconnectedCallback();
+      window.removeEventListener("hashchange", this._hashHandler);
+      window.removeEventListener("resize", this._resizeHandler);
+      window.visualViewport?.removeEventListener("resize", this._resizeHandler);
+      this._childObserver?.disconnect();
+      this._contentResizeObserver?.disconnect();
+      cancelAnimationFrame(this._measureFrame);
+      clearTimeout(this._toastTimer);
+      this._unbindGestures();
     }
 
-    _viewportNodesV078() {
-      const root = this.shadowRoot;
+    _viewFromLocation() {
+      const value = (location.hash || "#overview").slice(1).toLowerCase();
+      return ["overview", "wan", "failover", "traffic", "diagnostics", "system"].includes(value)
+        ? value
+        : "overview";
+    }
+
+    _syncHashView() {
+      const view = this._viewFromLocation();
+      if (view !== this._activeView) this._setView(view, false);
+    }
+
+    _mountShell() {
+      if (this.shadowRoot.getElementById("app-shell-v080")) return;
+      this.shadowRoot.innerHTML = `
+        <style>
+          :host{
+            --safe-top:var(--safe-area-inset-top,env(safe-area-inset-top,0px));
+            --safe-right:var(--safe-area-inset-right,env(safe-area-inset-right,0px));
+            --safe-bottom:var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px));
+            --safe-left:var(--safe-area-inset-left,env(safe-area-inset-left,0px));
+            display:block;
+            width:100%;
+            height:100vh;
+            height:100dvh;
+            min-height:0;
+            max-height:100dvh;
+            overflow:hidden;
+            color:var(--primary-text-color);
+            background:var(--primary-background-color);
+            font-family:var(--ha-font-family-body,var(--paper-font-body1_-_font-family,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif));
+          }
+          *{box-sizing:border-box}
+          #app-shell-v080{
+            width:100%;height:100%;min-height:0;
+            display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+            overflow:hidden;overscroll-behavior:none;
+            background:var(--primary-background-color);
+          }
+          .header-v080{
+            grid-row:1;min-width:0;
+            min-height:calc(62px + var(--safe-top));
+            padding:var(--safe-top) max(8px,var(--safe-right)) 0 max(8px,var(--safe-left));
+            display:grid;grid-template-columns:52px minmax(0,1fr) 52px;
+            align-items:center;
+            background:var(--card-background-color);
+            border-bottom:1px solid var(--divider-color);
+            z-index:10;
+          }
+          .header-action-v080{
+            width:44px;height:44px;margin:0;padding:0;
+            display:grid;place-items:center;
+            border:1px solid var(--divider-color);border-radius:16px;
+            background:var(--card-background-color);color:var(--primary-text-color);
+            box-shadow:0 7px 20px rgba(23,45,76,.08);
+            appearance:none;-webkit-appearance:none;font:inherit;
+          }
+          #menu-v080{grid-column:1;justify-self:start}
+          #refresh-v080{grid-column:3;justify-self:end;color:var(--primary-color)}
+          .header-action-v080 ha-icon{width:25px;height:25px;--mdc-icon-size:25px}
+          .title-v080{grid-column:2;grid-row:1;min-width:0;text-align:center;line-height:1}
+          .title-v080 strong,.title-v080 span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+          .title-v080 strong{font-size:23px;font-weight:800;line-height:1.08;letter-spacing:-.02em}
+          .title-v080 span{margin-top:2px;font-size:14px;font-weight:560;line-height:1.15;color:var(--secondary-text-color)}
+          #work-viewport-v080{
+            grid-row:2;min-width:0;min-height:0;
+            overflow-x:hidden;overflow-y:auto;
+            overscroll-behavior-x:none;overscroll-behavior-y:none;
+            -webkit-overflow-scrolling:touch;
+            touch-action:pan-y;
+            scrollbar-width:none;
+          }
+          #work-viewport-v080::-webkit-scrollbar{display:none}
+          #zoom-stage-v080{position:relative;width:100%;min-height:100%}
+          #zoom-surface-v080{position:relative;width:100%;min-height:100%;transform-origin:0 0}
+          #zoom-surface-v080>keenetic-hero-panel{display:block;min-height:100%}
+          #work-viewport-v080.scaled-v080 #zoom-surface-v080{position:absolute;left:0;top:0;will-change:transform}
+          #work-viewport-v080.zoomed-v080{overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+          .tabbar-v080{
+            grid-row:3;width:100%;min-width:0;
+            display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;
+            padding:6px max(6px,var(--safe-right)) calc(6px + var(--safe-bottom)) max(6px,var(--safe-left));
+            background:var(--card-background-color);
+            border-top:1px solid var(--divider-color);
+            box-shadow:0 -4px 18px rgba(23,45,76,.08);z-index:10;
+          }
+          .tabbar-v080 button{
+            min-width:0;min-height:52px;padding:3px 2px;
+            display:grid;place-items:center;align-content:center;gap:3px;
+            border:0;border-radius:16px;background:transparent;
+            color:var(--secondary-text-color);font:inherit;
+          }
+          .tabbar-v080 button.active{color:var(--primary-color);background:color-mix(in srgb,var(--primary-color) 11%,transparent)}
+          .tabbar-v080 ha-icon{--mdc-icon-size:28px}
+          .tabbar-v080 span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:700;line-height:1.1}
+          .zoom-toast-v080{
+            position:fixed;left:50%;bottom:calc(78px + var(--safe-bottom));z-index:30;
+            transform:translate(-50%,8px);opacity:0;pointer-events:none;
+            padding:8px 13px;border-radius:999px;background:rgba(20,24,31,.88);
+            color:#fff;font-size:12px;font-weight:700;transition:.18s;
+          }
+          .zoom-toast-v080.visible{opacity:1;transform:translate(-50%,0)}
+          @media(max-width:390px){
+            .header-v080{grid-template-columns:48px minmax(0,1fr) 48px;min-height:calc(60px + var(--safe-top))}
+            .title-v080 strong{font-size:21px}.title-v080 span{font-size:13px}
+          }
+        </style>
+        <div id="app-shell-v080">
+          <header class="header-v080" aria-label="Keenetic">
+            <button id="menu-v080" class="header-action-v080" type="button" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button>
+            <div class="title-v080"><strong>Keenetic Hero 4G+</strong><span>Network Control Center</span></div>
+            <button id="refresh-v080" class="header-action-v080" type="button" aria-label="Обновить"><ha-icon icon="mdi:refresh"></ha-icon></button>
+          </header>
+          <div id="work-viewport-v080">
+            <div id="zoom-stage-v080"><div id="zoom-surface-v080"></div></div>
+          </div>
+          <nav id="tabbar-v080" class="tabbar-v080" aria-label="Разделы Keenetic"></nav>
+          <div id="zoom-toast-v080" class="zoom-toast-v080" role="status">Масштаб 100%</div>
+        </div>`;
+      this.shadowRoot.getElementById("menu-v080").addEventListener("click", (event) => {
+        event.currentTarget.dispatchEvent(new CustomEvent("hass-toggle-menu", { bubbles: true, composed: true }));
+      });
+      this.shadowRoot.getElementById("refresh-v080").addEventListener("click", () => this._child?._loadBootstrap?.(false));
+      this._renderTabbar();
+      this._bindGestures();
+    }
+
+    _mountChild() {
+      if (!this.isConnected || !this.shadowRoot.getElementById("zoom-surface-v080")) return;
+      if (!this._child) {
+        this._child = document.createElement("keenetic-hero-panel");
+        this._child._view = this._activeView;
+        this.shadowRoot.getElementById("zoom-surface-v080").append(this._child);
+        this._observeChild();
+      }
+      if (this._panel && this._sentPanel !== this._panel) {
+        this._sentPanel = this._panel;
+        this._child.panel = this._panel;
+      }
+      if (this._route && this._sentRoute !== this._route) {
+        this._sentRoute = this._route;
+        this._child.route = this._route;
+      }
+      if (this._hass) this._child.hass = this._hass;
+    }
+
+    _observeChild() {
+      this._childObserver?.disconnect();
+      this._childObserver = new MutationObserver(() => this._scheduleAfterMount());
+      this._childObserver.observe(this._child.shadowRoot, { childList: true, subtree: true });
+      this._scheduleAfterMount();
+    }
+
+    _scheduleAfterMount() {
+      cancelAnimationFrame(this._afterMountFrame);
+      this._afterMountFrame = requestAnimationFrame(() => {
+        const root = this._child?.shadowRoot;
+        installOverviewCompositionV080(root);
+        tuneOverviewPathsV080(root);
+        this._observeActiveContent();
+        if (this._zoom.scale !== 1) this._scheduleMeasure();
+      });
+    }
+
+    _observeActiveContent() {
+      this._contentResizeObserver?.disconnect();
+      if (typeof ResizeObserver !== "function") return;
+      this._contentResizeObserver = new ResizeObserver(() => {
+        if (this._zoom.scale !== 1) this._scheduleMeasure();
+      });
+      const root = this._child?.shadowRoot;
+      const shell = root?.querySelector(".shell");
+      const active = root?.querySelector(".v075-view-slot:not([hidden])");
+      if (shell) this._contentResizeObserver.observe(shell);
+      if (active && active !== shell) this._contentResizeObserver.observe(active);
+    }
+
+    _renderTabbar() {
+      const nav = this.shadowRoot.getElementById("tabbar-v080");
+      if (!nav) return;
+      const items = [
+        ["overview", "mdi:view-dashboard-outline", "Обзор"],
+        ["wan", "mdi:wan", "Каналы"],
+        ["failover", "mdi:swap-horizontal-bold", "Failover"],
+        ["traffic", "mdi:chart-timeline-variant", "Трафик"],
+        ["diagnostics", "mdi:stethoscope", "Диагн."],
+      ];
+      if (!nav.firstElementChild) {
+        for (const [view, icon, label] of items) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.dataset.view = view;
+          button.innerHTML = `<ha-icon icon="${icon}"></ha-icon><span>${label}</span>`;
+          button.addEventListener("click", () => this._setView(view, true));
+          nav.append(button);
+        }
+      }
+      const active = this._activeView === "system" ? "diagnostics" : this._activeView;
+      nav.querySelectorAll("[data-view]").forEach((button) => {
+        const selected = button.dataset.view === active;
+        button.classList.toggle("active", selected);
+        button.setAttribute("aria-current", selected ? "page" : "false");
+      });
+    }
+
+    _setView(view, updateLocation = true) {
+      if (!view || view === this._activeView) return;
+      this._activeView = view;
+      if (updateLocation) history.replaceState(null, "", `${location.pathname}${location.search}#${view}`);
+      this._renderTabbar();
+      this._resetZoom(false);
+      if (this._child) {
+        this._child._view = view;
+        this._child._scheduleRender?.();
+        this._child._loadViewData?.();
+      }
+      requestAnimationFrame(() => requestAnimationFrame(() => this._scheduleAfterMount()));
+    }
+
+    _bindGestures() {
+      const viewport = this.shadowRoot.getElementById("work-viewport-v080");
+      if (!viewport || this._gestureViewport === viewport) return;
+      this._unbindGestures();
+      viewport.addEventListener("touchstart", this._touchStartHandler, { capture: true, passive: false });
+      viewport.addEventListener("touchmove", this._touchMoveHandler, { capture: true, passive: false });
+      viewport.addEventListener("touchend", this._touchEndHandler, { capture: true, passive: true });
+      viewport.addEventListener("touchcancel", this._touchCancelHandler, { capture: true, passive: true });
+      viewport.addEventListener("click", this._clickGuardHandler, { capture: true });
+      this._gestureViewport = viewport;
+    }
+
+    _unbindGestures() {
+      const viewport = this._gestureViewport;
+      if (!viewport) return;
+      viewport.removeEventListener("touchstart", this._touchStartHandler, true);
+      viewport.removeEventListener("touchmove", this._touchMoveHandler, true);
+      viewport.removeEventListener("touchend", this._touchEndHandler, true);
+      viewport.removeEventListener("touchcancel", this._touchCancelHandler, true);
+      viewport.removeEventListener("click", this._clickGuardHandler, true);
+      this._gestureViewport = null;
+    }
+
+    _loadStoredScale() {
+      const key = `nikas.keenetic.cleanZoom.v1:${this._panel?.config?.entry_id || "default"}`;
+      if (this._storageKey === key) return;
+      this._storageKey = key;
+      let scale = 1;
+      try { scale = clampScaleV080(localStorage.getItem(key) || 1); } catch (_error) { scale = 1; }
+      this._zoom = { scale, x: 0, y: 0 };
+      if (scale !== 1) this._scheduleMeasure();
+    }
+
+    _persistScale() {
+      try { localStorage.setItem(this._storageKey, this._zoom.scale.toFixed(3)); } catch (_error) { /* private WebView */ }
+    }
+
+    _nodes() {
       return {
-        viewport: root?.getElementById("app-content"),
-        stage: root?.getElementById("nika-zoom-stage"),
-        surface: root?.getElementById("nika-zoom-surface"),
+        viewport: this.shadowRoot.getElementById("work-viewport-v080"),
+        stage: this.shadowRoot.getElementById("zoom-stage-v080"),
+        surface: this.shadowRoot.getElementById("zoom-surface-v080"),
       };
     }
 
-    _scheduleViewportV078() {
-      if (!this.isConnected || this._viewportReadyV078) return;
-      cancelAnimationFrame(this._viewportFrameV078);
-      this._viewportFrameV078 = requestAnimationFrame(() => {
-        const ready = this._installViewportV078();
-        if (ready) {
-          this._viewportReadyV078 = true;
-          this._viewportRetryCountV078 = 0;
-          this._scheduleMeasureV078();
-          requestAnimationFrame(() => this._scheduleMeasureV078());
-          return;
-        }
-        this._viewportRetryCountV078 += 1;
-        if (this._viewportRetryCountV078 < MAX_VIEWPORT_RETRIES_V078) this._scheduleViewportV078();
-      });
-    }
-
-    _installViewportV078() {
-      const { viewport, stage, surface } = this._viewportNodesV078();
-      if (!viewport || !stage || !surface || !this._child) return false;
-      if (this._child.parentElement !== surface) surface.append(this._child);
-
-      /* Rebind in capture phase so gestures cannot be swallowed inside the child shadow root. */
-      this._unbindViewportEventsV078();
-      viewport.removeEventListener("touchstart", this._standardTouchStartV074, false);
-      viewport.removeEventListener("touchmove", this._standardTouchMoveV074, false);
-      viewport.removeEventListener("touchend", this._standardTouchEndV074, false);
-      viewport.removeEventListener("touchcancel", this._standardTouchCancelV074, false);
-      viewport.addEventListener("touchstart", this._standardTouchStartV074, { capture: true, passive: false });
-      viewport.addEventListener("touchmove", this._standardTouchMoveV074, { capture: true, passive: false });
-      viewport.addEventListener("touchend", this._standardTouchEndV074, { capture: true, passive: true });
-      viewport.addEventListener("touchcancel", this._standardTouchCancelV074, { capture: true, passive: true });
-      viewport.addEventListener("click", this._standardClickGuardV074, { capture: true });
-      viewport.dataset.standardZoomV074 = "true";
-      viewport.dataset.standardZoomV078 = "true";
-      this._boundViewportV078 = viewport;
-
-      this._observeActiveContentV078();
-      return true;
-    }
-
-    _unbindViewportEventsV078() {
-      const viewport = this._boundViewportV078;
-      if (!viewport) return;
-      viewport.removeEventListener("touchstart", this._standardTouchStartV074, true);
-      viewport.removeEventListener("touchmove", this._standardTouchMoveV074, true);
-      viewport.removeEventListener("touchend", this._standardTouchEndV074, true);
-      viewport.removeEventListener("touchcancel", this._standardTouchCancelV074, true);
-      viewport.removeEventListener("click", this._standardClickGuardV074, true);
-      delete viewport.dataset.standardZoomV078;
-      this._boundViewportV078 = null;
-    }
-
-    _observeActiveContentV078() {
-      this._contentResizeObserverV078?.disconnect();
-      if (typeof ResizeObserver !== "function") return;
-      this._contentResizeObserverV078 = new ResizeObserver(this._viewportMeasureV078);
-      const root = this._child?.shadowRoot;
-      const active = root?.querySelector(".v075-view-slot:not([hidden])");
-      const shell = root?.querySelector(".shell");
-      if (shell) this._contentResizeObserverV078.observe(shell);
-      if (active && active !== shell) this._contentResizeObserverV078.observe(active);
-    }
-
-    _scheduleMeasureV078() {
-      cancelAnimationFrame(this._viewportMeasureFrameV078);
-      this._viewportMeasureFrameV078 = requestAnimationFrame(() => {
-        installContentCompositionV078(this._child?.shadowRoot);
-        tuneTopologyPathsV078(this._child?.shadowRoot);
-        this._applyStandardZoomV074(this._standardStateV074?.scale || 1, { remeasure: true });
-      });
-    }
-
-    _measureStandardV074() {
-      const { viewport, surface } = this._viewportNodesV078();
+    _measure() {
+      const { viewport, surface } = this._nodes();
       if (!viewport || !surface || viewport.clientWidth <= 0) return false;
-      this._standardBaseWidthV074 = Math.max(1, viewport.clientWidth);
-      surface.style.width = `${this._standardBaseWidthV074}px`;
-      surface.style.height = "auto";
-      this._standardBaseHeightV074 = contentHeightV078(this, surface, viewport);
-      surface.style.height = `${this._standardBaseHeightV074}px`;
-      return true;
+      const root = this._child?.shadowRoot;
+      const shell = root?.querySelector(".shell");
+      const active = root?.querySelector(".v075-view-slot:not([hidden])");
+      this._baseWidth = viewport.clientWidth;
+      this._baseHeight = Math.max(
+        viewport.clientHeight,
+        this._child?.scrollHeight || 0,
+        shell?.scrollHeight || 0,
+        active?.scrollHeight || 0,
+        surface.scrollHeight || 0,
+      );
+      return this._baseHeight > 0;
     }
 
-    _applyStandardZoomV074(value, options = {}) {
-      super._applyStandardZoomV074(value, options);
-      const { viewport, stage, surface } = this._viewportNodesV078();
-      if (!viewport || !stage || !surface || !this._standardStateV074) return;
-      const scale = this._standardStateV074.scale;
-      const stageHeight = Math.max(viewport.clientHeight, this._standardBaseHeightV074 * scale);
-      stage.style.height = `${stageHeight}px`;
-      stage.style.minHeight = `${stageHeight}px`;
-      if (scale <= 1) {
-        viewport.classList.add("native-scroll-v074");
-        viewport.classList.remove("zoomed-v074");
-        surface.style.transform = scale === 1 ? "none" : `scale(${scale})`;
-      }
-    }
-
-    _setView(view) {
-      super._setView(view);
-      this._observeActiveContentV078();
-      this._scheduleMeasureV078();
-      requestAnimationFrame(() => {
-        this._observeActiveContentV078();
-        this._scheduleMeasureV078();
+    _scheduleMeasure() {
+      cancelAnimationFrame(this._measureFrame);
+      this._measureFrame = requestAnimationFrame(() => {
+        if (!this._measure()) return;
+        this._applyScale(this._zoom.scale, { persist: false });
       });
     }
 
-    _renderShell() {
-      super._renderShell();
-      const root = this.shadowRoot;
-      if (!root) return;
-      const version = root.querySelector(".title span");
-      if (version) version.textContent = "Network Control Center · UI v0.7.8";
-      this._viewportReadyV078 = false;
-      this._scheduleViewportV078();
+    _contentPoint(focal) {
+      const { viewport } = this._nodes();
+      const state = this._zoom;
+      if (state.scale > 1) return { x: (focal.x - state.x) / state.scale, y: (focal.y - state.y) / state.scale };
+      return { x: focal.x / state.scale, y: (viewport.scrollTop + focal.y) / state.scale };
     }
 
-    _ensureChild() {
-      const previous = this._child;
-      super._ensureChild();
-      const root = this._child?.shadowRoot;
-      installContentCompositionV078(root);
-      tuneTopologyPathsV078(root);
-      if (previous !== this._child || this._boundViewportV078 !== this.shadowRoot?.getElementById("app-content")) {
-        this._viewportReadyV078 = false;
-        this._viewportRetryCountV078 = 0;
+    _clampPan() {
+      const { viewport } = this._nodes();
+      const state = this._zoom;
+      const minX = Math.min(0, viewport.clientWidth - this._baseWidth * state.scale);
+      const minY = Math.min(0, viewport.clientHeight - this._baseHeight * state.scale);
+      state.x = Math.min(0, Math.max(minX, state.x));
+      state.y = Math.min(0, Math.max(minY, state.y));
+    }
+
+    _applyScale(value, options = {}) {
+      const { viewport, stage, surface } = this._nodes();
+      if (!viewport || !stage || !surface) return;
+      const state = this._zoom;
+      state.scale = clampScaleV080(value);
+      if (state.scale === 1) {
+        state.x = 0;state.y = 0;
+        viewport.classList.remove("scaled-v080", "zoomed-v080");
+        stage.style.width = "";stage.style.height = "";stage.style.minHeight = "";
+        surface.style.width = "";surface.style.height = "";surface.style.transform = "";
+        if (Number.isFinite(options.scrollTop)) viewport.scrollTop = Math.max(0, options.scrollTop);
+      } else {
+        if ((options.remeasure || this._baseHeight <= 1) && !this._measure()) return;
+        viewport.classList.add("scaled-v080");
+        surface.style.width = `${this._baseWidth}px`;
+        surface.style.height = `${this._baseHeight}px`;
+        if (state.scale > 1) {
+          viewport.classList.add("zoomed-v080");
+          viewport.scrollTop = 0;
+          if (options.focal && options.anchor) {
+            state.x = options.focal.x - options.anchor.x * state.scale;
+            state.y = options.focal.y - options.anchor.y * state.scale;
+          }
+          this._clampPan();
+          stage.style.width = `${viewport.clientWidth}px`;
+          stage.style.height = `${viewport.clientHeight}px`;
+          stage.style.minHeight = `${viewport.clientHeight}px`;
+          surface.style.transform = `translate3d(${state.x}px,${state.y}px,0) scale(${state.scale})`;
+        } else {
+          viewport.classList.remove("zoomed-v080");
+          state.x = 0;state.y = 0;
+          const height = Math.max(1, this._baseHeight * state.scale);
+          stage.style.width = `${viewport.clientWidth}px`;
+          stage.style.height = `${height}px`;
+          stage.style.minHeight = `${height}px`;
+          surface.style.transform = `scale(${state.scale})`;
+          if (options.focal && options.anchor) viewport.scrollTop = Math.max(0, options.anchor.y * state.scale - options.focal.y);
+        }
       }
-      this._scheduleViewportV078();
+      if (options.persist) this._persistScale();
+    }
+
+    _resetZoom(notify = true) {
+      const { viewport } = this._nodes();
+      this._zoom = { scale: 1, x: 0, y: 0 };
+      this._applyScale(1, { scrollTop: 0, persist: true });
+      viewport?.scrollTo({ left: 0, top: 0, behavior: "auto" });
+      if (notify) this._showResetToast();
+    }
+
+    _showResetToast() {
+      const toast = this.shadowRoot.getElementById("zoom-toast-v080");
+      if (!toast) return;
+      clearTimeout(this._toastTimer);
+      requestAnimationFrame(() => toast.classList.add("visible"));
+      this._toastTimer = setTimeout(() => toast.classList.remove("visible"), 1250);
+    }
+
+    _onTouchStart(event) {
+      const { viewport } = this._nodes();
+      if (!viewport) return;
+      if (event.touches.length >= 2) {
+        if (!this._measure()) return;
+        const [a, b] = event.touches;
+        const focal = midpointV080(a, b, viewport);
+        this._multiTouch = true;
+        this._pan = null;
+        this._pinch = {
+          distance: Math.max(1, distanceV080(a, b)),
+          scale: this._zoom.scale,
+          anchor: this._contentPoint(focal),
+          startedAt: performance.now(),
+          midpoint: pageMidpointV080(a, b),
+          moved: false,
+        };
+        this._guardUntil = Infinity;
+        for (const touch of event.touches) cancelEntityHoldV080(deepElementV080(this.shadowRoot, touch.clientX, touch.clientY));
+        event.preventDefault();
+      } else if (event.touches.length === 1 && this._zoom.scale > 1 && !this._multiTouch) {
+        const touch = event.touches[0];
+        this._pan = { clientX: touch.clientX, clientY: touch.clientY, x: this._zoom.x, y: this._zoom.y, moved: false };
+      }
+    }
+
+    _onTouchMove(event) {
+      const { viewport } = this._nodes();
+      if (!viewport) return;
+      if (event.touches.length >= 2 && this._pinch) {
+        const [a, b] = event.touches;
+        const focal = midpointV080(a, b, viewport);
+        const current = distanceV080(a, b);
+        const next = clampScaleV080(this._pinch.scale * current / this._pinch.distance);
+        if (Math.abs(current - this._pinch.distance) > TAP_MOVE_V080 || pointDistanceV080(this._pinch.midpoint, pageMidpointV080(a, b)) > TAP_MOVE_V080) this._pinch.moved = true;
+        this._applyScale(next, { focal, anchor: this._pinch.anchor });
+        event.preventDefault();
+        return;
+      }
+      if (!this._pan || event.touches.length !== 1 || this._zoom.scale <= 1 || this._multiTouch) return;
+      const touch = event.touches[0];
+      const dx = touch.clientX - this._pan.clientX;
+      const dy = touch.clientY - this._pan.clientY;
+      if (!this._pan.moved && Math.hypot(dx, dy) < PAN_START_V080) return;
+      this._pan.moved = true;
+      this._guardUntil = Infinity;
+      this._zoom.x = this._pan.x + dx;
+      this._zoom.y = this._pan.y + dy;
+      this._applyScale(this._zoom.scale);
+      event.preventDefault();
+    }
+
+    _onTouchEnd(event) {
+      if (event.touches.length) return;
+      const completed = this._pinch;
+      const wasMulti = this._multiTouch;
+      const movedPan = Boolean(this._pan?.moved);
+      this._pinch = null;this._pan = null;this._multiTouch = false;
+      const now = performance.now();
+      if (this._zoom.scale >= SNAP_MIN_V080 && this._zoom.scale <= SNAP_MAX_V080 && this._zoom.scale !== 1) {
+        this._resetZoom(true);
+      } else {
+        this._applyScale(this._zoom.scale, { persist: true });
+      }
+      if (wasMulti) {
+        this._guardUntil = now + CLICK_GUARD_MS_V080;
+        const isTap = completed && !completed.moved && now - completed.startedAt <= TAP_MS_V080;
+        if (isTap) {
+          const previous = this._lastTwoFingerTap;
+          if (previous && now - previous.at <= DOUBLE_TAP_MS_V080 && pointDistanceV080(previous.midpoint, completed.midpoint) <= 48) {
+            this._lastTwoFingerTap = null;
+            this._resetZoom(true);
+          } else {
+            this._lastTwoFingerTap = { at: now, midpoint: completed.midpoint };
+          }
+        } else {
+          this._lastTwoFingerTap = null;
+        }
+      } else if (movedPan) {
+        this._guardUntil = now + CLICK_GUARD_MS_V080;
+      }
+    }
+
+    _onTouchCancel() {
+      this._pinch = null;this._pan = null;this._multiTouch = false;
+      this._applyScale(this._zoom.scale, { persist: true });
+      this._guardUntil = performance.now() + CLICK_GUARD_MS_V080;
+    }
+
+    _onClickGuard(event) {
+      if (this._guardUntil === Infinity || performance.now() < Number(this._guardUntil || 0)) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
     }
   }
 
-  customElements.define("keenetic-hero-app-panel-v078", KeeneticHeroAppPanelV078);
+  customElements.define("keenetic-hero-app-panel-v080", KeeneticHeroAppPanelV080);
 }
 })();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v078.js
+// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js

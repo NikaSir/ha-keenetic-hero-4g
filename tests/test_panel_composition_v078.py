@@ -10,27 +10,28 @@ SOURCE = (
     / "custom_components"
     / "keenetic_hero_4g"
     / "frontend"
-    / "keenetic-app-v078.js"
+    / "keenetic-app-v080.js"
 )
 
 
-class PanelCompositionV078Tests(unittest.TestCase):
+class PanelCompositionV080Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.source = SOURCE.read_text(encoding="utf-8")
 
     def test_topology_cards_clear_the_router_body(self) -> None:
-        self.assertIn(".v061-cable{left:3%!important;top:50%!important}", self.source)
-        self.assertIn(".v061-lan{right:3%!important;top:50%!important}", self.source)
-        self.assertIn(".v060-router{top:56%!important;width:47%!important}", self.source)
+        self.assertIn(".v061-cable{left:2.6%!important;top:46%!important}", self.source)
+        self.assertIn(".v061-lan{right:2.6%!important;top:46%!important}", self.source)
+        self.assertIn(".v060-router{top:54%!important;width:44%!important", self.source)
 
     def test_topology_lines_follow_the_rebalanced_cards(self) -> None:
-        self.assertIn("M190 278 C285 278 350 294 438 316", self.source)
-        self.assertIn("M562 316 C660 294 725 278 820 278", self.source)
+        self.assertIn('".v061-lte-line": "M190 184 L438 304"', self.source)
+        self.assertIn('".v061-cable-line": "M190 270 L438 316"', self.source)
+        self.assertIn('".v061-lan-line": "M562 316 L820 270"', self.source)
 
     def test_mandatory_typography_has_reserved_width(self) -> None:
-        self.assertIn("max-width:calc(100% - 194px)!important", self.source)
-        self.assertIn("min-width:126px!important", self.source)
+        self.assertIn("max-width:calc(100% - 190px)!important", self.source)
+        self.assertIn("min-width:116px!important", self.source)
         self.assertIn("text-overflow:ellipsis!important", self.source)
 
 

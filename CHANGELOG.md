@@ -1,5 +1,15 @@
 # Changelog
 
+## UI metadata 0.8.0 / v1.00_b042 — 2026-08-27
+
+- Replaces the accumulated application-shell and gesture inheritance chain with one independently mounted production shell.
+- Restores native vertical scrolling at 100% by keeping the work surface in normal document flow with no transform or custom one-finger handler.
+- Installs one new focal pinch engine for 75–200% content-only scaling; Header and Bottom Tab Bar remain outside every gesture and transform node.
+- Keeps the two-finger double-tap reset, 97–103% snap, fixed safe areas and stable point-patched telemetry DOM.
+- Rebalances the overview topology so LTE, Cable and LAN cards and their paths clear the router and KPI row.
+- Removes the build/UI number from the visible Header; only release metadata carries it.
+- Excludes superseded shell/zoom modules v066–v078 from the production dependency graph.
+
 ## UI v0.7.8 / v1.00_b041 — 2026-08-27
 
 - Rebinds pinch gesture listeners in the capture phase only after `app-content`, `nika-zoom-stage`, `nika-zoom-surface` and the child panel exist.
