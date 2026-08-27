@@ -11,6 +11,7 @@ CONTRACT = INTEGRATION / "panel_contract.json"
 PANEL_MANIFEST = INTEGRATION / "panel_manifest.json"
 ZOOM_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v074.js"
 STANDARD_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v076.js"
+DELIVERY_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v077.js"
 
 
 class PanelZoomContractTests(unittest.TestCase):
@@ -20,6 +21,7 @@ class PanelZoomContractTests(unittest.TestCase):
         cls.manifest = json.loads(PANEL_MANIFEST.read_text(encoding="utf-8"))
         cls.source = ZOOM_SOURCE.read_text(encoding="utf-8")
         cls.standard_source = STANDARD_SOURCE.read_text(encoding="utf-8")
+        cls.delivery_source = DELIVERY_SOURCE.read_text(encoding="utf-8")
 
     def test_zoom_is_scoped_between_fixed_navigation_layers(self) -> None:
         zoom = self.contract["app_shell"]["content_zoom"]
@@ -51,6 +53,11 @@ class PanelZoomContractTests(unittest.TestCase):
         self.assertIn("translate3d(${s.x}px,${s.y}px,0) scale(${s.scale})", self.source)
         self.assertIn("s.scale<=1", self.source)
         self.assertNotIn("style.zoom", self.source)
+        self.assertIn("overflow-y:auto!important", self.delivery_source)
+        self.assertIn("this._installNikaZoom()", self.delivery_source)
+        self.assertIn("this._scheduleStandardMeasureV074()", self.delivery_source)
+        self.assertIn("this._child !== previousChild", self.delivery_source)
+        self.assertIn("if (!this.isConnected || this._viewportInitializedV077) return", self.delivery_source)
 
     def test_controls_are_removed_and_reset_is_gesture_only(self) -> None:
         zoom = self.contract["app_shell"]["content_zoom"]
@@ -84,7 +91,7 @@ class PanelZoomContractTests(unittest.TestCase):
     def test_delivery_manifest_matches_shell_and_zoom_policy(self) -> None:
         self.assertEqual(self.manifest["route"], "/dashboard-keenetic")
         self.assertEqual(self.manifest["entry_module"], "keenetic-panel-bundle.js")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v076")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v077")
         self.assertEqual(
             self.manifest["ha_menu_event"],
             {"type": "hass-toggle-menu", "bubbles": True, "composed": True},

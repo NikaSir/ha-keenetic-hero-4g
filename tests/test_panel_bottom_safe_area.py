@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
-SOURCE = INTEGRATION / "frontend" / "keenetic-app-v069.js"
+SOURCE = INTEGRATION / "frontend" / "keenetic-app-v077.js"
 CONTRACT = INTEGRATION / "panel_contract.json"
 
 
@@ -21,17 +21,18 @@ class PanelBottomSafeAreaTests(unittest.TestCase):
         navigation = self.contract["app_shell"]["bottom_navigation"]
         self.assertTrue(navigation["safe_area"])
         self.assertIn(
-            "padding-bottom:calc(4px + env(safe-area-inset-bottom,0px))!important",
+            "calc(6px + var(--nika-safe-bottom-v077))",
             self.source,
         )
 
     def test_safe_area_stays_outside_scaled_canvas(self) -> None:
-        self.assertIn(".nika-tabbar", self.source)
-        self.assertNotIn("nika-zoom-surface", self.source)
+        start = self.source.index("#nika-zoom-stage")
+        end = self.source.index(".nika-tabbar", start)
+        self.assertNotIn("--nika-safe-", self.source[start:end])
 
     def test_current_component_is_cache_safe(self) -> None:
-        self.assertIn('import("./keenetic-app-v068.js?v=0.6.9")', self.source)
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v069"', self.source)
+        self.assertIn('import("./keenetic-app-v076.js?v=0.7.7")', self.source)
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v077"', self.source)
 
 
 if __name__ == "__main__":

@@ -41,6 +41,7 @@ SOURCES = [
     FRONTEND / "keenetic-app-v074.js",
     FRONTEND / "keenetic-app-v075.js",
     FRONTEND / "keenetic-app-v076.js",
+    FRONTEND / "keenetic-app-v077.js",
 ]
 
 RUNTIME_IMPORT_RE = re.compile(
@@ -53,7 +54,7 @@ LEGACY_INLINE_HERO_RE = re.compile(
 ASSET_QUERY_RE = re.compile(
     r"(/keenetic_hero_4g_static/assets/[A-Za-z0-9._-]+(?:webp|svg))\?v=[0-9.]+"
 )
-PANEL_VERSION = "0.7.6"
+PANEL_VERSION = "0.7.7"
 HERO_ASSET_URL = f"/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v={PANEL_VERSION}"
 CSS_LINK = '<link rel="stylesheet" href="/keenetic_hero_4g_static/keenetic-panel.css?v=${encodeURIComponent(PANEL_VERSION)}">'
 
@@ -103,7 +104,7 @@ def build() -> str:
     parts = [
         "// GENERATED FILE. DO NOT EDIT DIRECTLY.",
         "// Keenetic Hero 4G+ self-contained Home Assistant panel bundle.",
-        "// Current v0.6.x sources and CSS are composed at build time only.",
+        "// Current production sources and CSS are composed at build time only.",
         "// Runtime dependency on prior UI modules is forbidden.",
         "// Artwork is delivered from frontend/assets; Base64 data URIs are forbidden.",
         "",

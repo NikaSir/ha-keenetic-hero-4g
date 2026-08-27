@@ -8,7 +8,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.7.6"
+    "version": "0.7.7"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -83,6 +83,8 @@
       "safe_area_owner": "specialized_panel_shell",
       "safe_area_applied_once": true,
       "height_locked_phone_shell": true,
+      "host_position": "normal_home_assistant_panel_flow",
+      "fixed_host_override": false,
       "outer_home_assistant_scroll": false,
       "scroll_chaining_to_outer_document": false,
       "short_views_fill_work_row": true
@@ -190,7 +192,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v076",
+    "web_component": "keenetic-hero-app-panel-v077",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
