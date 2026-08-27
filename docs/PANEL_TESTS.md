@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel metadata version: 0.8.0
+Panel metadata version: 0.8.3
 
-Integration build: 1.0.0-b042
+Integration build: 1.0.0-b045
 
 Standard: NikaS Specialized Panel UI Standard v1.6
 
@@ -35,6 +35,10 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - ResizeObserver and window/visual-viewport resize handling remeasure and clamp the single canvas without creating another viewport.
 - The shell mounts its viewport, stage and surface before attaching the child panel; the active persistent view supplies measurements only after scale leaves 100%.
 - Each Bottom Tab Bar action directly changes the child view, returns the viewport to origin and schedules one cancellable post-render measurement frame.
+- A `data-view` action inside Overview requests the change from the outer shell, so the child view, URL fragment and highlighted Bottom Tab item always agree.
+- Telemetry DOM mutations never trigger viewport measurement. The mount observer disconnects permanently once `.shell` exists.
+- Scaled height is measured from the active persistent view and shell padding, never from the previously sized transform surface.
+- Resize changes received during pinch or custom pan are deferred until the gesture ends.
 - Responsive mobile/tablet/desktop layout is resolved before user scale is applied.
 
 ## 3. iPhone gestures
@@ -47,6 +51,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 ## 4. Interaction
 
 - A stationary intentional hold outside a gesture still opens native more-info.
+- Ping, loss, Link/signal, RX, TX, WAN IP and uptime on Overview retain their factual `data-entity` mapping.
 - The second finger or a real pan sends `pointercancel`; generated clicks after a gesture are briefly suppressed.
 - Bottom Tab Bar clicks are not intercepted by work-surface gesture handlers.
 
@@ -62,7 +67,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.8.0` and component `keenetic-hero-app-panel-v080`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.8.3` and component `keenetic-hero-app-panel-v083`.
 - Superseded shell/zoom modules v066–v078 are excluded; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
@@ -72,11 +77,12 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - Wait for several telemetry cycles on every tab while repeatedly scrolling up/down; content, artwork, Header and Bottom Tab Bar must remain visually continuous.
 - Verify inertial scrolling and pinch while telemetry arrives. No active tab, image, shell or zoom viewport may be recreated.
 - Switch every tab at least ten times. Each view is created only on first visit; returning to it must reuse the same subtree and only toggle `hidden` / `inert`.
-- Verify polling failure and recovery: `Локально · Данные актуальны` changes to `Локально · Данные устарели` when retained values exist, then recovers without a loading frame. `Нет связи` is reserved for an actual known transport outage.
+- Verify polling failure and recovery: `Локально · Данные актуальны` changes to `Нет связи · Данные устарели`, then recovers without a loading frame.
+- Verify the phone hero is approximately 340 px high at 430 CSS px, contains no empty lower floor band, and shows the full `Резервный канал` caption without reducing its 12 px text.
 - Verify the channel/freshness indicator uses 16 px / 700 and 13 px / 600 text respectively and never shrinks below 13 px.
 - Verify all meaningful content stays within 12–25 px; only redundant schematic annotations may use the documented 9–10 px exception.
 - Minimize and reopen the Companion App; scroll, active tab and fixed-shell continuity must remain valid.
 
 ## Release gate
 
-Build b042 is accepted after all NikaS v1.6 checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, semantic typography, persistence, bounded pan, exactly-once safe areas and the rebalanced Cable/LAN/router composition must pass on the real iPhone Pro Max / KN-2311 environment.
+Build b045 is a phone-validation candidate. It is accepted only after all NikaS v1.6 checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the compact Cable/LTE/LAN composition must pass on the real iPhone Pro Max / KN-2311 environment.

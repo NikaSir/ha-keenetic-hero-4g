@@ -138,6 +138,7 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       this._touchEndHandler = (event) => this._onTouchEnd(event);
       this._touchCancelHandler = () => this._onTouchCancel();
       this._clickGuardHandler = (event) => this._onClickGuard(event);
+      this._childViewHandler = (event) => this._onChildViewRequest(event);
     }
 
     set hass(value) {
@@ -175,6 +176,7 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       this._childObserver?.disconnect();
       this._contentResizeObserver?.disconnect();
       cancelAnimationFrame(this._measureFrame);
+      cancelAnimationFrame(this._afterMountFrame);
       clearTimeout(this._toastTimer);
       this._unbindGestures();
     }
@@ -311,6 +313,7 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       if (!this._child) {
         this._child = document.createElement("keenetic-hero-panel");
         this._child._view = this._activeView;
+        this._child.addEventListener("keenetic-view-request", this._childViewHandler);
         this.shadowRoot.getElementById("zoom-surface-v080").append(this._child);
         this._observeChild();
       }
@@ -327,9 +330,16 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
 
     _observeChild() {
       this._childObserver?.disconnect();
-      this._childObserver = new MutationObserver(() => this._scheduleAfterMount());
+      const finishMount = () => {
+        if (!this._child?.shadowRoot?.querySelector(".shell")) return false;
+        this._childObserver?.disconnect();
+        this._childObserver = null;
+        this._scheduleAfterMount();
+        return true;
+      };
+      if (finishMount()) return;
+      this._childObserver = new MutationObserver(() => finishMount());
       this._childObserver.observe(this._child.shadowRoot, { childList: true, subtree: true });
-      this._scheduleAfterMount();
     }
 
     _scheduleAfterMount() {
@@ -347,7 +357,12 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       this._contentResizeObserver?.disconnect();
       if (typeof ResizeObserver !== "function") return;
       this._contentResizeObserver = new ResizeObserver(() => {
-        if (this._zoom.scale !== 1) this._scheduleMeasure();
+        if (this._zoom.scale === 1) return;
+        if (this._pinch || this._pan || this._multiTouch) {
+          this._measureAfterGesture = true;
+          return;
+        }
+        this._scheduleMeasure();
       });
       const root = this._child?.shadowRoot;
       const shell = root?.querySelector(".shell");
@@ -398,6 +413,13 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       requestAnimationFrame(() => requestAnimationFrame(() => this._scheduleAfterMount()));
     }
 
+    _onChildViewRequest(event) {
+      const view = event?.detail?.view;
+      if (!["overview", "wan", "failover", "traffic", "diagnostics", "system"].includes(view)) return;
+      event.preventDefault();
+      this._setView(view, true);
+    }
+
     _bindGestures() {
       const viewport = this.shadowRoot.getElementById("work-viewport-v080");
       if (!viewport || this._gestureViewport === viewport) return;
@@ -444,18 +466,22 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
     }
 
     _measure() {
-      const { viewport, surface } = this._nodes();
-      if (!viewport || !surface || viewport.clientWidth <= 0) return false;
+      const { viewport } = this._nodes();
+      if (!viewport || viewport.clientWidth <= 0) return false;
       const root = this._child?.shadowRoot;
       const shell = root?.querySelector(".shell");
+      const main = root?.querySelector(".shell>main");
       const active = root?.querySelector(".v075-view-slot:not([hidden])");
+      let shellPadding = 0;
+      if (shell && typeof getComputedStyle === "function") {
+        const style = getComputedStyle(shell);
+        shellPadding = (Number.parseFloat(style.paddingTop) || 0) + (Number.parseFloat(style.paddingBottom) || 0);
+      }
+      const contentHeight = Math.max(active?.scrollHeight || 0, main?.scrollHeight || 0) + shellPadding;
       this._baseWidth = viewport.clientWidth;
       this._baseHeight = Math.max(
         viewport.clientHeight,
-        this._child?.scrollHeight || 0,
-        shell?.scrollHeight || 0,
-        active?.scrollHeight || 0,
-        surface.scrollHeight || 0,
+        contentHeight,
       );
       return this._baseHeight > 0;
     }
@@ -623,12 +649,20 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       } else if (movedPan) {
         this._guardUntil = now + CLICK_GUARD_MS_V080;
       }
+      if (this._measureAfterGesture) {
+        this._measureAfterGesture = false;
+        this._scheduleMeasure();
+      }
     }
 
     _onTouchCancel() {
       this._pinch = null;this._pan = null;this._multiTouch = false;
       this._applyScale(this._zoom.scale, { persist: true });
       this._guardUntil = performance.now() + CLICK_GUARD_MS_V080;
+      if (this._measureAfterGesture) {
+        this._measureAfterGesture = false;
+        this._scheduleMeasure();
+      }
     }
 
     _onClickGuard(event) {

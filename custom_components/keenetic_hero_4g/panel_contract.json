@@ -8,13 +8,13 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.8.0"
+    "version": "0.8.3"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
     "version": "1.6",
     "canonical_source": "NikaSir/ha-contract-generated-ui",
-    "canonical_revision": "0cafa26faa145cc4d63e9c9ae7ecd668884d6f95",
+    "canonical_revision": "c05b707d533aa1afc5d051d2bb4528c4d08f8eda",
     "standards": {
       "shell": "1.6",
       "zoom": "1.6",
@@ -30,6 +30,8 @@
         "min_touch_target_px": 44
       },
       "title": "Keenetic Hero 4G+",
+      "title_surface_action": "return_to_source_nikas_panel",
+      "return_sources": ["/dashboard-house", "/dashboard-actions", "/dashboard-infrastructure"],
       "title_alignment": "viewport_center",
       "minimum_height_px": 62,
       "minimum_height_px_narrow": 60,
@@ -129,7 +131,10 @@
       "viewport_binding_requires_nodes": ["work-viewport-v080", "zoom-stage-v080", "zoom-surface-v080"],
       "gesture_listener_phase": "capture",
       "content_height_source": "active_persistent_view",
-      "remeasure_after_mount": true
+      "remeasure_after_mount": true,
+      "telemetry_mutation_remeasure": false,
+      "resize_during_gesture": "defer_until_gesture_end",
+      "height_measurement_excludes_scaled_surface_inline_height": true
     },
     "secondary_views": ["system"],
     "bootstrap": {
@@ -160,6 +165,8 @@
       "bottom_navigation_dom_persistent": true,
       "zoom_viewport_dom_persistent": true,
       "structural_update_during_scroll_or_gesture": false,
+      "overview_point_patch_per_frame": 1,
+      "unchanged_text_or_attribute_write": false,
       "unchanged_image_src_reassigned": false,
       "event_handlers_rebound": false
     },
@@ -196,7 +203,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v080",
+    "web_component": "keenetic-hero-app-panel-v083",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
@@ -222,7 +229,9 @@
     "bootstrap_cache_storage": "localStorage",
     "bootstrap_timeout_seconds": 5,
     "bootstrap_polling_enabled": false,
-    "infinite_loading_allowed": false
+    "infinite_loading_allowed": false,
+    "overview_patch_is_single_and_differential": true,
+    "inner_navigation_updates_shell_tabbar": true
   },
   "view_patterns": {
     "overview": {
@@ -230,15 +239,21 @@
       "hero_background": "local_static_webp",
       "hero_router_layer": "local_static_webp",
       "connection_layer": "dynamic_svg",
-      "hero_mobile_min_height_px": 438,
+      "hero_mobile_min_height_px": 340,
       "dynamic_overlays_from_hass_states": true,
       "preserve_network_topology": true,
-      "active_path_only": true,
+      "active_path_only": false,
       "inactive_grey_branches": false,
+      "channel_path_states": {
+        "active": "solid_green",
+        "ready_reserve": "dashed_blue",
+        "down": "red",
+        "unknown": "neutral_grey"
+      },
       "reserve_channel_separate": true,
       "reserve_badge_separate": true,
       "topology": {
-        "upper_left": "lte_reserve",
+        "upper_center": "lte_reserve",
         "lower_left": "ethernet_cable",
         "right": "lan",
         "center_internet_cloud": false,
@@ -251,24 +266,25 @@
       "composition": {
         "room_asset": "keenetic-hero-room-v064.webp",
         "router_asset": "keenetic-hero-router-v063.webp",
-        "router_scale_mobile_percent": 44,
-        "router_vertical_percent": 54,
-        "lte_card_top_percent": 31,
-        "cable_card_top_percent": 46,
-        "lan_card_top_percent": 46,
+        "router_scale_mobile_percent": 47,
+        "router_vertical_percent": 61.5,
+        "lte_card_top_percent": 32.5,
+        "cable_card_top_percent": 57.5,
+        "lan_card_top_percent": 57.5,
         "status_primary_label_ethernet": "Ethernet",
         "active_ethernet_path_style": "solid_green",
-        "reserve_lte_path_style": "animated_blue_dots"
+        "reserve_lte_path_style": "static_dashed_blue"
       },
-      "kpi_overlay": ["ping", "packet_loss", "telemetry_age"],
-      "overview_sections": ["hero", "channels"],
-      "items": ["ethernet", "lte"],
-      "labels": ["Кабель", "LTE"],
+      "kpi_overlay": [],
+      "overview_sections": ["hero", "reserve_state", "active_channel", "reserve_channel"],
+      "items": ["ethernet", "lte", "lan"],
+      "labels": ["Кабель", "4G LTE", "LAN"],
       "default_selected_from_role": "active_wan",
       "active_branch_indicator": true,
       "single_channel_detail_visible": true,
       "unknown_active_wan_has_no_fabricated_default": true,
-      "mobile_channel_grid": "3x2",
+      "mobile_channel_grid": "3_columns_8_metrics",
+      "active_metric_more_info": true,
       "device_selector": false,
       "device_control": false
     },

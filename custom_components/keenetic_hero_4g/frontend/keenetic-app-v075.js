@@ -113,6 +113,10 @@ function setDirectTextV075(element, value) {
   else if (!text) element.append(document.createTextNode(value));
 }
 
+function setTextContentV075(element, value) {
+  if (element && element.textContent !== value) element.textContent = value;
+}
+
 function indicatorCategoryV075(panel) {
   const telemetry = panel._telemetry?.() || {};
   const configured = panel._bootstrap?.telemetry || {};
@@ -168,13 +172,13 @@ function patchTopologyV075(panel, slot) {
   const cable = panel._connection?.("ethernet_connected") || {};
   const lteSubtitle = scene.querySelector(".v061-lte span");
   const cableSubtitle = scene.querySelector(".v061-cable span");
-  if (lteSubtitle) lteSubtitle.textContent = active === "lte" ? "Активен" : lte.state === "up" ? "Резерв готов" : lte.label || "Нет данных";
-  if (cableSubtitle) cableSubtitle.textContent = active === "ethernet" ? panel._display("ethernet_link_speed", "—") : cable.state === "up" ? "Резерв" : cable.label || "Нет данных";
+  setTextContentV075(lteSubtitle, active === "lte" ? "Активен" : lte.state === "up" ? "Резерв готов" : lte.label || "Нет данных");
+  setTextContentV075(cableSubtitle, active === "ethernet" ? panel._display("ethernet_link_speed", "—") : cable.state === "up" ? "Резерв" : cable.label || "Нет данных");
 
   const signalCell = slot.querySelector(".v060-signal-cell strong");
   const operatorCell = slot.querySelector(".v060-operator-cell strong");
-  if (signalCell) signalCell.textContent = panel._lteSignal?.().label || "—";
-  if (operatorCell) operatorCell.textContent = panel._display("lte_operator", "—");
+  setTextContentV075(signalCell, panel._lteSignal?.().label || "—");
+  setTextContentV075(operatorCell, panel._display("lte_operator", "—"));
 }
 
 function ensureIntegrityPlaceholderV075(panel, slot) {
@@ -187,13 +191,17 @@ function ensureIntegrityPlaceholderV075(panel, slot) {
     slot.querySelector(".v050-overview")?.prepend(banner);
   }
   const telemetry = panel._telemetry?.() || {};
-  banner.hidden = Boolean(telemetry.trusted);
-  banner.classList.remove("ok", "bad", "warn", "unknown");
-  banner.classList.add(telemetry.tone || "unknown");
+  const hidden = Boolean(telemetry.trusted);
+  if (banner.hidden !== hidden) banner.hidden = hidden;
+  const tone = telemetry.tone || "unknown";
+  for (const candidate of ["ok", "bad", "warn", "unknown"]) {
+    const enabled = candidate === tone;
+    if (banner.classList.contains(candidate) !== enabled) banner.classList.toggle(candidate, enabled);
+  }
   const strong = banner.querySelector("strong");
   const detail = banner.querySelector("span");
-  if (strong) strong.textContent = telemetry.label || "Нет данных";
-  if (detail) detail.textContent = `${telemetry.detail || "Состояние телеметрии не определено"}. WAN не трактуется как нормальный до восстановления телеметрии.`;
+  setTextContentV075(strong, telemetry.label || "Нет данных");
+  setTextContentV075(detail, `${telemetry.detail || "Состояние телеметрии не определено"}. WAN не трактуется как нормальный до восстановления телеметрии.`);
 }
 
 function patchSlotV075(panel, slot, view) {
@@ -252,6 +260,13 @@ if (CORE_COMPONENT_V075 && !CORE_COMPONENT_V075.prototype.__nikaStableDomV075) {
       element.addEventListener("click", () => {
         const view = element.dataset.view;
         if (!view) return;
+        const request = new CustomEvent("keenetic-view-request", {
+          detail: { view },
+          bubbles: true,
+          composed: true,
+          cancelable: true,
+        });
+        if (!this.dispatchEvent(request)) return;
         history.replaceState(null, "", `${location.pathname}${location.search}#${view}`);
         this._view = view;
         this._scheduleRender?.();
@@ -291,10 +306,11 @@ if (CORE_COMPONENT_V075 && !CORE_COMPONENT_V075.prototype.__nikaStableDomV075) {
   CORE_COMPONENT_V075.prototype._showStableViewV075 = function (view) {
     for (const [name, slot] of this._stableSlotsV075) {
       const active = name === view;
-      slot.classList.toggle("v075-active-view", active);
-      slot.hidden = !active;
-      slot.inert = !active;
-      slot.setAttribute("aria-hidden", active ? "false" : "true");
+      if (slot.classList.contains("v075-active-view") !== active) slot.classList.toggle("v075-active-view", active);
+      if (slot.hidden === active) slot.hidden = !active;
+      if (slot.inert === active) slot.inert = !active;
+      const ariaHidden = active ? "false" : "true";
+      if (slot.getAttribute("aria-hidden") !== ariaHidden) slot.setAttribute("aria-hidden", ariaHidden);
     }
   };
 

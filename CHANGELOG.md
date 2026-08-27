@@ -1,5 +1,16 @@
 # Changelog
 
+## UI v0.8.3 / v1.00_b045 — 2026-08-27
+
+- Replaces the b044 double Overview hook with one differential point patch and prevents unchanged topology text or attributes from being rewritten.
+- Disconnects the child MutationObserver after first mount so telemetry updates cannot remeasure or disturb the zoom surface.
+- Measures scaled bounds from the active persistent view, excludes stale inline surface height, and defers ResizeObserver work until pinch/pan ends.
+- Routes Overview drill-downs through the outer shell so the content, URL fragment and Bottom Tab selection remain synchronized.
+- Restores factual `data-entity` bindings for active-channel more-info holds.
+- Reduces the phone hero to 340 px, removes the empty lower floor band, widens the LTE caption and compacts the reserve and metric surfaces.
+- Encodes Cable/LTE/LAN paths independently as active, ready reserve, down or unknown instead of fabricating a uniform healthy/red topology.
+- Synchronizes panel metadata, contract, runtime component and asset cache keys at UI 0.8.3 / integration b045.
+
 ## UI metadata 0.8.0 / v1.00_b042 — 2026-08-27
 
 - Replaces the accumulated application-shell and gesture inheritance chain with one independently mounted production shell.

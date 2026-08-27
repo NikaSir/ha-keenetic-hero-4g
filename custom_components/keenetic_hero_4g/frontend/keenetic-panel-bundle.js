@@ -7,7 +7,7 @@
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-panel.js
 (() => {
 const BUNDLED_PANEL_CSS = ":host { display:block; min-height:100%; color:var(--primary-text-color); --kp-green:#36b37e; --kp-yellow:#d8a400; --kp-red:#d94b4b; --kp-grey:#7f8c99; --kp-blue:var(--primary-color,#03a9f4); --kp-surface:var(--ha-card-background,var(--card-background-color,#fff)); --kp-border:color-mix(in srgb,var(--primary-text-color) 11%,transparent); --kp-muted:var(--secondary-text-color,#6b7280); }\n* { box-sizing:border-box; }\nbutton { font:inherit; }\n.shell { width:min(100%,1100px); margin:0 auto; padding:12px max(12px,env(safe-area-inset-right)) calc(88px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left)); }\n.app-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin:2px 2px 12px; }\n.eyebrow { font-size:11px; color:var(--kp-muted); font-weight:700; letter-spacing:.06em; text-transform:uppercase; }\nh1 { font-size:23px; margin:3px 0 1px; line-height:1.15; }\n.subline { font-size:12px; color:var(--kp-muted); }\n.telemetry-chip { max-width:145px; display:flex; gap:6px; align-items:center; padding:7px 9px; border-radius:14px; font-size:11px; font-weight:700; background:color-mix(in srgb,var(--kp-grey) 10%,var(--kp-surface)); border:1px solid var(--kp-border); }\n.telemetry-chip ha-icon { --mdc-icon-size:17px; }\n.telemetry-chip.ok { color:var(--kp-green); background:color-mix(in srgb,var(--kp-green) 10%,var(--kp-surface)); }\n.telemetry-chip.warn { color:var(--kp-yellow); background:color-mix(in srgb,var(--kp-yellow) 10%,var(--kp-surface)); }\n.telemetry-chip.bad { color:var(--kp-red); background:color-mix(in srgb,var(--kp-red) 10%,var(--kp-surface)); }\n.view { display:grid; gap:10px; }\n.card { background:var(--kp-surface); border:1px solid var(--kp-border); border-radius:20px; box-shadow:0 3px 18px color-mix(in srgb,#000 7%,transparent); }\n.hero-card { padding:14px; }\n.hero-top { display:grid; grid-template-columns:1.15fr .85fr; gap:12px; align-items:end; }\n.label { display:block; color:var(--kp-muted); font-size:12px; font-weight:650; margin-bottom:2px; }\n.hero-value { display:flex; align-items:center; gap:7px; font-size:28px; font-weight:800; letter-spacing:-.02em; }\n.hero-value.ok { color:var(--kp-green); }\n.hero-value.bad { color:var(--kp-red); }\n.hero-value.unknown { color:var(--kp-grey); }\n.status-dot { width:10px; height:10px; border-radius:50%; background:currentColor; box-shadow:0 0 0 4px color-mix(in srgb,currentColor 12%,transparent); }\n.hero-top small { display:block; color:var(--kp-muted); font-size:10px; margin-top:2px; }\n.active-channel { text-align:right; }\n.active-channel > strong { font-size:24px; display:block; }\n.unknown-text { color:var(--kp-grey); }\n.rate-row { display:flex; justify-content:flex-end; gap:7px; font-size:10px; color:var(--kp-muted); margin-top:2px; }\n.network-map { margin-top:12px; padding:8px 8px 6px; border-radius:16px; background:color-mix(in srgb,var(--primary-text-color) 3%,transparent); display:grid; justify-items:center; }\n.node { display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; }\n.node ha-icon { --mdc-icon-size:16px; }\n.internet-node.ok { color:var(--kp-green); }\n.internet-node.bad { color:var(--kp-red); }\n.internet-node.unknown { color:var(--kp-grey); }\n.trunk { width:2px; height:8px; background:var(--kp-border); }\n.branches { position:relative; width:100%; display:grid; grid-template-columns:1fr 1fr; gap:10px; }\n.branches:before { content:\"\"; position:absolute; top:0; left:25%; right:25%; height:2px; background:var(--kp-border); }\n.branch { padding-top:8px; display:grid; justify-items:center; gap:1px; color:var(--kp-grey); position:relative; }\n.branch .branch-line { position:absolute; top:0; width:2px; height:8px; background:var(--kp-border); }\n.branch ha-icon { --mdc-icon-size:17px; }\n.branch b { font-size:11px; }\n.branch small { font-size:9px; }\n.branch.active.ok { color:var(--kp-green); }\n.branch.active.warn { color:var(--kp-yellow); }\n.branch.active.bad { color:var(--kp-red); }\n.router-node { margin-top:5px; display:flex; align-items:center; gap:4px; color:var(--kp-muted); font-size:10px; }\n.router-node ha-icon { --mdc-icon-size:15px; }\n.integrity-banner { display:flex; gap:9px; align-items:center; padding:10px 12px; border-radius:16px; border:1px solid var(--kp-border); background:var(--kp-surface); }\n.integrity-banner ha-icon { --mdc-icon-size:22px; }\n.integrity-banner strong,.integrity-banner span { display:block; }\n.integrity-banner strong { font-size:13px; }\n.integrity-banner span { font-size:10px; color:var(--kp-muted); }\n.integrity-banner.bad ha-icon { color:var(--kp-red); }\n.integrity-banner.warn ha-icon { color:var(--kp-yellow); }\n.integrity-banner.unknown ha-icon { color:var(--kp-grey); }\n.wan-pair { display:grid; grid-template-columns:1fr 1fr; gap:10px; }\n.channel-card { padding:12px; min-width:0; }\n.channel-card.selected { border-color:color-mix(in srgb,var(--kp-blue) 65%,var(--kp-border)); box-shadow:0 0 0 1px color-mix(in srgb,var(--kp-blue) 30%,transparent),0 4px 20px color-mix(in srgb,var(--kp-blue) 10%,transparent); }\n.card-title,.section-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; }\n.card-title > div,.section-heading > div { display:flex; align-items:center; gap:6px; min-width:0; }\n.card-title ha-icon,.section-heading ha-icon { --mdc-icon-size:19px; color:var(--kp-blue); }\n.card-title strong { font-size:13px; }\n.section-heading h2 { margin:0; font-size:17px; }\n.pill { display:inline-flex; align-items:center; gap:2px; white-space:nowrap; font-size:9px; border-radius:999px; padding:3px 6px; background:color-mix(in srgb,var(--kp-grey) 9%,transparent); color:var(--kp-grey); }\n.pill ha-icon { --mdc-icon-size:12px; color:currentColor; }\n.pill.ok { color:var(--kp-green); background:color-mix(in srgb,var(--kp-green) 10%,transparent); }\n.pill.warn { color:var(--kp-yellow); background:color-mix(in srgb,var(--kp-yellow) 10%,transparent); }\n.pill.bad { color:var(--kp-red); background:color-mix(in srgb,var(--kp-red) 10%,transparent); }\n.big-rates { display:grid; grid-template-columns:1fr 1fr; gap:5px; margin:10px 0 8px; }\n.big-rates span { min-width:0; font-size:12px; font-weight:750; }\n.big-rates small { display:block; font-size:8px; color:var(--kp-muted); }\n.mini-grid,.radio-grid,.detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; }\n.radio-grid { grid-template-columns:repeat(2,minmax(0,1fr)); margin:7px 0; }\n.metric { min-width:0; border-radius:11px; padding:6px 7px; background:color-mix(in srgb,var(--primary-text-color) 3.5%,transparent); cursor:default; outline:none; }\n.metric:focus { box-shadow:0 0 0 2px var(--kp-blue); }\n.metric span,.metric strong,.metric small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }\n.metric span { font-size:8px; color:var(--kp-muted); }\n.metric strong { font-size:10.5px; margin-top:1px; }\n.metric small { font-size:8px; color:var(--kp-muted); }\n.metric-unknown strong { color:var(--kp-grey); font-weight:600; }\n.signal-summary { display:grid; grid-template-columns:auto 1fr; gap:0 5px; align-items:baseline; margin:8px 0 5px; }\n.signal-summary span { font-size:8px; color:var(--kp-muted); }\n.signal-summary strong { font-size:12px; }\n.signal-summary small { grid-column:1 / -1; font-size:9px; color:var(--kp-muted); }\n.signal-summary .ok,.signal-banner.ok strong { color:var(--kp-green); }\n.signal-summary .warn,.signal-banner.warn strong { color:var(--kp-yellow); }\n.signal-summary .bad,.signal-banner.bad strong { color:var(--kp-red); }\n.signal-summary .unknown,.signal-banner.unknown strong { color:var(--kp-grey); }\n.failover-strip { padding:12px; }\n.failover-main { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }\n.failover-main div,.reason { min-width:0; }\n.failover-main span,.reason span { display:block; font-size:9px; color:var(--kp-muted); }\n.failover-main strong,.reason strong { font-size:12px; display:block; }\n.failover-main small { color:var(--kp-muted); font-size:8px; }\n.reason { margin-top:7px; padding-top:7px; border-top:1px solid var(--kp-border); }\n.detail-card,.traffic-summary,.chart-card,.failover-hero,.event-card,.system-hero,.diagnostics-card,.diagnostic-actions { padding:14px; }\n.detail-grid { margin-top:10px; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }\n.detail-grid .metric { padding:9px; }\n.detail-grid .metric span { font-size:10px; }\n.detail-grid .metric strong { font-size:12px; }\n.signal-banner { margin-top:10px; border-radius:14px; padding:9px 10px; background:color-mix(in srgb,var(--kp-grey) 6%,transparent); }\n.signal-banner span,.signal-banner strong,.signal-banner small { display:block; }\n.signal-banner span { font-size:9px; color:var(--kp-muted); }\n.signal-banner strong { font-size:16px; }\n.signal-banner small { font-size:9px; color:var(--kp-muted); }\n.hint { margin:0 5px; color:var(--kp-muted); font-size:10px; }\n.period-switch { display:flex; gap:3px; }\n.period { border:1px solid var(--kp-border); background:transparent; color:var(--kp-muted); border-radius:999px; padding:4px 8px; font-size:10px; }\n.period.selected { background:color-mix(in srgb,var(--kp-blue) 14%,transparent); color:var(--kp-blue); border-color:color-mix(in srgb,var(--kp-blue) 40%,var(--kp-border)); }\n.traffic-totals { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:11px; }\n.traffic-totals > div { padding:10px; border-radius:14px; background:color-mix(in srgb,var(--primary-text-color) 3.5%,transparent); }\n.traffic-totals span,.traffic-totals strong,.traffic-totals small { display:block; }\n.traffic-totals span { font-size:9px; color:var(--kp-muted); }\n.traffic-totals strong { font-size:15px; margin:2px 0; }\n.traffic-totals small { font-size:9px; color:var(--kp-muted); }\n.live-rate { color:var(--kp-muted); font-size:10px; text-align:right; }\n.chart-wrap { margin-top:8px; }\n.chart-wrap svg { width:100%; height:auto; max-height:180px; }\n.axis { stroke:var(--kp-border); stroke-width:1; }\n.series { fill:none; stroke-width:3; vector-effect:non-scaling-stroke; stroke-linecap:round; stroke-linejoin:round; }\n.series-0 { stroke:var(--kp-blue); }\n.series-1 { stroke:var(--kp-green); }\n.chart-legend { display:flex; gap:12px; align-items:center; font-size:9px; color:var(--kp-muted); }\n.chart-legend span { display:flex; align-items:center; gap:4px; }\n.chart-legend i { width:12px; height:3px; border-radius:3px; }\n.legend-0 { background:var(--kp-blue); }\n.legend-1 { background:var(--kp-green); }\n.chart-legend .scale { margin-left:auto; }\n.chart-empty { min-height:110px; display:flex; align-items:center; justify-content:center; gap:6px; color:var(--kp-muted); font-size:12px; }\n.failover-kpis { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }\n.failover-kpis > div { padding:10px; border-radius:14px; background:color-mix(in srgb,var(--primary-text-color) 3.5%,transparent); }\n.failover-kpis span,.failover-kpis strong,.failover-kpis small { display:block; }\n.failover-kpis span { color:var(--kp-muted); font-size:9px; }\n.failover-kpis strong { font-size:13px; }\n.failover-kpis small { color:var(--kp-muted); font-size:9px; }\n.event-list { margin-top:8px; }\n.event { display:grid; grid-template-columns:48px 1fr; gap:7px; padding:9px 0; border-top:1px solid var(--kp-border); }\n.event:first-child { border-top:0; }\n.event-time { font-weight:800; color:var(--kp-blue); font-size:12px; }\n.event strong,.event span { display:block; }\n.event strong { font-size:12px; }\n.event span { color:var(--kp-muted); font-size:9px; margin-top:2px; }\n.system-meta { display:flex; gap:8px; color:var(--kp-muted); font-size:10px; margin-top:5px; }\n.integrity-card { padding:13px; }\n.integrity-card > div { display:flex; gap:8px; align-items:center; }\n.integrity-card ha-icon { --mdc-icon-size:24px; }\n.integrity-card strong,.integrity-card span { display:block; }\n.integrity-card strong { font-size:14px; }\n.integrity-card span,.integrity-card > small { color:var(--kp-muted); font-size:9px; }\n.integrity-card.ok ha-icon { color:var(--kp-green); }\n.integrity-card.warn ha-icon { color:var(--kp-yellow); }\n.integrity-card.bad ha-icon { color:var(--kp-red); }\n.diag-list { margin-top:8px; }\n.diag-row { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr); gap:8px; padding:8px 0; border-top:1px solid var(--kp-border); outline:none; }\n.diag-row:first-child { border-top:0; }\n.diag-row > div:last-child { text-align:right; }\n.diag-row strong,.diag-row small,.diag-row span { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }\n.diag-row strong { font-size:11px; }\n.diag-row small { font-size:8px; color:var(--kp-muted); }\n.source-tag { display:inline-block !important; width:max-content; margin-left:auto; padding:1px 5px; border-radius:999px; background:color-mix(in srgb,var(--kp-blue) 10%,transparent); color:var(--kp-blue); font-size:8px; }\n.diag-row.warn > div:last-child strong { color:var(--kp-yellow); }\n.diag-row.bad > div:last-child strong { color:var(--kp-red); }\n.diag-row.neutral > div:last-child strong { color:var(--kp-grey); }\n.diagnostic-actions { display:flex; justify-content:space-between; gap:10px; align-items:center; }\n.diagnostic-actions > div { display:flex; gap:8px; align-items:center; }\n.diagnostic-actions ha-icon { color:var(--kp-blue); }\n.diagnostic-actions strong,.diagnostic-actions span { display:block; }\n.diagnostic-actions strong { font-size:12px; }\n.diagnostic-actions span { font-size:9px; color:var(--kp-muted); }\n.diagnostic-actions button { border:1px solid var(--kp-border); background:color-mix(in srgb,var(--kp-blue) 10%,transparent); color:var(--kp-blue); border-radius:12px; padding:8px 10px; }\n.bottom-nav { position:fixed; left:50%; transform:translateX(-50%); bottom:max(8px,env(safe-area-inset-bottom)); width:min(calc(100% - 20px),520px); display:grid; grid-template-columns:repeat(5,1fr); padding:6px; gap:2px; background:color-mix(in srgb,var(--kp-surface) 92%,transparent); backdrop-filter:blur(18px); border:1px solid var(--kp-border); border-radius:20px; box-shadow:0 8px 28px color-mix(in srgb,#000 18%,transparent); z-index:10; }\n.bottom-nav button { border:0; background:transparent; color:var(--kp-muted); border-radius:14px; min-height:48px; display:grid; place-items:center; align-content:center; gap:1px; padding:4px 2px; }\n.bottom-nav button.active { color:var(--kp-blue); background:color-mix(in srgb,var(--kp-blue) 10%,transparent); }\n.bottom-nav ha-icon { --mdc-icon-size:21px; }\n.bottom-nav span { font-size:9px; font-weight:700; }\n.loading,.fatal { min-height:60vh; display:flex; align-items:center; justify-content:center; gap:8px; flex-direction:column; text-align:center; color:var(--kp-muted); }\n.fatal ha-icon { color:var(--kp-red); --mdc-icon-size:40px; }\n.fatal strong { color:var(--primary-text-color); }\n.fatal button { border:0; border-radius:12px; padding:8px 12px; background:var(--kp-blue); color:var(--text-primary-color,#fff); }\n.spin { animation:spin 1s linear infinite; }\n@keyframes spin { to { transform:rotate(360deg); } }\n.bad-text { color:var(--kp-red); }\n@media (min-width:760px) {\n  .view { grid-template-columns:repeat(2,minmax(0,1fr)); }\n  .overview .hero-card,.overview .integrity-banner,.overview .wan-pair,.overview .failover-strip,.traffic-summary,.failover-hero,.system-hero,.integrity-card,.diagnostic-actions,.hint { grid-column:1 / -1; }\n  .wan-pair { grid-template-columns:1fr 1fr; }\n  .detail-card,.chart-card,.event-card,.diagnostics-card { align-self:start; }\n  .detail-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }\n}\n@media (max-width:390px) {\n  .shell { padding-left:8px; padding-right:8px; }\n  .app-header { align-items:center; }\n  .telemetry-chip { max-width:118px; padding:6px 7px; }\n  .telemetry-chip span { font-size:9px; }\n  h1 { font-size:20px; }\n  .hero-value { font-size:24px; }\n  .wan-pair { gap:7px; }\n  .channel-card { padding:9px; }\n  .pill { max-width:76px; overflow:hidden; text-overflow:ellipsis; }\n}\n@media (max-width:340px) { .wan-pair { grid-template-columns:1fr; } }\n@media (prefers-reduced-motion:reduce) { .spin { animation:none; } }\n";
-const PANEL_VERSION = "0.1.0";
+const PANEL_VERSION = "0.8.3";
 const UNKNOWN = new Set(["unknown", "unavailable", "none", "null", ""]);
 
 const ROLE_LABELS = {
@@ -1190,7 +1190,7 @@ function openHomeAssistantMenuV045(target) {
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v050.js
 (() => {
 const CORE_COMPONENT_V050 = customElements.get("keenetic-hero-panel");
-const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.2";
+const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.3";
 
 function escV050(value) {
   return String(value ?? "")
@@ -1391,7 +1391,7 @@ if (CORE_COMPONENT_V050 && !CORE_COMPONENT_V050.prototype.__nikaOverviewV050) {
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v051.js
 (() => {
 const CORE_COMPONENT_V051 = customElements.get("keenetic-hero-panel");
-const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.8.2";
+const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.8.3";
 
 if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) {
   CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051 = true;
@@ -1451,7 +1451,7 @@ if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) 
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
 (() => {
-const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.8.2";
+const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=0.8.3";
 const CORE_COMPONENT_V052 = customElements.get("keenetic-hero-panel");
 
 if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV052) {
@@ -1479,8 +1479,8 @@ if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV0
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js
 (() => {
 const CORE_COMPONENT_V060 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.8.2";
-const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.8.2";
+const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.8.3";
+const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.8.3";
 
 function _v060CreateMetricCell(label, value, className = "") {
   const span = document.createElement("span");
@@ -1684,8 +1684,8 @@ if (CORE_COMPONENT_V060 && !CORE_COMPONENT_V060.prototype.__nikaLayeredHeroV060)
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v061.js
 (() => {
 const CORE_COMPONENT_V061 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.8.2";
-const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.8.2";
+const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.8.3";
+const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.8.3";
 
 function _v061LabelCard(kind, title, subtitle, icon) {
   const card = document.createElement("div");
@@ -1832,8 +1832,8 @@ if (CORE_COMPONENT_V061 && !CORE_COMPONENT_V061.prototype.__nikaAcceptedTopology
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v062.js
 (() => {
 const CORE_COMPONENT_V062 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=0.8.2";
-const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.8.2";
+const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=0.8.3";
+const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=0.8.3";
 
 function _v062EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -1964,8 +1964,8 @@ if (CORE_COMPONENT_V062 && !CORE_COMPONENT_V062.prototype.__nikaHeroCompositionV
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
 (() => {
 const CORE_COMPONENT_V063 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.8.2";
-const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.8.2";
+const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=0.8.3";
+const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.8.3";
 
 function _v063EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -2149,7 +2149,7 @@ if (CORE_COMPONENT_V063 && !CORE_COMPONENT_V063.prototype.__nikaTargetGeometryV0
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v064.js
 (() => {
 const CORE_COMPONENT_V064 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.2";
+const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.3";
 
 function _v064InstallRoom(root) {
   if (!root) return;
@@ -2425,6 +2425,10 @@ function setDirectTextV075(element, value) {
   else if (!text) element.append(document.createTextNode(value));
 }
 
+function setTextContentV075(element, value) {
+  if (element && element.textContent !== value) element.textContent = value;
+}
+
 function indicatorCategoryV075(panel) {
   const telemetry = panel._telemetry?.() || {};
   const configured = panel._bootstrap?.telemetry || {};
@@ -2480,13 +2484,13 @@ function patchTopologyV075(panel, slot) {
   const cable = panel._connection?.("ethernet_connected") || {};
   const lteSubtitle = scene.querySelector(".v061-lte span");
   const cableSubtitle = scene.querySelector(".v061-cable span");
-  if (lteSubtitle) lteSubtitle.textContent = active === "lte" ? "Активен" : lte.state === "up" ? "Резерв готов" : lte.label || "Нет данных";
-  if (cableSubtitle) cableSubtitle.textContent = active === "ethernet" ? panel._display("ethernet_link_speed", "—") : cable.state === "up" ? "Резерв" : cable.label || "Нет данных";
+  setTextContentV075(lteSubtitle, active === "lte" ? "Активен" : lte.state === "up" ? "Резерв готов" : lte.label || "Нет данных");
+  setTextContentV075(cableSubtitle, active === "ethernet" ? panel._display("ethernet_link_speed", "—") : cable.state === "up" ? "Резерв" : cable.label || "Нет данных");
 
   const signalCell = slot.querySelector(".v060-signal-cell strong");
   const operatorCell = slot.querySelector(".v060-operator-cell strong");
-  if (signalCell) signalCell.textContent = panel._lteSignal?.().label || "—";
-  if (operatorCell) operatorCell.textContent = panel._display("lte_operator", "—");
+  setTextContentV075(signalCell, panel._lteSignal?.().label || "—");
+  setTextContentV075(operatorCell, panel._display("lte_operator", "—"));
 }
 
 function ensureIntegrityPlaceholderV075(panel, slot) {
@@ -2499,13 +2503,17 @@ function ensureIntegrityPlaceholderV075(panel, slot) {
     slot.querySelector(".v050-overview")?.prepend(banner);
   }
   const telemetry = panel._telemetry?.() || {};
-  banner.hidden = Boolean(telemetry.trusted);
-  banner.classList.remove("ok", "bad", "warn", "unknown");
-  banner.classList.add(telemetry.tone || "unknown");
+  const hidden = Boolean(telemetry.trusted);
+  if (banner.hidden !== hidden) banner.hidden = hidden;
+  const tone = telemetry.tone || "unknown";
+  for (const candidate of ["ok", "bad", "warn", "unknown"]) {
+    const enabled = candidate === tone;
+    if (banner.classList.contains(candidate) !== enabled) banner.classList.toggle(candidate, enabled);
+  }
   const strong = banner.querySelector("strong");
   const detail = banner.querySelector("span");
-  if (strong) strong.textContent = telemetry.label || "Нет данных";
-  if (detail) detail.textContent = `${telemetry.detail || "Состояние телеметрии не определено"}. WAN не трактуется как нормальный до восстановления телеметрии.`;
+  setTextContentV075(strong, telemetry.label || "Нет данных");
+  setTextContentV075(detail, `${telemetry.detail || "Состояние телеметрии не определено"}. WAN не трактуется как нормальный до восстановления телеметрии.`);
 }
 
 function patchSlotV075(panel, slot, view) {
@@ -2544,8 +2552,8 @@ function preloadImagesV075(root) {
     image.decode?.().catch(() => {});
   });
   [
-    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.2",
-    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.8.2",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.3",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.8.3",
   ].forEach((url) => {
     const image = new Image();
     image.src = url;
@@ -2564,6 +2572,13 @@ if (CORE_COMPONENT_V075 && !CORE_COMPONENT_V075.prototype.__nikaStableDomV075) {
       element.addEventListener("click", () => {
         const view = element.dataset.view;
         if (!view) return;
+        const request = new CustomEvent("keenetic-view-request", {
+          detail: { view },
+          bubbles: true,
+          composed: true,
+          cancelable: true,
+        });
+        if (!this.dispatchEvent(request)) return;
         history.replaceState(null, "", `${location.pathname}${location.search}#${view}`);
         this._view = view;
         this._scheduleRender?.();
@@ -2603,10 +2618,11 @@ if (CORE_COMPONENT_V075 && !CORE_COMPONENT_V075.prototype.__nikaStableDomV075) {
   CORE_COMPONENT_V075.prototype._showStableViewV075 = function (view) {
     for (const [name, slot] of this._stableSlotsV075) {
       const active = name === view;
-      slot.classList.toggle("v075-active-view", active);
-      slot.hidden = !active;
-      slot.inert = !active;
-      slot.setAttribute("aria-hidden", active ? "false" : "true");
+      if (slot.classList.contains("v075-active-view") !== active) slot.classList.toggle("v075-active-view", active);
+      if (slot.hidden === active) slot.hidden = !active;
+      if (slot.inert === active) slot.inert = !active;
+      const ariaHidden = active ? "false" : "true";
+      if (slot.getAttribute("aria-hidden") !== ariaHidden) slot.setAttribute("aria-hidden", ariaHidden);
     }
   };
 
@@ -2706,8 +2722,8 @@ const CORE_COMPONENT_V076 = customElements.get("keenetic-hero-panel");
 const INDICATOR_TONES_V076 = ["ok", "warn", "bad", "unknown", "neutral"];
 const STABLE_VIEWS_V076 = ["overview", "wan", "failover", "traffic", "diagnostics", "system"];
 const PERSISTENT_ASSETS_V076 = [
-  "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.2",
-  "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.8.2",
+  "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.3",
+  "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.8.3",
 ];
 const PRELOADED_ASSETS_V076 = PERSISTENT_ASSETS_V076.map((url) => {
   const image = new Image();
@@ -3089,6 +3105,7 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       this._touchEndHandler = (event) => this._onTouchEnd(event);
       this._touchCancelHandler = () => this._onTouchCancel();
       this._clickGuardHandler = (event) => this._onClickGuard(event);
+      this._childViewHandler = (event) => this._onChildViewRequest(event);
     }
 
     set hass(value) {
@@ -3126,6 +3143,7 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       this._childObserver?.disconnect();
       this._contentResizeObserver?.disconnect();
       cancelAnimationFrame(this._measureFrame);
+      cancelAnimationFrame(this._afterMountFrame);
       clearTimeout(this._toastTimer);
       this._unbindGestures();
     }
@@ -3262,6 +3280,7 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       if (!this._child) {
         this._child = document.createElement("keenetic-hero-panel");
         this._child._view = this._activeView;
+        this._child.addEventListener("keenetic-view-request", this._childViewHandler);
         this.shadowRoot.getElementById("zoom-surface-v080").append(this._child);
         this._observeChild();
       }
@@ -3278,9 +3297,16 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
 
     _observeChild() {
       this._childObserver?.disconnect();
-      this._childObserver = new MutationObserver(() => this._scheduleAfterMount());
+      const finishMount = () => {
+        if (!this._child?.shadowRoot?.querySelector(".shell")) return false;
+        this._childObserver?.disconnect();
+        this._childObserver = null;
+        this._scheduleAfterMount();
+        return true;
+      };
+      if (finishMount()) return;
+      this._childObserver = new MutationObserver(() => finishMount());
       this._childObserver.observe(this._child.shadowRoot, { childList: true, subtree: true });
-      this._scheduleAfterMount();
     }
 
     _scheduleAfterMount() {
@@ -3298,7 +3324,12 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       this._contentResizeObserver?.disconnect();
       if (typeof ResizeObserver !== "function") return;
       this._contentResizeObserver = new ResizeObserver(() => {
-        if (this._zoom.scale !== 1) this._scheduleMeasure();
+        if (this._zoom.scale === 1) return;
+        if (this._pinch || this._pan || this._multiTouch) {
+          this._measureAfterGesture = true;
+          return;
+        }
+        this._scheduleMeasure();
       });
       const root = this._child?.shadowRoot;
       const shell = root?.querySelector(".shell");
@@ -3349,6 +3380,13 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       requestAnimationFrame(() => requestAnimationFrame(() => this._scheduleAfterMount()));
     }
 
+    _onChildViewRequest(event) {
+      const view = event?.detail?.view;
+      if (!["overview", "wan", "failover", "traffic", "diagnostics", "system"].includes(view)) return;
+      event.preventDefault();
+      this._setView(view, true);
+    }
+
     _bindGestures() {
       const viewport = this.shadowRoot.getElementById("work-viewport-v080");
       if (!viewport || this._gestureViewport === viewport) return;
@@ -3395,18 +3433,22 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
     }
 
     _measure() {
-      const { viewport, surface } = this._nodes();
-      if (!viewport || !surface || viewport.clientWidth <= 0) return false;
+      const { viewport } = this._nodes();
+      if (!viewport || viewport.clientWidth <= 0) return false;
       const root = this._child?.shadowRoot;
       const shell = root?.querySelector(".shell");
+      const main = root?.querySelector(".shell>main");
       const active = root?.querySelector(".v075-view-slot:not([hidden])");
+      let shellPadding = 0;
+      if (shell && typeof getComputedStyle === "function") {
+        const style = getComputedStyle(shell);
+        shellPadding = (Number.parseFloat(style.paddingTop) || 0) + (Number.parseFloat(style.paddingBottom) || 0);
+      }
+      const contentHeight = Math.max(active?.scrollHeight || 0, main?.scrollHeight || 0) + shellPadding;
       this._baseWidth = viewport.clientWidth;
       this._baseHeight = Math.max(
         viewport.clientHeight,
-        this._child?.scrollHeight || 0,
-        shell?.scrollHeight || 0,
-        active?.scrollHeight || 0,
-        surface.scrollHeight || 0,
+        contentHeight,
       );
       return this._baseHeight > 0;
     }
@@ -3574,12 +3616,20 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
       } else if (movedPan) {
         this._guardUntil = now + CLICK_GUARD_MS_V080;
       }
+      if (this._measureAfterGesture) {
+        this._measureAfterGesture = false;
+        this._scheduleMeasure();
+      }
     }
 
     _onTouchCancel() {
       this._pinch = null;this._pan = null;this._multiTouch = false;
       this._applyScale(this._zoom.scale, { persist: true });
       this._guardUntil = performance.now() + CLICK_GUARD_MS_V080;
+      if (this._measureAfterGesture) {
+        this._measureAfterGesture = false;
+        this._scheduleMeasure();
+      }
     }
 
     _onClickGuard(event) {
@@ -3748,13 +3798,13 @@ if (CURRENT_SHELL_BASE_V081 && !customElements.get("keenetic-hero-app-panel-v081
 })();
 // END custom_components/keenetic_hero_4g/frontend/keenetic-app-v081.js
 
-// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v082.js
+// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v083.js
 (() => {
-const UI_VERSION_V082 = "0.8.2";
-const CORE_COMPONENT_V082 = customElements.get("keenetic-hero-panel");
-const CURRENT_SHELL_BASE_V082 = customElements.get("keenetic-hero-app-panel-v081");
+const UI_VERSION_V083 = "0.8.3";
+const CORE_COMPONENT_V083 = customElements.get("keenetic-hero-panel");
+const CURRENT_SHELL_BASE_V083 = customElements.get("keenetic-hero-app-panel-v081");
 
-function escV082(value) {
+function escV083(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -3763,14 +3813,26 @@ function escV082(value) {
     .replaceAll("'", "&#039;");
 }
 
-function reserveStateV082(panel, reserveRole, reserveConnection) {
-  const label = reserveRole === "lte" ? "4G LTE" : reserveRole === "ethernet" ? "Ethernet" : "Резерв";
+function setTextV083(element, value) {
+  if (element && element.textContent !== value) element.textContent = value;
+}
+
+function setAttributeV083(element, name, value) {
+  if (element && element.getAttribute(name) !== value) element.setAttribute(name, value);
+}
+
+function setDatasetV083(element, name, value) {
+  if (element && element.dataset[name] !== value) element.dataset[name] = value;
+}
+
+function reserveStateV083(reserveRole, reserveConnection) {
+  const label = reserveRole === "lte" ? "4G LTE" : reserveRole === "ethernet" ? "Ethernet" : "резервного канала";
   if (reserveConnection?.state === "up") {
     return {
       tone: "ok",
       icon: "mdi:check-circle",
       title: "Резерв готов",
-      detail: `Резервный канал ${label} подключён и готов к работе.`,
+      detail: `${label} подключён и готов к работе.`,
     };
   }
   if (reserveConnection?.state === "down") {
@@ -3778,22 +3840,24 @@ function reserveStateV082(panel, reserveRole, reserveConnection) {
       tone: "bad",
       icon: "mdi:alert-circle-outline",
       title: "Резерв недоступен",
-      detail: `Резервный канал ${label} сейчас недоступен.`,
+      detail: `${label} сейчас недоступен.`,
     };
   }
   return {
     tone: "unknown",
     icon: "mdi:help-circle-outline",
-    title: "Состояние резерва неизвестно",
-    detail: `Нет подтверждённых данных о готовности канала ${label}.`,
+    title: "Нет данных о резерве",
+    detail: `Готовность ${label} не подтверждена.`,
   };
 }
 
-function metricV082(icon, label, value, className = "") {
-  return `<div class="v082-metric ${className}"><ha-icon icon="${icon}"></ha-icon><div><span>${escV082(label)}</span><strong>${escV082(value)}</strong></div></div>`;
+function metricV083(panel, role, icon, label, value, className = "") {
+  const entity = role ? panel._entityId?.(role) : null;
+  const entityAttributes = entity ? ` data-entity="${escV083(entity)}" tabindex="0"` : "";
+  return `<div class="v083-metric ${className}"${entityAttributes}><ha-icon icon="${icon}"></ha-icon><div><span>${escV083(label)}</span><strong>${escV083(value)}</strong></div></div>`;
 }
 
-function reserveMetaV082(panel, reserveRole) {
+function reserveMetaV083(panel, reserveRole) {
   if (reserveRole === "lte") {
     return `${panel._display("lte_operator", "—")} · ${panel._display("lte_network_type", "—")} · ${panel._display("lte_primary_band", "—")} · RSRP ${panel._display("lte_rsrp", "—")}`;
   }
@@ -3803,7 +3867,7 @@ function reserveMetaV082(panel, reserveRole) {
   return "Нет подтверждённого резервного канала";
 }
 
-function renderOverviewV082(panel) {
+function renderOverviewV083(panel) {
   const internet = panel._internet();
   const active = panel._activeWan();
   const eth = panel._connection("ethernet_connected");
@@ -3813,274 +3877,308 @@ function renderOverviewV082(panel) {
   const activeRole = active === "ethernet" ? "ethernet" : active === "lte" ? "lte" : null;
   const reserveRole = activeRole === "ethernet" ? "lte" : activeRole === "lte" ? "ethernet" : null;
   const reserveConnection = reserveRole === "lte" ? lte : reserveRole === "ethernet" ? eth : null;
-  const reserveState = reserveStateV082(panel, reserveRole, reserveConnection);
+  const reserveState = reserveStateV083(reserveRole, reserveConnection);
+  const knownNoChannel = telemetry.trusted && internet.online === false;
 
   const heroTitle = internet.online === true ? "Интернет работает" : internet.online === false ? "Нет подключения" : "Состояние неизвестно";
   const heroTone = internet.online === true ? "ok" : internet.online === false ? "bad" : "unknown";
   const activeClass = activeRole ? `active-${activeRole}` : "active-none";
-  const activeName = activeRole === "ethernet" ? "Ethernet" : activeRole === "lte" ? "4G LTE" : "Нет активного канала";
+  const activeName = activeRole === "ethernet" ? "Ethernet" : activeRole === "lte" ? "4G LTE" : knownNoChannel ? "Нет активного канала" : "Канал не определён";
   const activeIcon = activeRole === "ethernet" ? "mdi:ethernet" : activeRole === "lte" ? "mdi:radio-tower" : "mdi:lan-disconnect";
+  const activeTone = activeRole ? "ok" : knownNoChannel ? "bad" : "unknown";
+  const activeStateLabel = activeRole ? "Активен" : knownNoChannel ? "Нет канала" : "Нет данных";
 
-  const pingRole = activeRole === "lte" ? "lte_ping" : "ethernet_ping";
-  const lossRole = activeRole === "lte" ? "lte_packet_loss" : "ethernet_packet_loss";
-  const rxRole = activeRole === "lte" ? "lte_rx_mbps" : "ethernet_rx_mbps";
-  const txRole = activeRole === "lte" ? "lte_tx_mbps" : "ethernet_tx_mbps";
-  const wanRole = activeRole === "lte" ? "lte_wan_ipv4" : "ethernet_wan_ipv4";
-  const uptimeRole = activeRole === "lte" ? "lte_interface_uptime" : "ethernet_interface_uptime";
+  const pingRole = activeRole === "lte" ? "lte_ping" : activeRole === "ethernet" ? "ethernet_ping" : null;
+  const lossRole = activeRole === "lte" ? "lte_packet_loss" : activeRole === "ethernet" ? "ethernet_packet_loss" : null;
+  const rxRole = activeRole === "lte" ? "lte_rx_mbps" : activeRole === "ethernet" ? "ethernet_rx_mbps" : null;
+  const txRole = activeRole === "lte" ? "lte_tx_mbps" : activeRole === "ethernet" ? "ethernet_tx_mbps" : null;
+  const wanRole = activeRole === "lte" ? "lte_wan_ipv4" : activeRole === "ethernet" ? "ethernet_wan_ipv4" : null;
+  const uptimeRole = activeRole === "lte" ? "lte_interface_uptime" : activeRole === "ethernet" ? "ethernet_interface_uptime" : null;
+  const linkRole = activeRole === "lte" ? "lte_rsrp" : activeRole === "ethernet" ? "ethernet_link_speed" : null;
   const linkLabel = activeRole === "lte" ? "Сигнал" : "Link";
   const linkValue = activeRole === "lte"
     ? `RSRP ${panel._display("lte_rsrp", "—")}`
-    : panel._display("ethernet_link_speed", "—");
+    : activeRole === "ethernet" ? panel._display("ethernet_link_speed", "—") : "—";
 
   const reserveName = reserveRole === "lte" ? "4G LTE" : reserveRole === "ethernet" ? "Ethernet" : "Резервный канал";
   const reserveIcon = reserveRole === "lte" ? "mdi:radio-tower" : reserveRole === "ethernet" ? "mdi:ethernet" : "mdi:lan-disconnect";
 
-  return `<section class="view v050-overview v082-overview">
-    ${!telemetry.trusted ? `<div class="integrity-banner ${escV082(telemetry.tone)}"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><div><strong>${escV082(telemetry.label)}</strong><span>${escV082(telemetry.detail)}. WAN не трактуется как нормальный до восстановления телеметрии.</span></div></div>` : ""}
+  return `<section class="view v050-overview v083-overview">
+    ${!telemetry.trusted ? `<div class="integrity-banner ${escV083(telemetry.tone)}"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><div><strong>${escV083(telemetry.label)}</strong><span>${escV083(telemetry.detail)}. WAN не трактуется как нормальный до восстановления телеметрии.</span></div></div>` : ""}
 
-    <article class="v050-hero ${escV082(heroTone)} ${activeClass}">
+    <article class="v050-hero ${escV083(heroTone)} ${activeClass}">
       <div class="v050-scene">
         <div class="v050-scene-shade"></div>
         <div class="v050-status-copy">
-          <h1>${escV082(heroTitle)}</h1>
-          <p>Основной канал · ${escV082(activeName)}</p>
+          <h1>${escV083(heroTitle)}</h1>
+          <p>Основной канал · ${escV083(activeName)}</p>
         </div>
-        <div class="v050-online-pill ${escV082(heroTone)}"><span class="status-dot"></span>${escV082(internet.label)}</div>
-        <div class="v050-fresh-pill ${escV082(telemetry.tone)}"><ha-icon icon="mdi:clock-outline"></ha-icon>${escV082(telemetry.age === null ? "Свежесть неизвестна" : `Обновлено ${Math.round(telemetry.age)} с назад`)}</div>
+        <div class="v050-online-pill ${escV083(heroTone)}"><span class="status-dot"></span>${escV083(internet.label)}</div>
+        <div class="v050-fresh-pill ${escV083(telemetry.tone)}"><ha-icon icon="mdi:clock-outline"></ha-icon>${escV083(telemetry.age === null ? "Свежесть неизвестна" : `Обновлено ${Math.round(telemetry.age)} с назад`)}</div>
       </div>
     </article>
 
-    <div class="v082-reserve-state ${reserveState.tone}">
+    <div class="v083-reserve-state ${reserveState.tone}">
       <ha-icon icon="${reserveState.icon}"></ha-icon>
-      <div><strong>${escV082(reserveState.title)}</strong><span>${escV082(reserveState.detail)}</span></div>
+      <div><strong>${escV083(reserveState.title)}</strong><span>${escV083(reserveState.detail)}</span></div>
     </div>
 
-    <article class="card v082-active-card">
-      <div class="v082-active-head">
+    <article class="card v083-active-card">
+      <div class="v083-active-head">
         <ha-icon icon="${activeIcon}"></ha-icon>
-        <strong>${escV082(activeName)}</strong>
-        <span class="v082-active-state ${activeRole ? "ok" : "bad"}"><i></i>${activeRole ? "Активен" : "Нет канала"}</span>
-        <button type="button" class="v082-open" data-view="wan" aria-label="Открыть каналы"><ha-icon icon="mdi:chevron-right"></ha-icon></button>
+        <strong>${escV083(activeName)}</strong>
+        <span class="v083-active-state ${activeTone}"><i></i>${activeStateLabel}</span>
+        <button type="button" class="v083-open" data-view="wan" aria-label="Открыть каналы"><ha-icon icon="mdi:chevron-right"></ha-icon></button>
       </div>
-      <div class="v082-metric-grid">
-        ${metricV082("mdi:earth", "Ping", activeRole ? panel._display(pingRole, "—") : "—")}
-        ${metricV082("mdi:shield-check-outline", "Потеря пакетов", activeRole ? panel._display(lossRole, "—") : "—")}
-        ${metricV082("mdi:timer-outline", "Телеметрия", telemetry.age === null ? "—" : `${Math.round(telemetry.age)} с`)}
-        ${metricV082("mdi:link-variant", linkLabel, activeRole ? linkValue : "—")}
-        ${metricV082("mdi:download-network-outline", "RX", activeRole ? panel._display(rxRole, "—") : "—")}
-        ${metricV082("mdi:upload-network-outline", "TX", activeRole ? panel._display(txRole, "—") : "—")}
-        ${metricV082("mdi:ip-network-outline", "WAN IP", activeRole ? panel._display(wanRole, "—") : "—", "wide")}
-        ${metricV082("mdi:clock-outline", "Uptime", activeRole ? panel._display(uptimeRole, "—") : "—")}
+      <div class="v083-metric-grid">
+        ${metricV083(panel, pingRole, "mdi:earth", "Ping", activeRole ? panel._display(pingRole, "—") : "—")}
+        ${metricV083(panel, lossRole, "mdi:shield-check-outline", "Потеря пакетов", activeRole ? panel._display(lossRole, "—") : "—")}
+        ${metricV083(panel, null, "mdi:timer-outline", "Телеметрия", telemetry.age === null ? "—" : `${Math.round(telemetry.age)} с`)}
+        ${metricV083(panel, linkRole, "mdi:link-variant", linkLabel, linkValue)}
+        ${metricV083(panel, rxRole, "mdi:download-network-outline", "RX", activeRole ? panel._display(rxRole, "—") : "—")}
+        ${metricV083(panel, txRole, "mdi:upload-network-outline", "TX", activeRole ? panel._display(txRole, "—") : "—")}
+        ${metricV083(panel, wanRole, "mdi:ip-network-outline", "WAN IP", activeRole ? panel._display(wanRole, "—") : "—", "wide")}
+        ${metricV083(panel, uptimeRole, "mdi:clock-outline", "Uptime", activeRole ? panel._display(uptimeRole, "—") : "—")}
       </div>
     </article>
 
-    <button type="button" class="card v082-reserve-channel" data-view="wan" aria-label="Открыть резервный канал">
-      <ha-icon class="v082-reserve-icon" icon="${reserveIcon}"></ha-icon>
-      <div><strong>${escV082(reserveName)}</strong><span>${escV082(reserveMetaV082(panel, reserveRole))}</span></div>
-      <ha-icon class="v082-chevron" icon="mdi:chevron-right"></ha-icon>
+    <button type="button" class="card v083-reserve-channel" data-view="wan" aria-label="Открыть резервный канал">
+      <ha-icon class="v083-reserve-icon" icon="${reserveIcon}"></ha-icon>
+      <div><strong>${escV083(reserveName)}</strong><span>${escV083(reserveMetaV083(panel, reserveRole))}</span></div>
+      <ha-icon class="v083-chevron" icon="mdi:chevron-right"></ha-icon>
     </button>
   </section>`;
 }
 
-function installOverviewStylesV082(root) {
-  if (!root || root.querySelector("style[data-keenetic-overview-v082]")) return;
+function installOverviewStylesV083(root) {
+  if (!root || root.querySelector("style[data-keenetic-overview-v083]")) return;
   const style = document.createElement("style");
-  style.dataset.keeneticOverviewV082 = "true";
+  style.dataset.keeneticOverviewV083 = "true";
   style.textContent = `
-    .v082-overview{gap:10px!important;padding-bottom:12px!important}
-    .v082-overview .v050-channels,.v082-overview .v050-kpi-row,.v082-overview .v050-reserve-strip,.v082-overview .v050-reserve-badge,.v082-overview .v050-path{display:none!important}
-    .v082-overview .v061-topology-layer,.v082-overview .v060-flow-layer,.v082-overview .v062-flow-layer,.v082-overview .v063-flow-layer{display:none!important}
-    .v082-overview .v050-scene{
-      min-height:410px!important;
-      padding:14px!important;
-      overflow:hidden!important;
-      background-position:center!important;
+    .v083-overview{gap:8px!important;padding-bottom:10px!important}
+    .v083-overview .v050-channels,.v083-overview .v050-kpi-row,.v083-overview .v050-reserve-strip,.v083-overview .v050-reserve-badge,.v083-overview .v050-path{display:none!important}
+    .v083-overview .v061-topology-layer,.v083-overview .v060-flow-layer,.v083-overview .v062-flow-layer,.v083-overview .v063-flow-layer{display:none!important}
+    .v083-overview .v050-scene{
+      min-height:340px!important;padding:12px!important;overflow:hidden!important;
+      background-position:center 54%!important;
     }
-    .v082-overview .v050-status-copy{left:14px!important;top:14px!important;max-width:calc(100% - 184px)!important}
-    .v082-overview .v050-status-copy h1{margin:0 0 6px!important;font-size:25px!important;line-height:1.04!important}
-    .v082-overview .v050-status-copy p{font-size:14px!important;line-height:1.2!important;font-weight:650!important}
-    .v082-overview .v060-router{top:60%!important;width:46%!important;max-width:300px!important;z-index:6!important}
+    .v083-overview .v050-status-copy{left:14px!important;top:13px!important;max-width:calc(100% - 194px)!important}
+    .v083-overview .v050-status-copy h1{margin:0 0 5px!important;font-size:25px!important;line-height:1.04!important}
+    .v083-overview .v050-status-copy p{font-size:14px!important;line-height:1.18!important;font-weight:650!important}
+    .v083-overview .v060-router{top:61.5%!important;width:47%!important;max-width:300px!important;z-index:6!important}
 
-    .v082-flow-layer{position:absolute;inset:0;z-index:4;pointer-events:none}
-    .v082-flow-layer svg{width:100%;height:100%;overflow:visible}
-    .v082-flow-line,.v082-flow-glow{fill:none;stroke-linecap:round;stroke-linejoin:round}
-    .v082-flow-line{stroke-width:6}
-    .v082-flow-glow{stroke-width:14;opacity:.13;filter:blur(2px)}
-    .v082-cable-line,.v082-lan-line{stroke:#27bf78}
-    .v082-lte-line{stroke:#179fe6;stroke-dasharray:5 11}
-    .v050-hero.active-lte .v082-lte-line{stroke:#27bf78;stroke-dasharray:none}
-    .v050-hero.active-lte .v082-cable-line{stroke:#a0a8af;opacity:.34}
-    .v050-hero.active-none .v082-cable-line,.v050-hero.active-none .v082-lte-line{stroke:var(--kp-red);opacity:.45}
+    .v083-flow-layer{position:absolute;inset:0;z-index:4;pointer-events:none}
+    .v083-flow-layer svg{width:100%;height:100%;overflow:visible}
+    .v083-flow-line,.v083-flow-glow{fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .v083-flow-line{stroke-width:6;stroke:#8c969f;stroke-dasharray:5 11}
+    .v083-flow-glow{stroke-width:14;stroke:#8c969f;opacity:.10;filter:blur(2px)}
+    .v083-flow-layer[data-cable-state="active"] .v083-cable-line,
+    .v083-flow-layer[data-lte-state="active"] .v083-lte-line,
+    .v083-flow-layer[data-lan-state="active"] .v083-lan-line{stroke:#27bf78}
+    .v083-flow-layer[data-cable-state="active"] .v083-flow-line.v083-cable-line,
+    .v083-flow-layer[data-lte-state="active"] .v083-flow-line.v083-lte-line,
+    .v083-flow-layer[data-lan-state="active"] .v083-flow-line.v083-lan-line{stroke-dasharray:none}
+    .v083-flow-layer[data-cable-state="standby"] .v083-cable-line,
+    .v083-flow-layer[data-lte-state="standby"] .v083-lte-line{stroke:#179fe6}
+    .v083-flow-layer[data-cable-state="down"] .v083-cable-line,
+    .v083-flow-layer[data-lte-state="down"] .v083-lte-line,
+    .v083-flow-layer[data-lan-state="down"] .v083-lan-line{stroke:var(--kp-red);opacity:.55}
 
-    .v082-overview .v061-topology-card{z-index:8!important;background:rgba(255,255,255,.93)!important;backdrop-filter:blur(10px)!important}
-    .v082-overview .v061-topology-card strong{font-size:14px!important;line-height:1.12!important}
-    .v082-overview .v061-topology-card span{font-size:12px!important;line-height:1.15!important;margin-top:3px!important}
-    .v082-overview .v061-lte{
-      left:50%!important;right:auto!important;top:34%!important;transform:translate(-50%,-50%)!important;
-      min-width:126px!important;max-width:148px!important;min-height:58px!important;padding:8px 10px!important;flex-direction:row!important;text-align:left!important;
+    .v083-overview .v061-topology-card{z-index:8!important;background:rgba(255,255,255,.93)!important;backdrop-filter:blur(10px)!important}
+    .v083-overview .v061-topology-card strong{font-size:14px!important;line-height:1.12!important}
+    .v083-overview .v061-topology-card span{font-size:12px!important;line-height:1.15!important;margin-top:3px!important}
+    .v083-overview .v061-topology-card[data-channel-state="active"] ha-icon,
+    .v083-overview .v061-topology-card[data-channel-state="active"] strong{color:var(--kp-green)!important}
+    .v083-overview .v061-topology-card[data-channel-state="standby"] ha-icon,
+    .v083-overview .v061-topology-card[data-channel-state="standby"] strong{color:var(--kp-blue)!important}
+    .v083-overview .v061-topology-card[data-channel-state="down"] ha-icon,
+    .v083-overview .v061-topology-card[data-channel-state="down"] strong{color:var(--kp-red)!important}
+    .v083-overview .v061-topology-card[data-channel-state="unknown"] ha-icon,
+    .v083-overview .v061-topology-card[data-channel-state="unknown"] strong{color:var(--kp-grey)!important}
+    .v083-overview .v061-lte{
+      left:50%!important;right:auto!important;top:32.5%!important;transform:translate(-50%,-50%)!important;
+      width:164px!important;min-width:164px!important;max-width:164px!important;min-height:58px!important;padding:8px 10px!important;flex-direction:row!important;text-align:left!important;
     }
-    .v082-overview .v061-lte ha-icon{--mdc-icon-size:25px!important}
-    .v082-overview .v061-cable,.v082-overview .v061-lan{
-      top:58%!important;transform:none!important;width:108px!important;min-width:108px!important;max-width:108px!important;min-height:82px!important;
-      padding:9px 7px!important;flex-direction:column!important;justify-content:center!important;text-align:center!important;gap:5px!important;
+    .v083-overview .v061-lte ha-icon{--mdc-icon-size:25px!important}
+    .v083-overview .v061-lte div{min-width:0!important;flex:1 1 auto!important}
+    .v083-overview .v061-cable,.v083-overview .v061-lan{
+      top:57.5%!important;transform:none!important;width:104px!important;min-width:104px!important;max-width:104px!important;min-height:78px!important;
+      padding:8px 7px!important;flex-direction:column!important;justify-content:center!important;text-align:center!important;gap:4px!important;
     }
-    .v082-overview .v061-cable{left:3%!important;right:auto!important}
-    .v082-overview .v061-lan{right:3%!important;left:auto!important}
-    .v082-overview .v061-cable ha-icon,.v082-overview .v061-lan ha-icon{--mdc-icon-size:27px!important}
-    .v082-overview .v061-cable div,.v082-overview .v061-lan div{text-align:center!important}
+    .v083-overview .v061-cable{left:3%!important;right:auto!important}
+    .v083-overview .v061-lan{right:3%!important;left:auto!important}
+    .v083-overview .v061-cable ha-icon,.v083-overview .v061-lan ha-icon{--mdc-icon-size:27px!important}
+    .v083-overview .v061-cable div,.v083-overview .v061-lan div{text-align:center!important}
 
-    .v082-reserve-state{
-      --v082-tone:var(--secondary-text-color);
-      min-height:68px;padding:11px 14px;display:flex;align-items:center;gap:12px;
-      border:1px solid color-mix(in srgb,var(--v082-tone) 30%,transparent);border-radius:22px;
-      background:color-mix(in srgb,var(--v082-tone) 8%,var(--card-background-color));
+    .v083-reserve-state{
+      --v083-tone:var(--secondary-text-color);min-height:56px;padding:8px 12px;display:flex;align-items:center;gap:10px;
+      border:1px solid color-mix(in srgb,var(--v083-tone) 30%,transparent);border-radius:20px;
+      background:color-mix(in srgb,var(--v083-tone) 8%,var(--card-background-color));
     }
-    .v082-reserve-state.ok{--v082-tone:var(--kp-green)}
-    .v082-reserve-state.bad{--v082-tone:var(--kp-red)}
-    .v082-reserve-state.unknown{--v082-tone:var(--secondary-text-color)}
-    .v082-reserve-state>ha-icon{--mdc-icon-size:31px;color:var(--v082-tone);flex:0 0 auto}
-    .v082-reserve-state div{min-width:0}.v082-reserve-state strong,.v082-reserve-state span{display:block}
-    .v082-reserve-state strong{font-size:16px;font-weight:750;color:color-mix(in srgb,var(--v082-tone) 80%,var(--primary-text-color));line-height:1.15}
-    .v082-reserve-state span{margin-top:4px;font-size:13px;font-weight:550;color:var(--secondary-text-color);line-height:1.25}
+    .v083-reserve-state.ok{--v083-tone:var(--kp-green)}.v083-reserve-state.bad{--v083-tone:var(--kp-red)}.v083-reserve-state.unknown{--v083-tone:var(--secondary-text-color)}
+    .v083-reserve-state>ha-icon{--mdc-icon-size:27px;color:var(--v083-tone);flex:0 0 auto}
+    .v083-reserve-state div{min-width:0}.v083-reserve-state strong,.v083-reserve-state span{display:block}
+    .v083-reserve-state strong{font-size:16px;font-weight:750;color:color-mix(in srgb,var(--v083-tone) 80%,var(--primary-text-color));line-height:1.12}
+    .v083-reserve-state span{margin-top:2px;font-size:13px;font-weight:550;color:var(--secondary-text-color);line-height:1.2}
 
-    .v082-active-card{position:relative;padding:13px 12px 12px!important;border-color:color-mix(in srgb,var(--primary-color) 34%,var(--kp-border))!important}
-    .v082-active-head{min-height:44px;display:flex;align-items:center;gap:8px;padding-right:42px}
-    .v082-active-head>ha-icon{--mdc-icon-size:28px;color:var(--primary-color)}
-    .v082-active-head>strong{font-size:18px;font-weight:780;line-height:1.15}
-    .v082-active-state{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:700;line-height:1.1}
-    .v082-active-state.ok{color:var(--kp-green)}.v082-active-state.bad{color:var(--kp-red)}
-    .v082-active-state i{display:block;width:8px;height:8px;border-radius:50%;background:currentColor}
-    .v082-open{position:absolute;right:8px;top:8px;width:44px;height:44px;border:0;background:transparent;color:var(--primary-color);display:grid;place-items:center;border-radius:14px}
-    .v082-open ha-icon{--mdc-icon-size:25px}
+    .v083-active-card{position:relative;padding:10px 10px 9px!important;border-color:color-mix(in srgb,var(--primary-color) 34%,var(--kp-border))!important}
+    .v083-active-head{min-height:40px;display:flex;align-items:center;gap:7px;padding-right:40px}
+    .v083-active-head>ha-icon{--mdc-icon-size:27px;color:var(--primary-color)}
+    .v083-active-head>strong{font-size:18px;font-weight:780;line-height:1.15}
+    .v083-active-state{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;line-height:1.1}
+    .v083-active-state.ok{color:var(--kp-green)}.v083-active-state.bad{color:var(--kp-red)}.v083-active-state.unknown{color:var(--kp-grey)}
+    .v083-active-state i{display:block;width:8px;height:8px;border-radius:50%;background:currentColor}
+    .v083-open{position:absolute;right:6px;top:5px;width:44px;height:44px;border:0;background:transparent;color:var(--primary-color);display:grid;place-items:center;border-radius:14px}
+    .v083-open ha-icon{--mdc-icon-size:25px}
 
-    .v082-metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:7px;border-top:1px solid color-mix(in srgb,var(--kp-border) 72%,transparent)}
-    .v082-metric{min-width:0;min-height:64px;padding:9px 8px;display:grid;grid-template-columns:22px minmax(0,1fr);align-items:center;gap:7px;border-top:1px solid color-mix(in srgb,var(--kp-border) 58%,transparent)}
-    .v082-metric:nth-child(-n+3){border-top:0}
-    .v082-metric:nth-child(3n+2),.v082-metric:nth-child(3n+3){border-left:1px solid color-mix(in srgb,var(--kp-border) 58%,transparent)}
-    .v082-metric.wide{grid-column:span 2}
-    .v082-metric>ha-icon{--mdc-icon-size:21px;color:var(--primary-color)}
-    .v082-metric div{min-width:0}.v082-metric span,.v082-metric strong{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis}
-    .v082-metric span{font-size:12px;font-weight:550;color:var(--secondary-text-color);line-height:1.18;white-space:normal}
-    .v082-metric strong{margin-top:3px;font-size:14px;font-weight:760;color:var(--primary-text-color);line-height:1.15;white-space:nowrap}
+    .v083-metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:5px;border-top:1px solid color-mix(in srgb,var(--kp-border) 72%,transparent)}
+    .v083-metric{min-width:0;min-height:58px;padding:7px;display:grid;grid-template-columns:21px minmax(0,1fr);align-items:center;gap:6px;border-top:1px solid color-mix(in srgb,var(--kp-border) 58%,transparent);outline:none}
+    .v083-metric:nth-child(-n+3){border-top:0}.v083-metric:nth-child(3n+2),.v083-metric:nth-child(3n+3){border-left:1px solid color-mix(in srgb,var(--kp-border) 58%,transparent)}
+    .v083-metric.wide{grid-column:span 2}.v083-metric:focus{box-shadow:inset 0 0 0 2px var(--primary-color)}
+    .v083-metric>ha-icon{--mdc-icon-size:20px;color:var(--primary-color)}
+    .v083-metric div{min-width:0}.v083-metric span,.v083-metric strong{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis}
+    .v083-metric span{font-size:12px;font-weight:550;color:var(--secondary-text-color);line-height:1.14;white-space:normal}
+    .v083-metric strong{margin-top:2px;font-size:14px;font-weight:760;color:var(--primary-text-color);line-height:1.13;white-space:nowrap}
 
-    .v082-reserve-channel{
-      width:100%;min-height:72px;margin:0;padding:11px 13px!important;display:grid;grid-template-columns:32px minmax(0,1fr) 28px;align-items:center;gap:10px;
+    .v083-reserve-channel{
+      width:100%;min-height:64px;margin:0;padding:9px 12px!important;display:grid;grid-template-columns:30px minmax(0,1fr) 28px;align-items:center;gap:9px;
       text-align:left;color:var(--primary-text-color);font:inherit;appearance:none;-webkit-appearance:none;background:var(--card-background-color);cursor:pointer;
     }
-    .v082-reserve-icon{--mdc-icon-size:28px;color:var(--primary-color)}
-    .v082-reserve-channel div{min-width:0}.v082-reserve-channel strong,.v082-reserve-channel span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .v082-reserve-channel strong{font-size:17px;font-weight:760;line-height:1.15}
-    .v082-reserve-channel span{margin-top:4px;font-size:13px;font-weight:550;color:var(--secondary-text-color);line-height:1.18}
-    .v082-chevron{--mdc-icon-size:25px;color:var(--primary-color)}
+    .v083-reserve-icon{--mdc-icon-size:27px;color:var(--primary-color)}
+    .v083-reserve-channel div{min-width:0}.v083-reserve-channel strong,.v083-reserve-channel span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .v083-reserve-channel strong{font-size:17px;font-weight:760;line-height:1.12}.v083-reserve-channel span{margin-top:3px;font-size:13px;font-weight:550;color:var(--secondary-text-color);line-height:1.15}
+    .v083-chevron{--mdc-icon-size:25px;color:var(--primary-color)}
 
     @media(max-width:390px){
-      .v082-overview .v050-scene{min-height:398px!important}
-      .v082-overview .v050-status-copy{max-width:calc(100% - 170px)!important}
-      .v082-overview .v060-router{width:44%!important;top:60%!important}
-      .v082-overview .v061-lte{min-width:118px!important;max-width:136px!important}
-      .v082-overview .v061-cable,.v082-overview .v061-lan{width:98px!important;min-width:98px!important;max-width:98px!important}
-      .v082-metric{padding-left:6px;padding-right:6px;grid-template-columns:20px minmax(0,1fr);gap:5px}
-      .v082-metric>ha-icon{--mdc-icon-size:19px}
-      .v082-metric strong{font-size:13px}
+      .v083-overview .v050-scene{min-height:330px!important}
+      .v083-overview .v050-status-copy{max-width:calc(100% - 182px)!important}
+      .v083-overview .v060-router{width:46%!important;top:61.5%!important}
+      .v083-overview .v061-lte{width:158px!important;min-width:158px!important;max-width:158px!important}
+      .v083-overview .v061-cable,.v083-overview .v061-lan{width:96px!important;min-width:96px!important;max-width:96px!important}
+      .v083-metric{padding-left:5px;padding-right:5px;grid-template-columns:19px minmax(0,1fr);gap:5px}
+      .v083-metric>ha-icon{--mdc-icon-size:19px}.v083-metric strong{font-size:13px}
     }
     @media(min-width:760px){
-      .v082-overview .v050-scene{min-height:470px!important}
-      .v082-overview .v060-router{width:42%!important;max-width:400px!important}
-      .v082-overview .v061-cable{left:5%!important}.v082-overview .v061-lan{right:5%!important}
+      .v083-overview .v050-scene{min-height:440px!important}
+      .v083-overview .v060-router{width:42%!important;max-width:400px!important}
+      .v083-overview .v061-cable{left:5%!important}.v083-overview .v061-lan{right:5%!important}
     }
   `;
   root.append(style);
 }
 
-function patchOverviewCompositionV082(panel) {
+function ensureOverviewStructureV083(panel) {
   const root = panel.shadowRoot;
-  if (!root) return;
-  installOverviewStylesV082(root);
   const scope = panel._stableSlotsV075?.get("overview") || root;
-  const overview = scope.querySelector(".v082-overview");
-  const scene = overview?.querySelector(".v050-scene");
-  if (!scene) return;
+  const scene = scope?.querySelector(".v083-overview .v050-scene");
+  if (!scene || scene.dataset.structureV083 === "true") return;
 
   scene.querySelectorAll(".v061-topology-layer,.v060-flow-layer,.v062-flow-layer,.v063-flow-layer").forEach((layer) => {
-    layer.hidden = true;
+    if (!layer.hidden) layer.hidden = true;
   });
 
-  if (!scene.querySelector(".v082-flow-layer")) {
+  if (!scene.querySelector(".v083-flow-layer")) {
     const flow = document.createElement("div");
-    flow.className = "v082-flow-layer";
+    flow.className = "v083-flow-layer";
     flow.setAttribute("aria-hidden", "true");
     flow.innerHTML = `
       <svg viewBox="0 0 1000 500" preserveAspectRatio="none">
-        <path class="v082-flow-glow v082-lte-line" d="M500 205 L500 278" />
-        <path class="v082-flow-line v082-lte-line" d="M500 205 L500 278" />
-        <path class="v082-flow-glow v082-cable-line" d="M245 302 L420 302" />
-        <path class="v082-flow-line v082-cable-line" d="M245 302 L420 302" />
-        <path class="v082-flow-glow v082-lan-line" d="M580 302 L755 302" />
-        <path class="v082-flow-line v082-lan-line" d="M580 302 L755 302" />
+        <path class="v083-flow-glow v083-lte-line" d="M500 195 L500 278" />
+        <path class="v083-flow-line v083-lte-line" d="M500 195 L500 278" />
+        <path class="v083-flow-glow v083-cable-line" d="M245 302 L420 302" />
+        <path class="v083-flow-line v083-cable-line" d="M245 302 L420 302" />
+        <path class="v083-flow-glow v083-lan-line" d="M580 302 L755 302" />
+        <path class="v083-flow-line v083-lan-line" d="M580 302 L755 302" />
       </svg>`;
     scene.append(flow);
   }
+  scene.dataset.structureV083 = "true";
+}
 
-  const active = panel._activeWan?.();
+function channelStateV083(activeRole, role, connection) {
+  if (activeRole === role) return "active";
+  if (connection?.state === "up") return "standby";
+  if (connection?.state === "down") return "down";
+  return "unknown";
+}
+
+function patchOverviewStateV083(panel) {
+  const root = panel.shadowRoot;
+  const scope = panel._stableSlotsV075?.get("overview") || root;
+  const overview = scope?.querySelector(".v083-overview");
+  const scene = overview?.querySelector(".v050-scene");
+  if (!scene) return;
+
+  const activeRole = panel._activeWan?.();
   const lteState = panel._connection?.("lte_connected") || {};
   const ethState = panel._connection?.("ethernet_connected") || {};
+  const configured = panel._bootstrap?.telemetry || {};
+  const routerState = panel._connection?.("router_connectivity") || {};
+  const lanState = configured.connection_available === true || routerState.state === "up"
+    ? "active"
+    : configured.connection_available === false || routerState.state === "down" ? "down" : "unknown";
+  const lteVisual = channelStateV083(activeRole, "lte", lteState);
+  const cableVisual = channelStateV083(activeRole, "ethernet", ethState);
+
+  const flow = scene.querySelector(".v083-flow-layer");
+  setDatasetV083(flow, "lteState", lteVisual);
+  setDatasetV083(flow, "cableState", cableVisual);
+  setDatasetV083(flow, "lanState", lanState);
+
   const lte = scene.querySelector(".v061-lte");
   const cable = scene.querySelector(".v061-cable");
   const lan = scene.querySelector(".v061-lan");
+  setDatasetV083(lte, "channelState", lteVisual);
+  setDatasetV083(cable, "channelState", cableVisual);
+  setDatasetV083(lan, "channelState", lanState);
 
-  if (lte) {
-    lte.querySelector("ha-icon")?.setAttribute("icon", "mdi:radio-tower");
-    const title = lte.querySelector("strong");
-    const subtitle = lte.querySelector("span");
-    if (title) title.textContent = "4G LTE";
-    if (subtitle) subtitle.textContent = active === "lte" ? "Активный канал" : lteState.state === "up" ? "Резервный канал" : lteState.state === "down" ? "Недоступен" : "Нет данных";
-  }
-  if (cable) {
-    cable.querySelector("ha-icon")?.setAttribute("icon", "mdi:ethernet");
-    const title = cable.querySelector("strong");
-    const subtitle = cable.querySelector("span");
-    if (title) title.textContent = "Кабель";
-    if (subtitle) subtitle.textContent = active === "ethernet" ? "Основной канал" : ethState.state === "up" ? "Резервный канал" : ethState.state === "down" ? "Недоступен" : "Нет данных";
-  }
-  if (lan) {
-    lan.querySelector("ha-icon")?.setAttribute("icon", "mdi:lan");
-    const title = lan.querySelector("strong");
-    const subtitle = lan.querySelector("span");
-    if (title) title.textContent = "LAN";
-    if (subtitle) subtitle.textContent = "Локальная сеть";
-  }
+  setAttributeV083(lte?.querySelector("ha-icon"), "icon", "mdi:radio-tower");
+  setTextV083(lte?.querySelector("strong"), "4G LTE");
+  setTextV083(lte?.querySelector("span"), activeRole === "lte" ? "Активный канал" : lteState.state === "up" ? "Резервный канал" : lteState.state === "down" ? "Недоступен" : "Нет данных");
+
+  setAttributeV083(cable?.querySelector("ha-icon"), "icon", "mdi:ethernet");
+  setTextV083(cable?.querySelector("strong"), "Кабель");
+  setTextV083(cable?.querySelector("span"), activeRole === "ethernet" ? "Основной канал" : ethState.state === "up" ? "Резервный канал" : ethState.state === "down" ? "Недоступен" : "Нет данных");
+
+  setAttributeV083(lan?.querySelector("ha-icon"), "icon", "mdi:lan");
+  setTextV083(lan?.querySelector("strong"), "LAN");
+  setTextV083(lan?.querySelector("span"), lanState === "down" ? "Нет связи" : lanState === "unknown" ? "Нет данных" : "Локальная сеть");
+
+  panel._bindStableInteractionsV075?.(overview);
 }
 
-if (CORE_COMPONENT_V082 && !CORE_COMPONENT_V082.prototype.__nikaOverviewV082) {
-  CORE_COMPONENT_V082.prototype.__nikaOverviewV082 = true;
-  CORE_COMPONENT_V082.prototype._renderOverview = function () {
-    return renderOverviewV082(this);
+if (CORE_COMPONENT_V083 && !CORE_COMPONENT_V083.prototype.__nikaOverviewV083) {
+  CORE_COMPONENT_V083.prototype.__nikaOverviewV083 = true;
+  CORE_COMPONENT_V083.prototype._renderOverview = function () {
+    return renderOverviewV083(this);
   };
 
-  const renderBaseV082 = CORE_COMPONENT_V082.prototype._render;
-  CORE_COMPONENT_V082.prototype._render = function (...args) {
-    renderBaseV082.apply(this, args);
-    patchOverviewCompositionV082(this);
+  const mountStableBaseV083 = CORE_COMPONENT_V083.prototype._mountStableDomV075;
+  CORE_COMPONENT_V083.prototype._mountStableDomV075 = function (...args) {
+    const mounted = mountStableBaseV083.apply(this, args);
+    if (!mounted) return mounted;
+    installOverviewStylesV083(this.shadowRoot);
+    ensureOverviewStructureV083(this);
+    patchOverviewStateV083(this);
+    return mounted;
   };
 
-  const patchStableBaseV082 = CORE_COMPONENT_V082.prototype._patchStableDomV075;
-  if (typeof patchStableBaseV082 === "function") {
-    CORE_COMPONENT_V082.prototype._patchStableDomV075 = function (...args) {
-      patchStableBaseV082.apply(this, args);
-      patchOverviewCompositionV082(this);
-    };
-  }
+  const patchStableBaseV083 = CORE_COMPONENT_V083.prototype._patchStableDomV075;
+  CORE_COMPONENT_V083.prototype._patchStableDomV075 = function (...args) {
+    patchStableBaseV083.apply(this, args);
+    patchOverviewStateV083(this);
+  };
 }
 
-if (CURRENT_SHELL_BASE_V082 && !customElements.get("keenetic-hero-app-panel-v082")) {
-  class KeeneticHeroAppPanelV082 extends CURRENT_SHELL_BASE_V082 {
+if (CURRENT_SHELL_BASE_V083 && !customElements.get("keenetic-hero-app-panel-v083")) {
+  class KeeneticHeroAppPanelV083 extends CURRENT_SHELL_BASE_V083 {
     _mountShell() {
       super._mountShell();
       const version = this.shadowRoot?.querySelector("#return-v081 span");
-      if (version) version.textContent = `UI v${UI_VERSION_V082}`;
+      if (version && version.textContent !== `UI v${UI_VERSION_V083}`) version.textContent = `UI v${UI_VERSION_V083}`;
     }
   }
-  customElements.define("keenetic-hero-app-panel-v082", KeeneticHeroAppPanelV082);
+  customElements.define("keenetic-hero-app-panel-v083", KeeneticHeroAppPanelV083);
 }
 })();
-// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v082.js
+// END custom_components/keenetic_hero_4g/frontend/keenetic-app-v083.js

@@ -247,6 +247,8 @@ def _bootstrap_payload(hass: HomeAssistant, entry: ConfigEntry) -> dict[str, Any
         "sources": source_map,
         "telemetry": {
             "last_update_success": bool(coordinator.last_update_success),
+            "connection_available": bool(coordinator.last_update_success),
+            "data_channel": "local",
             "latest_rci_state_update": _latest_rci_state_update(
                 hass, entity_map, source_map
             ),

@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel metadata version: **0.8.0**
+Panel metadata version: **0.8.3**
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -24,7 +24,7 @@ The current panel follows **NikaS Specialized Panel UI Standard v1.6** from the 
 
 The shell and first work view are mounted once. Other views are created on first visit and retained in a stable DOM cache. Home Assistant state cycles are coalesced through `requestAnimationFrame` and patch only changed text, classes and attributes. Header, Bottom Tab Bar, zoom viewport and visited tab containers keep their identity; tab selection uses `hidden` and `inert` without a blank frame.
 
-This panel explicitly includes the optional two-level connection indicator. Its channel line uses the factual labels `Локально / Облако / Резерв / Нет связи / Нет данных`; freshness uses `Данные актуальны / Данные устарели / Нет данных`. A failed current poll immediately makes retained values stale without relabelling a known local/cloud path as a transport outage. The stable surface is tinted by the primary state and uses 16 px / 700 plus 13 px / 600 typography.
+This panel explicitly includes the optional two-level connection indicator. Its channel line uses the factual labels `Локально / Облако / Резерв / Нет связи / Нет данных`; freshness uses `Данные актуальны / Данные устарели / Нет данных`. A failed current local poll immediately reports `Нет связи` and makes retained values stale. The stable surface is tinted by the primary state and uses 16 px / 700 plus 13 px / 600 typography.
 
 On phones the integration owns a height-locked three-row application shell in the Home Assistant panel's normal layout flow. Only `#work-viewport-v080` scrolls or scales; the outer Home Assistant page, Header and Bottom Tab Bar do not participate in content movement. The runtime must not escape the HA panel container with a fixed-position host. Meaningful panel text uses a semantic hierarchy within 12–25 px rather than flattening labels and values to one size.
 
@@ -35,9 +35,10 @@ The production shell is mounted directly and does not inherit any earlier scroll
 - permanent `mdi:menu` Home Assistant menu on the left; it dispatches `hass-toggle-menu`;
 - title `Keenetic Hero 4G+` geometrically centered against the viewport;
 - no decorative router/brand icon beside the title;
-- compact semantic subtitle `Network Control Center` with no build number;
+- the complete central title surface is a button that returns to the source NikaS panel;
+- first line `Keenetic Hero 4G+`, second line `UI v0.8.3`;
 - one global Refresh action on the right;
-- any parent-section transition belongs inside the work area, never in the permanent left Header slot.
+- the source route is restricted to `Дом сейчас`, `Действия` or `Инфраструктура`; the left Header slot remains the native HA menu.
 
 ### Bottom navigation
 
@@ -53,18 +54,20 @@ It is full-width, edge-attached, non-floating and respects iOS safe area. `Си�
 
 ## Overview hierarchy
 
-`Header -> network topology/status -> Провод | LTE contextual selector -> selected channel detail -> recent failover -> Bottom Tab Bar`
+`Header -> network topology/status -> reserve readiness -> active-channel metrics -> compact reserve channel -> Bottom Tab Bar`
 
-The compact Internet / Active WAN / Ethernet / LTE topology is always preserved. Ethernet and LTE are channels of one router, not peer physical devices, so the contextual selector is **not** a Device Selector.
+The compact Internet / Active WAN / Ethernet / LTE topology is always preserved. The 340 px phone hero contains only the network state, the two-line connection indicator, Cable/LTE/LAN cards and factual paths. Active metrics never overlap the artwork.
 
-### Overview channel selection
+### Overview channel composition
 
-- `Провод | LTE` appears directly below the topology;
-- default selection follows factual `active_wan`;
-- only the selected channel detail is rendered below the selector;
-- factual active-route indication remains independent from diagnostic selection;
-- inspecting the inactive channel never changes router state;
-- if Active WAN is unknown, no channel is silently invented as the default.
+- the active path is solid green;
+- a connected ready reserve is dashed blue;
+- a confirmed down path is red and unknown is neutral grey;
+- `Резерв готов` is a separate compact surface below the photo;
+- one active-channel card contains Ping, loss, telemetry age, Link/signal, RX, TX, WAN IP and uptime;
+- factual entity-backed metrics retain native Home Assistant more-info on hold;
+- the reserve channel is one compact row without a repeated readiness badge;
+- if Active WAN is unknown, no channel is silently invented as active.
 
 ## WAN / LTE
 
@@ -76,9 +79,7 @@ Shows last switch, direction, factual reason, switches today and LTE time today.
 
 ## Traffic
 
-Shows current/daily/monthly counters and Recorder RX/TX rate history for `24 ч`, `7 дн` and `30 дн`.
-
-Starting with panel 0.2.6, **every period-button selection performs a fresh Recorder request for that range**. A previously viewed period may remain cached for rendering, but the cache cannot suppress a later refresh. Request generations ensure that a late response from an older period does not overwrite the current loading/error state. This makes period switching symmetric in both directions (`24h -> 7d -> 30d` and `30d -> 7d -> 24h`).
+Shows current/daily/monthly counters. Recorder history and its period selector remain temporarily disabled in the current stabilization line.
 
 ## Diagnostics
 

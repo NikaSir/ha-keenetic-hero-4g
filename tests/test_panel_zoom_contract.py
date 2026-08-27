@@ -65,7 +65,7 @@ class PanelZoomContractTests(unittest.TestCase):
         self.assertEqual(zoom["gesture_listener_phase"], "capture")
         self.assertTrue(zoom["remeasure_after_mount"])
         self.assertIn('getElementById("work-viewport-v080")', self.delivery_source)
-        self.assertIn("if (!viewport || !surface || viewport.clientWidth <= 0) return false", self.delivery_source)
+        self.assertIn("if (!viewport || viewport.clientWidth <= 0) return false", self.delivery_source)
         self.assertIn('{ capture: true, passive: false }', self.delivery_source)
         self.assertIn("new ResizeObserver", self.delivery_source)
 
@@ -100,7 +100,7 @@ class PanelZoomContractTests(unittest.TestCase):
     def test_delivery_manifest_matches_shell_and_zoom_policy(self) -> None:
         self.assertEqual(self.manifest["route"], "/dashboard-keenetic")
         self.assertEqual(self.manifest["entry_module"], "keenetic-panel-bundle.js")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v082")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v083")
         self.assertEqual(
             self.manifest["ha_menu_event"],
             {"type": "hass-toggle-menu", "bubbles": True, "composed": True},
