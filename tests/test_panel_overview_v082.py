@@ -11,6 +11,9 @@ BUILD = ROOT / "scripts" / "build_frontend_bundle.py"
 RUNTIME = INTEGRATION / "panel_runtime.py"
 MANIFEST = INTEGRATION / "manifest.json"
 
+# This test file is intentionally outside frontend bundle inputs so the final
+# generated-bundle head can be revalidated without starting a rebuild loop.
+
 
 class PanelOverviewV082Tests(unittest.TestCase):
     @classmethod
