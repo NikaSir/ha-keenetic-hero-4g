@@ -4,11 +4,13 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from . import panel as _panel
-from .const import PANEL_VERSION
+
+FRONTEND_UI_VERSION = "0.8.1"
+FRONTEND_COMPONENT_SLUG = "v081"
 
 
 def _frontend_slug() -> str:
-    return "v" + PANEL_VERSION.replace(".", "")
+    return FRONTEND_COMPONENT_SLUG
 
 
 def _select_frontend() -> None:
@@ -16,7 +18,7 @@ def _select_frontend() -> None:
     slug = _frontend_slug()
     _panel.PANEL_COMPONENT = f"keenetic-hero-app-panel-{slug}"
     _panel.PANEL_MODULE = (
-        f"{_panel.PANEL_STATIC_URL}/keenetic-panel-bundle.js?v={PANEL_VERSION}"
+        f"{_panel.PANEL_STATIC_URL}/keenetic-panel-bundle.js?v={FRONTEND_UI_VERSION}"
     )
 
 
