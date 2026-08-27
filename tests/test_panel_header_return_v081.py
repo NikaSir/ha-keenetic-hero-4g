@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v081.js"
+CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v082.js"
 BASE_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
 RUNTIME = INTEGRATION / "panel_runtime.py"
 
@@ -18,15 +19,19 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.source = SOURCE.read_text(encoding="utf-8")
+        cls.current = CURRENT_SOURCE.read_text(encoding="utf-8")
         cls.base = BASE_SOURCE.read_text(encoding="utf-8")
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
 
     def test_current_ui_version_and_component_are_explicit(self) -> None:
-        self.assertIn('FRONTEND_UI_VERSION = "0.8.1"', self.runtime)
-        self.assertIn('FRONTEND_COMPONENT_SLUG = "v081"', self.runtime)
+        self.assertIn('FRONTEND_UI_VERSION = "0.8.2"', self.runtime)
+        self.assertIn('FRONTEND_COMPONENT_SLUG = "v082"', self.runtime)
         self.assertIn('const UI_VERSION_V081 = "0.8.1"', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v081"', self.source)
-        self.assertIn('<strong>Keenetic Hero 4G+</strong><span>UI v${UI_VERSION_V081}</span>', self.source)
+        self.assertIn('const UI_VERSION_V082 = "0.8.2"', self.current)
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v082"', self.current)
+        self.assertIn('querySelector("#return-v081 span")', self.current)
+        self.assertIn('version.textContent = `UI v${UI_VERSION_V082}`', self.current)
 
     def test_center_header_is_a_real_return_button(self) -> None:
         self.assertIn('button.id = "return-v081"', self.source)
@@ -36,6 +41,7 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         self.assertIn("border-radius:16px", self.source)
         self.assertIn("return-v081:active", self.source)
         self.assertIn("grid-column:2;grid-row:1;justify-self:center", self.source)
+        self.assertIn('extends CURRENT_SHELL_BASE_V082', self.current)
 
     def test_return_route_is_source_aware_and_safely_bounded(self) -> None:
         for route in [
@@ -56,6 +62,8 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         self.assertIn('new Event("location-changed")', self.source)
         self.assertNotIn("history.back", self.source)
         self.assertNotIn("history.go(-1", self.source)
+        self.assertNotIn("history.back", self.current)
+        self.assertNotIn("history.go(-1", self.current)
 
     def test_fixed_side_actions_remain_home_assistant_menu_and_refresh(self) -> None:
         self.assertIn('icon="mdi:menu"', self.base)
