@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v077.js"
+DELIVERY_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v078.js"
 CONTRACT = INTEGRATION / "panel_contract.json"
 
 
@@ -15,6 +16,7 @@ class PanelBottomSafeAreaTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.source = SOURCE.read_text(encoding="utf-8")
+        cls.delivery_source = DELIVERY_SOURCE.read_text(encoding="utf-8")
         cls.contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
 
     def test_tabbar_consumes_bottom_safe_area_once(self) -> None:
@@ -33,6 +35,8 @@ class PanelBottomSafeAreaTests(unittest.TestCase):
     def test_current_component_is_cache_safe(self) -> None:
         self.assertIn('import("./keenetic-app-v076.js?v=0.7.7")', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v077"', self.source)
+        self.assertIn('import("./keenetic-app-v077.js?v=0.7.8")', self.delivery_source)
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v078"', self.delivery_source)
 
 
 if __name__ == "__main__":

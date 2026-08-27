@@ -1,5 +1,13 @@
 # Changelog
 
+## UI v0.7.8 / v1.00_b041 — 2026-08-27
+
+- Rebinds pinch gesture listeners in the capture phase only after `app-content`, `nika-zoom-stage`, `nika-zoom-surface` and the child panel exist.
+- Retries viewport initialization instead of marking a missing surface as ready.
+- Measures the active persistent view after mount and on `ResizeObserver` changes, then gives the stage the real scaled content height so native vertical scrolling works at 100%.
+- Keeps Header and Bottom Tab Bar outside the only scroll/zoom viewport and preserves the stable no-flicker DOM update path.
+- Rebalances the overview for the 12 px minimum type scale: Cable and LAN move above the router path, topology cards become symmetric, and the router is slightly smaller and lower.
+
 ## UI v0.7.7 / v1.00_b040 — 2026-08-26
 
 - Removes the v0.7.6 mobile `position: fixed; inset: 0` host override that escaped the Home Assistant panel container and produced incorrect Header/work-viewport geometry on the real iPhone.

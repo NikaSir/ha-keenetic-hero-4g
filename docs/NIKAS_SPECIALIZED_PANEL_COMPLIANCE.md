@@ -1,21 +1,21 @@
 # NikaS specialized-panel compliance — Keenetic Hero 4G+
 
-**Audit date:** 2026-08-26
+**Audit date:** 2026-08-27
 **Standard:** NikaS Specialized Panel UI Standard v1.6
 **Canonical revision checked:** `NikaSir/ha-contract-generated-ui@0cafa26faa145cc4d63e9c9ae7ecd668884d6f95`
-**Audited production path:** `panel_runtime.py` + `PANEL_VERSION=0.7.7` → `keenetic-panel-bundle.js?v=0.7.7` → `keenetic-hero-app-panel-v077`
-**Scope:** corrected in UI v0.7.7 after v0.7.6 phone feedback; repeat phone field acceptance is required
+**Audited production path:** `panel_runtime.py` + `PANEL_VERSION=0.7.8` → `keenetic-panel-bundle.js?v=0.7.8` → `keenetic-hero-app-panel-v078`
+**Scope:** corrected in UI v0.7.8 after v0.7.7 phone feedback; repeat phone field acceptance is required
 
 | Area | Result | Evidence |
 |---|---|---|
-| Integration-owned fixed shell | PASS | v077 keeps the height-locked three-row shell in normal HA panel flow, prevents scroll chaining and keeps Header/`.nika-tabbar` outside `#app-content`/zoom surface. |
+| Integration-owned fixed shell | PASS | v077 keeps the height-locked three-row shell in normal HA panel flow; v078 keeps Header/`.nika-tabbar` outside the only `#app-content`/zoom surface. |
 | Native HA menu | PASS | `frontend/keenetic-app-v045.js` restores `mdi:menu` and dispatches bubbling/composed `hass-toggle-menu`. |
-| One production entry / cache busting | PASS | `panel_runtime.py` selects one `keenetic-panel-bundle.js?v=0.7.7`; build-time asset URLs and the manifest use the same version key. |
-| Stable live updates | PASS | v075's field-confirmed no-flicker point patch remains the update engine; v076/v077 add no telemetry-time shell or view replacement, and v077 measures the viewport only after mount or actual child replacement. |
+| One production entry / cache busting | PASS | `panel_runtime.py` selects one `keenetic-panel-bundle.js?v=0.7.8`; build-time asset URLs and the manifest use the same version key. |
+| Stable live updates | PASS | v075's field-confirmed no-flicker point patch remains the update engine; v076–v078 add no telemetry-time shell or view replacement. |
 | Persistent shell and lazy tab cache | PASS | Header, Bottom Tab Bar and zoom viewport keep DOM identity. Work views are created on first visit, retained, and switched with `hidden`/`inert`. |
 | Requested connection indicator | PASS | v076 renders a stable two-line status-tinted surface, patches semantic categories/ARIA only, uses 16/700 plus 13/600 typography, and keeps current freshness neutral. |
 | Scale 75–200% and focal pinch | PASS | Final `frontend/keenetic-app-v074.js` clamps 0.75–2.0 and maintains the content point under the live midpoint. |
-| Native vertical scroll at 100% | PASS | v074 owns the behavior; final v077 CSS explicitly restores vertical native overflow, hides horizontal overflow and sets `touch-action:pan-y` at or below 100%. |
+| Native vertical scroll at 100% | PASS | v074 owns the behavior; v078 waits for the real viewport graph, measures the active persistent view and gives the stage its actual scaled height. |
 | Origin fixed at 100%; no custom one-finger pan | PASS | v074 clamps transform x/y to zero at or below 100% and creates a pan candidate only above 100%. |
 | Pan only above 100% / overflowing axes | PASS | v074 independently enables and clamps each axis from measured scaled bounds. |
 | 97–103% snap | PASS | v074 snaps this range to exactly 100% after gesture end. |
@@ -23,7 +23,7 @@
 | No permanent zoom buttons | PASS | v074 never installs controls and removes legacy control nodes defensively. |
 | Scale persistence granularity | PASS | v074 persists per panel/client and config-entry device key. |
 | Tab reset and clamp | PASS | v074 resets scroll/x/y on each accepted tab transition, then remeasures the new content while preserving scale. |
-| Resize clamp | PASS | v074 observes the surface and window/visual viewport resize, then remeasures and clamps. |
+| Resize clamp | PASS | v078 observes the active persistent view, remeasures after mount/tab changes and clamps through the v074 engine. |
 | Header reference geometry | PASS | Final v077 CSS fixes both controls in grid row 1 and sets 52/48 rails, 62/60 height, matched 44×44 radius-16 plaques, exact reference shadow, 25px icons and 23/14 or narrow 21/13 typography. |
 | Safe area | PASS | v077 resolves each HA/iOS inset through one effective custom property and consumes it once at the corresponding shell edge. Must be field-checked with `handle_safe_area=True`. |
 | Bottom Tab geometry | PASS | Final v077 CSS preserves 6px insets, minimum 52px controls, radius 16, 3px internal gap, 28px `ha-icon`, 12/700 labels, 11% active fill and one effective bottom safe area. |

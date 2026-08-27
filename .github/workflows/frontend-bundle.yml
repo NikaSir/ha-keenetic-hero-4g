@@ -25,6 +25,7 @@ on:
       - "ui/b038-*"
       - "ui/b039-*"
       - "fix/b040-*"
+      - "fix/b041-*"
     paths:
       - "custom_components/keenetic_hero_4g/frontend/**"
       - "custom_components/keenetic_hero_4g/panel_runtime.py"
@@ -86,13 +87,13 @@ jobs:
             exit 1
           fi
 
-      - name: Verify UI v0.7.7 stable DOM, NikaS v1.6 shell and idempotent Failover
+      - name: Verify UI v0.7.8 viewport, composition, stable DOM and NikaS v1.6 shell
         shell: bash
         run: |
-          grep -q 'PANEL_VERSION = "0.7.7"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'PANEL_VERSION = "0.7.8"' custom_components/keenetic_hero_4g/const.py
           grep -q 'keenetic-panel-bundle.js' custom_components/keenetic_hero_4g/panel_runtime.py
-          grep -q '"version": "0.7.7"' custom_components/keenetic_hero_4g/panel_contract.json
-          grep -q '"web_component": "keenetic-hero-app-panel-v077"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"version": "0.7.8"' custom_components/keenetic_hero_4g/panel_contract.json
+          grep -q '"web_component": "keenetic-hero-app-panel-v078"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"hass_update": "point_patch"' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"shadow_root_inner_html_after_mount": false' custom_components/keenetic_hero_4g/panel_contract.json
           grep -q '"replace_children_after_mount": false' custom_components/keenetic_hero_4g/panel_contract.json
@@ -185,6 +186,15 @@ jobs:
           grep -q 'box-shadow:0 7px 20px rgba(23,45,76,.08)!important' custom_components/keenetic_hero_4g/frontend/keenetic-app-v077.js
           grep -q 'this._child !== previousChild' custom_components/keenetic_hero_4g/frontend/keenetic-app-v077.js
           grep -q 'this._viewportInitializedV077) return' custom_components/keenetic_hero_4g/frontend/keenetic-app-v077.js
+          grep -q 'keenetic-hero-app-panel-v078' custom_components/keenetic_hero_4g/frontend/keenetic-app-v078.js
+          grep -q 'MAX_VIEWPORT_RETRIES_V078 = 24' custom_components/keenetic_hero_4g/frontend/keenetic-app-v078.js
+          grep -q 'if (!viewport || !stage || !surface || !this._child) return false' custom_components/keenetic_hero_4g/frontend/keenetic-app-v078.js
+          grep -q 'capture: true, passive: false' custom_components/keenetic_hero_4g/frontend/keenetic-app-v078.js
+          grep -q 'new ResizeObserver' custom_components/keenetic_hero_4g/frontend/keenetic-app-v078.js
+          grep -q 'contentHeightV078' custom_components/keenetic_hero_4g/frontend/keenetic-app-v078.js
+          grep -q 'this._standardBaseHeightV074 \* scale' custom_components/keenetic_hero_4g/frontend/keenetic-app-v078.js
+          grep -q '.v061-cable{left:3%!important;top:50%!important}' custom_components/keenetic_hero_4g/frontend/keenetic-app-v078.js
+          grep -q '.v061-lan{right:3%!important;top:50%!important}' custom_components/keenetic_hero_4g/frontend/keenetic-app-v078.js
           grep -q 'keenetic-hero-router-v063.webp' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'v063-flow-layer' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'v063-cable-line' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
@@ -193,18 +203,18 @@ jobs:
           grep -q 'replace(/Кабель/gi, "Ethernet")' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'keenetic-hero-app-panel-v063' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
           grep -q 'padding-bottom:4px!important' custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
-          grep -q 'keenetic-app-v077.js' scripts/build_frontend_bundle.py
+          grep -q 'keenetic-app-v078.js' scripts/build_frontend_bundle.py
           python - <<'PY'
           import json
           from pathlib import Path
 
           root = Path("custom_components/keenetic_hero_4g")
           manifest = json.loads((root / "panel_manifest.json").read_text(encoding="utf-8"))
-          assert manifest["panel_version"] == "0.7.7"
+          assert manifest["panel_version"] == "0.7.8"
           assert manifest["schema_version"] == 2
           assert manifest["route"] == "/dashboard-keenetic"
           assert manifest["entry_module"] == "keenetic-panel-bundle.js"
-          assert manifest["web_component"] == "keenetic-hero-app-panel-v077"
+          assert manifest["web_component"] == "keenetic-hero-app-panel-v078"
           assert manifest["ha_menu_event"] == {
               "type": "hass-toggle-menu", "bubbles": True, "composed": True
           }
@@ -216,7 +226,7 @@ jobs:
           for asset in manifest["assets"]:
               path = root / asset["path"]
               assert path.is_file() and path.stat().st_size > 0, path
-              assert asset["url"].endswith("?v=0.7.7"), asset
+              assert asset["url"].endswith("?v=0.7.8"), asset
           PY
 
       - name: Commit generated bundle when changed
@@ -232,7 +242,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$BUNDLE"
-          git commit -m "build: refresh Keenetic UI v0.7.7 autonomous bundle"
+          git commit -m "build: refresh Keenetic UI v0.7.8 autonomous bundle"
           git push origin "HEAD:${TARGET_BRANCH}"
 
       - name: Verify bundle is current
