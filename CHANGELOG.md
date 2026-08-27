@@ -1,5 +1,14 @@
 # Changelog
 
+## UI v0.7.7 / v1.00_b040 — 2026-08-26
+
+- Removes the v0.7.6 mobile `position: fixed; inset: 0` host override that escaped the Home Assistant panel container and produced incorrect Header/work-viewport geometry on the real iPhone.
+- Restores one height-locked three-row grid in normal panel flow; `#app-content` again owns explicit native vertical scrolling at 100% while Header and Bottom Tab Bar remain outside it.
+- Re-arms the existing focal two-finger pinch after the child work surface has mounted and remeasures it on the second animation frame, avoiding a zero/incorrect initial canvas measurement.
+- Rebuilds the Header with one effective HA/iOS safe-area source, explicit row placement and matched 44×44 controls.
+- Replaces the flattened 12 px content override with a semantic 12–25 px hierarchy for captions, values, topology labels and headings.
+- Keeps the v0.7.5 stable-DOM/no-flicker update path and the v0.7.6 two-line connection indicator unchanged.
+
 ## UI v0.7.6 / v1.00_b039 — 2026-08-26
 
 - Rebuilds the panel against the repository-owned NikaS Specialized Panel UI Standard v1.6.

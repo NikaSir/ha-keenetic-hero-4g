@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel version: 0.7.6
+Panel version: 0.7.7
 
-Integration build: 1.0.0-b039
+Integration build: 1.0.0-b040
 
 Standard: NikaS Specialized Panel UI Standard v1.6
 
@@ -21,6 +21,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - Header, menu, Refresh and fixed Bottom Tab Bar remain at native scale.
 - Menu and Refresh render as matching 44 × 44 px, radius-16 plaques with 25 px `ha-icon` glyphs and remain fully visible below the Dynamic Island.
 - The height-locked shell prevents the Home Assistant outer document from scrolling; short views fill the work row instead of moving either menu.
+- The custom-panel host remains in normal Home Assistant layout flow; no mobile `position: fixed; inset: 0` override may detach it from the HA panel container.
 - Bottom Tab Bar is full-width, edge-attached, safe-area-aware and contains exactly `Обзор / Каналы / Failover / Трафик / Диагн.`.
 - Bottom Tab Bar keeps minimum 52 px controls, 28 px `ha-icon` pictograms and 12 px / 700 labels, and adds the iPhone bottom safe-area inset below them.
 - Final work content remains reachable above the Bottom Tab Bar; no horizontal page overflow is introduced at 430 px or 390 px.
@@ -60,7 +61,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.6` and component `keenetic-hero-app-panel-v076`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.7.7` and component `keenetic-hero-app-panel-v077`.
 - Historical modules are build-time inputs only; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
@@ -77,4 +78,4 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## Release gate
 
-UI v0.7.6 / b039 is accepted after all NikaS v1.6 checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; the corrected two-finger double-tap reset, fixed Header/Bottom Tab Bar, outer-scroll lock, typography, pinch midpoint, persistence, bounded pan, safe areas and router path occlusion must pass on the real iPhone Pro Max / KN-2311 environment.
+UI v0.7.7 / b040 is accepted after all NikaS v1.6 checks pass together with repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, the corrected two-finger double-tap reset, fixed Header/Bottom Tab Bar, semantic typography, persistence, bounded pan, exactly-once safe areas and router path occlusion must pass on the real iPhone Pro Max / KN-2311 environment.
