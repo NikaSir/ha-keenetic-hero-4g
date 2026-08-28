@@ -11,7 +11,7 @@ panel:
   navigation_contract_version: "1.1"
   expose_in_generated_ui: true
   preferred_view: overview
-  version: 0.8.7
+  version: 0.8.8
 
 app_shell:
   standard: Home Assistant NikaS specialized panel
@@ -25,7 +25,7 @@ app_shell:
       min_touch_target_px: 44
     title: Keenetic Hero 4G+
     title_surface_action: return_to_source_nikas_panel
-    version_line: UI v0.8.7
+    version_line: UI v0.8.8
     title_alignment: viewport_center
     source_route_handoff_key: nikas.specialized.source_route.v1
     source_route_timestamp_key: nikas.specialized.source_route_at.v1
@@ -67,7 +67,7 @@ app_shell:
 frontend_delivery:
   mode: self_contained_bundle
   module: keenetic-panel-bundle.js
-  web_component: keenetic-hero-app-panel-v087
+  web_component: keenetic-hero-app-panel-v088
   includes_styles: true
   cache_busting: query_panel_version
   runtime_previous_version_imports: false

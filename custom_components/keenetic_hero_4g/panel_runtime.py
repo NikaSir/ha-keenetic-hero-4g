@@ -5,8 +5,8 @@ from homeassistant.core import HomeAssistant
 
 from . import panel as _panel
 
-FRONTEND_UI_VERSION = "0.8.7"
-FRONTEND_COMPONENT_SLUG = "v087"
+FRONTEND_UI_VERSION = "0.8.8"
+FRONTEND_COMPONENT_SLUG = "v088"
 
 
 def _frontend_slug() -> str:
