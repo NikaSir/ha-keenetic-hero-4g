@@ -6,11 +6,11 @@ Custom Home Assistant integration for **Keenetic Hero 4G+ (KN-2311)**. The integ
 
 ## Status
 
-- integration candidate: `v1.00_b047`;
-- native panel candidate: `UI v0.8.5`;
+- integration candidate: `v1.00_b048`;
+- native panel candidate: `UI v0.8.6`;
 - publication model: reviewed branch/PR without GitHub Release or automatic tag.
 
-The current candidate keeps the previously validated read-only RCI telemetry and b046 Overview composition, then aligns the persistent Header return path and production metadata with the current NikaS UI/navigation contract. Final acceptance requires Companion App checks for source-aware Header return, scroll, pinch, two-finger reset, more-info holds and repeated tab switching on the target KN-2311 panel.
+The current candidate keeps the validated read-only RCI telemetry, stable shell and source-aware Header return, then replaces the degraded router artwork with the approved real KN-2311 product layer and connects all three live paths behind its body. Final acceptance requires Companion App checks for the Overview composition, source-aware Header return, scroll, pinch, two-finger reset, more-info holds and repeated tab switching on the target KN-2311 panel.
 
 Existing SNMP/template entities may remain installed during comparison testing. Temporary `_2` or `_old` entity IDs are not part of the integration's final entity model.
 

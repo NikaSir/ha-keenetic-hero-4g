@@ -73,6 +73,10 @@ def main() -> None:
 
     current_runtime_path = config.get("current_runtime_path")
     current_runtime = read_relative(current_runtime_path) if current_runtime_path else ""
+    header_return_runtime_path = config.get("header_return_runtime_path", current_runtime_path)
+    header_return_runtime = (
+        read_relative(header_return_runtime_path) if header_return_runtime_path else current_runtime
+    )
 
     if role == "readiness":
         require(not runtime_files, "readiness-only repository must not claim a panel runtime")
@@ -153,7 +157,7 @@ def main() -> None:
     for marker in config.get("forbidden_runtime_markers", []):
         require(marker not in sources, f"forbidden specialized-panel runtime marker present: {marker}")
 
-    if current_runtime:
+    if header_return_runtime:
         for token in (
             'for (const key of ["return_to", "from"])',
             "consumeSourceRouteV085()",
@@ -164,9 +168,18 @@ def main() -> None:
             "/dashboard-actions/home",
             "/dashboard-infrastructure/overview",
         ):
-            require(token in current_runtime, f"current Header-return implementation missing token: {token}")
-        require('params.get("source")' not in current_runtime, "non-canonical source query fallback is forbidden")
-        require("window.history.state" not in current_runtime, "non-canonical history-state fallback is forbidden")
+            require(
+                token in header_return_runtime,
+                f"current Header-return implementation missing token: {token}",
+            )
+        require(
+            'params.get("source")' not in header_return_runtime,
+            "non-canonical source query fallback is forbidden",
+        )
+        require(
+            "window.history.state" not in header_return_runtime,
+            "non-canonical history-state fallback is forbidden",
+        )
 
     integration = ROOT / "custom_components" / "keenetic_hero_4g"
     panel_contract = json.loads((integration / "panel_contract.json").read_text(encoding="utf-8"))

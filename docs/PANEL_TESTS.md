@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel metadata version: 0.8.5
+Panel metadata version: 0.8.6
 
-Integration build: 1.0.0-b047
+Integration build: 1.0.0-b048
 
 Standard: NikaS Specialized Panel UI Standard v1.8 + NikaS Panel Navigation and Return Contract v1.0
 
@@ -67,7 +67,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.8.5` and component `keenetic-hero-app-panel-v085`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.8.6` and component `keenetic-hero-app-panel-v086`.
 - Superseded shell/zoom modules v066–v078 are excluded; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
@@ -85,4 +85,4 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## Release gate
 
-Build b047 is a phone-validation candidate. It is accepted only after all NikaS rule 1.17, v1.8 navigation-contract and production-bundle checks pass together with return tests from all three base panels, repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the compact Cable/LTE/LAN composition must pass on the real iPhone Pro Max / KN-2311 environment.
+Build b048 is a phone-validation candidate. It is accepted only after all NikaS rule 1.17, v1.8 navigation-contract and production-bundle checks pass together with return tests from all three base panels, repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the approved real KN-2311 Cable/LTE/LAN composition must pass on the real iPhone Pro Max / KN-2311 environment.
