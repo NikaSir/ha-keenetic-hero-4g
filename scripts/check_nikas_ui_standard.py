@@ -75,6 +75,13 @@ def main() -> None:
             "production_entrypoint must be one of the checked runtime_files",
         )
 
+    current_runtime_path = config.get("current_runtime_path")
+    current_runtime = read_relative(current_runtime_path) if current_runtime_path else ""
+    header_return_runtime_path = config.get("header_return_runtime_path", current_runtime_path)
+    header_return_runtime = (
+        read_relative(header_return_runtime_path) if header_return_runtime_path else current_runtime
+    )
+
     if role == "readiness":
         require(not runtime_files, "readiness-only repository must not claim a panel runtime")
         compliance = read_relative(config["compliance_path"])
@@ -173,6 +180,46 @@ def main() -> None:
     for marker in config.get("forbidden_runtime_markers", []):
         require(marker not in sources, f"forbidden specialized-panel runtime marker present: {marker}")
 
+    if header_return_runtime:
+        for token in (
+            'for (const key of ["return_to", "from"])',
+            "consumeSourceRouteV085()",
+            "savedReturnRouteV085()",
+            "sessionStorage.removeItem(SOURCE_ROUTE_KEY_V085)",
+            "localStorage.setItem(RETURN_ROUTE_KEY_V085, route)",
+            "/dashboard-house-v11/home",
+            "/dashboard-actions/home",
+            "/dashboard-infrastructure/overview",
+        ):
+            require(
+                token in header_return_runtime,
+                f"current Header-return implementation missing token: {token}",
+            )
+        require(
+            'params.get("source")' not in header_return_runtime,
+            "non-canonical source query fallback is forbidden",
+        )
+        require(
+            "window.history.state" not in header_return_runtime,
+            "non-canonical history-state fallback is forbidden",
+        )
+
+    integration = ROOT / "custom_components" / "keenetic_hero_4g"
+    panel_contract = json.loads((integration / "panel_contract.json").read_text(encoding="utf-8"))
+    panel_manifest = json.loads((integration / "panel_manifest.json").read_text(encoding="utf-8"))
+    ui_version = config.get("ui_version")
+    web_component = config.get("web_component")
+    require(panel_contract["panel"]["version"] == ui_version, "panel contract UI version drift")
+    require(panel_manifest["panel_version"] == ui_version, "panel manifest UI version drift")
+    require(panel_contract["frontend_delivery"]["web_component"] == web_component, "panel contract component drift")
+    require(panel_manifest["web_component"] == web_component, "panel manifest component drift")
+    require(panel_contract["app_shell"]["version"] == config["version"], "panel contract standard drift")
+    require(panel_manifest["zoom_policy"]["standard"] == config["version"], "panel manifest standard drift")
+    require(panel_contract["app_shell"]["canonical_sha256"] == config["standard_sha256"], "panel contract standard hash drift")
+    require(
+        panel_contract["app_shell"]["navigation_contract_sha256"] == config["navigation_contract_sha256"],
+        "panel contract navigation hash drift",
+    )
 
 if __name__ == "__main__":
     main()
