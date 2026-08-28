@@ -39,6 +39,7 @@ on:
       - "scripts/build_frontend_bundle.py"
       - "scripts/check_nikas_ui_standard.py"
       - "docs/NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md"
+      - "docs/NIKAS_PANEL_NAVIGATION_CONTRACT.md"
       - ".nikas-ui-standard.json"
       - ".github/workflows/frontend-bundle.yml"
   pull_request:
@@ -51,12 +52,13 @@ on:
       - "scripts/build_frontend_bundle.py"
       - "scripts/check_nikas_ui_standard.py"
       - "docs/NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md"
+      - "docs/NIKAS_PANEL_NAVIGATION_CONTRACT.md"
       - ".nikas-ui-standard.json"
       - ".github/workflows/frontend-bundle.yml"
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   bundle:
@@ -72,7 +74,7 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Enforce NikaS rule 1.17 and navigation contract v1.8
+      - name: Enforce NikaS rule 1.17, UI standard v1.9 and navigation contract v1.1
         run: python scripts/check_nikas_ui_standard.py
 
       - name: Set up Node.js
@@ -80,8 +82,8 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Build autonomous frontend bundle
-        run: python scripts/build_frontend_bundle.py
+      - name: Verify deterministic autonomous frontend bundle
+        run: python scripts/build_frontend_bundle.py --check
 
       - name: Verify production bundle syntax and dependency contract
         shell: bash
@@ -246,19 +248,21 @@ jobs:
       - name: Verify clean panel shell, scroll, zoom and current NikaS contract
         shell: bash
         run: |
-          grep -q 'PANEL_VERSION = "0.8.6"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'PANEL_VERSION = "0.8.7"' custom_components/keenetic_hero_4g/const.py
           grep -q 'keenetic-panel-bundle.js' custom_components/keenetic_hero_4g/panel_runtime.py
           grep -q 'keenetic-app-v080.js' scripts/build_frontend_bundle.py
           grep -q 'keenetic-app-v083.js' scripts/build_frontend_bundle.py
           grep -q 'keenetic-app-v084.js' scripts/build_frontend_bundle.py
           grep -q 'keenetic-app-v085.js' scripts/build_frontend_bundle.py
           grep -q 'keenetic-app-v086.js' scripts/build_frontend_bundle.py
+          grep -q 'keenetic-app-v087.js' scripts/build_frontend_bundle.py
           if grep -q 'FRONTEND / "keenetic-app-v082.js"' scripts/build_frontend_bundle.py; then exit 1; fi
           grep -q 'keenetic-hero-app-panel-v080' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
           grep -q 'keenetic-hero-app-panel-v083' custom_components/keenetic_hero_4g/frontend/keenetic-app-v083.js
           grep -q 'keenetic-hero-app-panel-v084' custom_components/keenetic_hero_4g/frontend/keenetic-app-v084.js
           grep -q 'keenetic-hero-app-panel-v085' custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js
           grep -q 'keenetic-hero-app-panel-v086' custom_components/keenetic_hero_4g/frontend/keenetic-app-v086.js
+          grep -q 'keenetic-hero-app-panel-v087' custom_components/keenetic_hero_4g/frontend/keenetic-app-v087.js
           grep -q 'keenetic-hero-router-v086.webp' custom_components/keenetic_hero_4g/frontend/keenetic-app-v086.js
           grep -q 'M500 228 L500 406' custom_components/keenetic_hero_4g/frontend/keenetic-app-v086.js
           grep -q 'nikas.specialized.source_route.v1' custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js
@@ -285,22 +289,6 @@ jobs:
             fi
           done
           python -m unittest discover -s tests -v
-
-      - name: Commit generated bundle when changed
-        shell: bash
-        env:
-          TARGET_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
-        run: |
-          BUNDLE=custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js
-          if [ -z "$(git status --porcelain -- "$BUNDLE")" ]; then
-            echo "Bundle already current."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$BUNDLE"
-          git commit -m "build: refresh Keenetic panel autonomous bundle"
-          git push origin "HEAD:${TARGET_BRANCH}"
 
       - name: Verify bundle is current
         shell: bash

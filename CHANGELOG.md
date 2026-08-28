@@ -1,5 +1,11 @@
 # Changelog
 
+## UI v0.8.7 / v1.00_b049 — 2026-08-28
+
+- Requires a complete one-shot route/timestamp pair and rejects invalid, stale and future hand-offs before capturing the centered Header return destination.
+- Adopts NikaS Specialized Panel UI Standard v1.9, Navigation Contract v1.1 and explicit read-only integration/registry data-truth metadata.
+- Adds deterministic autonomous-bundle verification and publishes the coherent `keenetic-hero-app-panel-v087` component/cache key while preserving the approved KN-2311 artwork.
+
 ## UI v0.8.6 / v1.00_b048 — 2026-08-28
 
 - Replaces the degraded generated router layer with a transparent local asset derived from the official Keenetic Hero 4G+ KN-2311 product photograph.

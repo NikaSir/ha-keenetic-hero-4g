@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v081.js"
 CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v085.js"
-DELIVERY_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v086.js"
+DELIVERY_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v087.js"
 BASE_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
 RUNTIME = INTEGRATION / "panel_runtime.py"
 
@@ -26,27 +26,44 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
 
     def test_current_ui_version_and_component_are_explicit(self) -> None:
-        self.assertIn('FRONTEND_UI_VERSION = "0.8.6"', self.runtime)
-        self.assertIn('FRONTEND_COMPONENT_SLUG = "v086"', self.runtime)
+        self.assertIn('FRONTEND_UI_VERSION = "0.8.7"', self.runtime)
+        self.assertIn('FRONTEND_COMPONENT_SLUG = "v087"', self.runtime)
         self.assertIn('const UI_VERSION_V081 = "0.8.3"', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v081"', self.source)
         self.assertIn('const UI_VERSION_V085 = "0.8.5"', self.current)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v085"', self.current)
         self.assertIn('getElementById("return-v081")', self.current)
         self.assertIn('version.textContent !== `UI v${UI_VERSION_V085}`', self.current)
-        self.assertIn('const UI_VERSION_V086 = "0.8.6"', self.delivery)
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v086"', self.delivery)
+        self.assertIn('const UI_VERSION_V087 = "0.8.7"', self.delivery)
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v087"', self.delivery)
 
     def test_center_header_is_a_real_return_button(self) -> None:
         self.assertIn('button.id = "return-v081"', self.source)
         self.assertIn('button.type = "button"', self.source)
-        self.assertIn("min-height:44px", self.source)
-        self.assertIn("border:1px solid var(--divider-color)", self.source)
+        self.assertIn("min-width:min(290px,100%);max-width:100%;min-height:44px", self.source)
+        self.assertIn(
+            "border:1px solid color-mix(in srgb,var(--primary-color,#03a9d9) 24%,var(--divider-color,#dfe3e8))",
+            self.source,
+        )
+        self.assertIn(
+            "background:color-mix(in srgb,var(--primary-color,#03a9d9) 5%,var(--card-background-color,#fff))",
+            self.source,
+        )
+        self.assertIn("box-shadow:0 5px 16px rgba(23,45,76,.06)", self.source)
         self.assertIn("border-radius:16px", self.source)
+        self.assertIn(".return-v081:focus-visible{outline:2px", self.source)
         self.assertIn("return-v081:active", self.source)
+        self.assertIn(
+            "background:color-mix(in srgb,var(--primary-color,#03a9d9) 13%,var(--card-background-color,#fff))",
+            self.source,
+        )
+        self.assertIn(
+            "border-color:color-mix(in srgb,var(--primary-color,#03a9d9) 42%,var(--divider-color,#dfe3e8))",
+            self.source,
+        )
         self.assertIn("grid-column:2;grid-row:1;justify-self:center", self.source)
         self.assertIn('extends CURRENT_SHELL_BASE_V085', self.current)
-        self.assertIn('extends CURRENT_SHELL_BASE_V086', self.delivery)
+        self.assertIn('extends CURRENT_SHELL_BASE_V087', self.delivery)
 
     def test_return_route_is_source_aware_and_safely_bounded(self) -> None:
         for route in [
@@ -79,6 +96,8 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         self.assertIn('new CustomEvent("hass-toggle-menu"', self.base)
         self.assertIn("bubbles: true", self.base)
         self.assertIn("composed: true", self.base)
+        self.assertIn("border:1px solid var(--divider-color)", self.base)
+        self.assertIn("box-shadow:0 7px 20px rgba(23,45,76,.08)", self.base)
 
     def test_return_route_is_not_recomputed_by_telemetry_updates(self) -> None:
         self.assertIn("this._returnRouteV085 = null", self.current)
@@ -90,6 +109,8 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         self.assertIn('sessionStorage.getItem(SOURCE_ROUTE_KEY_V085)', self.current)
         self.assertIn('sessionStorage.removeItem(SOURCE_ROUTE_KEY_V085)', self.current)
         self.assertIn('sessionStorage.removeItem(SOURCE_ROUTE_AT_KEY_V085)', self.current)
+        self.assertIn('value === null || timestampValue === null', self.current)
+        self.assertIn('age < 0', self.current)
         self.assertIn('localStorage.setItem(RETURN_ROUTE_KEY_V085, route)', self.current)
         self.assertIn('localStorage.getItem(RETURN_ROUTE_KEY_V085)', self.current)
         self.assertIn("SOURCE_ROUTE_MAX_AGE_MS_V085 = 30_000", self.current)

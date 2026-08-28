@@ -1,6 +1,6 @@
 # Keenetic panel v0.2.1 RC2 candidate
 
-> Historical record only. Current Header, navigation, shell and publication requirements are defined by `NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md` v1.8 and `NIKAS_PANEL_NAVIGATION_CONTRACT.md`; the explicit Back control below is retired.
+> Historical record only. Current Header, navigation, shell and publication requirements are defined by `NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md` v1.9 and `NIKAS_PANEL_NAVIGATION_CONTRACT.md`; the explicit Back control below is retired.
 
 This candidate supersedes panel v0.2.0 RC1 for UI acceptance.
 

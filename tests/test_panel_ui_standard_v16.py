@@ -9,13 +9,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
-CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v086.js"
+CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v087.js"
 INDICATOR_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v076.js"
 STANDARD = ROOT / "docs" / "NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md"
 MENU_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v045.js"
 
 
-class PanelUiStandardV18Tests(unittest.TestCase):
+class PanelUiStandardV19Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.source = SOURCE.read_text(encoding="utf-8")
@@ -30,14 +30,18 @@ class PanelUiStandardV18Tests(unittest.TestCase):
             (INTEGRATION / "panel_manifest.json").read_text(encoding="utf-8")
         )
 
-    def test_canonical_standard_snapshot_is_v18(self) -> None:
-        self.assertIn("NikaS Specialized Panel UI Standard v1.8", self.standard)
-        self.assertEqual(self.contract["app_shell"]["version"], "1.8")
+    def test_canonical_standard_snapshot_is_v19(self) -> None:
+        self.assertIn("NikaS Specialized Panel UI Standard v1.9", self.standard)
+        self.assertEqual(self.contract["app_shell"]["version"], "1.9")
         self.assertEqual(
             self.contract["app_shell"]["canonical_sha256"],
-            "03bc586ff334d06d593ea639fc7899d52ed8d0f3fa3255d133f1c6f32aeac8c2",
+            "f02b40c0e16d49ced98f3f099382ede1798837e1d709cb8934787c110455fb9c",
         )
-        self.assertEqual(self.manifest["zoom_policy"]["standard"], "1.8")
+        self.assertEqual(
+            self.contract["app_shell"]["navigation_contract_sha256"],
+            "c87dc760c0900701f6a807a35aba40e790f68f52c39f4579583598f697997e52",
+        )
+        self.assertEqual(self.manifest["zoom_policy"]["standard"], "1.9")
 
     def test_phone_shell_owns_the_only_scroll_viewport(self) -> None:
         viewport = self.contract["app_shell"]["viewport_fit"]
@@ -98,10 +102,10 @@ class PanelUiStandardV18Tests(unittest.TestCase):
         self.assertIn("font-size:23px", self.source)
         self.assertIn("font-size:12px", self.source)
         self.assertIsNone(re.search(r"font-size:(?:[0-9]|1[01])px", self.source))
-        self.assertEqual(self.manifest["panel_version"], "0.8.6")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v086")
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v086"', self.current_source)
-        self.assertIn('version.textContent !== `UI v${UI_VERSION_V086}`', self.current_source)
+        self.assertEqual(self.manifest["panel_version"], "0.8.7")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v087")
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v087"', self.current_source)
+        self.assertIn('version.textContent !== `UI v${UI_VERSION_V087}`', self.current_source)
 
 
 if __name__ == "__main__":

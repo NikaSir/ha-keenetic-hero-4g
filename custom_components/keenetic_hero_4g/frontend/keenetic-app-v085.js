@@ -49,11 +49,10 @@ function consumeSourceRouteV085() {
     sessionStorage.removeItem(SOURCE_ROUTE_KEY_V085);
     sessionStorage.removeItem(SOURCE_ROUTE_AT_KEY_V085);
 
-    if (timestampValue !== null) {
-      const timestamp = Number(timestampValue);
-      const age = Date.now() - timestamp;
-      if (!Number.isFinite(timestamp) || age < 0 || age > SOURCE_ROUTE_MAX_AGE_MS_V085) return null;
-    }
+    if (value === null || timestampValue === null) return null;
+    const timestamp = Number(timestampValue);
+    const age = Date.now() - timestamp;
+    if (!Number.isFinite(timestamp) || age < 0 || age > SOURCE_ROUTE_MAX_AGE_MS_V085) return null;
     return normalizeReturnRouteV085(value);
   } catch (_error) {
     return null;

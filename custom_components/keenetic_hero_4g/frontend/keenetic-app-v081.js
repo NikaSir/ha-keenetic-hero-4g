@@ -48,6 +48,24 @@ function acceptReturnRouteV081(value) {
 
 function resolveReturnRouteV081(panel) {
   const params = new URLSearchParams(window.location.search);
+  let handedOff = null;
+  let saved = null;
+  try {
+    const handedOffRaw = sessionStorage.getItem(SOURCE_ROUTE_KEY_V081);
+    const handedOffAtRaw = sessionStorage.getItem(SOURCE_ROUTE_AT_KEY_V081);
+    sessionStorage.removeItem(SOURCE_ROUTE_KEY_V081);
+    sessionStorage.removeItem(SOURCE_ROUTE_AT_KEY_V081);
+    const handedOffAt = Number(handedOffAtRaw);
+    const handedOffAge = Date.now() - handedOffAt;
+    const handedOffFresh = handedOffRaw !== null
+      && handedOffAtRaw !== null
+      && Number.isFinite(handedOffAt)
+      && handedOffAge >= 0
+      && handedOffAge <= 30_000;
+    handedOff = handedOffFresh ? acceptReturnRouteV081(handedOffRaw) : null;
+    saved = acceptReturnRouteV081(sessionStorage.getItem(RETURN_ROUTE_KEY_V081));
+  } catch (_error) {}
+
   for (const key of ["return_to", "from"]) {
     const candidate = acceptReturnRouteV081(params.get(key));
     if (candidate) return candidate;
@@ -55,18 +73,8 @@ function resolveReturnRouteV081(panel) {
 
   const explicitSource = sourceRouteV081(params.get("source"));
   if (explicitSource) return acceptReturnRouteV081(explicitSource);
-
-  try {
-    const handedOffAtRaw = sessionStorage.getItem(SOURCE_ROUTE_AT_KEY_V081);
-    const handedOffAt = Number(handedOffAtRaw);
-    const handedOffFresh = handedOffAtRaw === null || (Number.isFinite(handedOffAt) && Date.now() - handedOffAt <= 30_000);
-    const handedOff = handedOffFresh ? acceptReturnRouteV081(sessionStorage.getItem(SOURCE_ROUTE_KEY_V081)) : null;
-    sessionStorage.removeItem(SOURCE_ROUTE_KEY_V081);
-    sessionStorage.removeItem(SOURCE_ROUTE_AT_KEY_V081);
-    if (handedOff) return handedOff;
-    const saved = acceptReturnRouteV081(sessionStorage.getItem(RETURN_ROUTE_KEY_V081));
-    if (saved) return saved;
-  } catch (_error) {}
+  if (handedOff) return handedOff;
+  if (saved) return saved;
 
   const stateCandidates = [
     window.history.state?.nikasReturnRoute,
@@ -124,13 +132,13 @@ if (CURRENT_SHELL_BASE_V081 && !customElements.get("keenetic-hero-app-panel-v081
         style.textContent = `
           .return-v081{
             grid-column:2;grid-row:1;justify-self:center;
-            width:min(100%,460px);min-width:0;min-height:44px;
+            min-width:min(290px,100%);max-width:100%;min-height:44px;
             margin:0;padding:5px 14px;
             display:block;text-align:center;
-            border:1px solid var(--divider-color);border-radius:16px;
-            background:color-mix(in srgb,var(--card-background-color) 96%,var(--primary-color) 4%);
+            border:1px solid color-mix(in srgb,var(--primary-color,#03a9d9) 24%,var(--divider-color,#dfe3e8));border-radius:16px;
+            background:color-mix(in srgb,var(--primary-color,#03a9d9) 5%,var(--card-background-color,#fff));
             color:var(--primary-text-color);
-            box-shadow:0 7px 20px rgba(23,45,76,.08);
+            box-shadow:0 5px 16px rgba(23,45,76,.06);
             appearance:none;-webkit-appearance:none;font:inherit;
             line-height:1;cursor:pointer;
             transition:transform .10s ease,background-color .10s ease;
@@ -138,16 +146,18 @@ if (CURRENT_SHELL_BASE_V081 && !customElements.get("keenetic-hero-app-panel-v081
           }
           .return-v081:active{
             transform:scale(.985);
-            background:color-mix(in srgb,var(--card-background-color) 90%,var(--primary-color) 10%);
+            background:color-mix(in srgb,var(--primary-color,#03a9d9) 13%,var(--card-background-color,#fff));
+            border-color:color-mix(in srgb,var(--primary-color,#03a9d9) 42%,var(--divider-color,#dfe3e8));
+            box-shadow:0 2px 7px rgba(23,45,76,.05);
           }
           .return-v081:focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}
           .return-v081 strong,.return-v081 span{
             display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
           }
-          .return-v081 strong{font-size:23px;font-weight:800;line-height:1.08;letter-spacing:-.02em}
-          .return-v081 span{margin-top:2px;font-size:14px;font-weight:560;line-height:1.15;color:var(--secondary-text-color)}
+          .return-v081 strong{font-size:23px;font-weight:800;line-height:1.05;letter-spacing:.08em}
+          .return-v081 span{margin-top:3px;font-size:14px;font-weight:560;line-height:1.2;letter-spacing:.01em;color:var(--secondary-text-color)}
           @media(max-width:390px){
-            .return-v081{padding-left:9px;padding-right:9px}
+            .return-v081{min-width:0;width:100%;padding-inline:8px}
             .return-v081 strong{font-size:21px}
             .return-v081 span{font-size:13px}
           }
