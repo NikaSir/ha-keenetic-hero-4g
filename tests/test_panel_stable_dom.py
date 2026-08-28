@@ -98,8 +98,8 @@ class PanelStableDomTests(unittest.TestCase):
         self.assertFalse(updates["shadow_root_inner_html_after_mount"])
         self.assertFalse(updates["replace_children_after_mount"])
         self.assertTrue(updates["persistent_view_containers"])
-        self.assertEqual(self.manifest["panel_version"], "0.8.9")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v089")
+        self.assertEqual(self.manifest["panel_version"], "0.9.0")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v090")
 
 
 if __name__ == "__main__":

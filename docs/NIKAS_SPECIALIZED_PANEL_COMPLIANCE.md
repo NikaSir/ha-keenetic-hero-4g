@@ -3,8 +3,8 @@
 **Audit date:** 2026-08-27
 **Standard:** NikaS Specialized Panel UI Standard v1.9 + NikaS Panel Navigation and Return Contract v1.1
 **Canonical snapshots:** UI `f02b40c0…`; navigation `c87dc760…`
-**Audited production path:** `panel_runtime.py` + panel metadata `0.8.9` → autonomous bundle → `keenetic-hero-app-panel-v089`
-**Scope:** b051 approved real-router composition retaining the b047 contract and b045 stable runtime; repeat phone field acceptance is required
+**Audited production path:** `panel_runtime.py` + panel metadata `0.9.0` → autonomous bundle → `keenetic-hero-app-panel-v090`
+**Scope:** b052 approved real-router composition retaining the b047 contract and b045 stable runtime; repeat phone field acceptance is required
 
 | Area | Result | Evidence |
 |---|---|---|
@@ -37,11 +37,11 @@
 | Repository icon | PASS | README displays `docs/icon.svg`. |
 | Integration icon assets | PASS | `custom_components/keenetic_hero_4g/brand/icon.png` and `dark_icon.png` are valid 256×256 RGBA assets and satisfy the HACS minimum. Logo variants are optional unless a wordmark surface requires them. |
 | HACS packaging | PASS | `hacs.json` is configured and the local brand assets ship with the integration. |
-| Deterministic production bundle | PASS | `build_frontend_bundle.py --check` reproduces the single import-free entrypoint and the configured UI version, cache key and `v089` component agree. |
+| Deterministic production bundle | PASS | `build_frontend_bundle.py --check` reproduces the single import-free entrypoint and the configured UI version, cache key and `v090` component agree. |
 
 ## Remaining follow-up
 
-Complete the phone field checks below for b051. Code/build compliance is not a substitute for Companion App gesture and navigation acceptance.
+Complete the phone field checks below for b052. Code/build compliance is not a substitute for Companion App gesture and navigation acceptance.
 
 ## Phone verification still required
 
