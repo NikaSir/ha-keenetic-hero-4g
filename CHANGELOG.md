@@ -1,5 +1,13 @@
 # Changelog
 
+## UI v0.8.6 / v1.00_b048 — 2026-08-28
+
+- Replaces the degraded generated router layer with a transparent local asset derived from the official Keenetic Hero 4G+ KN-2311 product photograph.
+- Preserves the approved real housing, grey top panel, four flat antennas, front indicators and right-side ventilation/USB geometry.
+- Extends the red Cable, green LAN and vertical active-LTE paths under the router body so every channel visibly terminates at the device without drawing over it.
+- Preloads and decodes the new asset once during stable Overview mounting and never reassigns its unchanged `src` from telemetry updates.
+- Publishes a distinct autonomous `UI v0.8.6` bundle/cache key and registers only `keenetic-hero-app-panel-v086` as the current runtime component.
+
 ## UI v0.8.5 / v1.00_b047 — 2026-08-28
 
 - Preserves the accepted b046 Overview composition, factual active/reserve channel logic, stable point-patched telemetry and fixed shell geometry.

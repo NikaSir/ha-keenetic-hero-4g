@@ -3,8 +3,8 @@
 **Audit date:** 2026-08-27
 **Standard:** NikaS Specialized Panel UI Standard v1.8 + NikaS Panel Navigation and Return Contract v1.0
 **Canonical snapshots:** UI `03bc586f…`; navigation `4f3efe18…`
-**Audited production path:** `panel_runtime.py` + panel metadata `0.8.5` → autonomous bundle → `keenetic-hero-app-panel-v085`
-**Scope:** b047 contract rebuild retaining the b046 composition and b045 stable runtime; repeat phone field acceptance is required
+**Audited production path:** `panel_runtime.py` + panel metadata `0.8.6` → autonomous bundle → `keenetic-hero-app-panel-v086`
+**Scope:** b048 approved real-router composition retaining the b047 contract and b045 stable runtime; repeat phone field acceptance is required
 
 | Area | Result | Evidence |
 |---|---|---|
@@ -39,7 +39,7 @@
 
 ## Remaining follow-up
 
-Complete the phone field checks below before merging b047. Code/build compliance is not a substitute for Companion App gesture and navigation acceptance.
+Complete the phone field checks below for b048. Code/build compliance is not a substitute for Companion App gesture and navigation acceptance.
 
 ## Phone verification still required
 
