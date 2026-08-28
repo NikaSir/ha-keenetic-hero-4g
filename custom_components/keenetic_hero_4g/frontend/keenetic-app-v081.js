@@ -48,6 +48,24 @@ function acceptReturnRouteV081(value) {
 
 function resolveReturnRouteV081(panel) {
   const params = new URLSearchParams(window.location.search);
+  let handedOff = null;
+  let saved = null;
+  try {
+    const handedOffRaw = sessionStorage.getItem(SOURCE_ROUTE_KEY_V081);
+    const handedOffAtRaw = sessionStorage.getItem(SOURCE_ROUTE_AT_KEY_V081);
+    sessionStorage.removeItem(SOURCE_ROUTE_KEY_V081);
+    sessionStorage.removeItem(SOURCE_ROUTE_AT_KEY_V081);
+    const handedOffAt = Number(handedOffAtRaw);
+    const handedOffAge = Date.now() - handedOffAt;
+    const handedOffFresh = handedOffRaw !== null
+      && handedOffAtRaw !== null
+      && Number.isFinite(handedOffAt)
+      && handedOffAge >= 0
+      && handedOffAge <= 30_000;
+    handedOff = handedOffFresh ? acceptReturnRouteV081(handedOffRaw) : null;
+    saved = acceptReturnRouteV081(sessionStorage.getItem(RETURN_ROUTE_KEY_V081));
+  } catch (_error) {}
+
   for (const key of ["return_to", "from"]) {
     const candidate = acceptReturnRouteV081(params.get(key));
     if (candidate) return candidate;
@@ -55,18 +73,8 @@ function resolveReturnRouteV081(panel) {
 
   const explicitSource = sourceRouteV081(params.get("source"));
   if (explicitSource) return acceptReturnRouteV081(explicitSource);
-
-  try {
-    const handedOffAtRaw = sessionStorage.getItem(SOURCE_ROUTE_AT_KEY_V081);
-    const handedOffAt = Number(handedOffAtRaw);
-    const handedOffFresh = handedOffAtRaw === null || (Number.isFinite(handedOffAt) && Date.now() - handedOffAt <= 30_000);
-    const handedOff = handedOffFresh ? acceptReturnRouteV081(sessionStorage.getItem(SOURCE_ROUTE_KEY_V081)) : null;
-    sessionStorage.removeItem(SOURCE_ROUTE_KEY_V081);
-    sessionStorage.removeItem(SOURCE_ROUTE_AT_KEY_V081);
-    if (handedOff) return handedOff;
-    const saved = acceptReturnRouteV081(sessionStorage.getItem(RETURN_ROUTE_KEY_V081));
-    if (saved) return saved;
-  } catch (_error) {}
+  if (handedOff) return handedOff;
+  if (saved) return saved;
 
   const stateCandidates = [
     window.history.state?.nikasReturnRoute,

@@ -6,24 +6,24 @@
     "panel_root": "/dashboard-keenetic",
     "entry_route": "/dashboard-keenetic",
     "safe_return_route": "/dashboard-infrastructure/overview",
-    "navigation_contract_version": "1.0",
+    "navigation_contract_version": "1.1",
     "icon": "mdi:router-network",
     "owner": "ha-keenetic-hero-4g",
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.8.6"
+    "version": "0.8.7"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
-    "version": "1.8",
+    "version": "1.9",
     "canonical_source": "NikaSir/ha-contract-generated-ui",
-    "canonical_sha256": "af41ee58956f0076519157c295f8e9b97f82c1e764fe64456680a1aeae0ba244",
-    "navigation_contract_sha256": "b434169a733d5c40eb0155ccc1a0377354002caab6d2073801754ac5a367c37b",
+    "canonical_sha256": "f02b40c0e16d49ced98f3f099382ede1798837e1d709cb8934787c110455fb9c",
+    "navigation_contract_sha256": "c87dc760c0900701f6a807a35aba40e790f68f52c39f4579583598f697997e52",
     "standards": {
-      "shell": "1.8",
-      "zoom": "1.8",
-      "navigation": "1.0",
+      "shell": "1.9",
+      "zoom": "1.9",
+      "navigation": "1.1",
       "integration_ui": "1.4",
       "frontend_delivery": "1.1"
     },
@@ -261,7 +261,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v086",
+    "web_component": "keenetic-hero-app-panel-v087",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
