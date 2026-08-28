@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v081.js"
 CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v085.js"
-DELIVERY_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v088.js"
+DELIVERY_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v089.js"
 BASE_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
 RUNTIME = INTEGRATION / "panel_runtime.py"
 
@@ -26,16 +26,16 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
 
     def test_current_ui_version_and_component_are_explicit(self) -> None:
-        self.assertIn('FRONTEND_UI_VERSION = "0.8.8"', self.runtime)
-        self.assertIn('FRONTEND_COMPONENT_SLUG = "v088"', self.runtime)
+        self.assertIn('FRONTEND_UI_VERSION = "0.8.9"', self.runtime)
+        self.assertIn('FRONTEND_COMPONENT_SLUG = "v089"', self.runtime)
         self.assertIn('const UI_VERSION_V081 = "0.8.3"', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v081"', self.source)
         self.assertIn('const UI_VERSION_V085 = "0.8.5"', self.current)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v085"', self.current)
         self.assertIn('getElementById("return-v081")', self.current)
         self.assertIn('version.textContent !== `UI v${UI_VERSION_V085}`', self.current)
-        self.assertIn('const UI_VERSION_V088 = "0.8.8"', self.delivery)
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v088"', self.delivery)
+        self.assertIn('const UI_VERSION_V089 = "0.8.9"', self.delivery)
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v089"', self.delivery)
 
     def test_center_header_is_a_real_return_button(self) -> None:
         self.assertIn('button.id = "return-v081"', self.source)
@@ -63,7 +63,7 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         )
         self.assertIn("grid-column:2;grid-row:1;justify-self:center", self.source)
         self.assertIn('extends CURRENT_SHELL_BASE_V085', self.current)
-        self.assertIn('extends CURRENT_SHELL_BASE_V088', self.delivery)
+        self.assertIn('extends CURRENT_SHELL_BASE_V089', self.delivery)
 
     def test_return_route_is_source_aware_and_safely_bounded(self) -> None:
         for route in [

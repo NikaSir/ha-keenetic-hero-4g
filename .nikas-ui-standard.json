@@ -11,7 +11,7 @@
     "custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js"
   ],
   "production_entrypoint": "custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js",
-  "current_runtime_path": "custom_components/keenetic_hero_4g/frontend/keenetic-app-v088.js",
+  "current_runtime_path": "custom_components/keenetic_hero_4g/frontend/keenetic-app-v089.js",
   "header_return_runtime_path": "custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js",
   "build_source_files": [
     "scripts/build_frontend_bundle.py",
@@ -40,10 +40,11 @@
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js",
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v086.js",
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v087.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v088.js"
+    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v088.js",
+    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v089.js"
   ],
-  "ui_version": "0.8.8",
-  "web_component": "keenetic-hero-app-panel-v088",
+  "ui_version": "0.8.9",
+  "web_component": "keenetic-hero-app-panel-v089",
   "bundle_contract": {
     "autonomous": true,
     "runtime_imports": false,

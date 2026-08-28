@@ -31,6 +31,7 @@ on:
       - "rebuild/b047-*"
       - "fix/b048-*"
       - "fix/b050-*"
+      - "fix/b051-*"
     paths:
       - "custom_components/keenetic_hero_4g/frontend/**"
       - "custom_components/keenetic_hero_4g/panel_runtime.py"
@@ -243,13 +244,13 @@ jobs:
           for asset in manifest["assets"]:
               path = root / asset["path"]
               assert path.is_file() and path.stat().st_size > 0, path
-              assert asset["url"].endswith("?v=0.8.8"), asset
+              assert asset["url"].endswith("?v=0.8.9"), asset
           PY
 
       - name: Verify clean panel shell, scroll, zoom and current NikaS contract
         shell: bash
         run: |
-          grep -q 'PANEL_VERSION = "0.8.8"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'PANEL_VERSION = "0.8.9"' custom_components/keenetic_hero_4g/const.py
           grep -q 'keenetic-panel-bundle.js' custom_components/keenetic_hero_4g/panel_runtime.py
           grep -q 'keenetic-app-v080.js' scripts/build_frontend_bundle.py
           grep -q 'keenetic-app-v083.js' scripts/build_frontend_bundle.py
@@ -258,6 +259,7 @@ jobs:
           grep -q 'keenetic-app-v086.js' scripts/build_frontend_bundle.py
           grep -q 'keenetic-app-v087.js' scripts/build_frontend_bundle.py
           grep -q 'keenetic-app-v088.js' scripts/build_frontend_bundle.py
+          grep -q 'keenetic-app-v089.js' scripts/build_frontend_bundle.py
           if grep -q 'FRONTEND / "keenetic-app-v082.js"' scripts/build_frontend_bundle.py; then exit 1; fi
           grep -q 'keenetic-hero-app-panel-v080' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
           grep -q 'keenetic-hero-app-panel-v083' custom_components/keenetic_hero_4g/frontend/keenetic-app-v083.js
@@ -266,11 +268,15 @@ jobs:
           grep -q 'keenetic-hero-app-panel-v086' custom_components/keenetic_hero_4g/frontend/keenetic-app-v086.js
           grep -q 'keenetic-hero-app-panel-v087' custom_components/keenetic_hero_4g/frontend/keenetic-app-v087.js
           grep -q 'keenetic-hero-app-panel-v088' custom_components/keenetic_hero_4g/frontend/keenetic-app-v088.js
+          grep -q 'keenetic-hero-app-panel-v089' custom_components/keenetic_hero_4g/frontend/keenetic-app-v089.js
           grep -q 'keenetic-hero-router-v086.webp' custom_components/keenetic_hero_4g/frontend/keenetic-app-v086.js
           grep -q 'M500 228 L500 406' custom_components/keenetic_hero_4g/frontend/keenetic-app-v086.js
           grep -q 'M500 210 L500 406' custom_components/keenetic_hero_4g/frontend/keenetic-app-v088.js
           grep -q 'width:40%!important' custom_components/keenetic_hero_4g/frontend/keenetic-app-v088.js
           grep -q 'Работа через резерв' custom_components/keenetic_hero_4g/frontend/keenetic-app-v088.js
+          grep -q 'M500 190 L500 406' custom_components/keenetic_hero_4g/frontend/keenetic-app-v089.js
+          grep -q 'touch-action:none!important' custom_components/keenetic_hero_4g/frontend/keenetic-app-v089.js
+          grep -q 'viewport.scrollTop <= 0' custom_components/keenetic_hero_4g/frontend/keenetic-app-v089.js
           grep -q 'nikas.specialized.source_route.v1' custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js
           grep -q 'nikas.keenetic.return_route.v1' custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js
           grep -q 'for (const key of \["return_to", "from"\])' custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js

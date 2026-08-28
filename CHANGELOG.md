@@ -1,5 +1,12 @@
 # Changelog
 
+## UI v0.8.9 / v1.00_b051 — 2026-08-28
+
+- Moves the LTE topology card upward to restore clear space above the accepted KN-2311 antennas and extends the vertical LTE path to the new card anchor.
+- Stops one-finger native scrolling at the work viewport boundaries before iOS can chain the gesture into Home Assistant's outer document.
+- Disables scroll gestures on the persistent Header and Bottom Tab Bar, keeping both chrome rows at fixed screen coordinates without a fixed-position host override.
+- Preserves the accepted b050 router scale, three path-to-housing connections, failover semantics, focal pinch and two-finger reset.
+
 ## UI v0.8.8 / v1.00_b050 — 2026-08-28
 
 - Restores the approved mobile KN-2311 composition after the v0.8.7 standards merge enlarged the router layer: the official product image returns to 40% width and the accepted lower-centre position.
