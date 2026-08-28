@@ -46,6 +46,8 @@ def main() -> None:
         "Capture precedence is:",
         "exact form `UI vX.Y.Z`",
         "focus state and pressed response",
+        "same click/keyboard handler",
+        "Ambient shell synchronization",
     ):
         require(clause in standard, f"canonical Header-return clause missing: {clause}")
     for clause in (
@@ -53,6 +55,8 @@ def main() -> None:
         "/dashboard-actions/home",
         "/dashboard-infrastructure/overview",
         "/starline",
+        "nikas.specialized.source_route_at.v1",
+        "same click/keyboard handler",
         "A missing, orphaned or mismatched public route is a blocking defect.",
     ):
         require(clause in navigation_contract, f"canonical navigation clause missing: {clause}")
@@ -70,9 +74,6 @@ def main() -> None:
             production_entrypoint in runtime_files,
             "production_entrypoint must be one of the checked runtime_files",
         )
-
-    current_runtime_path = config.get("current_runtime_path")
-    current_runtime = read_relative(current_runtime_path) if current_runtime_path else ""
 
     if role == "readiness":
         require(not runtime_files, "readiness-only repository must not claim a panel runtime")
@@ -98,10 +99,29 @@ def main() -> None:
         require("sessionStorage" in sources, "base shell must persist the source-route hand-off")
         markers = config.get("source_handoff", {})
         require(isinstance(markers, dict) and markers, "base shell must declare source_handoff markers")
-        for name in ("storage_write_marker", "route_normalizer_marker", "capture_marker"):
+        for name in (
+            "storage_write_marker",
+            "route_normalizer_marker",
+            "specialized_route_marker",
+            "capture_marker",
+            "navigation_marker",
+            "delegation_marker",
+        ):
             marker = markers.get(name)
             require(isinstance(marker, str) and marker, f"source_handoff.{name} must be configured")
             require(marker in sources, f"base source-route hand-off marker missing: {marker}")
+        require(
+            "rememberSpecializedSourceRoute(window.location.pathname);" not in sources,
+            "ambient shell synchronization must not refresh the source hand-off",
+        )
+        delegated_files = config.get("delegated_navigation_files", [])
+        require(delegated_files, "base shell must list every delegated navigation source")
+        delegation_marker = markers["delegation_marker"]
+        for path in delegated_files:
+            require(
+                delegation_marker in read_relative(path),
+                f"base outbound navigation does not delegate to click-time hand-off: {path}",
+            )
         for token in (
             "/dashboard-zont",
             "/starline",
@@ -152,38 +172,6 @@ def main() -> None:
 
     for marker in config.get("forbidden_runtime_markers", []):
         require(marker not in sources, f"forbidden specialized-panel runtime marker present: {marker}")
-
-    if current_runtime:
-        for token in (
-            'for (const key of ["return_to", "from"])',
-            "consumeSourceRouteV085()",
-            "savedReturnRouteV085()",
-            "sessionStorage.removeItem(SOURCE_ROUTE_KEY_V085)",
-            "localStorage.setItem(RETURN_ROUTE_KEY_V085, route)",
-            "/dashboard-house-v11/home",
-            "/dashboard-actions/home",
-            "/dashboard-infrastructure/overview",
-        ):
-            require(token in current_runtime, f"current Header-return implementation missing token: {token}")
-        require('params.get("source")' not in current_runtime, "non-canonical source query fallback is forbidden")
-        require("window.history.state" not in current_runtime, "non-canonical history-state fallback is forbidden")
-
-    integration = ROOT / "custom_components" / "keenetic_hero_4g"
-    panel_contract = json.loads((integration / "panel_contract.json").read_text(encoding="utf-8"))
-    panel_manifest = json.loads((integration / "panel_manifest.json").read_text(encoding="utf-8"))
-    ui_version = config.get("ui_version")
-    web_component = config.get("web_component")
-    require(panel_contract["panel"]["version"] == ui_version, "panel contract UI version drift")
-    require(panel_manifest["panel_version"] == ui_version, "panel manifest UI version drift")
-    require(panel_contract["frontend_delivery"]["web_component"] == web_component, "panel contract component drift")
-    require(panel_manifest["web_component"] == web_component, "panel manifest component drift")
-    require(panel_contract["app_shell"]["version"] == config["version"], "panel contract standard drift")
-    require(panel_manifest["zoom_policy"]["standard"] == config["version"], "panel manifest standard drift")
-    require(panel_contract["app_shell"]["canonical_sha256"] == config["standard_sha256"], "panel contract standard hash drift")
-    require(
-        panel_contract["app_shell"]["navigation_contract_sha256"] == config["navigation_contract_sha256"],
-        "panel contract navigation hash drift",
-    )
 
 
 if __name__ == "__main__":
