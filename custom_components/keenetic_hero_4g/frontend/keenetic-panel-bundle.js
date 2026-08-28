@@ -3648,6 +3648,7 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v081.js
 (() => {
 const UI_VERSION_V081 = "0.8.3";
+// Capture the base-panel handoff once; telemetry refreshes must not replace it.
 const SOURCE_ROUTE_KEY_V081 = "nikas.specialized.source_route.v1";
 const SOURCE_ROUTE_AT_KEY_V081 = "nikas.specialized.source_route_at.v1";
 const RETURN_ROUTE_KEY_V081 = "nikas.keenetic.return_route.v1";
