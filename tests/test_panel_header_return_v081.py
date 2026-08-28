@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v081.js"
-CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v084.js"
+CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v083.js"
 BASE_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
 RUNTIME = INTEGRATION / "panel_runtime.py"
 
@@ -24,14 +24,14 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
 
     def test_current_ui_version_and_component_are_explicit(self) -> None:
-        self.assertIn('FRONTEND_UI_VERSION = "0.8.4"', self.runtime)
-        self.assertIn('FRONTEND_COMPONENT_SLUG = "v084"', self.runtime)
-        self.assertIn('const UI_VERSION_V081 = "0.8.4"', self.source)
+        self.assertIn('FRONTEND_UI_VERSION = "0.8.3"', self.runtime)
+        self.assertIn('FRONTEND_COMPONENT_SLUG = "v083"', self.runtime)
+        self.assertIn('const UI_VERSION_V081 = "0.8.3"', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v081"', self.source)
-        self.assertIn('const UI_VERSION_V084 = "0.8.4"', self.current)
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v084"', self.current)
+        self.assertIn('const UI_VERSION_V083 = "0.8.3"', self.current)
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v083"', self.current)
         self.assertIn('querySelector("#return-v081 span")', self.current)
-        self.assertIn('version.textContent !== `UI v${UI_VERSION_V084}`', self.current)
+        self.assertIn('version.textContent !== `UI v${UI_VERSION_V083}`', self.current)
 
     def test_center_header_is_a_real_return_button(self) -> None:
         self.assertIn('button.id = "return-v081"', self.source)
@@ -41,13 +41,13 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         self.assertIn("border-radius:16px", self.source)
         self.assertIn("return-v081:active", self.source)
         self.assertIn("grid-column:2;grid-row:1;justify-self:center", self.source)
-        self.assertIn('extends CURRENT_SHELL_BASE_V084', self.current)
+        self.assertIn('extends CURRENT_SHELL_BASE_V083', self.current)
 
     def test_return_route_is_source_aware_and_safely_bounded(self) -> None:
         for route in [
-            "/dashboard-house",
-            "/dashboard-actions",
-            "/dashboard-infrastructure",
+            "/dashboard-house-v11/home",
+            "/dashboard-actions/home",
+            "/dashboard-infrastructure/overview",
         ]:
             self.assertIn(route, self.source)
         self.assertIn('const DEFAULT_RETURN_ROUTE_V081 = "/dashboard-infrastructure/overview"', self.source)

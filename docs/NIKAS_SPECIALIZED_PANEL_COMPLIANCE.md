@@ -1,16 +1,15 @@
 # NikaS specialized-panel compliance — Keenetic Hero 4G+
 
 **Audit date:** 2026-08-27
-**Standard:** NikaS Specialized Panel UI Standard v1.7
+**Standard:** NikaS Specialized Panel UI Standard v1.8 + NikaS Panel Navigation and Return Contract v1.0
 **Canonical revision checked:** `NikaSir/ha-contract-generated-ui@c05b707d533aa1afc5d051d2bb4528c4d08f8eda`
-**Audited production path:** `panel_runtime.py` + panel metadata `0.8.4` → autonomous bundle → `keenetic-hero-app-panel-v084`
-**Scope:** b046 composition refinement layered on the b045 stable runtime after phone-image audit; repeat phone field acceptance is required
+**Audited production path:** `panel_runtime.py` + panel metadata `0.8.3` → autonomous bundle → `keenetic-hero-app-panel-v083`
+**Scope:** b045 runtime/Overview correction after b044 code and phone-image audit; repeat phone field acceptance is required
 
 | Area | Result | Evidence |
 |---|---|---|
 | Integration-owned fixed shell | PASS | v080 directly owns one height-locked three-row shell; Header and `.tabbar-v080` stay outside the only work viewport. |
 | Native HA menu | PASS | `frontend/keenetic-app-v045.js` restores `mdi:menu` and dispatches bubbling/composed `hass-toggle-menu`. |
-| Center title source return | PASS | `frontend/keenetic-app-v081.js` contributes the semantic version-only title button, focus/pressed states, source-route validation/persistence and explicit HA navigation; v084 retains that stable Header. The v1.7 guard reads the registered autonomous production bundle. |
 | One production entry / cache busting | PASS | `panel_runtime.py` selects one autonomous bundle; build-time asset URLs and the manifest use the same metadata key. |
 | Stable live updates | PASS (code) | v083 replaces the double b044 Overview hook with one differential stable patch; the shell's MutationObserver disconnects after initial mount and telemetry cannot request a zoom measurement. |
 | Persistent shell and lazy tab cache | PASS | Header, Bottom Tab Bar and zoom viewport keep DOM identity. Work views are created on first visit, retained, and switched with `hidden`/`inert`. |
@@ -32,14 +31,14 @@
 | Click/hold protection | PASS | v080 cancels pending holds on pinch/actual pan and captures post-gesture clicks without intercepting native 100% scroll. |
 | Overview more-info | PASS (code) | v083 restores `data-entity` and keyboard focus for every factual active-channel metric. |
 | Internal view synchronization | PASS (code) | Overview emits one cancelable view request; the outer shell owns URL, child view, reset and Bottom Tab selection. |
-| Overview composition | PASS (code) | v084 reduces the phone hero to 320 px, separates LTE from the connection indicator, retunes the paths, balances WAN IP/Uptime and compacts the reserve surfaces without adding a live-update hook. |
+| Overview composition | PASS (code) | Phone hero is reduced to 340 px; reserve readiness and active/reserve channel surfaces are compact and topology paths encode active/standby/down/unknown independently. |
 | Repository icon | PASS | README displays `docs/icon.svg`. |
 | Integration icon assets | PASS | `custom_components/keenetic_hero_4g/brand/icon.png` and `dark_icon.png` are valid 256×256 RGBA assets and satisfy the HACS minimum. Logo variants are optional unless a wordmark surface requires them. |
 | HACS packaging | PASS | `hacs.json` is configured and the local brand assets ship with the integration. |
 
 ## Remaining follow-up
 
-Complete the phone field checks below before merging b046. Code/build compliance is not a substitute for Companion App gesture acceptance.
+Complete the phone field checks below before merging b045. Code/build compliance is not a substitute for Companion App gesture acceptance.
 
 ## Phone verification still required
 

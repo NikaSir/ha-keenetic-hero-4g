@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel metadata version: **0.8.4**
+Panel metadata version: **0.8.3**
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -20,7 +20,7 @@ The first screen must answer, without opening Keenetic Web UI:
 
 ## Home Assistant NikaS app shell
 
-The current panel follows **NikaS Specialized Panel UI Standard v1.7** from the canonical `ha-contract-generated-ui` repository.
+The current panel follows **NikaS Specialized Panel UI Standard v1.8** and the mandatory navigation/return contract from the canonical `ha-contract-generated-ui` repository.
 
 The shell and first work view are mounted once. Other views are created on first visit and retained in a stable DOM cache. Home Assistant state cycles are coalesced through `requestAnimationFrame` and patch only changed text, classes and attributes. Header, Bottom Tab Bar, zoom viewport and visited tab containers keep their identity; tab selection uses `hidden` and `inert` without a blank frame.
 
@@ -36,7 +36,7 @@ The production shell is mounted directly and does not inherit any earlier scroll
 - title `Keenetic Hero 4G+` geometrically centered against the viewport;
 - no decorative router/brand icon beside the title;
 - the complete central title surface is a button that returns to the source NikaS panel;
-- first line `Keenetic Hero 4G+`, second line `UI v0.8.4`;
+- first line `Keenetic Hero 4G+`, second line `UI v0.8.3`;
 - one global Refresh action on the right;
 - the source route is restricted to `Дом сейчас`, `Действия` or `Инфраструктура`; the left Header slot remains the native HA menu.
 
@@ -56,7 +56,7 @@ It is full-width, edge-attached, non-floating and respects iOS safe area. `Си�
 
 `Header -> network topology/status -> reserve readiness -> active-channel metrics -> compact reserve channel -> Bottom Tab Bar`
 
-The compact Internet / Active WAN / Ethernet / LTE topology is always preserved. The 320 px phone hero contains only the network state, the two-line connection indicator, Cable/LTE/LAN cards and factual paths. Active metrics never overlap the artwork. LTE sits below the connection indicator with a dedicated gap; the remaining floor-only band is removed.
+The compact Internet / Active WAN / Ethernet / LTE topology is always preserved. The 340 px phone hero contains only the network state, the two-line connection indicator, Cable/LTE/LAN cards and factual paths. Active metrics never overlap the artwork.
 
 ### Overview channel composition
 
@@ -65,7 +65,6 @@ The compact Internet / Active WAN / Ethernet / LTE topology is always preserved.
 - a confirmed down path is red and unknown is neutral grey;
 - `Резерв готов` is a separate compact surface below the photo;
 - one active-channel card contains Ping, loss, telemetry age, Link/signal, RX, TX, WAN IP and uptime;
-- the final active-channel row uses equal WAN IP and Uptime halves;
 - factual entity-backed metrics retain native Home Assistant more-info on hold;
 - the reserve channel is one compact row without a repeated readiness badge;
 - if Active WAN is unknown, no channel is silently invented as active.

@@ -1,18 +1,19 @@
 await import("./keenetic-app-v080.js");
 
-const UI_VERSION_V081 = "0.8.4";
+const UI_VERSION_V081 = "0.8.3";
 const SOURCE_ROUTE_KEY_V081 = "nikas.specialized.source_route.v1";
+const SOURCE_ROUTE_AT_KEY_V081 = "nikas.specialized.source_route_at.v1";
 const RETURN_ROUTE_KEY_V081 = "nikas.keenetic.return_route.v1";
 const DEFAULT_RETURN_ROUTE_V081 = "/dashboard-infrastructure/overview";
 const SAFE_RETURN_PREFIXES_V081 = [
-  "/dashboard-house",
+  "/dashboard-house-v11",
   "/dashboard-actions",
   "/dashboard-infrastructure",
 ];
 const SOURCE_ROUTES_V081 = {
-  house: "/dashboard-house",
-  home: "/dashboard-house",
-  actions: "/dashboard-actions",
+  house: "/dashboard-house-v11/home",
+  home: "/dashboard-house-v11/home",
+  actions: "/dashboard-actions/home",
   infrastructure: DEFAULT_RETURN_ROUTE_V081,
 };
 
@@ -24,7 +25,9 @@ function normalizeReturnRouteV081(value) {
     if (!SAFE_RETURN_PREFIXES_V081.some((prefix) => url.pathname === prefix || url.pathname.startsWith(`${prefix}/`))) {
       return null;
     }
-    return `${url.pathname}${url.search}${url.hash}`;
+    if (url.pathname === "/dashboard-house-v11" || url.pathname.startsWith("/dashboard-house-v11/")) return "/dashboard-house-v11/home";
+    if (url.pathname === "/dashboard-actions" || url.pathname.startsWith("/dashboard-actions/")) return "/dashboard-actions/home";
+    return "/dashboard-infrastructure/overview";
   } catch (_error) {
     return null;
   }
@@ -53,8 +56,12 @@ function resolveReturnRouteV081(panel) {
   if (explicitSource) return acceptReturnRouteV081(explicitSource);
 
   try {
-    const handedOff = acceptReturnRouteV081(sessionStorage.getItem(SOURCE_ROUTE_KEY_V081));
+    const handedOffAtRaw = sessionStorage.getItem(SOURCE_ROUTE_AT_KEY_V081);
+    const handedOffAt = Number(handedOffAtRaw);
+    const handedOffFresh = handedOffAtRaw === null || (Number.isFinite(handedOffAt) && Date.now() - handedOffAt <= 30_000);
+    const handedOff = handedOffFresh ? acceptReturnRouteV081(sessionStorage.getItem(SOURCE_ROUTE_KEY_V081)) : null;
     sessionStorage.removeItem(SOURCE_ROUTE_KEY_V081);
+    sessionStorage.removeItem(SOURCE_ROUTE_AT_KEY_V081);
     if (handedOff) return handedOff;
     const saved = acceptReturnRouteV081(sessionStorage.getItem(RETURN_ROUTE_KEY_V081));
     if (saved) return saved;
@@ -78,7 +85,7 @@ function resolveReturnRouteV081(panel) {
 }
 
 function returnLabelV081(route) {
-  if (route.startsWith("/dashboard-house")) return "Дом сейчас";
+  if (route.startsWith("/dashboard-house-v11")) return "Дом сейчас";
   if (route.startsWith("/dashboard-actions")) return "Действия";
   return "Инфраструктура";
 }
