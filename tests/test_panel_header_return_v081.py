@@ -91,6 +91,8 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         self.assertIn('new CustomEvent("hass-toggle-menu"', self.base)
         self.assertIn("bubbles: true", self.base)
         self.assertIn("composed: true", self.base)
+        self.assertIn("border:1px solid var(--divider-color)", self.base)
+        self.assertIn("box-shadow:0 7px 20px rgba(23,45,76,.08)", self.base)
 
     def test_return_route_is_not_recomputed_by_telemetry_updates(self) -> None:
         self.assertIn("this._returnRouteV085 = null", self.current)
