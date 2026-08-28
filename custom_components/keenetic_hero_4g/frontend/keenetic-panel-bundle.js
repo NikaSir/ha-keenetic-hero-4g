@@ -3200,9 +3200,9 @@ if (!customElements.get("keenetic-hero-app-panel-v080")) {
           .header-action-v080{
             width:44px;height:44px;margin:0;padding:0;
             display:grid;place-items:center;
-            border:1px solid color-mix(in srgb,var(--primary-color,#03a9d9) 24%,var(--divider-color,#dfe3e8));border-radius:16px;
+            border:1px solid var(--divider-color);border-radius:16px;
             background:var(--card-background-color);color:var(--primary-text-color);
-            box-shadow:0 5px 16px rgba(23,45,76,.06);
+            box-shadow:0 7px 20px rgba(23,45,76,.08);
             appearance:none;-webkit-appearance:none;font:inherit;
           }
           #menu-v080{grid-column:1;justify-self:start}
@@ -3774,10 +3774,10 @@ if (CURRENT_SHELL_BASE_V081 && !customElements.get("keenetic-hero-app-panel-v081
             min-width:min(290px,100%);max-width:100%;min-height:44px;
             margin:0;padding:5px 14px;
             display:block;text-align:center;
-            border:1px solid var(--divider-color);border-radius:16px;
+            border:1px solid color-mix(in srgb,var(--primary-color,#03a9d9) 24%,var(--divider-color,#dfe3e8));border-radius:16px;
             background:color-mix(in srgb,var(--primary-color,#03a9d9) 5%,var(--card-background-color,#fff));
             color:var(--primary-text-color);
-            box-shadow:0 7px 20px rgba(23,45,76,.08);
+            box-shadow:0 5px 16px rgba(23,45,76,.06);
             appearance:none;-webkit-appearance:none;font:inherit;
             line-height:1;cursor:pointer;
             transition:transform .10s ease,background-color .10s ease;
