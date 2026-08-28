@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v075.js"
 STANDARD_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v076.js"
+PANEL_SOURCE = INTEGRATION / "panel.py"
 
 
 class PanelStableDomTests(unittest.TestCase):
@@ -16,6 +17,7 @@ class PanelStableDomTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.source = SOURCE.read_text(encoding="utf-8")
         cls.standard_source = STANDARD_SOURCE.read_text(encoding="utf-8")
+        cls.panel_source = PANEL_SOURCE.read_text(encoding="utf-8")
         cls.contract = json.loads(
             (INTEGRATION / "panel_contract.json").read_text(encoding="utf-8")
         )
@@ -71,6 +73,17 @@ class PanelStableDomTests(unittest.TestCase):
         self.assertIn("telemetryCategoryV075", self.source)
         self.assertNotIn("Math.round(telemetry.age)", self.source)
 
+    def test_bootstrap_exposes_factual_local_transport_availability(self) -> None:
+        self.assertIn('"connection_available": bool(coordinator.last_update_success)', self.panel_source)
+        self.assertIn('"data_channel": "local"', self.panel_source)
+        self.assertIn("configured.connection_available === false", self.standard_source)
+
+    def test_legacy_live_patches_skip_unchanged_text(self) -> None:
+        self.assertIn("function setTextContentV075", self.source)
+        self.assertIn("element.textContent !== value", self.source)
+        self.assertNotIn("if (lteSubtitle) lteSubtitle.textContent", self.source)
+        self.assertNotIn("if (cableSubtitle) cableSubtitle.textContent", self.source)
+
     def test_indicator_typography_has_no_sub_13px_text(self) -> None:
         indicator = self.contract["app_shell"]["connection_indicator"]
         self.assertEqual(indicator["primary_font_px"], 16)
@@ -85,8 +98,8 @@ class PanelStableDomTests(unittest.TestCase):
         self.assertFalse(updates["shadow_root_inner_html_after_mount"])
         self.assertFalse(updates["replace_children_after_mount"])
         self.assertTrue(updates["persistent_view_containers"])
-        self.assertEqual(self.manifest["panel_version"], "0.8.2")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v082")
+        self.assertEqual(self.manifest["panel_version"], "0.8.5")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v085")
 
 
 if __name__ == "__main__":

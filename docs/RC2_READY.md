@@ -1,5 +1,7 @@
 # Keenetic panel v0.2.1 RC2 candidate
 
+> Historical record only. Current Header, navigation, shell and publication requirements are defined by `NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md` v1.8 and `NIKAS_PANEL_NAVIGATION_CONTRACT.md`; the explicit Back control below is retired.
+
 This candidate supersedes panel v0.2.0 RC1 for UI acceptance.
 
 Reason: NikaS specialized-panel app-shell standard v1.1 requires the primary bottom Tab Bar to be full-width and edge-attached on iPhone. Floating/pill navigation with side or bottom gaps is not accepted.

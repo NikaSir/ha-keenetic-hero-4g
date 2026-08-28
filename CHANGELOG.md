@@ -1,5 +1,34 @@
 # Changelog
 
+## UI v0.8.5 / v1.00_b047 — 2026-08-28
+
+- Preserves the accepted b046 Overview composition, factual active/reserve channel logic, stable point-patched telemetry and fixed shell geometry.
+- Aligns the panel contract, manifest and repository guards with NikaS UI Standard v1.8 and the required Navigation and Return Contract v1.0.
+- Captures the Header return route once using the exact precedence `return_to` → `from` → one-shot session hand-off → saved panel route → same-origin referrer → configured parent → safe fallback.
+- Normalizes House now, Actions and Infrastructure sources to their canonical entry routes and rejects legacy, arbitrary, specialized-panel and cross-origin destinations.
+- Persists the accepted Keenetic return route per client without recalculating it during telemetry, tab changes, scroll or gestures.
+- Publishes a distinct autonomous `UI v0.8.5` bundle/cache key and registers only `keenetic-hero-app-panel-v085` as the current runtime component.
+
+## UI v0.8.4 / v1.00_b046 — 2026-08-27
+
+- Shortens the phone hero from 340 px to 320 px while preserving the full Cable/LTE/LAN topology and router artwork.
+- Moves the LTE reserve card down into a clear visual gap below the connection indicator and retunes all three SVG path anchors.
+- Keeps Cable, router and LAN at their accepted absolute visual level while removing the remaining empty floor band.
+- Reflows the final active-channel metric row into equal WAN IP and Uptime halves instead of leaving a two-thirds empty span.
+- Compacts the reserve, metric and reserve-channel surfaces so the reserve row clears the fixed Bottom Tab Bar sooner.
+- Publishes a distinct UI/cache key for repeat phone validation without merging the draft PR.
+
+## UI v0.8.3 / v1.00_b045 — 2026-08-27
+
+- Replaces the b044 double Overview hook with one differential point patch and prevents unchanged topology text or attributes from being rewritten.
+- Disconnects the child MutationObserver after first mount so telemetry updates cannot remeasure or disturb the zoom surface.
+- Measures scaled bounds from the active persistent view, excludes stale inline surface height, and defers ResizeObserver work until pinch/pan ends.
+- Routes Overview drill-downs through the outer shell so the content, URL fragment and Bottom Tab selection remain synchronized.
+- Restores factual `data-entity` bindings for active-channel more-info holds.
+- Reduces the phone hero to 340 px, removes the empty lower floor band, widens the LTE caption and compacts the reserve and metric surfaces.
+- Encodes Cable/LTE/LAN paths independently as active, ready reserve, down or unknown instead of fabricating a uniform healthy/red topology.
+- Synchronizes panel metadata, contract, runtime component and asset cache keys at UI 0.8.3 / integration b045.
+
 ## UI metadata 0.8.0 / v1.00_b042 — 2026-08-27
 
 - Replaces the accumulated application-shell and gesture inheritance chain with one independently mounted production shell.

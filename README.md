@@ -6,11 +6,11 @@ Custom Home Assistant integration for **Keenetic Hero 4G+ (KN-2311)**. The integ
 
 ## Status
 
-- `v1.00_b001` — accepted first RCI telemetry build.
-- `v1.00_b002` — current validation build for WAN diagnostics and failover accounting.
-- native panel `v0.1.0` — separate draft validation line in `feature/native-panel-v1`.
+- integration candidate: `v1.00_b047`;
+- native panel candidate: `UI v0.8.5`;
+- publication model: reviewed branch/PR without GitHub Release or automatic tag.
 
-`b002` has already passed live Ethernet -> LTE -> Ethernet failover testing on the target KN-2311. The remaining b002 acceptance item is live validation of the direct RCI Ethernet/LTE ping and packet-loss probes.
+The current candidate keeps the previously validated read-only RCI telemetry and b046 Overview composition, then aligns the persistent Header return path and production metadata with the current NikaS UI/navigation contract. Final acceptance requires Companion App checks for source-aware Header return, scroll, pinch, two-finger reset, more-info holds and repeated tab switching on the target KN-2311 panel.
 
 Existing SNMP/template entities may remain installed during comparison testing. Temporary `_2` or `_old` entity IDs are not part of the integration's final entity model.
 

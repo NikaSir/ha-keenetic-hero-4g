@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v081.js"
-CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v082.js"
+CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v085.js"
 BASE_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
 RUNTIME = INTEGRATION / "panel_runtime.py"
 
@@ -24,14 +24,14 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
 
     def test_current_ui_version_and_component_are_explicit(self) -> None:
-        self.assertIn('FRONTEND_UI_VERSION = "0.8.2"', self.runtime)
-        self.assertIn('FRONTEND_COMPONENT_SLUG = "v082"', self.runtime)
-        self.assertIn('const UI_VERSION_V081 = "0.8.1"', self.source)
+        self.assertIn('FRONTEND_UI_VERSION = "0.8.5"', self.runtime)
+        self.assertIn('FRONTEND_COMPONENT_SLUG = "v085"', self.runtime)
+        self.assertIn('const UI_VERSION_V081 = "0.8.3"', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v081"', self.source)
-        self.assertIn('const UI_VERSION_V082 = "0.8.2"', self.current)
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v082"', self.current)
-        self.assertIn('querySelector("#return-v081 span")', self.current)
-        self.assertIn('version.textContent = `UI v${UI_VERSION_V082}`', self.current)
+        self.assertIn('const UI_VERSION_V085 = "0.8.5"', self.current)
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v085"', self.current)
+        self.assertIn('getElementById("return-v081")', self.current)
+        self.assertIn('version.textContent !== `UI v${UI_VERSION_V085}`', self.current)
 
     def test_center_header_is_a_real_return_button(self) -> None:
         self.assertIn('button.id = "return-v081"', self.source)
@@ -41,21 +41,24 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         self.assertIn("border-radius:16px", self.source)
         self.assertIn("return-v081:active", self.source)
         self.assertIn("grid-column:2;grid-row:1;justify-self:center", self.source)
-        self.assertIn('extends CURRENT_SHELL_BASE_V082', self.current)
+        self.assertIn('extends CURRENT_SHELL_BASE_V085', self.current)
 
     def test_return_route_is_source_aware_and_safely_bounded(self) -> None:
         for route in [
-            "/dashboard-house",
-            "/dashboard-actions",
-            "/dashboard-infrastructure",
+            "/dashboard-house-v11/home",
+            "/dashboard-actions/home",
+            "/dashboard-infrastructure/overview",
         ]:
-            self.assertIn(route, self.source)
-        self.assertIn('const DEFAULT_RETURN_ROUTE_V081 = "/dashboard-infrastructure/overview"', self.source)
-        self.assertIn('["return_to", "from"]', self.source)
-        self.assertIn('params.get("source")', self.source)
-        self.assertIn("document.referrer", self.source)
-        self.assertIn("panel?.config?.parent_route", self.source)
-        self.assertIn("url.origin !== window.location.origin", self.source)
+            self.assertIn(route, self.current)
+        self.assertIn('const DEFAULT_RETURN_ROUTE_V085 = "/dashboard-infrastructure/overview"', self.current)
+        self.assertIn('for (const key of ["return_to", "from"])', self.current)
+        self.assertIn("consumeSourceRouteV085()", self.current)
+        self.assertIn("savedReturnRouteV085()", self.current)
+        self.assertIn("document.referrer", self.current)
+        self.assertIn("panel?.config?.parent_route", self.current)
+        self.assertIn("url.origin !== window.location.origin", self.current)
+        self.assertNotIn('params.get("source")', self.current)
+        self.assertNotIn("window.history.state", self.current)
 
     def test_navigation_is_explicit_and_never_history_back(self) -> None:
         self.assertIn('history.pushState(null, "", target)', self.source)
@@ -73,9 +76,18 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
         self.assertIn("composed: true", self.base)
 
     def test_return_route_is_not_recomputed_by_telemetry_updates(self) -> None:
-        self.assertIn("this._returnRouteV081 = null", self.source)
-        self.assertIn("if (!this._returnRouteV081)", self.source)
-        self.assertNotIn("set hass", self.source)
+        self.assertIn("this._returnRouteV085 = null", self.current)
+        self.assertIn("if (!this._returnRouteV085)", self.current)
+        self.assertIn("this._returnRouteV081 = this._returnRouteV085", self.current)
+        self.assertNotIn("set hass", self.current)
+
+    def test_one_shot_handoff_and_saved_route_follow_rule_117(self) -> None:
+        self.assertIn('sessionStorage.getItem(SOURCE_ROUTE_KEY_V085)', self.current)
+        self.assertIn('sessionStorage.removeItem(SOURCE_ROUTE_KEY_V085)', self.current)
+        self.assertIn('sessionStorage.removeItem(SOURCE_ROUTE_AT_KEY_V085)', self.current)
+        self.assertIn('localStorage.setItem(RETURN_ROUTE_KEY_V085, route)', self.current)
+        self.assertIn('localStorage.getItem(RETURN_ROUTE_KEY_V085)', self.current)
+        self.assertIn("SOURCE_ROUTE_MAX_AGE_MS_V085 = 30_000", self.current)
 
 
 if __name__ == "__main__":
