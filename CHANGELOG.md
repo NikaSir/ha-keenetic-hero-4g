@@ -1,5 +1,12 @@
 # Changelog
 
+## UI v0.8.8 / v1.00_b050 — 2026-08-28
+
+- Restores the approved mobile KN-2311 composition after the v0.8.7 standards merge enlarged the router layer: the official product image returns to 40% width and the accepted lower-centre position.
+- Retunes the Cable, LAN and vertical LTE paths so all three reach the smaller housing and remain occluded behind it.
+- Corrects failover semantics: active 4G LTE is shown as `Работа через резерв`, while unavailable Ethernet is identified as the failed primary channel instead of being mislabeled as an unavailable reserve.
+- Preserves the NikaS UI v1.9 navigation contract, stable point-patched DOM, native scroll, focal pinch, two-finger reset and fixed Header/Bottom Tab Bar.
+
 ## UI v0.8.7 / v1.00_b049 — 2026-08-28
 
 - Requires a complete one-shot route/timestamp pair and rejects invalid, stale and future hand-offs before capturing the centered Header return destination.

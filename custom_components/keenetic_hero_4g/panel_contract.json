@@ -12,7 +12,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.8.7"
+    "version": "0.8.8"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -261,7 +261,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v087",
+    "web_component": "keenetic-hero-app-panel-v088",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
@@ -323,15 +323,17 @@
       },
       "composition": {
         "room_asset": "keenetic-hero-room-v064.webp",
-        "router_asset": "keenetic-hero-router-v063.webp",
-        "router_scale_mobile_percent": 47,
-        "router_vertical_percent": 61.5,
+        "router_asset": "keenetic-hero-router-v086.webp",
+        "router_scale_mobile_percent": 40,
+        "router_vertical_percent": 64.5,
         "lte_card_top_percent": 32.5,
         "cable_card_top_percent": 57.5,
         "lan_card_top_percent": 57.5,
         "status_primary_label_ethernet": "Ethernet",
         "active_ethernet_path_style": "solid_green",
-        "reserve_lte_path_style": "static_dashed_blue"
+        "reserve_lte_path_style": "static_dashed_blue",
+        "lte_failover_title": "Работа через резерв",
+        "lte_failover_detail": "Основной канал Ethernet недоступен"
       },
       "kpi_overlay": [],
       "overview_sections": [
