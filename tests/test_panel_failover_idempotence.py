@@ -37,8 +37,8 @@ class PanelFailoverIdempotenceTests(unittest.TestCase):
 
     def test_current_delivery_is_cache_safe(self) -> None:
         self.assertIn('import("./keenetic-app-v072.js?v=0.7.3")', self.source)
-        self.assertEqual(self.manifest["panel_version"], "0.8.4")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v084")
+        self.assertEqual(self.manifest["panel_version"], "0.8.5")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v085")
 
 
 if __name__ == "__main__":

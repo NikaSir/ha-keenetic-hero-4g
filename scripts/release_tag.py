@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 def release_tag() -> str:
-    """Reject obsolete tag publication under NikaS UI Standard v1.7."""
+    """Reject obsolete tag publication under the current NikaS UI standard."""
     raise RuntimeError(
         "Automatic release tags are disabled; publish through a reviewed branch and pull request."
     )

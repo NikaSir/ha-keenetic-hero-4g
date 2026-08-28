@@ -1,5 +1,14 @@
 # Changelog
 
+## UI v0.8.5 / v1.00_b047 — 2026-08-28
+
+- Preserves the accepted b046 Overview composition, factual active/reserve channel logic, stable point-patched telemetry and fixed shell geometry.
+- Aligns the panel contract, manifest and repository guards with NikaS UI Standard v1.8 and the required Navigation and Return Contract v1.0.
+- Captures the Header return route once using the exact precedence `return_to` → `from` → one-shot session hand-off → saved panel route → same-origin referrer → configured parent → safe fallback.
+- Normalizes House now, Actions and Infrastructure sources to their canonical entry routes and rejects legacy, arbitrary, specialized-panel and cross-origin destinations.
+- Persists the accepted Keenetic return route per client without recalculating it during telemetry, tab changes, scroll or gestures.
+- Publishes a distinct autonomous `UI v0.8.5` bundle/cache key and registers only `keenetic-hero-app-panel-v085` as the current runtime component.
+
 ## UI v0.8.4 / v1.00_b046 — 2026-08-27
 
 - Shortens the phone hero from 340 px to 320 px while preserving the full Cable/LTE/LAN topology and router artwork.

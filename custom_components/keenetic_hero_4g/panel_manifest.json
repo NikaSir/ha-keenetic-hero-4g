@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
   "panel": "keenetic",
-  "panel_version": "0.8.4",
+  "panel_version": "0.8.5",
   "route": "/dashboard-keenetic",
   "entry_module": "keenetic-panel-bundle.js",
-  "web_component": "keenetic-hero-app-panel-v084",
+  "web_component": "keenetic-hero-app-panel-v085",
   "ha_menu_event": {
     "type": "hass-toggle-menu",
     "bubbles": true,
     "composed": true
   },
   "zoom_policy": {
-    "standard": "1.7",
+    "standard": "1.8",
     "engine": "native_vertical_at_100_transform_pan_above_100",
     "min_percent": 75,
     "max_percent": 200,
@@ -45,13 +45,13 @@
   "assets": [
     {
       "path": "frontend/assets/keenetic-hero-room-v064.webp",
-      "url": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.4",
+      "url": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=0.8.5",
       "role": "overview_hero_background",
       "format": "webp"
     },
     {
       "path": "frontend/assets/keenetic-hero-router-v063.webp",
-      "url": "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.8.4",
+      "url": "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=0.8.5",
       "role": "overview_router_layer",
       "format": "webp"
     }

@@ -13,6 +13,7 @@ STABLE = INTEGRATION / "frontend" / "keenetic-app-v075.js"
 BUILD = ROOT / "scripts" / "build_frontend_bundle.py"
 RUNTIME = INTEGRATION / "panel_runtime.py"
 MANIFEST = INTEGRATION / "manifest.json"
+CURRENT = INTEGRATION / "frontend" / "keenetic-app-v085.js"
 
 # This test file is intentionally outside frontend bundle inputs so the final
 # generated-bundle head can be revalidated without starting a rebuild loop.
@@ -28,6 +29,7 @@ class PanelOverviewV084Tests(unittest.TestCase):
         cls.build = BUILD.read_text(encoding="utf-8")
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
         cls.manifest = MANIFEST.read_text(encoding="utf-8")
+        cls.current = CURRENT.read_text(encoding="utf-8")
 
     def test_overview_is_recomposed_without_duplicate_channels_section(self) -> None:
         self.assertIn("v083-active-card", self.source)
@@ -115,14 +117,16 @@ class PanelOverviewV084Tests(unittest.TestCase):
         self.assertNotIn("_patchStableDomV075", self.tuning)
         self.assertNotIn("shadowRoot.innerHTML", self.tuning)
 
-    def test_delivery_version_is_v084_and_package_is_b046(self) -> None:
+    def test_delivery_version_is_v085_and_package_is_b047(self) -> None:
         self.assertIn('FRONTEND / "keenetic-app-v083.js"', self.build)
         self.assertIn('FRONTEND / "keenetic-app-v084.js"', self.build)
+        self.assertIn('FRONTEND / "keenetic-app-v085.js"', self.build)
         self.assertNotIn('FRONTEND / "keenetic-app-v082.js"', self.build)
-        self.assertIn('PANEL_VERSION = "0.8.4"', self.build)
-        self.assertIn('FRONTEND_UI_VERSION = "0.8.4"', self.runtime)
-        self.assertIn('FRONTEND_COMPONENT_SLUG = "v084"', self.runtime)
-        self.assertIn('"version": "1.0.0-b046"', self.manifest)
+        self.assertIn('PANEL_VERSION = "0.8.5"', self.build)
+        self.assertIn('FRONTEND_UI_VERSION = "0.8.5"', self.runtime)
+        self.assertIn('FRONTEND_COMPONENT_SLUG = "v085"', self.runtime)
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v085"', self.current)
+        self.assertIn('"version": "1.0.0-b047"', self.manifest)
 
 
 if __name__ == "__main__":

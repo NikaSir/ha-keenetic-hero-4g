@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel metadata version: **0.8.3**
+Panel metadata version: **0.8.5**
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -36,7 +36,7 @@ The production shell is mounted directly and does not inherit any earlier scroll
 - title `Keenetic Hero 4G+` geometrically centered against the viewport;
 - no decorative router/brand icon beside the title;
 - the complete central title surface is a button that returns to the source NikaS panel;
-- first line `Keenetic Hero 4G+`, second line `UI v0.8.3`;
+- first line `Keenetic Hero 4G+`, second line `UI v0.8.5`;
 - one global Refresh action on the right;
 - the source route is restricted to `Дом сейчас`, `Действия` or `Инфраструктура`; the left Header slot remains the native HA menu.
 

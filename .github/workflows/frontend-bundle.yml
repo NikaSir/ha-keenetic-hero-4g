@@ -28,6 +28,7 @@ on:
       - "fix/b041-*"
       - "rebuild/b042-*"
       - "fix/b045-*"
+      - "rebuild/b047-*"
     paths:
       - "custom_components/keenetic_hero_4g/frontend/**"
       - "custom_components/keenetic_hero_4g/panel_runtime.py"
@@ -70,7 +71,7 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Enforce NikaS UI standard v1.7
+      - name: Enforce NikaS rule 1.17 and navigation contract v1.8
         run: python scripts/check_nikas_ui_standard.py
 
       - name: Set up Node.js
@@ -241,18 +242,25 @@ jobs:
               assert asset["url"].endswith("?v=0.7.8"), asset
           PY
 
-      - name: Verify clean panel shell, scroll, zoom and NikaS v1.6 contract
+      - name: Verify clean panel shell, scroll, zoom and current NikaS contract
         shell: bash
         run: |
-          grep -q 'PANEL_VERSION = "0.8.4"' custom_components/keenetic_hero_4g/const.py
+          grep -q 'PANEL_VERSION = "0.8.5"' custom_components/keenetic_hero_4g/const.py
           grep -q 'keenetic-panel-bundle.js' custom_components/keenetic_hero_4g/panel_runtime.py
           grep -q 'keenetic-app-v080.js' scripts/build_frontend_bundle.py
           grep -q 'keenetic-app-v083.js' scripts/build_frontend_bundle.py
           grep -q 'keenetic-app-v084.js' scripts/build_frontend_bundle.py
+          grep -q 'keenetic-app-v085.js' scripts/build_frontend_bundle.py
           if grep -q 'FRONTEND / "keenetic-app-v082.js"' scripts/build_frontend_bundle.py; then exit 1; fi
           grep -q 'keenetic-hero-app-panel-v080' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
           grep -q 'keenetic-hero-app-panel-v083' custom_components/keenetic_hero_4g/frontend/keenetic-app-v083.js
           grep -q 'keenetic-hero-app-panel-v084' custom_components/keenetic_hero_4g/frontend/keenetic-app-v084.js
+          grep -q 'keenetic-hero-app-panel-v085' custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js
+          grep -q 'nikas.specialized.source_route.v1' custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js
+          grep -q 'nikas.keenetic.return_route.v1' custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js
+          grep -q 'for (const key of \["return_to", "from"\])' custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js
+          grep -q 'sessionStorage.removeItem(SOURCE_ROUTE_KEY_V085)' custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js
+          grep -q 'localStorage.setItem(RETURN_ROUTE_KEY_V085, route)' custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js
           grep -q 'overflow-x:hidden;overflow-y:auto' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
           grep -q 'touch-action:pan-y' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js
           grep -q 'event.touches.length >= 2' custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js

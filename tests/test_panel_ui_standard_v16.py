@@ -9,13 +9,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
-CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v084.js"
+CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v085.js"
 INDICATOR_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v076.js"
 STANDARD = ROOT / "docs" / "NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md"
 MENU_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v045.js"
 
 
-class PanelUiStandardV16Tests(unittest.TestCase):
+class PanelUiStandardV18Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.source = SOURCE.read_text(encoding="utf-8")
@@ -30,14 +30,14 @@ class PanelUiStandardV16Tests(unittest.TestCase):
             (INTEGRATION / "panel_manifest.json").read_text(encoding="utf-8")
         )
 
-    def test_canonical_standard_snapshot_is_v17(self) -> None:
+    def test_canonical_standard_snapshot_is_v18(self) -> None:
         self.assertIn("NikaS Specialized Panel UI Standard v1.8", self.standard)
-        self.assertEqual(self.contract["app_shell"]["version"], "1.7")
+        self.assertEqual(self.contract["app_shell"]["version"], "1.8")
         self.assertEqual(
             self.contract["app_shell"]["canonical_sha256"],
-            "22c0cec7fa61b8210fc40e3f053242335f8e502984cbb8a4fb93c33a93bd3706",
+            "03bc586ff334d06d593ea639fc7899d52ed8d0f3fa3255d133f1c6f32aeac8c2",
         )
-        self.assertEqual(self.manifest["zoom_policy"]["standard"], "1.7")
+        self.assertEqual(self.manifest["zoom_policy"]["standard"], "1.8")
 
     def test_phone_shell_owns_the_only_scroll_viewport(self) -> None:
         viewport = self.contract["app_shell"]["viewport_fit"]
@@ -98,10 +98,10 @@ class PanelUiStandardV16Tests(unittest.TestCase):
         self.assertIn("font-size:23px", self.source)
         self.assertIn("font-size:12px", self.source)
         self.assertIsNone(re.search(r"font-size:(?:[0-9]|1[01])px", self.source))
-        self.assertEqual(self.manifest["panel_version"], "0.8.4")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v084")
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v084"', self.current_source)
-        self.assertIn('version.textContent !== `UI v${UI_VERSION_V084}`', self.current_source)
+        self.assertEqual(self.manifest["panel_version"], "0.8.5")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v085")
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v085"', self.current_source)
+        self.assertIn('version.textContent !== `UI v${UI_VERSION_V085}`', self.current_source)
 
 
 if __name__ == "__main__":
