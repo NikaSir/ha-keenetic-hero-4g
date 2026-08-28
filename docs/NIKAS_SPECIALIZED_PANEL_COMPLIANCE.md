@@ -10,6 +10,7 @@
 |---|---|---|
 | Integration-owned fixed shell | PASS | v080 directly owns one height-locked three-row shell; Header and `.tabbar-v080` stay outside the only work viewport. |
 | Native HA menu | PASS | `frontend/keenetic-app-v045.js` restores `mdi:menu` and dispatches bubbling/composed `hass-toggle-menu`. |
+| Center title source return | PASS | `frontend/keenetic-app-v081.js` contributes the semantic version-only title button, focus/pressed states, source-route validation/persistence and explicit HA navigation; v084 retains that stable Header. The v1.7 guard reads the registered autonomous production bundle. |
 | One production entry / cache busting | PASS | `panel_runtime.py` selects one autonomous bundle; build-time asset URLs and the manifest use the same metadata key. |
 | Stable live updates | PASS (code) | v083 replaces the double b044 Overview hook with one differential stable patch; the shell's MutationObserver disconnects after initial mount and telemetry cannot request a zoom measurement. |
 | Persistent shell and lazy tab cache | PASS | Header, Bottom Tab Bar and zoom viewport keep DOM identity. Work views are created on first visit, retained, and switched with `hidden`/`inert`. |

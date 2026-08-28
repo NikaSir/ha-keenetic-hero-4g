@@ -35,7 +35,7 @@ class PanelUiStandardV16Tests(unittest.TestCase):
         self.assertEqual(self.contract["app_shell"]["version"], "1.7")
         self.assertEqual(
             self.contract["app_shell"]["canonical_sha256"],
-            "22c0cec7fa61b8210fc40e3f053242335f8e502984cbb8a4fb93c33a93bd3706",
+            "17afc8ea93b07a4362c45e5e9d5f6504158e70a9c19328a545403a92f1e08a8c",
         )
         self.assertEqual(self.manifest["zoom_policy"]["standard"], "1.7")
 

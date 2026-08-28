@@ -14,7 +14,7 @@
     "standard": "Home Assistant NikaS specialized panel",
     "version": "1.7",
     "canonical_source": "NikaSir/ha-contract-generated-ui",
-    "canonical_sha256": "22c0cec7fa61b8210fc40e3f053242335f8e502984cbb8a4fb93c33a93bd3706",
+    "canonical_sha256": "17afc8ea93b07a4362c45e5e9d5f6504158e70a9c19328a545403a92f1e08a8c",
     "standards": {
       "shell": "1.7",
       "zoom": "1.7",
