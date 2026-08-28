@@ -36,10 +36,27 @@ class PanelHeaderReturnV081Tests(unittest.TestCase):
     def test_center_header_is_a_real_return_button(self) -> None:
         self.assertIn('button.id = "return-v081"', self.source)
         self.assertIn('button.type = "button"', self.source)
-        self.assertIn("min-height:44px", self.source)
-        self.assertIn("border:1px solid var(--divider-color)", self.source)
+        self.assertIn("min-width:min(290px,100%);max-width:100%;min-height:44px", self.source)
+        self.assertIn(
+            "border:1px solid color-mix(in srgb,var(--primary-color,#03a9d9) 24%,var(--divider-color,#dfe3e8))",
+            self.source,
+        )
+        self.assertIn(
+            "background:color-mix(in srgb,var(--primary-color,#03a9d9) 5%,var(--card-background-color,#fff))",
+            self.source,
+        )
+        self.assertIn("box-shadow:0 5px 16px rgba(23,45,76,.06)", self.source)
         self.assertIn("border-radius:16px", self.source)
+        self.assertIn(".return-v081:focus-visible{outline:2px", self.source)
         self.assertIn("return-v081:active", self.source)
+        self.assertIn(
+            "background:color-mix(in srgb,var(--primary-color,#03a9d9) 13%,var(--card-background-color,#fff))",
+            self.source,
+        )
+        self.assertIn(
+            "border-color:color-mix(in srgb,var(--primary-color,#03a9d9) 42%,var(--divider-color,#dfe3e8))",
+            self.source,
+        )
         self.assertIn("grid-column:2;grid-row:1;justify-self:center", self.source)
         self.assertIn('extends CURRENT_SHELL_BASE_V085', self.current)
 
