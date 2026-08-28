@@ -1,5 +1,11 @@
 # Changelog
 
+## UI v0.9.0 / v1.00_b052 — 2026-08-28
+
+- Compacts the two-line hero heading within the approved 12–25 px typography range so `Работа через резерв · 4G LTE` remains fully visible above the LTE topology card.
+- Displays the active LTE signal as the complete factual value (for example `−97 dBm`) without the redundant `RSRP` prefix or ellipsis.
+- Preserves the accepted router position, LTE-card antenna clearance, three housing-occluded paths, fixed Header/Bottom Tab Bar and all zoom gestures from b051.
+
 ## UI v0.8.9 / v1.00_b051 — 2026-08-28
 
 - Moves the LTE topology card upward to restore clear space above the accepted KN-2311 antennas and extends the vertical LTE path to the new card anchor.

@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
-CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v089.js"
+CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v090.js"
 INDICATOR_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v076.js"
 STANDARD = ROOT / "docs" / "NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md"
 MENU_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v045.js"
@@ -102,10 +102,10 @@ class PanelUiStandardV19Tests(unittest.TestCase):
         self.assertIn("font-size:23px", self.source)
         self.assertIn("font-size:12px", self.source)
         self.assertIsNone(re.search(r"font-size:(?:[0-9]|1[01])px", self.source))
-        self.assertEqual(self.manifest["panel_version"], "0.8.9")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v089")
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v089"', self.current_source)
-        self.assertIn('version.textContent !== `UI v${UI_VERSION_V089}`', self.current_source)
+        self.assertEqual(self.manifest["panel_version"], "0.9.0")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v090")
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v090"', self.current_source)
+        self.assertIn('version.textContent !== `UI v${UI_VERSION_V090}`', self.current_source)
 
 
 if __name__ == "__main__":

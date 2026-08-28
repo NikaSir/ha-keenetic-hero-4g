@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 CURRENT = INTEGRATION / "frontend" / "keenetic-app-v085.js"
-DELIVERY = INTEGRATION / "frontend" / "keenetic-app-v089.js"
+DELIVERY = INTEGRATION / "frontend" / "keenetic-app-v090.js"
 SHELL = INTEGRATION / "frontend" / "keenetic-app-v080.js"
 BUNDLE = INTEGRATION / "frontend" / "keenetic-panel-bundle.js"
 RUNTIME = INTEGRATION / "panel_runtime.py"
@@ -27,13 +27,13 @@ class PanelRules117RebuildTests(unittest.TestCase):
         cls.integration_manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
 
     def test_rule_117_rebuild_versions_are_synchronized(self) -> None:
-        self.assertEqual(self.contract["panel"]["version"], "0.8.9")
+        self.assertEqual(self.contract["panel"]["version"], "0.9.0")
         self.assertEqual(self.contract["app_shell"]["version"], "1.9")
-        self.assertEqual(self.panel_manifest["panel_version"], "0.8.9")
+        self.assertEqual(self.panel_manifest["panel_version"], "0.9.0")
         self.assertEqual(self.panel_manifest["zoom_policy"]["standard"], "1.9")
-        self.assertEqual(self.integration_manifest["version"], "1.0.0-b051")
-        self.assertIn('FRONTEND_UI_VERSION = "0.8.9"', self.runtime)
-        self.assertIn('FRONTEND_COMPONENT_SLUG = "v089"', self.runtime)
+        self.assertEqual(self.integration_manifest["version"], "1.0.0-b052")
+        self.assertIn('FRONTEND_UI_VERSION = "0.9.0"', self.runtime)
+        self.assertIn('FRONTEND_COMPONENT_SLUG = "v090"', self.runtime)
 
     def test_header_return_precedence_is_exact_and_captured_once(self) -> None:
         markers = [
@@ -69,15 +69,15 @@ class PanelRules117RebuildTests(unittest.TestCase):
 
     def test_production_bundle_contains_the_current_component_without_imports(self) -> None:
         self.assertIn(
-            "// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v089.js",
+            "// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v090.js",
             self.bundle,
         )
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v089"', self.bundle)
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v090"', self.bundle)
         self.assertNotIn('await import("./keenetic-app-v084.js")', self.bundle)
-        self.assertEqual(self.panel_manifest["web_component"], "keenetic-hero-app-panel-v089")
+        self.assertEqual(self.panel_manifest["web_component"], "keenetic-hero-app-panel-v090")
         self.assertEqual(
             self.contract["frontend_delivery"]["web_component"],
-            "keenetic-hero-app-panel-v089",
+            "keenetic-hero-app-panel-v090",
         )
 
     def test_fixed_loading_shell_exists_before_live_telemetry(self) -> None:

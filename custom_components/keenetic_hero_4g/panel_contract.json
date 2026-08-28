@@ -12,7 +12,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.8.9"
+    "version": "0.9.0"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -263,7 +263,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v089",
+    "web_component": "keenetic-hero-app-panel-v090",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
@@ -329,6 +329,8 @@
         "router_scale_mobile_percent": 40,
         "router_vertical_percent": 64.5,
         "lte_card_top_percent": 28.5,
+        "hero_title_font_px": 20,
+        "hero_subtitle_font_px": 12,
         "cable_card_top_percent": 57.5,
         "lan_card_top_percent": 57.5,
         "status_primary_label_ethernet": "Ethernet",
