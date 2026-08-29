@@ -6,6 +6,7 @@ from homeassistant.core import HomeAssistant
 from . import panel as _panel
 
 FRONTEND_UI_VERSION = "0.9.0"
+FRONTEND_CACHE_KEY = "0.9.0-b054"
 FRONTEND_COMPONENT_SLUG = "v090"
 
 
@@ -18,7 +19,7 @@ def _select_frontend() -> None:
     slug = _frontend_slug()
     _panel.PANEL_COMPONENT = f"keenetic-hero-app-panel-{slug}"
     _panel.PANEL_MODULE = (
-        f"{_panel.PANEL_STATIC_URL}/keenetic-panel-bundle.js?v={FRONTEND_UI_VERSION}"
+        f"{_panel.PANEL_STATIC_URL}/keenetic-panel-bundle.js?v={FRONTEND_CACHE_KEY}"
     )
 
 
