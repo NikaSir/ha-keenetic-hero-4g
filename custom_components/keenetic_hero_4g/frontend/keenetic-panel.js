@@ -1,4 +1,4 @@
-const PANEL_VERSION = "0.9.0";
+const PANEL_VERSION = "1.0.1";
 const UNKNOWN = new Set(["unknown", "unavailable", "none", "null", ""]);
 
 const ROLE_LABELS = {

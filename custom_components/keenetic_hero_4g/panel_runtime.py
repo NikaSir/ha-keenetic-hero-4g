@@ -5,8 +5,8 @@ from homeassistant.core import HomeAssistant
 
 from . import panel as _panel
 
-FRONTEND_UI_VERSION = "1.0.0"
-FRONTEND_CACHE_KEY = "1.0.0"
+FRONTEND_UI_VERSION = "1.0.1"
+FRONTEND_CACHE_KEY = "1.0.1"
 FRONTEND_COMPONENT_SLUG = "v100"
 
 
@@ -15,7 +15,7 @@ def _frontend_slug() -> str:
 
 
 def _select_frontend() -> None:
-    """Select the current autonomous UI 1.0.0 production component."""
+    """Select the current autonomous UI 1.0.1 production component."""
     slug = _frontend_slug()
     _panel.PANEL_COMPONENT = f"keenetic-hero-app-panel-{slug}"
     _panel.PANEL_MODULE = (

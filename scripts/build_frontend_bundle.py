@@ -31,7 +31,7 @@ SOURCES = [
 RUNTIME_IMPORT_RE = re.compile(r"^\s*(?:await\s+)?import(?:\s*\(\s*)?\s*[\"']\./[^\"']+[\"']\s*\)?\s*;?\s*$", re.MULTILINE)
 LEGACY_INLINE_HERO_RE = re.compile(r'const KEENETIC_ROOM_V050 = "data:image/webp;base64,[^"]+";')
 ASSET_QUERY_RE = re.compile(r"(/keenetic_hero_4g_static/assets/[A-Za-z0-9._-]+(?:webp|svg))\?v=[0-9.]+")
-PANEL_VERSION = "1.0.0"
+PANEL_VERSION = "1.0.1"
 HERO_ASSET_URL = f"/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v={PANEL_VERSION}"
 CSS_LINK = '<link rel="stylesheet" href="/keenetic_hero_4g_static/keenetic-panel.css?v=${encodeURIComponent(PANEL_VERSION)}">'
 
@@ -81,7 +81,7 @@ def _wrap(path: Path) -> str:
 def build() -> str:
     parts = [
         "// GENERATED FILE. DO NOT EDIT DIRECTLY.",
-        "// Keenetic Hero 4G+ autonomous UI 1.0.0 production bundle.",
+        "// Keenetic Hero 4G+ autonomous UI 1.0.1 production bundle.",
         "// One active shell: keenetic-hero-app-panel-v100.",
         "",
     ]
