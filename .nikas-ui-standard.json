@@ -34,7 +34,7 @@
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v075.js",
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js"
   ],
-  "ui_version": "1.0.1",
+  "ui_version": "1.0.2",
   "web_component": "keenetic-hero-app-panel-v100",
   "bundle_contract": {
     "autonomous": true,
@@ -54,7 +54,7 @@
   },
   "header_return": {
     "button_marker": "id=\"k100-title\"",
-    "version_marker": "<small>UI v1.0.1</small>",
+    "version_marker": "<small>UI v1.0.2</small>",
     "focus_marker": ".k100-title:focus-visible",
     "pressed_marker": ".k100-title:active",
     "explicit_precedence_marker": "[\"return_to\",\"from\"]",
