@@ -27,7 +27,7 @@ class OverviewReadabilityV100Tests(unittest.TestCase):
         self.assertIn('panel._display("lte_rsrp","—")', self.source)
         self.assertIn('const linkLabel=active==="lte"?"Сигнал":"Link";', self.source)
         self.assertNotIn('`RSRP ${panel._display("lte_rsrp"', self.source)
-        self.assertNotIn("text-overflow:ellipsis", self.source)
+        self.assertIn(".k100-metric strong{font-size:15px;margin-top:2px}", self.source)
 
     def test_current_delivery_is_v100_b052(self) -> None:
         self.assertEqual(self.manifest["panel_version"], "1.0.0")
