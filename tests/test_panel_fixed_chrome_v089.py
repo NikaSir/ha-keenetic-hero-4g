@@ -34,9 +34,9 @@ class FixedChromeV089Tests(unittest.TestCase):
         self.assertEqual(viewport["scroll_boundary_guard"], "prevent_default_at_top_and_bottom")
         self.assertEqual(viewport["fixed_chrome_touch_action"], "none")
 
-    def test_current_delivery_is_v090_b052(self) -> None:
-        self.assertEqual(self.manifest["panel_version"], "0.9.0")
-        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v090")
+    def test_current_delivery_is_v100_b052(self) -> None:
+        self.assertEqual(self.manifest["panel_version"], "1.0.0")
+        self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
         integration_manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(integration_manifest["version"], "1.0.0-b052")
 
