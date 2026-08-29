@@ -32,39 +32,49 @@ class PanelHeaderReturnV19Tests(unittest.TestCase):
         self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.source)
 
     def test_center_header_is_a_semantic_return_button(self) -> None:
-        markers = self.standard["header_return"]
-        for name in ["button_marker", "version_marker", "focus_marker", "pressed_marker"]:
-            self.assertIn(markers[name], self.bundle)
-        reference = self.standard["title_plaque_reference"]
-        self.assertEqual(reference["implementation"], "LIDER")
-        self.assertEqual(reference["min_height_px"], 44)
-        self.assertEqual(reference["radius_px"], 16)
+        self.assertIn('id="k100-title" class="k100-title" type="button"', self.source)
+        self.assertIn("<strong>Keenetic Hero 4G+</strong><small>UI v1.0.0</small>", self.source)
+        self.assertIn("min-width:min(290px,100%)", self.source)
+        self.assertIn("min-height:44px", self.source)
+        self.assertIn("border-radius:16px", self.source)
+        self.assertIn(".k100-title:focus-visible{outline:2px", self.source)
+        self.assertIn(".k100-title:active{", self.source)
+        self.assertIn("box-shadow:0 2px 7px rgba(23,45,76,.05)", self.source)
 
-    def test_return_route_is_source_aware_and_safely_bounded(self) -> None:
+    def test_one_shot_handoff_is_consumed_before_explicit_precedence(self) -> None:
+        resolver = self.source[
+            self.source.index("function k100Return") : self.source.index("function k100Navigate")
+        ]
+        self.assertLess(
+            resolver.index("const handedOff = k100ConsumeSourceRoute();"),
+            resolver.index('for (const key of ["return_to","from"])'),
+        )
+        consume = self.source[
+            self.source.index("function k100ConsumeSourceRoute")
+            : self.source.index("function k100Return")
+        ]
+        self.assertIn('sessionStorage.removeItem("nikas.specialized.source_route.v1")', consume)
+        self.assertIn('sessionStorage.removeItem("nikas.specialized.source_route_at.v1")', consume)
+        self.assertIn("once!==null&&onceAt!==null", consume)
+        self.assertIn("K100_HANDOFF_MAX_AGE_MS = 30_000", self.source)
+        self.assertIn("handedOffAge>=0", consume)
+        self.assertIn("handedOffAge<=K100_HANDOFF_MAX_AGE_MS", consume)
+
+    def test_routes_are_same_origin_and_normalized_to_canonical_entries(self) -> None:
         for route in [
             "/dashboard-house-v11/home",
             "/dashboard-actions/home",
             "/dashboard-infrastructure/overview",
         ]:
             self.assertIn(route, self.source)
-        self.assertIn('["return_to","from"]', self.source)
-        self.assertIn('sessionStorage.getItem("nikas.specialized.source_route.v1")', self.source)
-        self.assertIn('sessionStorage.getItem("nikas.specialized.source_route_at.v1")', self.source)
-        self.assertIn("document.referrer", self.source)
-        self.assertIn("panel?.config?.parent_route", self.source)
-        self.assertIn("url.origin!==window.location.origin", self.source)
-
-    def test_one_shot_handoff_requires_matching_fresh_timestamp(self) -> None:
-        self.assertIn('sessionStorage.removeItem("nikas.specialized.source_route.v1")', self.source)
-        self.assertIn('sessionStorage.removeItem("nikas.specialized.source_route_at.v1")', self.source)
-        self.assertIn("once!==null&&onceAt!==null", self.source)
-        self.assertIn("handedOffAge>=0", self.source)
-        self.assertIn("handedOffAge<10*60*1000", self.source)
-        self.assertIn("this._returnRoute", self.bundle)
+        self.assertIn("url.origin !== window.location.origin", self.source)
+        self.assertIn("return canonical;", self.source)
+        self.assertNotIn('"/dashboard-house"', self.source)
+        self.assertNotIn("/dashboard-starline", self.source)
 
     def test_navigation_is_explicit_and_never_browser_back(self) -> None:
-        self.assertIn('history.pushState(null,"",route)', self.source)
-        self.assertIn('new Event("location-changed")', self.source)
+        self.assertIn('window.history.pushState(null, "", route);', self.source)
+        self.assertIn('window.dispatchEvent(new Event("location-changed"));', self.source)
         self.assertNotIn("history.back(", self.bundle)
         self.assertNotIn("history.go(-1", self.bundle)
 
