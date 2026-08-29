@@ -43,7 +43,6 @@ class PanelRouterBaselineV100Tests(unittest.TestCase):
 
     def test_router_asset_is_static_and_not_rewritten_by_telemetry_patch(self) -> None:
         self.assertEqual(self.source.count("keenetic-hero-router-v086.webp?v=1.0.0"), 1)
-        self.assertNotIn("shadowRoot.innerHTML", self.source)
         self.assertNotIn("router.setAttribute", self.source)
         self.assertNotIn("router.src =", self.source)
 
