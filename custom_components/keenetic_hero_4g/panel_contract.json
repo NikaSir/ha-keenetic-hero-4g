@@ -12,7 +12,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "1.0.1"
+    "version": "1.0.2"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",

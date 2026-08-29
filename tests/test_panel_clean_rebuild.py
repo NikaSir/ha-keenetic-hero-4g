@@ -48,7 +48,7 @@ class PanelCleanRebuildTests(unittest.TestCase):
         self.assertNotIn("history.back(", self.bundle)
 
     def test_v100_runtime_exposes_current_version_and_semantic_return_shell(self) -> None:
-        self.assertIn('const K100_VERSION = "1.0.1";', self.source)
+        self.assertIn('const K100_VERSION = "1.0.2";', self.source)
         self.assertIn("nikas.specialized.source_route.v1", self.source)
         self.assertIn("history.pushState", self.source)
         self.assertIn("location-changed", self.source)
