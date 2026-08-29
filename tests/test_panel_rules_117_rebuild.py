@@ -8,7 +8,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 DELIVERY = INTEGRATION / "frontend" / "keenetic-app-v100.js"
-SHELL = INTEGRATION / "frontend" / "keenetic-app-v080.js"
 BUNDLE = INTEGRATION / "frontend" / "keenetic-panel-bundle.js"
 RUNTIME = INTEGRATION / "panel_runtime.py"
 STANDARD = ROOT / ".nikas-ui-standard.json"
@@ -18,7 +17,6 @@ class PanelRulesV19RebuildTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.delivery = DELIVERY.read_text(encoding="utf-8")
-        cls.shell = SHELL.read_text(encoding="utf-8")
         cls.bundle = BUNDLE.read_text(encoding="utf-8")
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
         cls.standard = json.loads(STANDARD.read_text(encoding="utf-8"))
@@ -39,14 +37,19 @@ class PanelRulesV19RebuildTests(unittest.TestCase):
         self.assertIn('FRONTEND_COMPONENT_SLUG = "v100"', self.runtime)
 
     def test_header_return_precedence_is_explicit_and_captured_once(self) -> None:
-        self.assertIn('["return_to","from"]', self.delivery)
+        resolver = self.delivery[
+            self.delivery.index("function k100Return") : self.delivery.index("function k100Navigate")
+        ]
+        self.assertLess(
+            resolver.index("const handedOff = k100ConsumeSourceRoute();"),
+            resolver.index('for (const key of ["return_to","from"])'),
+        )
         self.assertIn('sessionStorage.getItem("nikas.specialized.source_route.v1")', self.delivery)
         self.assertIn('sessionStorage.getItem("nikas.specialized.source_route_at.v1")', self.delivery)
         self.assertIn("document.referrer", self.delivery)
         self.assertIn("panel?.config?.parent_route", self.delivery)
-        self.assertIn("this._returnRoute", self.delivery)
-        self.assertIn("once!==null&&onceAt!==null", self.delivery)
-        self.assertIn("handedOffAge>=0", self.delivery)
+        self.assertIn("if (this._returnRoute) return", self.delivery)
+        self.assertIn("K100_HANDOFF_MAX_AGE_MS = 30_000", self.delivery)
         self.assertNotIn("history.back(", self.bundle)
 
     def test_only_canonical_base_destinations_are_accepted(self) -> None:
@@ -63,7 +66,8 @@ class PanelRulesV19RebuildTests(unittest.TestCase):
             self.assertIn(route, self.delivery)
         self.assertNotIn('"/dashboard-house"', self.delivery)
         self.assertNotIn("/dashboard-starline", self.delivery)
-        self.assertIn("url.origin!==window.location.origin", self.delivery)
+        self.assertIn("url.origin !== window.location.origin", self.delivery)
+        self.assertIn("return canonical;", self.delivery)
 
     def test_production_bundle_contains_the_current_component_without_runtime_imports(self) -> None:
         self.assertIn(
@@ -78,13 +82,13 @@ class PanelRulesV19RebuildTests(unittest.TestCase):
             "keenetic-hero-app-panel-v100",
         )
 
-    def test_fixed_loading_shell_exists_before_live_telemetry(self) -> None:
-        self.assertIn('id="app-shell-v080"', self.shell)
-        self.assertIn('class="header-v080"', self.shell)
-        self.assertIn('id="work-viewport-v080"', self.shell)
-        self.assertIn('id="tabbar-v080"', self.shell)
-        connected = self.shell[
-            self.shell.index("connectedCallback()") : self.shell.index("disconnectedCallback()")
+    def test_fixed_shell_exists_before_live_telemetry(self) -> None:
+        self.assertIn('id="k100-shell"', self.delivery)
+        self.assertIn('class="k100-header"', self.delivery)
+        self.assertIn('id="k100-work"', self.delivery)
+        self.assertIn('id="k100-tabs"', self.delivery)
+        connected = self.delivery[
+            self.delivery.index("connectedCallback()") : self.delivery.index("disconnectedCallback()")
         ]
         self.assertLess(connected.index("this._mountShell();"), connected.index("this._mountChild();"))
 
