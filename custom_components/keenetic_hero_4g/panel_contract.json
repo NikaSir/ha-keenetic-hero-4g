@@ -12,7 +12,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "0.9.0"
+    "version": "1.0.0"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -263,7 +263,7 @@
   "frontend_delivery": {
     "mode": "self_contained_bundle",
     "module": "keenetic-panel-bundle.js",
-    "web_component": "keenetic-hero-app-panel-v090",
+    "web_component": "keenetic-hero-app-panel-v100",
     "includes_styles": true,
     "includes_hero_artwork": true,
     "assets_directory": "frontend/assets",
