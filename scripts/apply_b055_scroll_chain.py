@@ -23,13 +23,12 @@ marker='  _mount(){if(!this.shadowRoot.getElementById("k100-shell"))'
 s=s.replace(marker,insert+'\n'+marker)
 app.write_text(s,encoding='utf-8')
 
-for p in [root/'custom_components/keenetic_hero_4g/panel_runtime.py',root/'custom_components/keenetic_hero_4g/manifest.json',root/'custom_components/keenetic_hero_4g/panel_manifest.json',root/'custom_components/keenetic_hero_4g/panel_contract.json']:
+for p in [root/'custom_components/keenetic_hero_4g/panel_runtime.py',root/'custom_components/keenetic_hero_4g/manifest.json',root/'custom_components/keenetic_hero_4g/panel_manifest.json',root/'custom_components/keenetic_hero_4g/panel_contract.json',root/'.nikas-ui-standard.json']:
     if not p.exists(): continue
     t=p.read_text(encoding='utf-8')
     t=t.replace('1.0.2','1.0.3').replace('1.0.0-b054','1.0.0-b055')
     p.write_text(t,encoding='utf-8')
 
-# Release-lock checks must follow the current UI baseline, not the previous build.
 for p in [root/'scripts/check_nikas_ui_standard.py', *sorted((root/'tests').glob('test_*.py'))]:
     t=p.read_text(encoding='utf-8')
     if '1.0.2' in t:
