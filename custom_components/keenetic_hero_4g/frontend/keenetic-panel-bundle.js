@@ -4745,6 +4745,22 @@ function installOverviewReadabilityStylesV090(root) {
       line-height:1.1!important;
       letter-spacing:-.02em!important;
     }
+    .v083-overview .v061-lte{
+      top:31.5%!important;
+      left:49%!important;
+      width:158px!important;
+      min-width:158px!important;
+      max-width:158px!important;
+    }
+    @media(max-width:390px){
+      .v083-overview .v061-lte{
+        top:32.5%!important;
+        left:47%!important;
+        width:150px!important;
+        min-width:150px!important;
+        max-width:150px!important;
+      }
+    }
   `;
   root.append(style);
 }
@@ -4753,9 +4769,14 @@ function patchOverviewReadabilityV090(panel) {
   const root = panel.shadowRoot;
   const scope = panel._stableSlotsV075?.get("overview") || root;
   const signalValue = scope?.querySelector(".v083-active-card .v083-metric:nth-child(4) strong");
-  if (!signalValue || panel._activeWan?.() !== "lte") return;
-  const value = panel._display("lte_rsrp", "—");
-  if (signalValue.textContent !== value) signalValue.textContent = value;
+  if (signalValue && panel._activeWan?.() === "lte") {
+    const value = panel._display("lte_rsrp", "—");
+    if (signalValue.textContent !== value) signalValue.textContent = value;
+  }
+  root?.querySelectorAll(".v083-flow-glow.v083-lte-line,.v083-flow-line.v083-lte-line").forEach((path) => {
+    const d = "M490 215 L500 406";
+    if (path.getAttribute("d") !== d) path.setAttribute("d", d);
+  });
 }
 
 if (CORE_COMPONENT_V090 && !CORE_COMPONENT_V090.prototype.__nikaOverviewReadabilityV090) {
