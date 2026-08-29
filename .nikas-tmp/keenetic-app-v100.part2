@@ -1,0 +1,420 @@
+.k100-reserve span,.k100-alert span{font-size:13px;margin-top:2px;color:var(--secondary-text-color)}
+.k100-reserve.ok{color:#279f69;border-color:#9fe4c8;background:rgba(232,249,241,.9)}
+.k100-reserve.bad,.k100-alert.bad{color:#d95d63;border-color:#efb8ba;background:rgba(255,238,239,.94)}
+.k100-reserve.unknown{color:#69757f;border-color:#cdd3d8;background:rgba(248,249,250,.94)}
+.k100-alert.warn{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.94)}
+.k100-alert.hidden{display:none}
+.k100-active-card{border:1px solid color-mix(in srgb,var(--primary-color) 45%,var(--divider-color));border-radius:22px;background:var(--card-background-color);overflow:hidden}
+.k100-active-head{min-height:58px;display:flex;align-items:center;gap:9px;padding:10px 14px}
+.k100-active-head>ha-icon{color:var(--primary-color);--mdc-icon-size:28px}
+.k100-active-head>strong{font-size:20px}
+.k100-active-head>span{font-size:14px;font-weight:700;color:#2fb878}
+.k100-active-head button{margin-left:auto;border:0;background:none;color:var(--primary-color);padding:7px}
+.k100-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--divider-color)}
+.k100-metric{min-height:72px;padding:12px;display:flex;align-items:center;gap:9px;border-right:1px solid var(--divider-color);border-bottom:1px solid var(--divider-color)}
+.k100-metric:nth-child(3n){border-right:0}
+.k100-metric ha-icon{color:var(--primary-color);--mdc-icon-size:25px}
+.k100-metric span,.k100-metric strong{display:block}
+.k100-metric span{font-size:12px;color:var(--secondary-text-color);font-weight:650}
+.k100-metric strong{font-size:15px;margin-top:2px}
+.k100-metric.wide{grid-column:span 2}
+.k100-alert{margin-bottom:2px}
+
+/* v1.9 typography floor for the retained Keenetic detail views. */
+.metric span,.metric small,.pill,.hint,.period,.traffic-totals span,.traffic-totals small,.live-rate,.chart-legend,.failover-kpis span,.failover-kpis small,.event span,.system-meta,.integrity-card span,.integrity-card>small,.diag-row small,.source-tag,.diagnostic-actions span{font-size:12px!important}
+.metric strong{font-size:14px!important}
+.diag-row strong{font-size:13px!important}
+.eyebrow,.subline,.label{font-size:12px!important}
+
+@media(max-width:390px){
+  .k100-hero{height:410px}
+  .k100-copy{max-width:50%;left:13px;top:8px}
+  .k100-copy h1{font-size:20px}
+  .k100-indicator{right:10px;top:10px;width:164px}
+  .k100-router{width:40%;max-width:245px;top:64.5%}
+  .k100-channel{min-width:132px;padding:9px 10px}
+  .k100-lte{top:28.5%}
+  .k100-eth,.k100-lan{top:57.5%}
+  .k100-grid{grid-template-columns:repeat(3,1fr)}
+  .k100-metric{padding:10px 8px}
+  .k100-metric strong{font-size:14px}
+}`;
+  root.append(style);
+}
+
+class KeeneticHeroAppPanelV100 extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this._hass = null;
+    this._panel = null;
+    this._route = null;
+    this._child = null;
+    this._activeView = this._viewFromLocation();
+    this._zoom = { scale: 1, x: 0, y: 0 };
+    this._baseWidth = 1;
+    this._baseHeight = 1;
+    this._pinch = null;
+    this._pan = null;
+    this._nativeTouch = null;
+    this._multiTouch = false;
+    this._lastTwoFingerTap = null;
+    this._guardUntil = 0;
+    this._storageKey = null;
+    this._returnRoute = null;
+    this._hashHandler = () => this._syncHashView();
+    this._resizeHandler = () => this._scheduleMeasure();
+    this._touchStartHandler = (event) => this._onTouchStart(event);
+    this._touchMoveHandler = (event) => this._onTouchMove(event);
+    this._touchEndHandler = (event) => this._onTouchEnd(event);
+    this._touchCancelHandler = () => this._onTouchCancel();
+    this._clickGuardHandler = (event) => this._onClickGuard(event);
+    this._childViewHandler = (event) => this._onChildViewRequest(event);
+  }
+
+  set hass(value) {
+    this._hass = value;
+    this._mountChild();
+    if (this._child) this._child.hass = value;
+  }
+
+  set panel(value) {
+    this._panel = value;
+    this._captureReturnRoute(value);
+    this._loadStoredZoom();
+    this._mountChild();
+    if (this._child && this._sentPanel !== value) {
+      this._sentPanel = value;
+      this._child.panel = value;
+    }
+  }
+
+  set route(value) {
+    this._route = value;
+    this._mountChild();
+    if (this._child && this._sentRoute !== value) {
+      this._sentRoute = value;
+      this._child.route = value;
+    }
+  }
+
+  connectedCallback() {
+    this._captureReturnRoute(this._panel);
+    this._mountShell();
+    this._mountChild();
+    window.addEventListener("hashchange", this._hashHandler);
+    window.addEventListener("resize", this._resizeHandler, { passive: true });
+    window.visualViewport?.addEventListener("resize", this._resizeHandler, { passive: true });
+    this._scheduleAfterMount();
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener("hashchange", this._hashHandler);
+    window.removeEventListener("resize", this._resizeHandler);
+    window.visualViewport?.removeEventListener("resize", this._resizeHandler);
+    this._childObserver?.disconnect();
+    this._contentResizeObserver?.disconnect();
+    cancelAnimationFrame(this._measureFrame);
+    cancelAnimationFrame(this._afterMountFrame);
+    clearTimeout(this._toastTimer);
+    this._unbindGestures();
+  }
+
+  _captureReturnRoute(panel) {
+    if (this._returnRoute) return;
+    this._returnRoute = k100Return(panel);
+    try {
+      localStorage.setItem("nikas.keenetic.return_route.v1", this._returnRoute);
+    } catch (_error) {
+      // Navigation remains deterministic even when private storage is unavailable.
+    }
+  }
+
+  _viewFromLocation() {
+    const value = (location.hash || "#overview").slice(1).toLowerCase();
+    return ["overview", "wan", "failover", "traffic", "diagnostics", "system"].includes(value)
+      ? value
+      : "overview";
+  }
+
+  _syncHashView() {
+    const view = this._viewFromLocation();
+    if (view !== this._activeView) this._setView(view, false);
+  }
+
+  _mountShell() {
+    if (this.shadowRoot.getElementById("k100-shell")) return;
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host{
+          --safe-top:var(--safe-area-inset-top,env(safe-area-inset-top,0px));
+          --safe-right:var(--safe-area-inset-right,env(safe-area-inset-right,0px));
+          --safe-bottom:var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px));
+          --safe-left:var(--safe-area-inset-left,env(safe-area-inset-left,0px));
+          display:block;width:100%;height:100vh;height:100dvh;min-height:0;max-height:100dvh;
+          overflow:hidden;color:var(--primary-text-color);background:var(--primary-background-color);
+          font-family:var(--ha-font-family-body,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)
+        }
+        *{box-sizing:border-box}
+        #k100-shell{
+          width:100%;height:100%;min-height:0;display:grid;
+          grid-template-rows:auto minmax(0,1fr) auto;
+          overflow:hidden;overscroll-behavior:none;background:var(--primary-background-color)
+        }
+        .k100-header{
+          grid-row:1;min-width:0;min-height:calc(62px + var(--safe-top));
+          padding:var(--safe-top) max(8px,var(--safe-right)) 0 max(8px,var(--safe-left));
+          display:grid;grid-template-columns:52px minmax(0,1fr) 52px;align-items:center;
+          background:var(--card-background-color);border-bottom:1px solid var(--divider-color);
+          z-index:20;touch-action:none
+        }
+        .k100-side{
+          width:44px;height:44px;margin:0;padding:0;display:grid;place-items:center;
+          border:1px solid var(--divider-color);border-radius:16px;
+          background:var(--card-background-color);color:var(--primary-text-color);
+          box-shadow:0 7px 20px rgba(23,45,76,.08);
+          appearance:none;-webkit-appearance:none;font:inherit
+        }
+        .k100-side ha-icon{width:25px;height:25px;--mdc-icon-size:25px}
+        #k100-menu{grid-column:1;justify-self:start}
+        #k100-refresh{grid-column:3;justify-self:end;color:var(--primary-color)}
+        .k100-title{
+          grid-column:2;grid-row:1;justify-self:center;min-width:min(290px,100%);max-width:100%;
+          min-height:44px;padding:5px 14px;border:1px solid color-mix(in srgb,var(--primary-color,#03a9d9) 24%,var(--divider-color,#dfe3e8));
+          border-radius:16px;background:color-mix(in srgb,var(--primary-color,#03a9d9) 5%,var(--card-background-color,#fff));
+          box-shadow:0 5px 16px rgba(23,45,76,.06);text-align:center;font:inherit;color:var(--primary-text-color);
+          appearance:none;-webkit-appearance:none
+        }
+        .k100-title strong,.k100-title small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .k100-title strong{font-size:23px;font-weight:800;line-height:1.08;letter-spacing:-.02em}
+        .k100-title small{margin-top:2px;font-size:14px;font-weight:560;line-height:1.15;color:var(--secondary-text-color)}
+        .k100-title:active{
+          background:color-mix(in srgb,var(--primary-color,#03a9d9) 13%,var(--card-background-color,#fff));
+          border-color:color-mix(in srgb,var(--primary-color,#03a9d9) 42%,var(--divider-color,#dfe3e8));
+          box-shadow:0 2px 7px rgba(23,45,76,.05);transform:scale(.985)
+        }
+        .k100-title:focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}
+        #k100-work{
+          grid-row:2;min-width:0;min-height:0;overflow-x:hidden;overflow-y:auto;
+          overscroll-behavior-x:none;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;
+          touch-action:pan-y;scrollbar-width:none
+        }
+        #k100-work::-webkit-scrollbar{display:none}
+        #k100-stage{position:relative;width:100%;min-height:100%}
+        #k100-surface{position:relative;width:100%;min-height:100%;transform-origin:0 0;visibility:hidden}
+        #k100-stage.ready #k100-surface{visibility:visible}
+        #k100-surface>keenetic-hero-panel{display:block;min-height:100%}
+        #k100-work.scaled #k100-surface{position:absolute;left:0;top:0;will-change:transform}
+        #k100-work.zoomed{overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+        .k100-tabs{
+          grid-row:3;width:100%;min-width:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;
+          padding:6px max(6px,var(--safe-right)) calc(6px + var(--safe-bottom)) max(6px,var(--safe-left));
+          background:var(--card-background-color);border-top:1px solid var(--divider-color);
+          box-shadow:0 -4px 18px rgba(23,45,76,.08);z-index:20;touch-action:none
+        }
+        .k100-tabs button{
+          min-width:0;min-height:52px;padding:3px 2px;display:grid;place-items:center;align-content:center;gap:3px;
+          border:0;border-radius:16px;background:transparent;color:var(--secondary-text-color);font:inherit
+        }
+        .k100-tabs button.active{color:var(--primary-color);background:color-mix(in srgb,var(--primary-color) 11%,transparent)}
+        .k100-tabs ha-icon{--mdc-icon-size:28px}
+        .k100-tabs span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:700;line-height:1.1}
+        .k100-toast{
+          position:fixed;left:50%;bottom:calc(78px + var(--safe-bottom));z-index:30;
+          transform:translate(-50%,8px);opacity:0;pointer-events:none;
+          padding:8px 13px;border-radius:999px;background:rgba(20,24,31,.88);
+          color:#fff;font-size:12px;font-weight:700;transition:.18s
+        }
+        .k100-toast.visible{opacity:1;transform:translate(-50%,0)}
+        @media(max-width:390px){
+          .k100-header{grid-template-columns:48px minmax(0,1fr) 48px;min-height:calc(60px + var(--safe-top))}
+          .k100-title{min-width:0;width:100%;padding-inline:8px}
+          .k100-title strong{font-size:21px}
+          .k100-title small{font-size:13px}
+        }
+      </style>
+      <div id="k100-shell">
+        <header class="k100-header" aria-label="Keenetic Hero 4G+">
+          <button id="k100-menu" class="k100-side" type="button" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button>
+          <button id="k100-title" class="k100-title" type="button" aria-label="Вернуться в исходную панель NikaS"><strong>Keenetic Hero 4G+</strong><small>UI v1.0.0</small></button>
+          <button id="k100-refresh" class="k100-side" type="button" aria-label="Обновить"><ha-icon icon="mdi:refresh"></ha-icon></button>
+        </header>
+        <main id="k100-work">
+          <div id="k100-stage"><div id="k100-surface"></div></div>
+        </main>
+        <nav id="k100-tabs" class="k100-tabs" aria-label="Разделы Keenetic"></nav>
+        <div id="k100-toast" class="k100-toast" role="status">Масштаб 100%</div>
+      </div>`;
+    this.shadowRoot.getElementById("k100-menu").addEventListener("click", (event) => {
+      event.currentTarget.dispatchEvent(
+        new CustomEvent("hass-toggle-menu", { bubbles: true, composed: true }),
+      );
+    });
+    this.shadowRoot
+      .getElementById("k100-title")
+      .addEventListener("click", () =>
+        k100Navigate(this._returnRoute || "/dashboard-infrastructure/overview"),
+      );
+    this.shadowRoot
+      .getElementById("k100-refresh")
+      .addEventListener("click", () => this._child?._loadBootstrap?.(false));
+    this._mountTabbar();
+    this._bindGestures();
+  }
+
+  _mountChild() {
+    const surface = this.shadowRoot.getElementById("k100-surface");
+    if (!this.isConnected || !surface) return;
+    if (!this._child) {
+      this._child = document.createElement("keenetic-hero-panel");
+      this._child._view = this._activeView;
+      this._child.addEventListener("keenetic-view-request", this._childViewHandler);
+      surface.append(this._child);
+      this._observeChild();
+    }
+    if (this._panel && this._sentPanel !== this._panel) {
+      this._sentPanel = this._panel;
+      this._child.panel = this._panel;
+    }
+    if (this._route && this._sentRoute !== this._route) {
+      this._sentRoute = this._route;
+      this._child.route = this._route;
+    }
+    if (this._hass) this._child.hass = this._hass;
+  }
+
+  _observeChild() {
+    this._childObserver?.disconnect();
+    const finishMount = () => {
+      if (!this._child?.shadowRoot?.querySelector(".shell")) return false;
+      this._childObserver?.disconnect();
+      this._childObserver = null;
+      this._scheduleAfterMount();
+      return true;
+    };
+    if (finishMount()) return;
+    this._childObserver = new MutationObserver(() => finishMount());
+    this._childObserver.observe(this._child.shadowRoot, { childList: true, subtree: true });
+  }
+
+  _scheduleAfterMount() {
+    cancelAnimationFrame(this._afterMountFrame);
+    this._afterMountFrame = requestAnimationFrame(() => {
+      k100InstallStyles(this._child?.shadowRoot);
+      this._observeActiveContent();
+      this._scheduleMeasure();
+    });
+  }
+
+  _observeActiveContent() {
+    this._contentResizeObserver?.disconnect();
+    if (typeof ResizeObserver !== "function") return;
+    this._contentResizeObserver = new ResizeObserver(() => {
+      if (this._pinch || this._pan || this._multiTouch) {
+        this._measureAfterGesture = true;
+        return;
+      }
+      this._scheduleMeasure();
+    });
+    const root = this._child?.shadowRoot;
+    const shell = root?.querySelector(".shell");
+    const active = root?.querySelector(".v075-view-slot:not([hidden])");
+    if (shell) this._contentResizeObserver.observe(shell);
+    if (active && active !== shell) this._contentResizeObserver.observe(active);
+  }
+
+  _mountTabbar() {
+    const nav = this.shadowRoot.getElementById("k100-tabs");
+    if (!nav) return;
+    if (!nav.firstElementChild) {
+      for (const [view, icon, label] of K100_TABS) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.view = view;
+        button.innerHTML = `<ha-icon icon="${icon}"></ha-icon><span>${label}</span>`;
+        button.addEventListener("click", () => this._setView(view, true));
+        nav.append(button);
+      }
+    }
+    this._updateTabbar();
+  }
+
+  _updateTabbar() {
+    const nav = this.shadowRoot.getElementById("k100-tabs");
+    if (!nav) return;
+    const active = this._activeView === "system" ? "diagnostics" : this._activeView;
+    nav.querySelectorAll("[data-view]").forEach((button) => {
+      const selected = button.dataset.view === active;
+      button.classList.toggle("active", selected);
+      button.setAttribute("aria-current", selected ? "page" : "false");
+    });
+  }
+
+  _setView(view, updateLocation = true) {
+    if (!K100_TABS.some(([name]) => name === view) && view !== "system") return;
+    if (view === this._activeView) {
+      this.shadowRoot.getElementById("k100-work")?.scrollTo({ left: 0, top: 0, behavior: "auto" });
+      return;
+    }
+    this._activeView = view;
+    if (updateLocation) {
+      history.replaceState(null, "", `${location.pathname}${location.search}#${view}`);
+    }
+    this._updateTabbar();
+    const viewport = this.shadowRoot.getElementById("k100-work");
+    viewport?.scrollTo({ left: 0, top: 0, behavior: "auto" });
+    if (this._zoom.scale <= 1) {
+      this._zoom.x = 0;
+      this._zoom.y = 0;
+    }
+    if (this._child) {
+      this._child._view = view;
+      this._child._scheduleRender?.();
+      this._child._loadViewData?.();
+    }
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        this._observeActiveContent();
+        this._scheduleMeasure();
+      }),
+    );
+  }
+
+  _onChildViewRequest(event) {
+    const view = event?.detail?.view;
+    if (
+      !["overview", "wan", "failover", "traffic", "diagnostics", "system"].includes(view)
+    ) {
+      return;
+    }
+    event.preventDefault();
+    this._setView(view, true);
+  }
+
+  _bindGestures() {
+    const viewport = this.shadowRoot.getElementById("k100-work");
+    if (!viewport || this._gestureViewport === viewport) return;
+    this._unbindGestures();
+    viewport.addEventListener("touchstart", this._touchStartHandler, {
+      capture: true,
+      passive: false,
+    });
+    viewport.addEventListener("touchmove", this._touchMoveHandler, {
+      capture: true,
+      passive: false,
+    });
+    viewport.addEventListener("touchend", this._touchEndHandler, {
+      capture: true,
+      passive: true,
+    });
+    viewport.addEventListener("touchcancel", this._touchCancelHandler, {
+      capture: true,
+      passive: true,
+    });
+    viewport.addEventListener("click", this._clickGuardHandler, { capture: true });
+    this._gestureViewport = viewport;
+  }
+
+  _unbindGestures() {
+    const viewport = this._gestureViewport;
+    if (!viewport) return;
