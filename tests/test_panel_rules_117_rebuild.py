@@ -7,48 +7,47 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
-CURRENT = INTEGRATION / "frontend" / "keenetic-app-v085.js"
-DELIVERY = INTEGRATION / "frontend" / "keenetic-app-v090.js"
+DELIVERY = INTEGRATION / "frontend" / "keenetic-app-v100.js"
 SHELL = INTEGRATION / "frontend" / "keenetic-app-v080.js"
 BUNDLE = INTEGRATION / "frontend" / "keenetic-panel-bundle.js"
 RUNTIME = INTEGRATION / "panel_runtime.py"
+STANDARD = ROOT / ".nikas-ui-standard.json"
 
 
-class PanelRules117RebuildTests(unittest.TestCase):
+class PanelRulesV19RebuildTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.current = CURRENT.read_text(encoding="utf-8")
         cls.delivery = DELIVERY.read_text(encoding="utf-8")
         cls.shell = SHELL.read_text(encoding="utf-8")
         cls.bundle = BUNDLE.read_text(encoding="utf-8")
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
+        cls.standard = json.loads(STANDARD.read_text(encoding="utf-8"))
         cls.contract = json.loads((INTEGRATION / "panel_contract.json").read_text(encoding="utf-8"))
         cls.panel_manifest = json.loads((INTEGRATION / "panel_manifest.json").read_text(encoding="utf-8"))
         cls.integration_manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
 
-    def test_rule_117_rebuild_versions_are_synchronized(self) -> None:
-        self.assertEqual(self.contract["panel"]["version"], "0.9.0")
+    def test_v19_rebuild_versions_are_synchronized(self) -> None:
+        self.assertEqual(self.standard["version"], "1.9")
+        self.assertEqual(self.standard["navigation_contract_version"], "1.1")
+        self.assertEqual(self.contract["panel"]["version"], "1.0.0")
         self.assertEqual(self.contract["app_shell"]["version"], "1.9")
-        self.assertEqual(self.panel_manifest["panel_version"], "0.9.0")
+        self.assertEqual(self.contract["panel"]["navigation_contract_version"], "1.1")
+        self.assertEqual(self.panel_manifest["panel_version"], "1.0.0")
         self.assertEqual(self.panel_manifest["zoom_policy"]["standard"], "1.9")
         self.assertEqual(self.integration_manifest["version"], "1.0.0-b052")
-        self.assertIn('FRONTEND_UI_VERSION = "0.9.0"', self.runtime)
-        self.assertIn('FRONTEND_COMPONENT_SLUG = "v090"', self.runtime)
+        self.assertIn('FRONTEND_UI_VERSION = "1.0.0"', self.runtime)
+        self.assertIn('FRONTEND_COMPONENT_SLUG = "v100"', self.runtime)
 
-    def test_header_return_precedence_is_exact_and_captured_once(self) -> None:
-        markers = [
-            "const handedOff = consumeSourceRouteV085()",
-            'for (const key of ["return_to", "from"])',
-            "if (handedOff)",
-            "const saved = savedReturnRouteV085()",
-            "normalizeReturnRouteV085(document.referrer)",
-            "normalizeReturnRouteV085(panel?.config?.parent_route)",
-            "persistReturnRouteV085(DEFAULT_RETURN_ROUTE_V085)",
-        ]
-        positions = [self.current.index(marker) for marker in markers]
-        self.assertEqual(positions, sorted(positions))
-        self.assertIn("if (!this._returnRouteV085)", self.current)
-        self.assertNotIn("set hass", self.current)
+    def test_header_return_precedence_is_explicit_and_captured_once(self) -> None:
+        self.assertIn('["return_to","from"]', self.delivery)
+        self.assertIn('sessionStorage.getItem("nikas.specialized.source_route.v1")', self.delivery)
+        self.assertIn('sessionStorage.getItem("nikas.specialized.source_route_at.v1")', self.delivery)
+        self.assertIn("document.referrer", self.delivery)
+        self.assertIn("panel?.config?.parent_route", self.delivery)
+        self.assertIn("this._returnRoute", self.delivery)
+        self.assertIn("once!==null&&onceAt!==null", self.delivery)
+        self.assertIn("handedOffAge>=0", self.delivery)
+        self.assertNotIn("history.back(", self.bundle)
 
     def test_only_canonical_base_destinations_are_accepted(self) -> None:
         header = self.contract["app_shell"]["header"]
@@ -60,24 +59,23 @@ class PanelRules117RebuildTests(unittest.TestCase):
                 "/dashboard-infrastructure/overview",
             ],
         )
-        self.assertNotIn('"/dashboard-house"', self.current)
-        self.assertNotIn("/dashboard-starline", self.current)
-        self.assertNotIn('params.get("source")', self.current)
-        self.assertNotIn("window.history.state", self.current)
-        self.assertIn('candidate.startsWith("//")', self.current)
-        self.assertIn('!candidate.startsWith("/") && !hasScheme', self.current)
+        for route in header["return_sources"]:
+            self.assertIn(route, self.delivery)
+        self.assertNotIn('"/dashboard-house"', self.delivery)
+        self.assertNotIn("/dashboard-starline", self.delivery)
+        self.assertIn("url.origin!==window.location.origin", self.delivery)
 
-    def test_production_bundle_contains_the_current_component_without_imports(self) -> None:
+    def test_production_bundle_contains_the_current_component_without_runtime_imports(self) -> None:
         self.assertIn(
-            "// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v090.js",
+            "// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js",
             self.bundle,
         )
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v090"', self.bundle)
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.bundle)
         self.assertNotIn('await import("./keenetic-app-v084.js")', self.bundle)
-        self.assertEqual(self.panel_manifest["web_component"], "keenetic-hero-app-panel-v090")
+        self.assertEqual(self.panel_manifest["web_component"], "keenetic-hero-app-panel-v100")
         self.assertEqual(
             self.contract["frontend_delivery"]["web_component"],
-            "keenetic-hero-app-panel-v090",
+            "keenetic-hero-app-panel-v100",
         )
 
     def test_fixed_loading_shell_exists_before_live_telemetry(self) -> None:
