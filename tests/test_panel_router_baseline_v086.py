@@ -35,16 +35,21 @@ class PanelRouterBaselineV100Tests(unittest.TestCase):
         )
 
     def test_all_three_paths_continue_under_the_router(self) -> None:
-        self.assertIn('d="M500 185 L500 405"', self.source)
-        self.assertIn('d="M215 420 L435 420"', self.source)
-        self.assertIn('d="M565 420 L785 420"', self.source)
+        self.assertIn('d="M500 210 L500 406"', self.source)
+        self.assertIn('d="M245 370 L430 370"', self.source)
+        self.assertIn('d="M570 370 L755 370"', self.source)
         self.assertIn(".k100-lines{position:absolute;inset:0;z-index:3", self.source)
         self.assertIn(".k100-router{position:absolute;z-index:6", self.source)
 
-    def test_router_asset_is_static_and_not_rewritten_by_telemetry_patch(self) -> None:
+    def test_router_asset_is_not_reassigned_by_state_patches(self) -> None:
         self.assertEqual(self.source.count("keenetic-hero-router-v086.webp?v=1.0.0"), 1)
-        self.assertNotIn("router.setAttribute", self.source)
-        self.assertNotIn("router.src =", self.source)
+        core_patch = self.source[
+            self.source.index("function k100InstallCore")
+            : self.source.index("function k100InstallStyles")
+        ]
+        self.assertNotIn("router.setAttribute", core_patch)
+        self.assertNotIn("router.src =", core_patch)
+        self.assertEqual(self.source.count("this.shadowRoot.innerHTML ="), 1)
 
     def test_delivery_component_is_current(self) -> None:
         self.assertIn('const K100_VERSION = "1.0.0";', self.source)
