@@ -2718,7 +2718,7 @@ if (CORE_COMPONENT_V075 && !CORE_COMPONENT_V075.prototype.__nikaStableDomV075) {
 (() => {
 const K100_VERSION = "1.0.0";
 const K100_CORE = customElements.get("keenetic-hero-panel");
-const K100_ALLOWED = ["/dashboard-house-v11", "/dashboard-actions", "/dashboard-infrastructure"];
+const K100_ALLOWED = ["/dashboard-house-v11/home", "/dashboard-actions/home", "/dashboard-infrastructure/overview"];
 const K100_TABS = [
   ["overview","mdi:view-dashboard-outline","Обзор"],
   ["wan","mdi:web","Каналы"],
@@ -2730,13 +2730,14 @@ const K100_TABS = [
 function k100Esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
 function k100SafeRoute(v){
   if(!v)return null;
-  try{const u=new URL(v,location.origin);if(u.origin!==location.origin)return null;return K100_ALLOWED.some(p=>u.pathname===p||u.pathname.startsWith(`${p}/`))?`${u.pathname}${u.search}${u.hash}`:null;}catch{return null;}
+  try{const url=new URL(v,window.location.origin);if(url.origin!==window.location.origin)return null;const pathname=url.pathname;return K100_ALLOWED.some(p=>pathname===p||pathname.startsWith(`${p}/`))?`${url.pathname}${url.search}${url.hash}`:null;}catch{return null;}
 }
 function k100Return(panel){
   const q=new URLSearchParams(location.search);
   for(const key of ["return_to","from"]){const v=k100SafeRoute(q.get(key));if(v)return v;}
   const once=sessionStorage.getItem("nikas.specialized.source_route.v1");
-  if(once){try{const x=JSON.parse(once);const age=Date.now()-Number(x?.timestamp||0);const v=k100SafeRoute(x?.route);sessionStorage.removeItem("nikas.specialized.source_route.v1");if(v&&age>=0&&age<10*60*1000)return v;}catch{sessionStorage.removeItem("nikas.specialized.source_route.v1");}}
+  const onceAt=sessionStorage.getItem("nikas.specialized.source_route_at.v1");
+  if(once!==null||onceAt!==null){sessionStorage.removeItem("nikas.specialized.source_route.v1");sessionStorage.removeItem("nikas.specialized.source_route_at.v1");if(once!==null&&onceAt!==null){const handedOffAge=Date.now()-Number(onceAt);const v=k100SafeRoute(once);if(v&&Number.isFinite(handedOffAge)&&handedOffAge>=0&&handedOffAge<10*60*1000)return v;}}
   const saved=k100SafeRoute(localStorage.getItem("nikas.keenetic.return_route.v1"));if(saved)return saved;
   const ref=k100SafeRoute(document.referrer);if(ref)return ref;
   const configured=k100SafeRoute(panel?.config?.parent_route);if(configured)return configured;
