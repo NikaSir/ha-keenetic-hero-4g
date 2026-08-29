@@ -13,11 +13,10 @@ STABLE = INTEGRATION / "frontend" / "keenetic-app-v075.js"
 BUILD = ROOT / "scripts" / "build_frontend_bundle.py"
 RUNTIME = INTEGRATION / "panel_runtime.py"
 MANIFEST = INTEGRATION / "manifest.json"
-CURRENT = INTEGRATION / "frontend" / "keenetic-app-v085.js"
-DELIVERY = INTEGRATION / "frontend" / "keenetic-app-v090.js"
+DELIVERY = INTEGRATION / "frontend" / "keenetic-app-v100.js"
 
-# This test file is intentionally outside frontend bundle inputs so the final
-# generated-bundle head can be revalidated without starting a rebuild loop.
+# Historical source files remain regression fixtures. Production delivery is
+# validated separately against the current autonomous v100 runtime.
 
 
 class PanelOverviewV084Tests(unittest.TestCase):
@@ -30,7 +29,6 @@ class PanelOverviewV084Tests(unittest.TestCase):
         cls.build = BUILD.read_text(encoding="utf-8")
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
         cls.manifest = MANIFEST.read_text(encoding="utf-8")
-        cls.current = CURRENT.read_text(encoding="utf-8")
         cls.delivery = DELIVERY.read_text(encoding="utf-8")
 
     def test_overview_is_recomposed_without_duplicate_channels_section(self) -> None:
@@ -119,16 +117,14 @@ class PanelOverviewV084Tests(unittest.TestCase):
         self.assertNotIn("_patchStableDomV075", self.tuning)
         self.assertNotIn("shadowRoot.innerHTML", self.tuning)
 
-    def test_delivery_version_is_v090_and_package_is_b052(self) -> None:
-        self.assertIn('FRONTEND / "keenetic-app-v083.js"', self.build)
-        self.assertIn('FRONTEND / "keenetic-app-v084.js"', self.build)
-        self.assertIn('FRONTEND / "keenetic-app-v085.js"', self.build)
-        self.assertIn('FRONTEND / "keenetic-app-v090.js"', self.build)
-        self.assertNotIn('FRONTEND / "keenetic-app-v082.js"', self.build)
-        self.assertIn('PANEL_VERSION = "0.9.0"', self.build)
-        self.assertIn('FRONTEND_UI_VERSION = "0.9.0"', self.runtime)
-        self.assertIn('FRONTEND_COMPONENT_SLUG = "v090"', self.runtime)
-        self.assertIn('customElements.define("keenetic-hero-app-panel-v090"', self.delivery)
+    def test_delivery_version_is_v100_and_package_is_b052(self) -> None:
+        self.assertIn('FRONTEND / "keenetic-app-v100.js"', self.build)
+        for old in ["v083", "v084", "v085", "v086", "v087", "v088", "v089", "v090"]:
+            self.assertNotIn(f'FRONTEND / "keenetic-app-{old}.js"', self.build)
+        self.assertIn('PANEL_VERSION = "1.0.0"', self.build)
+        self.assertIn('FRONTEND_UI_VERSION = "1.0.0"', self.runtime)
+        self.assertIn('FRONTEND_COMPONENT_SLUG = "v100"', self.runtime)
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.delivery)
         self.assertIn('"version": "1.0.0-b052"', self.manifest)
 
 
