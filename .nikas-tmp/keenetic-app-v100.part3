@@ -1,0 +1,380 @@
+    viewport.removeEventListener("touchstart", this._touchStartHandler, true);
+    viewport.removeEventListener("touchmove", this._touchMoveHandler, true);
+    viewport.removeEventListener("touchend", this._touchEndHandler, true);
+    viewport.removeEventListener("touchcancel", this._touchCancelHandler, true);
+    viewport.removeEventListener("click", this._clickGuardHandler, true);
+    this._gestureViewport = null;
+  }
+
+  _loadStoredZoom() {
+    const key = `nikas.keenetic.contentZoom.v1:${this._panel?.config?.entry_id || "default"}`;
+    if (this._storageKey === key) return;
+    this._storageKey = key;
+    let state = { scale: 1, x: 0, y: 0 };
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const parsed = raw.trim().startsWith("{")
+          ? JSON.parse(raw)
+          : { scale: Number(raw), x: 0, y: 0 };
+        state = {
+          scale: k100ClampScale(parsed.scale),
+          x: Number(parsed.x) || 0,
+          y: Number(parsed.y) || 0,
+        };
+      }
+    } catch (_error) {
+      state = { scale: 1, x: 0, y: 0 };
+    }
+    if (state.scale >= K100_SNAP_MIN && state.scale <= K100_SNAP_MAX) {
+      state = { scale: 1, x: 0, y: 0 };
+    }
+    if (state.scale <= 1) {
+      state.x = 0;
+      state.y = 0;
+    }
+    this._zoom = state;
+    this._scheduleMeasure();
+  }
+
+  _persistZoom() {
+    if (!this._storageKey) return;
+    try {
+      localStorage.setItem(
+        this._storageKey,
+        JSON.stringify({
+          scale: Number(this._zoom.scale.toFixed(3)),
+          x: Math.round(this._zoom.x),
+          y: Math.round(this._zoom.y),
+        }),
+      );
+    } catch (_error) {
+      // Private WebView storage is optional.
+    }
+  }
+
+  _nodes() {
+    return {
+      viewport: this.shadowRoot.getElementById("k100-work"),
+      stage: this.shadowRoot.getElementById("k100-stage"),
+      surface: this.shadowRoot.getElementById("k100-surface"),
+    };
+  }
+
+  _measure() {
+    const { viewport } = this._nodes();
+    if (!viewport || viewport.clientWidth <= 0) return false;
+    const root = this._child?.shadowRoot;
+    const shell = root?.querySelector(".shell");
+    const main = root?.querySelector(".shell>main");
+    const active = root?.querySelector(".v075-view-slot:not([hidden])");
+    let shellPadding = 0;
+    if (shell && typeof getComputedStyle === "function") {
+      const style = getComputedStyle(shell);
+      shellPadding =
+        (Number.parseFloat(style.paddingTop) || 0) +
+        (Number.parseFloat(style.paddingBottom) || 0);
+    }
+    const contentHeight =
+      Math.max(
+        active?.scrollHeight || 0,
+        main?.scrollHeight || 0,
+        shell?.scrollHeight || 0,
+        this._child?.scrollHeight || 0,
+      ) + shellPadding;
+    this._baseWidth = viewport.clientWidth;
+    this._baseHeight = Math.max(viewport.clientHeight, contentHeight);
+    return this._baseHeight > 0;
+  }
+
+  _scheduleMeasure() {
+    cancelAnimationFrame(this._measureFrame);
+    this._measureFrame = requestAnimationFrame(() => {
+      if (!this._measure()) return;
+      this._applyZoom(this._zoom.scale, { persist: false });
+      this.shadowRoot.getElementById("k100-stage")?.classList.add("ready");
+    });
+  }
+
+  _contentPoint(focal) {
+    const { viewport } = this._nodes();
+    const state = this._zoom;
+    if (state.scale > 1) {
+      return {
+        x: (focal.x - state.x) / state.scale,
+        y: (focal.y - state.y) / state.scale,
+      };
+    }
+    return {
+      x: focal.x / state.scale,
+      y: (viewport.scrollTop + focal.y) / state.scale,
+    };
+  }
+
+  _clampPan() {
+    const { viewport } = this._nodes();
+    const state = this._zoom;
+    if (!viewport) return;
+    const minX = Math.min(0, viewport.clientWidth - this._baseWidth * state.scale);
+    const minY = Math.min(0, viewport.clientHeight - this._baseHeight * state.scale);
+    state.x = Math.min(0, Math.max(minX, state.x));
+    state.y = Math.min(0, Math.max(minY, state.y));
+  }
+
+  _applyZoom(value, options = {}) {
+    const { viewport, stage, surface } = this._nodes();
+    if (!viewport || !stage || !surface) return;
+    const state = this._zoom;
+    state.scale = k100ClampScale(value);
+
+    if (state.scale === 1) {
+      state.x = 0;
+      state.y = 0;
+      viewport.classList.remove("scaled", "zoomed");
+      stage.style.width = "";
+      stage.style.height = "";
+      stage.style.minHeight = "";
+      surface.style.width = "";
+      surface.style.height = "";
+      surface.style.transform = "";
+      if (Number.isFinite(options.scrollTop)) {
+        viewport.scrollTop = Math.max(0, options.scrollTop);
+      }
+    } else {
+      if ((options.remeasure || this._baseHeight <= 1) && !this._measure()) return;
+      viewport.classList.add("scaled");
+      surface.style.width = `${this._baseWidth}px`;
+      surface.style.height = `${this._baseHeight}px`;
+
+      if (state.scale > 1) {
+        viewport.classList.add("zoomed");
+        viewport.scrollTop = 0;
+        if (options.focal && options.anchor) {
+          state.x = options.focal.x - options.anchor.x * state.scale;
+          state.y = options.focal.y - options.anchor.y * state.scale;
+        }
+        this._clampPan();
+        stage.style.width = `${viewport.clientWidth}px`;
+        stage.style.height = `${viewport.clientHeight}px`;
+        stage.style.minHeight = `${viewport.clientHeight}px`;
+        surface.style.transform = `translate3d(${state.x}px,${state.y}px,0) scale(${state.scale})`;
+      } else {
+        viewport.classList.remove("zoomed");
+        state.x = 0;
+        state.y = 0;
+        const height = Math.max(1, this._baseHeight * state.scale);
+        stage.style.width = `${viewport.clientWidth}px`;
+        stage.style.height = `${height}px`;
+        stage.style.minHeight = `${height}px`;
+        surface.style.transform = `scale(${state.scale})`;
+        if (options.focal && options.anchor) {
+          viewport.scrollTop = Math.max(
+            0,
+            options.anchor.y * state.scale - options.focal.y,
+          );
+        }
+      }
+    }
+
+    if (options.persist) this._persistZoom();
+  }
+
+  _resetZoom(notify = true) {
+    const { viewport } = this._nodes();
+    this._zoom = { scale: 1, x: 0, y: 0 };
+    this._applyZoom(1, { scrollTop: 0, persist: true });
+    viewport?.scrollTo({ left: 0, top: 0, behavior: "auto" });
+    if (notify) this._showResetToast();
+  }
+
+  _showResetToast() {
+    const toast = this.shadowRoot.getElementById("k100-toast");
+    if (!toast) return;
+    clearTimeout(this._toastTimer);
+    requestAnimationFrame(() => toast.classList.add("visible"));
+    this._toastTimer = setTimeout(() => toast.classList.remove("visible"), 1250);
+  }
+
+  _onTouchStart(event) {
+    const { viewport } = this._nodes();
+    if (!viewport) return;
+
+    if (event.touches.length >= 2) {
+      if (!this._measure()) return;
+      const [a, b] = event.touches;
+      const focal = k100Midpoint(a,b,viewport);
+      this._multiTouch = true;
+      this._pan = null;
+      this._nativeTouch = null;
+      this._pinch = {
+        distance: Math.max(1, k100Distance(a, b)),
+        scale: this._zoom.scale,
+        anchor: this._contentPoint(focal),
+        startedAt: performance.now(),
+        midpoint: k100PageMidpoint(a, b),
+        moved: false,
+      };
+      this._guardUntil = Infinity;
+      for (const touch of event.touches) {
+        k100CancelEntityHold(
+          k100DeepElement(this.shadowRoot, touch.clientX, touch.clientY),
+        );
+      }
+      event.preventDefault();
+      return;
+    }
+
+    if (event.touches.length === 1 && this._zoom.scale > 1 && !this._multiTouch) {
+      const touch = event.touches[0];
+      this._pan = {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        x: this._zoom.x,
+        y: this._zoom.y,
+        moved: false,
+        target: k100DeepElement(this.shadowRoot, touch.clientX, touch.clientY),
+      };
+      return;
+    }
+
+    if (event.touches.length === 1) {
+      const touch = event.touches[0];
+      this._nativeTouch = { clientY: touch.clientY };
+    }
+  }
+
+  _onTouchMove(event) {
+    const { viewport } = this._nodes();
+    if (!viewport) return;
+
+    if (event.touches.length >= 2 && this._pinch) {
+      const [a, b] = event.touches;
+      const focal = k100Midpoint(a,b,viewport);
+      const current = k100Distance(a, b);
+      const next = k100ClampScale(
+        (this._pinch.scale * current) / this._pinch.distance,
+      );
+      if (
+        Math.abs(current - this._pinch.distance) > K100_TAP_MOVE ||
+        k100PointDistance(this._pinch.midpoint, k100PageMidpoint(a, b)) >
+          K100_TAP_MOVE
+      ) {
+        this._pinch.moved = true;
+      }
+      this._applyZoom(next, { focal, anchor: this._pinch.anchor });
+      event.preventDefault();
+      return;
+    }
+
+    if (
+      this._pan &&
+      event.touches.length === 1 &&
+      this._zoom.scale > 1 &&
+      !this._multiTouch
+    ) {
+      const touch = event.touches[0];
+      const dx = touch.clientX - this._pan.clientX;
+      const dy = touch.clientY - this._pan.clientY;
+      if (!this._pan.moved && Math.hypot(dx, dy) < K100_PAN_START) return;
+      if (!this._pan.moved) k100CancelEntityHold(this._pan.target);
+      this._pan.moved = true;
+      this._guardUntil = Infinity;
+      this._zoom.x = this._pan.x + dx;
+      this._zoom.y = this._pan.y + dy;
+      this._applyZoom(this._zoom.scale);
+      event.preventDefault();
+      return;
+    }
+
+    if (event.touches.length === 1 && this._nativeTouch && this._zoom.scale <= 1) {
+      const touch = event.touches[0];
+      const dy = touch.clientY - this._nativeTouch.clientY;
+      this._nativeTouch.clientY = touch.clientY;
+      const atTop = viewport.scrollTop <= 0;
+      const atBottom =
+        viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 1;
+      if ((atTop && dy > 0) || (atBottom && dy < 0)) {
+        event.preventDefault();
+      }
+    }
+  }
+
+  _onTouchEnd(event) {
+    if (event.touches.length) return;
+    const completed = this._pinch;
+    const wasMulti = this._multiTouch;
+    const movedPan = Boolean(this._pan?.moved);
+    this._pinch = null;
+    this._pan = null;
+    this._nativeTouch = null;
+    this._multiTouch = false;
+    const now = performance.now();
+
+    if (
+      this._zoom.scale >= K100_SNAP_MIN &&
+      this._zoom.scale <= K100_SNAP_MAX
+    ) {
+      this._resetZoom(this._zoom.scale !== 1 || wasMulti);
+    } else {
+      this._applyZoom(this._zoom.scale, { persist: true });
+    }
+
+    if (wasMulti) {
+      this._guardUntil = now + K100_CLICK_GUARD_MS;
+      const isTap =
+        completed &&
+        !completed.moved &&
+        now - completed.startedAt <= K100_TAP_MS;
+      if (isTap) {
+        const previous = this._lastTwoFingerTap;
+        if (
+          previous &&
+          now - previous.at <= K100_DOUBLE_TAP_MS &&
+          k100PointDistance(previous.midpoint, completed.midpoint) <= 48
+        ) {
+          this._lastTwoFingerTap = null;
+          this._resetZoom(true);
+        } else {
+          this._lastTwoFingerTap = { at: now, midpoint: completed.midpoint };
+        }
+      } else {
+        this._lastTwoFingerTap = null;
+      }
+    } else if (movedPan) {
+      this._guardUntil = now + K100_CLICK_GUARD_MS;
+    }
+
+    if (this._measureAfterGesture) {
+      this._measureAfterGesture = false;
+      this._scheduleMeasure();
+    }
+  }
+
+  _onTouchCancel() {
+    this._pinch = null;
+    this._pan = null;
+    this._nativeTouch = null;
+    this._multiTouch = false;
+    this._applyZoom(this._zoom.scale, { persist: true });
+    this._guardUntil = performance.now() + K100_CLICK_GUARD_MS;
+    if (this._measureAfterGesture) {
+      this._measureAfterGesture = false;
+      this._scheduleMeasure();
+    }
+  }
+
+  _onClickGuard(event) {
+    if (
+      this._guardUntil === Infinity ||
+      performance.now() < Number(this._guardUntil || 0)
+    ) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }
+}
+
+k100InstallCore();
+if (!customElements.get("keenetic-hero-app-panel-v100")) {
+  customElements.define("keenetic-hero-app-panel-v100", KeeneticHeroAppPanelV100);
+}
