@@ -1,0 +1,38 @@
+name: Temporary b056 scene alert rebuild
+
+on:
+  push:
+    branches:
+      - "rebuild/b056-scene-alert"
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: rebuild/b056-scene-alert
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Rebuild autonomous bundle
+        run: python scripts/build_frontend_bundle.py
+      - name: Validate
+        run: |
+          python scripts/build_frontend_bundle.py --check
+          python -m unittest discover -s tests -v
+          python -m compileall -q custom_components/keenetic_hero_4g
+          git diff --check
+      - name: Commit bundle
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js
+          git commit -m "build: regenerate b056 Keenetic frontend bundle"
+          git push origin HEAD:rebuild/b056-scene-alert
