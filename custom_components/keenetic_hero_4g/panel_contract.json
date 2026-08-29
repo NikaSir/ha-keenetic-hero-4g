@@ -166,9 +166,9 @@
       "reset_native_scroll_to_origin": true,
       "tab_change_resets_scroll_and_clamps": true,
       "viewport_binding_requires_nodes": [
-        "work-viewport-v080",
-        "zoom-stage-v080",
-        "zoom-surface-v080"
+        "k100-work",
+        "k100-stage",
+        "k100-surface"
       ],
       "gesture_listener_phase": "capture",
       "content_height_source": "active_persistent_view",
