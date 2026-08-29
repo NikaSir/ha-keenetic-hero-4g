@@ -1,5 +1,5 @@
 // GENERATED FILE. DO NOT EDIT DIRECTLY.
-// Keenetic Hero 4G+ autonomous UI 1.0.2 production bundle.
+// Keenetic Hero 4G+ autonomous UI 1.0.3 production bundle.
 // One active shell: keenetic-hero-app-panel-v100.
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-panel.js
@@ -1188,7 +1188,7 @@ function openHomeAssistantMenuV045(target) {
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v050.js
 (() => {
 const CORE_COMPONENT_V050 = customElements.get("keenetic-hero-panel");
-const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.2";
+const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.3";
 
 function escV050(value) {
   return String(value ?? "")
@@ -1389,7 +1389,7 @@ if (CORE_COMPONENT_V050 && !CORE_COMPONENT_V050.prototype.__nikaOverviewV050) {
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v051.js
 (() => {
 const CORE_COMPONENT_V051 = customElements.get("keenetic-hero-panel");
-const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.2";
+const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.3";
 
 if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) {
   CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051 = true;
@@ -1449,7 +1449,7 @@ if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) 
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
 (() => {
-const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.2";
+const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.3";
 const CORE_COMPONENT_V052 = customElements.get("keenetic-hero-panel");
 
 if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV052) {
@@ -1477,8 +1477,8 @@ if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV0
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js
 (() => {
 const CORE_COMPONENT_V060 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.2";
-const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.2";
+const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.3";
+const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.3";
 
 function _v060CreateMetricCell(label, value, className = "") {
   const span = document.createElement("span");
@@ -1682,8 +1682,8 @@ if (CORE_COMPONENT_V060 && !CORE_COMPONENT_V060.prototype.__nikaLayeredHeroV060)
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v061.js
 (() => {
 const CORE_COMPONENT_V061 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.2";
-const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.2";
+const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.3";
+const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.3";
 
 function _v061LabelCard(kind, title, subtitle, icon) {
   const card = document.createElement("div");
@@ -1830,8 +1830,8 @@ if (CORE_COMPONENT_V061 && !CORE_COMPONENT_V061.prototype.__nikaAcceptedTopology
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v062.js
 (() => {
 const CORE_COMPONENT_V062 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=1.0.2";
-const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.2";
+const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=1.0.3";
+const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.3";
 
 function _v062EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -1962,8 +1962,8 @@ if (CORE_COMPONENT_V062 && !CORE_COMPONENT_V062.prototype.__nikaHeroCompositionV
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
 (() => {
 const CORE_COMPONENT_V063 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.2";
-const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.2";
+const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.3";
+const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.3";
 
 function _v063EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -2147,7 +2147,7 @@ if (CORE_COMPONENT_V063 && !CORE_COMPONENT_V063.prototype.__nikaTargetGeometryV0
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v064.js
 (() => {
 const CORE_COMPONENT_V064 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.2";
+const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.3";
 
 function _v064InstallRoom(root) {
   if (!root) return;
@@ -2550,8 +2550,8 @@ function preloadImagesV075(root) {
     image.decode?.().catch(() => {});
   });
   [
-    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.2",
-    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.2",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.3",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.3",
   ].forEach((url) => {
     const image = new Image();
     image.src = url;
@@ -2716,7 +2716,7 @@ if (CORE_COMPONENT_V075 && !CORE_COMPONENT_V075.prototype.__nikaStableDomV075) {
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js
 (() => {
-const K100_VERSION = "1.0.2";
+const K100_VERSION = "1.0.3";
 const K100_CORE = customElements.get("keenetic-hero-panel");
 const K100_ALLOWED = ["/dashboard-house-v11/home", "/dashboard-actions/home", "/dashboard-infrastructure/overview"];
 const K100_TABS = [
@@ -2780,7 +2780,7 @@ function k100Overview(panel){
       <div class="k100-channel k100-lte ${channelState("lte",lte)}"><ha-icon icon="mdi:radio-tower"></ha-icon><div><strong>4G LTE</strong><span>${active==="lte"?"Активный канал":lte.state==="up"?"Резервный канал":"Нет данных"}</span></div></div>
       <div class="k100-channel k100-eth ${channelState("ethernet",eth)}"><ha-icon icon="mdi:ethernet"></ha-icon><div><strong>Кабель</strong><span>${active==="ethernet"?"Основной канал":eth.state==="up"?"Резервный канал":"Нет данных"}</span></div></div>
       <div class="k100-channel k100-lan active"><ha-icon icon="mdi:lan"></ha-icon><div><strong>LAN</strong><span>Локальная сеть</span></div></div>
-      <img class="k100-router" src="/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.2" alt="Keenetic Hero 4G+">
+      <img class="k100-router" src="/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.3" alt="Keenetic Hero 4G+">
     </article>
     <div class="k100-reserve ${reserve[0]}"><ha-icon icon="${reserve[1]}"></ha-icon><div><strong>${reserve[2]}</strong><span>${reserve[3]}</span></div></div>
     <article class="k100-active-card">
@@ -2809,7 +2809,7 @@ function k100InstallCore(){
   K100_CORE.prototype._render=function(...args){const r=oldRender.apply(this,args);k100InstallStyles(this.shadowRoot);return r;};
 }
 function k100InstallStyles(root){if(!root||root.querySelector("style[data-k100]"))return;const s=document.createElement("style");s.dataset.k100="1";s.textContent=`
-.k100-overview{display:grid;gap:8px;padding:8px 10px 12px;min-height:100%}.k100-hero{position:relative;height:430px;border:1px solid var(--divider-color);border-radius:24px;overflow:hidden;background:url('/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.2') center/cover no-repeat;box-shadow:0 8px 26px rgba(23,45,76,.08)}
+.k100-overview{display:grid;gap:8px;padding:8px 10px 12px;min-height:100%}.k100-hero{position:relative;height:430px;border:1px solid var(--divider-color);border-radius:24px;overflow:hidden;background:url('/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.3') center/cover no-repeat;box-shadow:0 8px 26px rgba(23,45,76,.08)}
 .k100-copy{position:absolute;z-index:8;left:16px;top:14px;max-width:48%}.k100-copy h1{margin:0 0 3px;font-size:25px;line-height:1.04}.k100-copy p{margin:0;font-size:14px;font-weight:650;color:var(--secondary-text-color)}
 .k100-indicator{position:absolute;z-index:9;right:14px;top:14px;width:174px;padding:11px 14px;border:1px solid;border-radius:18px;background:var(--card-background-color)}.k100-indicator strong,.k100-indicator span{display:block}.k100-indicator strong{font-size:16px}.k100-indicator span{margin-top:6px;font-size:13px;font-weight:600;color:var(--secondary-text-color)}.k100-indicator i,.k100-active-head i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;background:currentColor}.k100-indicator.ok{color:#2fb878;border-color:#9ce4c5;background:rgba(232,249,241,.94)}.k100-indicator.warn{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.94)}.k100-indicator.bad{color:#d95d63;border-color:#efb8ba;background:rgba(255,238,239,.94)}
 .k100-lines{position:absolute;inset:0;z-index:3;width:100%;height:100%}.k100-lines path{fill:none;stroke:#9aa3ab;stroke-width:7;stroke-linecap:round;stroke-dasharray:8 13}.k100-lines path.active{stroke:#2fbd7c;stroke-dasharray:none}.k100-lines path.standby{stroke:#16a4db}.k100-lines path.down{stroke:#dc6267;opacity:.65}
@@ -2823,11 +2823,23 @@ function k100InstallStyles(root){if(!root||root.querySelector("style[data-k100]"
 class KeeneticHeroAppPanelV100 extends HTMLElement{
   constructor(){super();this.attachShadow({mode:"open"});this._hass=null;this._panel=null;this._route=null;this._child=null;this._view=k100ViewFromLocation();this._scale=1;this._returnRoute=null;this._pinch=null;this._sentPanel=null;this._sentRoute=null;this._sentHass=null;this._hashHandler=()=>{const view=k100ViewFromLocation();if(view!==this._view)this._setView(view,false);};}
   set hass(v){this._hass=v;this._mount();this._syncChild();} set panel(v){this._panel=v;if(!this._returnRoute){this._returnRoute=k100Return(v);localStorage.setItem("nikas.keenetic.return_route.v1",this._returnRoute);}this._mount();this._syncChild();} set route(v){this._route=v;this._mount();this._syncChild();}
-  connectedCallback(){this._mount();this._bind();window.addEventListener("hashchange",this._hashHandler);}
-  disconnectedCallback(){this._unbind();window.removeEventListener("hashchange",this._hashHandler);}
+  connectedCallback(){this._mount();this._bind();this._bindScrollBoundaryGuard();window.addEventListener("hashchange",this._hashHandler);}
+  disconnectedCallback(){this._unbind();this._unbindScrollBoundaryGuard();window.removeEventListener("hashchange",this._hashHandler);}
+
+  _bindScrollBoundaryGuard(){
+    if(this._scrollGuardBound)return;
+    const work=this.shadowRoot.getElementById("k100-work");if(!work)return;
+    this._scrollGuardBound=true;this._scrollTouchY=null;
+    this._scrollStart=e=>{if(e.touches?.length===1)this._scrollTouchY=e.touches[0].clientY;};
+    this._scrollMove=e=>{if(e.touches?.length!==1||this._scrollTouchY===null)return;const y=e.touches[0].clientY;const dy=y-this._scrollTouchY;const atTop=work.scrollTop<=0;const atBottom=work.scrollTop+work.clientHeight>=work.scrollHeight-1;if((atTop&&dy>0)||(atBottom&&dy<0)){e.preventDefault();e.stopPropagation();}this._scrollTouchY=y;};
+    this._scrollEnd=()=>{this._scrollTouchY=null;};
+    work.addEventListener("touchstart",this._scrollStart,{passive:true});work.addEventListener("touchmove",this._scrollMove,{passive:false});work.addEventListener("touchend",this._scrollEnd,{passive:true});work.addEventListener("touchcancel",this._scrollEnd,{passive:true});
+  }
+  _unbindScrollBoundaryGuard(){const work=this.shadowRoot.getElementById("k100-work");if(work&&this._scrollGuardBound){work.removeEventListener("touchstart",this._scrollStart);work.removeEventListener("touchmove",this._scrollMove);work.removeEventListener("touchend",this._scrollEnd);work.removeEventListener("touchcancel",this._scrollEnd);}this._scrollGuardBound=false;this._scrollTouchY=null;}
+
   _mount(){if(!this.shadowRoot.getElementById("k100-shell")){this.shadowRoot.innerHTML=`<style>
-:host{--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);display:block;width:100%;height:100dvh;overflow:hidden;background:var(--primary-background-color);font-family:var(--ha-font-family-body,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)}*{box-sizing:border-box}#k100-shell{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}.k100-header{min-height:calc(62px + var(--safe-top));padding:var(--safe-top) 8px 0;display:grid;grid-template-columns:52px minmax(0,1fr) 52px;align-items:center;background:var(--card-background-color);border-bottom:1px solid var(--divider-color);z-index:20}.k100-side{width:44px;height:44px;border:1px solid var(--divider-color);border-radius:16px;background:var(--card-background-color);box-shadow:0 7px 20px rgba(23,45,76,.08);display:grid;place-items:center}.k100-side ha-icon{--mdc-icon-size:25px}.k100-refresh{justify-self:end;color:var(--primary-color)}.k100-title{justify-self:center;min-width:min(290px,100%);max-width:100%;min-height:44px;padding:5px 14px;border:1px solid color-mix(in srgb,var(--primary-color,#03a9d9) 24%,var(--divider-color));border-radius:16px;background:color-mix(in srgb,var(--primary-color,#03a9d9) 5%,var(--card-background-color));box-shadow:0 5px 16px rgba(23,45,76,.06);text-align:center}.k100-title strong,.k100-title small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.k100-title strong{font-size:23px;font-weight:800;line-height:1.08}.k100-title small{font-size:14px;font-weight:560;color:var(--secondary-text-color);margin-top:2px}.k100-title:active{background:color-mix(in srgb,var(--primary-color) 13%,var(--card-background-color));border-color:color-mix(in srgb,var(--primary-color) 42%,var(--divider-color));transform:scale(.985)}.k100-title:focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}.k100-work{min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;-webkit-overflow-scrolling:touch;touch-action:pan-y}.k100-stage{min-height:100%;transform-origin:0 0}.k100-stage>keenetic-hero-panel{display:block;min-height:100%}.k100-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;padding:6px 6px calc(6px + var(--safe-bottom));background:var(--card-background-color);border-top:1px solid var(--divider-color);box-shadow:0 -4px 18px rgba(23,45,76,.08);z-index:20}.k100-tabs button{min-height:52px;border:0;border-radius:16px;background:transparent;color:var(--secondary-text-color);display:grid;place-items:center;align-content:center;gap:3px}.k100-tabs button.active{color:var(--primary-color);background:color-mix(in srgb,var(--primary-color) 11%,transparent)}.k100-tabs ha-icon{--mdc-icon-size:28px}.k100-tabs span{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:390px){.k100-header{grid-template-columns:48px minmax(0,1fr) 48px;min-height:calc(60px + var(--safe-top))}.k100-title{min-width:0;width:100%;padding-inline:8px}.k100-title strong{font-size:21px}.k100-title small{font-size:13px}}
-</style><div id="k100-shell"><header class="k100-header"><button id="k100-menu" class="k100-side" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button><button id="k100-title" class="k100-title"><strong>Keenetic Hero 4G+</strong><small>UI v1.0.2</small></button><button id="k100-refresh" class="k100-side k100-refresh" aria-label="Обновить"><ha-icon icon="mdi:refresh"></ha-icon></button></header><main id="k100-work" class="k100-work"><div id="k100-stage" class="k100-stage"></div></main><nav id="k100-tabs" class="k100-tabs"></nav></div>`;this.shadowRoot.getElementById("k100-menu").onclick=e=>e.currentTarget.dispatchEvent(new CustomEvent("hass-toggle-menu",{bubbles:true,composed:true}));this.shadowRoot.getElementById("k100-title").onclick=()=>k100Navigate(this._returnRoute||"/dashboard-infrastructure/overview");this.shadowRoot.getElementById("k100-refresh").onclick=()=>this._child?._loadBootstrap?.(false);this._renderTabs();}this._mountChild();}
+:host{--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);display:block;width:100%;height:100%;min-height:0;max-height:100%;overflow:hidden;overscroll-behavior:none;position:relative;background:var(--primary-background-color);font-family:var(--ha-font-family-body,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)}*{box-sizing:border-box}#k100-shell{height:100%;min-height:0;display:grid;overscroll-behavior:none;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}.k100-header{touch-action:none;overscroll-behavior:none;min-height:calc(62px + var(--safe-top));padding:var(--safe-top) 8px 0;display:grid;grid-template-columns:52px minmax(0,1fr) 52px;align-items:center;background:var(--card-background-color);border-bottom:1px solid var(--divider-color);z-index:20}.k100-side{width:44px;height:44px;border:1px solid var(--divider-color);border-radius:16px;background:var(--card-background-color);box-shadow:0 7px 20px rgba(23,45,76,.08);display:grid;place-items:center}.k100-side ha-icon{--mdc-icon-size:25px}.k100-refresh{justify-self:end;color:var(--primary-color)}.k100-title{justify-self:center;min-width:min(290px,100%);max-width:100%;min-height:44px;padding:5px 14px;border:1px solid color-mix(in srgb,var(--primary-color,#03a9d9) 24%,var(--divider-color));border-radius:16px;background:color-mix(in srgb,var(--primary-color,#03a9d9) 5%,var(--card-background-color));box-shadow:0 5px 16px rgba(23,45,76,.06);text-align:center}.k100-title strong,.k100-title small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.k100-title strong{font-size:23px;font-weight:800;line-height:1.08}.k100-title small{font-size:14px;font-weight:560;color:var(--secondary-text-color);margin-top:2px}.k100-title:active{background:color-mix(in srgb,var(--primary-color) 13%,var(--card-background-color));border-color:color-mix(in srgb,var(--primary-color) 42%,var(--divider-color));transform:scale(.985)}.k100-title:focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}.k100-work{min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;overscroll-behavior-x:none;-webkit-overflow-scrolling:touch;touch-action:pan-y}.k100-stage{min-height:100%;transform-origin:0 0}.k100-stage>keenetic-hero-panel{display:block;min-height:100%}.k100-tabs{touch-action:none;overscroll-behavior:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;padding:6px 6px calc(6px + var(--safe-bottom));background:var(--card-background-color);border-top:1px solid var(--divider-color);box-shadow:0 -4px 18px rgba(23,45,76,.08);z-index:20}.k100-tabs button{min-height:52px;border:0;border-radius:16px;background:transparent;color:var(--secondary-text-color);display:grid;place-items:center;align-content:center;gap:3px}.k100-tabs button.active{color:var(--primary-color);background:color-mix(in srgb,var(--primary-color) 11%,transparent)}.k100-tabs ha-icon{--mdc-icon-size:28px}.k100-tabs span{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:390px){.k100-header{grid-template-columns:48px minmax(0,1fr) 48px;min-height:calc(60px + var(--safe-top))}.k100-title{min-width:0;width:100%;padding-inline:8px}.k100-title strong{font-size:21px}.k100-title small{font-size:13px}}
+</style><div id="k100-shell"><header class="k100-header"><button id="k100-menu" class="k100-side" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button><button id="k100-title" class="k100-title"><strong>Keenetic Hero 4G+</strong><small>UI v1.0.3</small></button><button id="k100-refresh" class="k100-side k100-refresh" aria-label="Обновить"><ha-icon icon="mdi:refresh"></ha-icon></button></header><main id="k100-work" class="k100-work"><div id="k100-stage" class="k100-stage"></div></main><nav id="k100-tabs" class="k100-tabs"></nav></div>`;this.shadowRoot.getElementById("k100-menu").onclick=e=>e.currentTarget.dispatchEvent(new CustomEvent("hass-toggle-menu",{bubbles:true,composed:true}));this.shadowRoot.getElementById("k100-title").onclick=()=>k100Navigate(this._returnRoute||"/dashboard-infrastructure/overview");this.shadowRoot.getElementById("k100-refresh").onclick=()=>this._child?._loadBootstrap?.(false);this._renderTabs();}this._mountChild();}
   _mountChild(){const stage=this.shadowRoot.getElementById("k100-stage");if(!this.isConnected||!stage)return;if(!this._child){this._child=document.createElement("keenetic-hero-panel");this._child.addEventListener("keenetic-view-request",event=>{const view=event.detail?.view;if(!K100_VIEW_IDS.has(view))return;event.preventDefault();this._setView(view);});stage.append(this._child);}this._syncChild();}
   _syncChild(){if(!this._child)return;if(this._panel&&this._sentPanel!==this._panel){this._child.panel=this._panel;this._sentPanel=this._panel;}if(this._route&&this._sentRoute!==this._route){this._child.route=this._route;this._sentRoute=this._route;}if(this._child._view!==this._view)this._child._view=this._view;if(this._hass&&this._sentHass!==this._hass){this._child.hass=this._hass;this._sentHass=this._hass;}}
   _renderTabs(){const nav=this.shadowRoot.getElementById("k100-tabs");if(!nav)return;if(nav.dataset.mounted!=="true"){for(const[v,icon,label]of K100_TABS){const button=document.createElement("button");button.dataset.view=v;button.type="button";const glyph=document.createElement("ha-icon");glyph.setAttribute("icon",icon);const text=document.createElement("span");text.textContent=label;button.append(glyph,text);button.addEventListener("click",()=>this._setView(v));nav.append(button);}nav.dataset.mounted="true";}this._updateTabs();}
