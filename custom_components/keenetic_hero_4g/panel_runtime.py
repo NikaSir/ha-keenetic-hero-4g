@@ -6,7 +6,7 @@ from homeassistant.core import HomeAssistant
 from . import panel as _panel
 
 FRONTEND_UI_VERSION = "0.9.0"
-FRONTEND_CACHE_KEY = "0.9.0-b054"
+FRONTEND_CACHE_KEY = "0.9.0-b055"
 FRONTEND_COMPONENT_SLUG = "v090"
 
 
