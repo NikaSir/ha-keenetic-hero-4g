@@ -1,0 +1,94 @@
+name: Temporary b054 current delivery rebuild
+
+on:
+  push:
+    branches:
+      - "rebuild/b054-current-delivery"
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: rebuild/b054-current-delivery
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Rebuild current delivery contract
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          root = Path('.')
+          integration = root / 'custom_components' / 'keenetic_hero_4g'
+
+          panel = integration / 'panel.py'
+          text = panel.read_text(encoding='utf-8')
+          text = text.replace(
+              '# Use a versioned physical module path and web-component name. iOS/Home Assistant\n# may retain an older ES module even when only the query string changes, so each\n# UI contract revision gets a hard cache-bust path.\nPANEL_COMPONENT = "keenetic-hero-app-panel-v040"\nPANEL_MODULE = f"{PANEL_STATIC_URL}/keenetic-app-v040.js?v={PANEL_VERSION}"',
+              '# Canonical fallback must already point at the current autonomous production\n# delivery. panel_runtime may refresh the cache key, but no code path may fall back\n# to the historical v040 app shell.\nPANEL_COMPONENT = "keenetic-hero-app-panel-v090"\nPANEL_MODULE = f"{PANEL_STATIC_URL}/keenetic-panel-bundle.js?v=0.9.0-b054"'
+          )
+          panel.write_text(text, encoding='utf-8')
+
+          runtime = integration / 'panel_runtime.py'
+          text = runtime.read_text(encoding='utf-8')
+          text = text.replace('FRONTEND_UI_VERSION = "0.9.0"\nFRONTEND_COMPONENT_SLUG = "v090"', 'FRONTEND_UI_VERSION = "0.9.0"\nFRONTEND_CACHE_KEY = "0.9.0-b054"\nFRONTEND_COMPONENT_SLUG = "v090"')
+          text = text.replace('f"{_panel.PANEL_STATIC_URL}/keenetic-panel-bundle.js?v={FRONTEND_UI_VERSION}"', 'f"{_panel.PANEL_STATIC_URL}/keenetic-panel-bundle.js?v={FRONTEND_CACHE_KEY}"')
+          runtime.write_text(text, encoding='utf-8')
+
+          manifest = integration / 'manifest.json'
+          text = manifest.read_text(encoding='utf-8').replace('"version": "1.0.0-b052"', '"version": "1.0.0-b054"')
+          manifest.write_text(text, encoding='utf-8')
+
+          for rel in [
+              'README.md',
+              'docs/NIKAS_SPECIALIZED_PANEL_COMPLIANCE.md',
+              'docs/PANEL_TESTS.md',
+          ]:
+              path = root / rel
+              if path.exists():
+                  path.write_text(path.read_text(encoding='utf-8').replace('b052', 'b054'), encoding='utf-8')
+
+          for path in (root / 'tests').glob('test_*.py'):
+              text = path.read_text(encoding='utf-8')
+              if '1.0.0-b052' in text:
+                  path.write_text(text.replace('1.0.0-b052', '1.0.0-b054'), encoding='utf-8')
+
+          changelog = root / 'CHANGELOG.md'
+          text = changelog.read_text(encoding='utf-8')
+          entry = '''## Delivery rebuild / v1.00_b054 — 2026-08-29
+
+- Forces Home Assistant to register the autonomous `keenetic-panel-bundle.js` and current `keenetic-hero-app-panel-v090` component even through the canonical fallback path.
+- Adds a dedicated `0.9.0-b054` frontend cache key so iOS / Companion App cannot reuse the pre-rebuild bundle under the unchanged UI version.
+- Keeps NikaS UI v1.9, the accepted Overview composition, fixed Header/Bottom Tab Bar, pinch/reset gestures and stable point-update runtime unchanged.
+
+'''
+          marker = '# Changelog\n\n'
+          if entry not in text:
+              text = text.replace(marker, marker + entry, 1)
+          changelog.write_text(text, encoding='utf-8')
+
+          delivery_test = root / 'tests' / 'test_panel_current_delivery_b054.py'
+          delivery_test.write_text('''from __future__ import annotations\n\nimport json\nimport unittest\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[1]\nINTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"\n\nclass CurrentDeliveryB054Tests(unittest.TestCase):\n    def test_canonical_registration_cannot_fall_back_to_legacy_shell(self) -> None:\n        panel = (INTEGRATION / "panel.py").read_text(encoding="utf-8")\n        self.assertIn('PANEL_COMPONENT = "keenetic-hero-app-panel-v090"', panel)\n        self.assertIn('keenetic-panel-bundle.js?v=0.9.0-b054', panel)\n        self.assertNotIn('PANEL_COMPONENT = "keenetic-hero-app-panel-v040"', panel)\n        self.assertNotIn('keenetic-app-v040.js?v=', panel)\n\n    def test_runtime_uses_dedicated_cache_key(self) -> None:\n        runtime = (INTEGRATION / "panel_runtime.py").read_text(encoding="utf-8")\n        self.assertIn('FRONTEND_UI_VERSION = "0.9.0"', runtime)\n        self.assertIn('FRONTEND_CACHE_KEY = "0.9.0-b054"', runtime)\n        self.assertIn('FRONTEND_COMPONENT_SLUG = "v090"', runtime)\n        self.assertIn('keenetic-panel-bundle.js?v={FRONTEND_CACHE_KEY}', runtime)\n\n    def test_integration_build_is_b054(self) -> None:\n        manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))\n        self.assertEqual(manifest["version"], "1.0.0-b054")\n\nif __name__ == "__main__":\n    unittest.main()\n''', encoding='utf-8')
+          PY
+      - name: Validate rebuild
+        run: |
+          python scripts/build_frontend_bundle.py --check
+          python -m unittest discover -s tests -v
+          python -m compileall -q custom_components/keenetic_hero_4g
+          git diff --check
+      - name: Commit rebuild
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add custom_components/keenetic_hero_4g/panel.py custom_components/keenetic_hero_4g/panel_runtime.py custom_components/keenetic_hero_4g/manifest.json README.md CHANGELOG.md docs tests/test_panel_current_delivery_b054.py tests
+          git commit -m "b054: force current autonomous Keenetic delivery"
+          git push origin HEAD:rebuild/b054-current-delivery
