@@ -11,7 +11,7 @@
     "custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js"
   ],
   "production_entrypoint": "custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js",
-  "current_runtime_path": "custom_components/keenetic_hero_4g/frontend/keenetic-app-v090.js",
+  "current_runtime_path": "custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js",
   "header_return_runtime_path": "custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js",
   "build_source_files": [
     "scripts/build_frontend_bundle.py",
@@ -32,20 +32,10 @@
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v068.js",
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v073.js",
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v075.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v076.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v080.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v081.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v083.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v084.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v085.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v086.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v087.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v088.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v089.js",
-    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v090.js"
+    "custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js"
   ],
-  "ui_version": "0.9.0",
-  "web_component": "keenetic-hero-app-panel-v090",
+  "ui_version": "1.0.0",
+  "web_component": "keenetic-hero-app-panel-v100",
   "bundle_contract": {
     "autonomous": true,
     "runtime_imports": false,
@@ -61,14 +51,14 @@
     "forbidden_command_markers": [".callService("]
   },
   "header_return": {
-    "button_marker": "id = \"return-v081\"",
-    "version_marker": "version.textContent = `UI v${UI_VERSION_V085}`",
-    "focus_marker": ".return-v081:focus-visible",
-    "pressed_marker": ".return-v081:active",
-    "explicit_precedence_marker": "for (const key of [\"return_to\", \"from\"])",
-    "capture_once_marker": "if (!this._returnRouteV085)",
-    "timestamp_required_marker": "value === null || timestampValue === null",
-    "future_timestamp_rejection_marker": "age < 0"
+    "button_marker": "id=\"k100-title\"",
+    "version_marker": "<small>UI v1.0.0</small>",
+    "focus_marker": ".k100-title:focus-visible",
+    "pressed_marker": ".k100-title:active",
+    "explicit_precedence_marker": "[\"return_to\",\"from\"]",
+    "capture_once_marker": "this._returnRoute",
+    "timestamp_required_marker": "timestamp",
+    "future_timestamp_rejection_marker": "age>=0"
   },
   "title_plaque_reference": {
     "implementation": "LIDER",
