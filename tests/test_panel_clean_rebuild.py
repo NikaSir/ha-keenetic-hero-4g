@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "custom_components" / "keenetic_hero_4g" / "frontend"
-SOURCE = FRONTEND / "keenetic-app-v080.js"
+SOURCE = FRONTEND / "keenetic-app-v100.js"
 BUNDLE = FRONTEND / "keenetic-panel-bundle.js"
 BUILD = ROOT / "scripts" / "build_frontend_bundle.py"
 
@@ -18,41 +18,41 @@ class PanelCleanRebuildTests(unittest.TestCase):
         cls.bundle = BUNDLE.read_text(encoding="utf-8")
         cls.build = BUILD.read_text(encoding="utf-8")
 
-    def test_old_shell_and_zoom_engines_are_not_shipped(self) -> None:
+    def test_only_v100_app_shell_is_shipped(self) -> None:
+        self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.bundle)
+        self.assertEqual(self.bundle.count('customElements.define("keenetic-hero-app-panel-v100"'), 1)
+        for slug in [
+            "v040", "v045", "v050", "v051", "v052", "v060", "v061", "v062",
+            "v063", "v064", "v065", "v068", "v073", "v075", "v076", "v080",
+            "v081", "v083", "v084", "v085", "v086", "v087", "v088", "v089", "v090",
+        ]:
+            self.assertNotIn(f'customElements.define("keenetic-hero-app-panel-{slug}"', self.bundle)
+
+    def test_build_has_one_current_shell_source_and_no_superseded_delivery_sources(self) -> None:
+        self.assertIn('FRONTEND / "keenetic-app-v100.js"', self.build)
         for name in [
-            "keenetic-app-v066.js",
-            "keenetic-app-v067.js",
-            "keenetic-app-v069.js",
-            "keenetic-app-v070.js",
-            "keenetic-app-v071.js",
-            "keenetic-app-v072.js",
-            "keenetic-app-v074.js",
-            "keenetic-app-v077.js",
-            "keenetic-app-v078.js",
+            "keenetic-app-v066.js", "keenetic-app-v067.js", "keenetic-app-v069.js",
+            "keenetic-app-v070.js", "keenetic-app-v071.js", "keenetic-app-v072.js",
+            "keenetic-app-v074.js", "keenetic-app-v077.js", "keenetic-app-v078.js",
+            "keenetic-app-v080.js", "keenetic-app-v081.js", "keenetic-app-v083.js",
+            "keenetic-app-v084.js", "keenetic-app-v085.js", "keenetic-app-v086.js",
+            "keenetic-app-v087.js", "keenetic-app-v088.js", "keenetic-app-v089.js",
+            "keenetic-app-v090.js",
         ]:
             self.assertNotIn(f'FRONTEND / "{name}"', self.build)
-            self.assertNotIn(f"// BEGIN custom_components/keenetic_hero_4g/frontend/{name}", self.bundle)
-        for marker in ["#nika-zoom-stage", "nika-zoom-dock", "_standardStateV074"]:
-            self.assertNotIn(marker, self.bundle)
-        for slug in ["v040", "v045", "v050", "v051", "v052", "v060", "v061", "v062", "v063", "v064", "v065", "v068", "v073", "v075", "v076", "v077", "v078"]:
-            self.assertNotIn(f'customElements.get("keenetic-hero-app-panel-{slug}")', self.bundle)
 
-    def test_native_scroll_is_the_default_untransformed_state(self) -> None:
-        self.assertIn("overflow-x:hidden;overflow-y:auto", self.source)
-        self.assertIn("touch-action:pan-y", self.source)
-        self.assertIn("#zoom-surface-v080{position:relative", self.source)
-        self.assertIn('viewport.classList.remove("scaled-v080", "zoomed-v080")', self.source)
-        self.assertIn('surface.style.width = "";surface.style.height = "";surface.style.transform = ""', self.source)
+    def test_production_bundle_is_autonomous(self) -> None:
+        self.assertNotIn("keenetic-panel.css?v=", self.bundle)
+        self.assertNotIn("data:image/", self.bundle)
+        self.assertNotIn("base64,", self.bundle)
+        self.assertNotIn("history.back(", self.bundle)
 
-    def test_new_shell_is_mounted_once_and_has_one_viewport(self) -> None:
-        self.assertEqual(self.source.count('id="work-viewport-v080"'), 1)
-        self.assertEqual(self.source.count('id="zoom-stage-v080"'), 1)
-        self.assertEqual(self.source.count('id="zoom-surface-v080"'), 1)
-        self.assertIn('if (this.shadowRoot.getElementById("app-shell-v080")) return', self.source)
-
-    def test_ui_does_not_expose_a_build_number(self) -> None:
-        self.assertIn("<span>Network Control Center</span>", self.source)
-        self.assertNotIn("UI v0.", self.source)
+    def test_v100_runtime_exposes_current_version_and_semantic_return_shell(self) -> None:
+        self.assertIn('const K100_VERSION = "1.0.0";', self.source)
+        self.assertIn("nikas.specialized.source_route.v1", self.source)
+        self.assertIn("history.pushState", self.source)
+        self.assertIn("location-changed", self.source)
+        self.assertIn("UI v", self.source)
 
 
 if __name__ == "__main__":
