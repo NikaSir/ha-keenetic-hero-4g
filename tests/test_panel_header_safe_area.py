@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 CONTRACT = INTEGRATION / "panel_contract.json"
-SOURCE = INTEGRATION / "frontend" / "keenetic-app-v080.js"
+SOURCE = INTEGRATION / "frontend" / "keenetic-app-v100.js"
 
 
 class PanelHeaderSafeAreaTests(unittest.TestCase):
@@ -29,18 +29,15 @@ class PanelHeaderSafeAreaTests(unittest.TestCase):
             "--safe-top:var(--safe-area-inset-top,env(safe-area-inset-top,0px))",
             self.source,
         )
-        self.assertIn(
-            "min-height:calc(62px + var(--safe-top))",
-            self.source,
-        )
+        self.assertIn("min-height:calc(62px + var(--safe-top))", self.source)
         self.assertIn(
             "padding:var(--safe-top) max(8px,var(--safe-right))",
             self.source,
         )
 
     def test_safe_area_does_not_wrap_the_zoom_surface(self) -> None:
-        start = self.source.index("#zoom-stage-v080")
-        end = self.source.index(".tabbar-v080", start)
+        start = self.source.index("#k100-stage")
+        end = self.source.index(".k100-tabs", start)
         self.assertNotIn("safe-top", self.source[start:end])
 
 
