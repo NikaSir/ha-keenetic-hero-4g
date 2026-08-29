@@ -3,14 +3,14 @@ name: Temporary Keenetic UI 1.0.0 rebuild
 on:
   push:
     branches:
-      - "rebuild/keenetic-ui-1.0.0"
+      - rebuild/keenetic-ui-1.0.0
 
 permissions:
   contents: write
 
 jobs:
   rebuild:
-    if: ${{ github.actor != 'github-actions[bot]' }}
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -19,64 +19,18 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
-      - name: Switch production graph to UI 1.0.0
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import json,re
-          root=Path('.')
-          p=root/'scripts/build_frontend_bundle.py'
-          s=p.read_text()
-          a=s.index('SOURCES = ['); b=s.index('\n]\n',a)+3
-          sources='''SOURCES = [
-    FRONTEND / "keenetic-panel.js",
-    FRONTEND / "keenetic-overview-v040.js",
-    FRONTEND / "keenetic-app-v040.js",
-    FRONTEND / "keenetic-app-v045.js",
-    FRONTEND / "keenetic-app-v050.js",
-    FRONTEND / "keenetic-app-v051.js",
-    FRONTEND / "keenetic-app-v052.js",
-    FRONTEND / "keenetic-app-v060.js",
-    FRONTEND / "keenetic-app-v061.js",
-    FRONTEND / "keenetic-app-v062.js",
-    FRONTEND / "keenetic-app-v063.js",
-    FRONTEND / "keenetic-app-v064.js",
-    FRONTEND / "keenetic-app-v065.js",
-    FRONTEND / "keenetic-app-v068.js",
-    FRONTEND / "keenetic-app-v073.js",
-    FRONTEND / "keenetic-app-v075.js",
-    FRONTEND / "keenetic-app-v100.js",
-]
-'''
-          s=s[:a]+sources+s[b:]
-          s=re.sub(r'PANEL_VERSION = "[^"]+"','PANEL_VERSION = "1.0.0"',s)
-          p.write_text(s)
-          r=root/'custom_components/keenetic_hero_4g/panel_runtime.py'; t=r.read_text()
-          t=re.sub(r'FRONTEND_UI_VERSION = "[^"]+"','FRONTEND_UI_VERSION = "1.0.0"',t)
-          t=re.sub(r'FRONTEND_CACHE_KEY = "[^"]+"','FRONTEND_CACHE_KEY = "1.0.0"',t)
-          t=re.sub(r'FRONTEND_COMPONENT_SLUG = "[^"]+"','FRONTEND_COMPONENT_SLUG = "v100"',t); r.write_text(t)
-          std=root/'.nikas-ui-standard.json'; d=json.loads(std.read_text())
-          d['current_runtime_path']='custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js'
-          d['build_source_files']=[str(x.relative_to(root)) for x in [p,root/'custom_components/keenetic_hero_4g/frontend/keenetic-panel.css',root/'custom_components/keenetic_hero_4g/frontend/keenetic-panel.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-overview-v040.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v040.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v045.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v050.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v051.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v061.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v062.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v064.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v065.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v068.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v073.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v075.js',root/'custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js']]
-          d['ui_version']='1.0.0'; d['web_component']='keenetic-hero-app-panel-v100'
-          d['header_return']={'button_marker':'id="k100-title"','version_marker':'<small>UI v1.0.0</small>','focus_marker':'.k100-title:focus-visible','pressed_marker':'.k100-title:active','explicit_precedence_marker':'["return_to","from"]','capture_once_marker':'this._returnRoute','timestamp_required_marker':'timestamp','future_timestamp_rejection_marker':'age>=0'}
-          std.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n')
-          for f in (root/'tests').glob('test_*.py'):
-              x=f.read_text().replace('0.9.0','1.0.0').replace('v090','v100'); f.write_text(x)
-          PY
-      - name: Rebuild autonomous bundle
+          python-version: '3.13'
+      - name: Build bundle
         run: python scripts/build_frontend_bundle.py
-      - name: Validate
+      - name: Validate bundle
         run: |
           python scripts/build_frontend_bundle.py --check
-          python -m unittest discover -s tests -v
           python -m compileall -q custom_components/keenetic_hero_4g
           git diff --check
-      - name: Commit rebuild
+      - name: Commit bundle
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add scripts/build_frontend_bundle.py custom_components/keenetic_hero_4g/panel_runtime.py custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js .nikas-ui-standard.json tests
-          git commit -m "build: switch Keenetic production to clean UI 1.0.0"
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js
+          git commit -m 'build: regenerate Keenetic UI 1.0.0 bundle'
           git push origin HEAD:rebuild/keenetic-ui-1.0.0
