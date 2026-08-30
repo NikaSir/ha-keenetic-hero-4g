@@ -121,11 +121,11 @@ class PanelOverviewV084Tests(unittest.TestCase):
         self.assertIn('FRONTEND / "keenetic-app-v100.js"', self.build)
         for old in ["v083", "v084", "v085", "v086", "v087", "v088", "v089", "v090"]:
             self.assertNotIn(f'FRONTEND / "keenetic-app-{old}.js"', self.build)
-        self.assertIn('PANEL_VERSION = "1.0.4"', self.build)
-        self.assertIn('FRONTEND_UI_VERSION = "1.0.4"', self.runtime)
+        self.assertIn('PANEL_VERSION = "1.0.5"', self.build)
+        self.assertIn('FRONTEND_UI_VERSION = "1.0.5"', self.runtime)
         self.assertIn('FRONTEND_COMPONENT_SLUG = "v100"', self.runtime)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.delivery)
-        self.assertIn('"version": "1.0.0-b056"', self.manifest)
+        self.assertIn('"version": "1.0.0-b057"', self.manifest)
 
 
 if __name__ == "__main__":

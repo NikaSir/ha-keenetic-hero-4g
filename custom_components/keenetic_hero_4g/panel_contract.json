@@ -12,7 +12,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "1.0.4"
+    "version": "1.0.5"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -279,7 +279,7 @@
     "hero_layers": {
       "room": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp",
       "router": "/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp",
-      "connections": "dynamic_svg_dom",
+      "connections": "none_status_on_plaques",
       "telemetry": "live_hass_html"
     },
     "external_image_dependency": false,
@@ -304,17 +304,21 @@
       "hero_style": "layered_room_router",
       "hero_background": "local_static_webp",
       "hero_router_layer": "local_static_webp",
-      "connection_layer": "dynamic_svg",
+      "connection_layer": "status_tinted_channel_cards",
       "hero_mobile_min_height_px": 350,
       "hero_fills_available_work_row": true,
       "dynamic_overlays_from_hass_states": true,
       "preserve_network_topology": true,
-      "active_path_only": false,
-      "inactive_grey_branches": false,
-      "channel_path_states": {
-        "active": "solid_green",
-        "ready_reserve": "dashed_blue",
-        "down": "red",
+      "line_free_channel_composition": true,
+      "channel_surface_states": {
+        "active_or_healthy": "light_green",
+        "ready_reserve": "light_blue",
+        "down": "light_orange",
+        "unknown": "neutral_grey"
+      },
+      "reserve_readiness_surface_states": {
+        "ready_or_active": "light_blue",
+        "down": "light_orange",
         "unknown": "neutral_grey"
       },
       "reserve_channel_separate": true,
@@ -327,8 +331,7 @@
         "outlet_artwork": false,
         "cable_label": "Кабель",
         "lan_label": "LAN",
-        "separate_path_segments": true,
-        "router_blocks_path_visual": true
+        "visual_connectors": false
       },
       "composition": {
         "room_asset": "keenetic-hero-room-v064.webp",
@@ -341,8 +344,10 @@
         "cable_card_top_percent": 57.5,
         "lan_card_top_percent": 57.5,
         "status_primary_label_ethernet": "Ethernet",
-        "active_ethernet_path_style": "solid_green",
-        "reserve_lte_path_style": "static_dashed_blue",
+        "active_ethernet_surface_style": "light_green",
+        "reserve_lte_surface_style": "light_blue",
+        "unavailable_surface_style": "light_orange",
+        "unknown_surface_style": "neutral_grey",
         "lte_failover_title": "Работа через резерв",
         "lte_failover_detail": "Основной канал Ethernet недоступен"
       },
