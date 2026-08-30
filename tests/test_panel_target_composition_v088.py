@@ -38,10 +38,10 @@ class TargetCompositionV088Tests(unittest.TestCase):
         self.assertIn("v083-reserve-state warn", self.source)
 
     def test_target_composition_is_preserved_by_current_delivery(self) -> None:
-        self.assertEqual(self.manifest["panel_version"], "1.0.2")
+        self.assertEqual(self.manifest["panel_version"], "1.0.3")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
         integration_manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual(integration_manifest["version"], "1.0.0-b054")
+        self.assertEqual(integration_manifest["version"], "1.0.0-b055")
 
 
 if __name__ == "__main__":
