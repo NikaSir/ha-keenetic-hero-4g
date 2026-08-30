@@ -12,13 +12,13 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "1.0.3"
+    "version": "1.0.4"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
     "version": "1.9",
     "canonical_source": "NikaSir/ha-contract-generated-ui",
-    "canonical_sha256": "f02b40c0e16d49ced98f3f099382ede1798837e1d709cb8934787c110455fb9c",
+    "canonical_sha256": "a31dc45499443f8fa43eaea1906fe3a793dffcb411b10cebcd3a3a205fbcef27",
     "navigation_contract_sha256": "c87dc760c0900701f6a807a35aba40e790f68f52c39f4579583598f697997e52",
     "standards": {
       "shell": "1.9",
@@ -72,6 +72,13 @@
       "subtitle_px": 14,
       "subtitle_px_narrow": 13,
       "control_shadow": "0 7px 20px rgba(23,45,76,.08)",
+      "reference_implementation": "S8 OMNI",
+      "surface_background_primary_mix_percent": 97,
+      "surface_divider_mix_percent": 70,
+      "surface_blur_px": 18,
+      "surface_saturation_percent": 130,
+      "horizontal_padding_min_px": 12,
+      "control_border_divider_mix_percent": 72,
       "show_brand_icon": false,
       "actions": [
         "refresh"
@@ -156,7 +163,7 @@
         "max_percent": 103
       },
       "reset_feedback": "Масштаб 100%",
-      "gesture_click_guard_ms": 380,
+      "gesture_click_guard_ms": 460,
       "cancel_entity_hold_on_gesture": true,
       "responsive_layout_before_zoom": true,
       "idempotent_reconciliation": true,
@@ -166,12 +173,11 @@
       "reset_native_scroll_to_origin": true,
       "tab_change_resets_scroll_and_clamps": true,
       "viewport_binding_requires_nodes": [
-        "work-viewport-v080",
-        "zoom-stage-v080",
-        "zoom-surface-v080"
+        "k100-work",
+        "k100-stage"
       ],
       "gesture_listener_phase": "capture",
-      "content_height_source": "active_persistent_view",
+      "content_height_source": "active_v075_view_slot_fills_k100_stage",
       "remeasure_after_mount": true,
       "telemetry_mutation_remeasure": false,
       "resize_during_gesture": "defer_until_gesture_end",
@@ -299,7 +305,8 @@
       "hero_background": "local_static_webp",
       "hero_router_layer": "local_static_webp",
       "connection_layer": "dynamic_svg",
-      "hero_mobile_min_height_px": 340,
+      "hero_mobile_min_height_px": 350,
+      "hero_fills_available_work_row": true,
       "dynamic_overlays_from_hass_states": true,
       "preserve_network_topology": true,
       "active_path_only": false,

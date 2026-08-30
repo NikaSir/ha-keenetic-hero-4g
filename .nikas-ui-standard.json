@@ -2,7 +2,7 @@
   "version": "1.9",
   "navigation_contract_version": "1.1",
   "standard_path": "docs/NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md",
-  "standard_sha256": "f02b40c0e16d49ced98f3f099382ede1798837e1d709cb8934787c110455fb9c",
+  "standard_sha256": "a31dc45499443f8fa43eaea1906fe3a793dffcb411b10cebcd3a3a205fbcef27",
   "navigation_contract_path": "docs/NIKAS_PANEL_NAVIGATION_CONTRACT.md",
   "navigation_contract_sha256": "c87dc760c0900701f6a807a35aba40e790f68f52c39f4579583598f697997e52",
   "role": "specialized",
@@ -34,7 +34,7 @@
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v075.js",
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js"
   ],
-  "ui_version": "1.0.3",
+  "ui_version": "1.0.4",
   "web_component": "keenetic-hero-app-panel-v100",
   "bundle_contract": {
     "autonomous": true,
@@ -54,7 +54,7 @@
   },
   "header_return": {
     "button_marker": "id=\"k100-title\"",
-    "version_marker": "<small>UI v1.0.3</small>",
+    "version_marker": "<small>UI v1.0.4</small>",
     "focus_marker": ".k100-title:focus-visible",
     "pressed_marker": ".k100-title:active",
     "explicit_precedence_marker": "[\"return_to\",\"from\"]",
@@ -62,8 +62,21 @@
     "timestamp_required_marker": "onceAt!==null",
     "future_timestamp_rejection_marker": "handedOffAge>=0"
   },
+  "header_reference": {
+    "implementation": "S8 OMNI",
+    "implementation_source": "NikaSir/ha-s8-omni",
+    "background_primary_mix_percent": 97,
+    "divider_mix_percent": 70,
+    "blur_px": 18,
+    "saturation_percent": 130,
+    "side_action_size_px": 44,
+    "side_action_radius_px": 16,
+    "side_action_border_divider_mix_percent": 72,
+    "side_action_shadow": "0 7px 20px rgba(23,45,76,.08)"
+  },
   "title_plaque_reference": {
-    "implementation": "LIDER",
+    "implementation": "S8 OMNI",
+    "implementation_source": "NikaSir/ha-s8-omni",
     "min_width": "min(290px,100%)",
     "min_height_px": 44,
     "padding_px": "5 14",

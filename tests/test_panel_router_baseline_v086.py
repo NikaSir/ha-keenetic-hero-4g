@@ -24,14 +24,14 @@ class PanelRouterBaselineV100Tests(unittest.TestCase):
     def test_approved_router_is_a_versioned_local_layer(self) -> None:
         self.assertTrue(ASSET.is_file())
         self.assertGreater(ASSET.stat().st_size, 50_000)
-        self.assertIn("keenetic-hero-router-v086.webp?v=1.0.3", self.source)
+        self.assertIn("keenetic-hero-router-v086.webp?v=1.0.4", self.source)
         router = next(
             item for item in self.manifest["assets"] if item["role"] == "overview_router_layer"
         )
         self.assertEqual(router["path"], "frontend/assets/keenetic-hero-router-v086.webp")
         self.assertEqual(
             router["url"],
-            "/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.3",
+            "/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.4",
         )
 
     def test_all_three_paths_continue_under_the_router(self) -> None:
@@ -42,12 +42,12 @@ class PanelRouterBaselineV100Tests(unittest.TestCase):
         self.assertIn(".k100-router{position:absolute;z-index:6", self.source)
 
     def test_router_asset_is_static_and_not_rewritten_by_telemetry_patch(self) -> None:
-        self.assertEqual(self.source.count("keenetic-hero-router-v086.webp?v=1.0.3"), 1)
+        self.assertEqual(self.source.count("keenetic-hero-router-v086.webp?v=1.0.4"), 1)
         self.assertNotIn("router.setAttribute", self.source)
         self.assertNotIn("router.src =", self.source)
 
     def test_delivery_component_is_current(self) -> None:
-        self.assertIn('const K100_VERSION = "1.0.3";', self.source)
+        self.assertIn('const K100_VERSION = "1.0.4";', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.source)
         self.assertIn(
             "// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js",

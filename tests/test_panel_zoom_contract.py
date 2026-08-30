@@ -60,7 +60,7 @@ class PanelZoomContractTests(unittest.TestCase):
         zoom = self.contract["app_shell"]["content_zoom"]
         self.assertEqual(
             zoom["viewport_binding_requires_nodes"],
-            ["work-viewport-v080", "zoom-stage-v080", "zoom-surface-v080"],
+            ["k100-work", "k100-stage"],
         )
         self.assertEqual(zoom["gesture_listener_phase"], "capture")
         self.assertTrue(zoom["remeasure_after_mount"])
@@ -88,7 +88,7 @@ class PanelZoomContractTests(unittest.TestCase):
     def test_gestures_cancel_more_info_and_guard_generated_clicks(self) -> None:
         zoom = self.contract["app_shell"]["content_zoom"]
         self.assertTrue(zoom["cancel_entity_hold_on_gesture"])
-        self.assertEqual(zoom["gesture_click_guard_ms"], 380)
+        self.assertEqual(zoom["gesture_click_guard_ms"], 460)
         self.assertIn('new PointerEvent("pointercancel"', self.source)
         self.assertIn("event.stopImmediatePropagation()", self.source)
 
@@ -100,7 +100,7 @@ class PanelZoomContractTests(unittest.TestCase):
     def test_delivery_manifest_matches_shell_and_zoom_policy(self) -> None:
         self.assertEqual(self.manifest["route"], "/dashboard-keenetic")
         self.assertEqual(self.manifest["entry_module"], "keenetic-panel-bundle.js")
-        self.assertEqual(self.manifest["panel_version"], "1.0.3")
+        self.assertEqual(self.manifest["panel_version"], "1.0.4")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
         self.assertEqual(
             self.manifest["ha_menu_event"],

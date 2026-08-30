@@ -8,9 +8,10 @@ class B054Tests(unittest.TestCase):
     def test_system_is_nested_diagnostics_view(self):
         self.assertIn('K100_VIEW_IDS = new Set([...K100_TABS.map(([view])=>view),"system"])', SRC)
         self.assertIn('this._view==="system"&&button.dataset.view==="diagnostics"', SRC)
-    def test_mobile_overview_is_compacted_without_recropping_hero(self):
-        self.assertIn('.k100-hero{height:350px;background-size:auto 430px;background-position:center top}', SRC)
-        self.assertIn('.k100-overview{gap:5px;padding:5px 10px 6px}', SRC)
+    def test_mobile_overview_is_compacted_and_fills_short_work_rows(self):
+        self.assertIn('grid-template-rows:minmax(350px,1fr) auto auto auto', SRC)
+        self.assertIn('.k100-hero{height:auto;min-height:350px;background-size:auto max(430px,100%);background-position:center top}', SRC)
+        self.assertIn('gap:5px;padding:5px 10px 6px', SRC)
         self.assertIn('.k100-active-head{min-height:50px;padding:7px 12px}', SRC)
         self.assertIn('.k100-metric{min-height:62px;padding:7px 8px}', SRC)
 
