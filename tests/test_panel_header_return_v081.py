@@ -24,11 +24,11 @@ class PanelHeaderReturnV19Tests(unittest.TestCase):
     def test_current_ui_and_standard_are_explicit(self) -> None:
         self.assertEqual(self.standard["version"], "1.9")
         self.assertEqual(self.standard["navigation_contract_version"], "1.1")
-        self.assertEqual(self.standard["ui_version"], "1.0.3")
+        self.assertEqual(self.standard["ui_version"], "1.0.4")
         self.assertEqual(self.standard["web_component"], "keenetic-hero-app-panel-v100")
-        self.assertIn('FRONTEND_UI_VERSION = "1.0.3"', self.runtime)
+        self.assertIn('FRONTEND_UI_VERSION = "1.0.4"', self.runtime)
         self.assertIn('FRONTEND_COMPONENT_SLUG = "v100"', self.runtime)
-        self.assertIn('const K100_VERSION = "1.0.3";', self.source)
+        self.assertIn('const K100_VERSION = "1.0.4";', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.source)
 
     def test_center_header_is_a_semantic_return_button(self) -> None:
@@ -36,7 +36,7 @@ class PanelHeaderReturnV19Tests(unittest.TestCase):
         for name in ["button_marker", "version_marker", "focus_marker", "pressed_marker"]:
             self.assertIn(markers[name], self.bundle)
         reference = self.standard["title_plaque_reference"]
-        self.assertEqual(reference["implementation"], "LIDER")
+        self.assertEqual(reference["implementation"], "S8 OMNI")
         self.assertEqual(reference["min_height_px"], 44)
         self.assertEqual(reference["radius_px"], 16)
 

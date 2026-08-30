@@ -35,7 +35,7 @@ class PanelUiStandardV19Tests(unittest.TestCase):
         self.assertEqual(self.contract["app_shell"]["version"], "1.9")
         self.assertEqual(
             self.contract["app_shell"]["canonical_sha256"],
-            "f02b40c0e16d49ced98f3f099382ede1798837e1d709cb8934787c110455fb9c",
+            "a31dc45499443f8fa43eaea1906fe3a793dffcb411b10cebcd3a3a205fbcef27",
         )
         self.assertEqual(
             self.contract["app_shell"]["navigation_contract_sha256"],
@@ -102,11 +102,11 @@ class PanelUiStandardV19Tests(unittest.TestCase):
         self.assertIn("font-size:23px", self.source)
         self.assertIn("font-size:12px", self.source)
         self.assertIsNone(re.search(r"font-size:(?:[0-9]|1[01])px", self.source))
-        self.assertEqual(self.manifest["panel_version"], "1.0.3")
+        self.assertEqual(self.manifest["panel_version"], "1.0.4")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
-        self.assertIn('const K100_VERSION = "1.0.3";', self.current_source)
+        self.assertIn('const K100_VERSION = "1.0.4";', self.current_source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.current_source)
-        self.assertIn("<small>UI v1.0.3</small>", self.current_source)
+        self.assertIn("<small>UI v1.0.4</small>", self.current_source)
 
 
 if __name__ == "__main__":

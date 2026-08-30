@@ -27,13 +27,14 @@ class PanelTabsViewportV100Tests(unittest.TestCase):
         self.assertIn("hashchange", self.source)
         self.assertNotIn("n.innerHTML=K100_TABS", self.source)
 
-    def test_mobile_scene_is_cropped_from_the_bottom(self) -> None:
+    def test_mobile_scene_fills_available_height_without_moving_topology(self) -> None:
         self.assertIn("@media(max-width:430px)", self.source)
-        self.assertIn(".k100-hero{height:350px;background-size:auto 430px;background-position:center top}", self.source)
-        self.assertIn(".k100-lines{height:430px}", self.source)
-        self.assertIn(".k100-router{top:260px;width:40%", self.source)
-        self.assertIn(".k100-lte{top:122px}", self.source)
-        self.assertIn(".k100-eth,.k100-lan{top:240px}", self.source)
+        self.assertIn("grid-template-rows:minmax(350px,1fr) auto auto auto", self.source)
+        self.assertIn(".k100-hero{height:auto;min-height:350px;background-size:auto max(430px,100%);background-position:center top}", self.source)
+        self.assertIn(".k100-lines{height:100%}", self.source)
+        self.assertIn(".k100-router{top:min(74%,260px);width:40%", self.source)
+        self.assertIn(".k100-lte{top:min(35%,122px)}", self.source)
+        self.assertIn(".k100-eth,.k100-lan{top:min(69%,240px)}", self.source)
 
 
 if __name__ == "__main__":

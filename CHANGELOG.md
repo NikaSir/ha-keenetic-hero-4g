@@ -1,5 +1,13 @@
 # Changelog
 
+## UI v1.0.4 / v1.00_b056 — 2026-08-30
+
+- Fills the entire phone work row: short Overview content now expands the room Hero instead of leaving a white tail above the Bottom Tab Bar.
+- Rebuilds the complete upper menu from the S8 OMNI NikaS reference, including the persistent 97% background strip, divider/blur treatment, safe-area padding and matched side/title plaques.
+- Replaces the minimal pinch transform with focal 75–200% zoom, bounded one-finger pan only above 100%, local persistence and gesture click/hold protection.
+- Routes 97–103% snap, stored-state normalization and the stationary two-finger double-tap through one exact 100% reset that clears transform and native scroll origin.
+- Synchronizes the latest canonical NikaS UI v1.9 snapshot and publishes coherent UI 1.0.4 / integration b056 metadata and cache keys.
+
 ## UI v0.9.0 / v1.00_b052 — 2026-08-28
 
 - Compacts the two-line hero heading within the approved 12–25 px typography range so `Работа через резерв · 4G LTE` remains fully visible above the LTE topology card.
