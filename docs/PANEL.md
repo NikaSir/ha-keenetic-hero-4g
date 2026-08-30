@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel metadata version: **0.9.0**
+Panel metadata version: **1.0.5**
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -28,7 +28,7 @@ This panel explicitly includes the optional two-level connection indicator. Its 
 
 On phones the integration owns a height-locked three-row application shell in the Home Assistant panel's normal layout flow. Only `#work-viewport-v080` scrolls or scales; the outer Home Assistant page, Header and Bottom Tab Bar do not participate in content movement. The runtime must not escape the HA panel container with a fixed-position host. Meaningful panel text uses a semantic hierarchy within 12–25 px rather than flattening labels and values to one size.
 
-The production shell is mounted directly and does not inherit any earlier scroll/zoom shell. At 100% its surface remains in normal document flow, so the browser owns vertical scrolling. A transform surface and custom one-finger pan exist only after scale moves away from 100% and above 100% respectively. Cable and LAN topology cards are positioned above the router path and sized for the mandatory 12 px minimum text.
+The production shell is mounted directly and does not inherit any earlier scroll/zoom shell. At 100% its surface remains in normal document flow, so the browser owns vertical scrolling. A transform surface and custom one-finger pan exist only after scale moves away from 100% and above 100% respectively. Cable, LTE and LAN status plaques are positioned around the router and sized for the mandatory 12 px minimum text.
 
 ### Header
 
@@ -36,7 +36,7 @@ The production shell is mounted directly and does not inherit any earlier scroll
 - title `Keenetic Hero 4G+` geometrically centered against the viewport;
 - no decorative router/brand icon beside the title;
 - the complete central title surface is a button that returns to the source NikaS panel;
-- first line `Keenetic Hero 4G+`, second line `UI v0.9.0`;
+- first line `Keenetic Hero 4G+`, second line `UI v1.0.5`;
 - one global Refresh action on the right;
 - the source route is restricted to `Дом сейчас`, `Действия` or `Инфраструктура`; the left Header slot remains the native HA menu.
 
@@ -56,14 +56,17 @@ It is full-width, edge-attached, non-floating and respects iOS safe area. `Си�
 
 `Header -> network topology/status -> reserve readiness -> active-channel metrics -> compact reserve channel -> Bottom Tab Bar`
 
-The compact Internet / Active WAN / Ethernet / LTE topology is always preserved. The 340 px phone hero contains only the network state, the two-line connection indicator, Cable/LTE/LAN cards and factual paths. Active metrics never overlap the artwork.
+The compact Internet / Active WAN / Ethernet / LTE composition is always preserved. The phone hero contains only the network state, the two-line connection indicator and the Cable/LTE/LAN status plaques. Active metrics never overlap the artwork.
 
 ### Overview channel composition
 
-- the active path is solid green;
-- a connected ready reserve is dashed blue;
-- a confirmed down path is red and unknown is neutral grey;
-- `Резерв готов` is a separate compact surface below the photo;
+- connector lines are not drawn;
+- an active or healthy channel plaque uses a light green fill;
+- a connected ready reserve uses a light blue fill;
+- a confirmed unavailable channel uses a light orange fill;
+- unknown or missing channel data uses a neutral grey fill;
+- red is reserved for the overall critical loss of Internet or router telemetry;
+- `Резерв готов` is a separate light-blue compact surface below the photo; its confirmed unavailable state is light orange;
 - one active-channel card contains Ping, loss, telemetry age, Link/signal, RX, TX, WAN IP and uptime;
 - factual entity-backed metrics retain native Home Assistant more-info on hold;
 - the reserve channel is one compact row without a repeated readiness badge;

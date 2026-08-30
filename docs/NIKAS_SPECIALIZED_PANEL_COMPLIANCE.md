@@ -8,7 +8,7 @@
 
 **Audited production path:** `panel_runtime.py` → autonomous `keenetic-panel-bundle.js` → `keenetic-hero-app-panel-v100`
 
-**Release candidate:** UI 1.0.4 / integration 1.0.0-b056
+**Release candidate:** UI 1.0.5 / integration 1.0.0-b057
 
 | Area | Result | Evidence |
 |---|---|---|
@@ -26,7 +26,8 @@
 | Gesture safety | PASS (code) | Pinch/pan cancel pending touch holds, suppress generated click/contextmenu activation and defer resize reconciliation until the gesture ends. |
 | Scale persistence | PASS (code) | Normalized transform state persists locally for the Keenetic panel/client context. |
 | Stable runtime | PASS (code) | The fixed shell mounts once; tab content remains cached and telemetry updates continue through the existing stable child runtime. |
-| Version coherence | PASS | Visible UI, runtime/cache key, asset URLs, contract, panel manifest and integration metadata agree on UI 1.0.4 / b056. |
+| Line-free channel states | PASS (code) | Cable/LTE/LAN connector lines are absent; the stable plaques encode healthy, ready reserve, unavailable and unknown with light green, blue, orange and grey surfaces. |
+| Version coherence | PASS | Visible UI, runtime/cache key, asset URLs, contract, panel manifest and integration metadata agree on UI 1.0.5 / b057. |
 | Deterministic delivery | PASS | The generated production bundle is autonomous, import-free and reproducible from the declared source list. |
 | Repository packaging | PASS | Local icon assets, HACS metadata and Home Assistant integration metadata remain included. |
 

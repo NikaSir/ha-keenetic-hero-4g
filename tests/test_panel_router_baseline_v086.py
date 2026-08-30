@@ -24,30 +24,32 @@ class PanelRouterBaselineV100Tests(unittest.TestCase):
     def test_approved_router_is_a_versioned_local_layer(self) -> None:
         self.assertTrue(ASSET.is_file())
         self.assertGreater(ASSET.stat().st_size, 50_000)
-        self.assertIn("keenetic-hero-router-v086.webp?v=1.0.4", self.source)
+        self.assertIn("keenetic-hero-router-v086.webp?v=1.0.5", self.source)
         router = next(
             item for item in self.manifest["assets"] if item["role"] == "overview_router_layer"
         )
         self.assertEqual(router["path"], "frontend/assets/keenetic-hero-router-v086.webp")
         self.assertEqual(
             router["url"],
-            "/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.4",
+            "/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.5",
         )
 
-    def test_all_three_paths_continue_under_the_router(self) -> None:
-        self.assertIn('d="M500 185 L500 405"', self.source)
-        self.assertIn('d="M215 420 L435 420"', self.source)
-        self.assertIn('d="M565 420 L785 420"', self.source)
-        self.assertIn(".k100-lines{position:absolute;inset:0;z-index:3", self.source)
+    def test_router_uses_line_free_status_plaque_composition(self) -> None:
+        self.assertNotIn('class="k100-lines"', self.source)
+        self.assertNotIn(".k100-lines{", self.source)
+        self.assertIn(".k100-channel.active{color:#279f69", self.source)
+        self.assertIn(".k100-channel.standby{color:#168fbd", self.source)
+        self.assertIn(".k100-channel.down{color:#c58419", self.source)
+        self.assertIn(".k100-channel.unknown{color:#69757f", self.source)
         self.assertIn(".k100-router{position:absolute;z-index:6", self.source)
 
     def test_router_asset_is_static_and_not_rewritten_by_telemetry_patch(self) -> None:
-        self.assertEqual(self.source.count("keenetic-hero-router-v086.webp?v=1.0.4"), 1)
+        self.assertEqual(self.source.count("keenetic-hero-router-v086.webp?v=1.0.5"), 1)
         self.assertNotIn("router.setAttribute", self.source)
         self.assertNotIn("router.src =", self.source)
 
     def test_delivery_component_is_current(self) -> None:
-        self.assertIn('const K100_VERSION = "1.0.4";', self.source)
+        self.assertIn('const K100_VERSION = "1.0.5";', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.source)
         self.assertIn(
             "// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js",

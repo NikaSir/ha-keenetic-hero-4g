@@ -1,5 +1,12 @@
 # Changelog
 
+## UI v1.0.5 / v1.00_b057 — 2026-08-30
+
+- Removes all Cable/LTE/LAN connector lines from the Overview room scene so channel state is read from the three plaques without schematic clutter.
+- Applies a light semantic fill to the channel and reserve surfaces: green for active/healthy, blue for a ready or active reserve, orange for confirmed unavailability and neutral grey for unknown/no data.
+- Labels confirmed down channels as `Недоступен` instead of collapsing them into `Нет данных`; red remains reserved for an overall critical Internet/telemetry loss.
+- Preserves the accepted KN-2311 artwork, full-height work row, S8 OMNI Header and canonical 75–200% zoom/reset behavior.
+
 ## UI v1.0.4 / v1.00_b056 — 2026-08-30
 
 - Fills the entire phone work row: short Overview content now expands the room Hero instead of leaving a white tail above the Bottom Tab Bar.

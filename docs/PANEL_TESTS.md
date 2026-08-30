@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel metadata version: 0.9.0
+Panel metadata version: 1.0.5
 
-Integration build: 1.0.0-b052
+Integration build: 1.0.0-b057
 
 Standard: NikaS Specialized Panel UI Standard v1.9 + NikaS Panel Navigation and Return Contract v1.1
 
@@ -61,13 +61,15 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - Registration snapshot fallback is used if the background bootstrap WebSocket is delayed; the panel never remains indefinitely blank.
 - Ethernet/LTE active state, rates, ping, loss, failover and radio values remain factual and read-only.
 - `unknown`, `unavailable`, stale or untrusted data never appear healthy and are never fabricated as zero.
-- Domain cards, local room/router artwork and dynamic SVG topology remain unchanged by the shell migration.
-- Cable, LAN and LTE paths remain behind the router bitmap and disappear at its visible silhouette instead of crossing the top or front face.
+- Domain cards and local room/router artwork remain unchanged by the status-surface revision.
+- No Cable, LTE or LAN connector line is rendered in the hero.
+- Active/healthy, ready-reserve, unavailable and unknown plaques use light green, light blue, light orange and neutral grey fills respectively.
+- A confirmed down channel reads `Недоступен`; `Нет данных` remains reserved for unknown state.
 - Opening the central `Failover` tab commits the disabled Recorder-history notice once; repeated render hooks do not schedule another render and do not call Recorder.
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=0.9.0` and component `keenetic-hero-app-panel-v090`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=1.0.5` and component `keenetic-hero-app-panel-v100`.
 - Superseded shell/zoom modules v066–v078 are excluded; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
@@ -85,4 +87,4 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## Release gate
 
-Build b052 is a phone-validation candidate. It is accepted only after all NikaS rule 1.17, v1.9 navigation-contract and production-bundle checks pass together with return tests from all three base panels, repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the approved real KN-2311 Cable/LTE/LAN composition must pass on the real iPhone Pro Max / KN-2311 environment.
+Build b057 is a phone-validation candidate. It is accepted only after all NikaS rule 1.17, v1.9 navigation-contract and production-bundle checks pass together with return tests from all three base panels, repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the approved line-free KN-2311 Cable/LTE/LAN composition must pass on the real iPhone Pro Max / KN-2311 environment.

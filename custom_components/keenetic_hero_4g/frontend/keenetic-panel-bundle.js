@@ -1,5 +1,5 @@
 // GENERATED FILE. DO NOT EDIT DIRECTLY.
-// Keenetic Hero 4G+ autonomous UI 1.0.4 production bundle.
+// Keenetic Hero 4G+ autonomous UI 1.0.5 production bundle.
 // One active shell: keenetic-hero-app-panel-v100.
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-panel.js
@@ -1188,7 +1188,7 @@ function openHomeAssistantMenuV045(target) {
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v050.js
 (() => {
 const CORE_COMPONENT_V050 = customElements.get("keenetic-hero-panel");
-const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.4";
+const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.5";
 
 function escV050(value) {
   return String(value ?? "")
@@ -1389,7 +1389,7 @@ if (CORE_COMPONENT_V050 && !CORE_COMPONENT_V050.prototype.__nikaOverviewV050) {
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v051.js
 (() => {
 const CORE_COMPONENT_V051 = customElements.get("keenetic-hero-panel");
-const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.4";
+const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.5";
 
 if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) {
   CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051 = true;
@@ -1449,7 +1449,7 @@ if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) 
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
 (() => {
-const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.4";
+const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.5";
 const CORE_COMPONENT_V052 = customElements.get("keenetic-hero-panel");
 
 if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV052) {
@@ -1477,8 +1477,8 @@ if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV0
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js
 (() => {
 const CORE_COMPONENT_V060 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.4";
-const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.4";
+const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.5";
+const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.5";
 
 function _v060CreateMetricCell(label, value, className = "") {
   const span = document.createElement("span");
@@ -1682,8 +1682,8 @@ if (CORE_COMPONENT_V060 && !CORE_COMPONENT_V060.prototype.__nikaLayeredHeroV060)
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v061.js
 (() => {
 const CORE_COMPONENT_V061 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.4";
-const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.4";
+const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.5";
+const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.5";
 
 function _v061LabelCard(kind, title, subtitle, icon) {
   const card = document.createElement("div");
@@ -1830,8 +1830,8 @@ if (CORE_COMPONENT_V061 && !CORE_COMPONENT_V061.prototype.__nikaAcceptedTopology
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v062.js
 (() => {
 const CORE_COMPONENT_V062 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=1.0.4";
-const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.4";
+const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=1.0.5";
+const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.5";
 
 function _v062EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -1962,8 +1962,8 @@ if (CORE_COMPONENT_V062 && !CORE_COMPONENT_V062.prototype.__nikaHeroCompositionV
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
 (() => {
 const CORE_COMPONENT_V063 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.4";
-const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.4";
+const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.5";
+const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.5";
 
 function _v063EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -2147,7 +2147,7 @@ if (CORE_COMPONENT_V063 && !CORE_COMPONENT_V063.prototype.__nikaTargetGeometryV0
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v064.js
 (() => {
 const CORE_COMPONENT_V064 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.4";
+const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.5";
 
 function _v064InstallRoom(root) {
   if (!root) return;
@@ -2550,8 +2550,8 @@ function preloadImagesV075(root) {
     image.decode?.().catch(() => {});
   });
   [
-    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.4",
-    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.4",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.5",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.5",
   ].forEach((url) => {
     const image = new Image();
     image.src = url;
@@ -2716,7 +2716,7 @@ if (CORE_COMPONENT_V075 && !CORE_COMPONENT_V075.prototype.__nikaStableDomV075) {
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js
 (() => {
-const K100_VERSION = "1.0.4";
+const K100_VERSION = "1.0.5";
 const K100_SCALE_MIN = 0.75;
 const K100_SCALE_MAX = 2;
 const K100_SCALE_SNAP_MIN = 0.97;
@@ -2758,11 +2758,12 @@ function k100Return(panel){
 function k100Navigate(route){history.pushState(null,"",route);window.dispatchEvent(new Event("location-changed"));}
 
 function k100Reserve(panel,active){
-  const role=active==="ethernet"?"lte":active==="lte"?"ethernet":null;
+  if(active==="lte")return ["reserve","mdi:check-circle","Работа через резерв","Основной Ethernet недоступен."];
+  const role=active==="ethernet"?"lte":null;
   const c=role?panel._connection(`${role}_connected`):{state:"unknown"};
   const name=role==="lte"?"4G LTE":role==="ethernet"?"Ethernet":"Резерв";
-  if(c.state==="up")return ["ok","mdi:check-circle",active==="lte"?"Работа через резерв":"Резерв готов",active==="lte"?"Основной Ethernet недоступен.":`${name} подключён и готов к работе.`];
-  if(c.state==="down")return ["bad","mdi:alert-circle-outline","Резерв недоступен",`${name} сейчас недоступен.`];
+  if(c.state==="up")return ["reserve","mdi:check-circle","Резерв готов",`${name} подключён и готов к работе.`];
+  if(c.state==="down")return ["unavailable","mdi:alert-circle-outline","Резерв недоступен",`${name} сейчас недоступен.`];
   return ["unknown","mdi:help-circle-outline","Нет данных о резерве","Готовность резервного канала не подтверждена."];
 }
 function k100Metric(panel,role,icon,label,value,wide=""){const id=role?panel._entityId?.(role):null;return `<div class="k100-metric ${wide}"${id?` data-entity="${k100Esc(id)}" tabindex="0"`:""}><ha-icon icon="${icon}"></ha-icon><div><span>${k100Esc(label)}</span><strong>${k100Esc(value)}</strong></div></div>`;}
@@ -2773,6 +2774,7 @@ function k100Overview(panel){
   const reserve=k100Reserve(panel,active);
   const eth=panel._connection("ethernet_connected");const lte=panel._connection("lte_connected");
   const channelState=(role,c)=>active===role?"active":c.state==="up"?"standby":c.state==="down"?"down":"unknown";
+  const channelCaption=(role,c)=>active===role?(role==="ethernet"?"Основной канал":"Активный канал"):c.state==="up"?(role==="lte"?"Резерв готов":"Канал доступен"):c.state==="down"?"Недоступен":"Нет данных";
   const ping=active==="lte"?"lte_ping":active==="ethernet"?"ethernet_ping":null;
   const loss=active==="lte"?"lte_packet_loss":active==="ethernet"?"ethernet_packet_loss":null;
   const rx=active==="lte"?"lte_rx_mbps":active==="ethernet"?"ethernet_rx_mbps":null;
@@ -2786,11 +2788,10 @@ function k100Overview(panel){
     <article class="k100-hero">
       <div class="k100-copy"><h1>${k100Esc(heroTitle)}</h1><p>${active?`Основной канал · ${k100Esc(activeName)}`:"Канал не определён"}</p></div>
       <div class="k100-indicator ${telemetry.trusted?"ok":telemetry.stale?"warn":"bad"}"><strong><i></i>${telemetry.trusted?"Локально":telemetry.stale?"Локально":"Нет связи"}</strong><span>${telemetry.trusted?"Данные актуальны":telemetry.stale?"Данные устарели":"Нет данных"}</span></div>
-      <svg class="k100-lines" viewBox="0 0 1000 620" preserveAspectRatio="none"><path class="lte ${channelState("lte",lte)}" d="M500 185 L500 405"/><path class="eth ${channelState("ethernet",eth)}" d="M215 420 L435 420"/><path class="lan active" d="M565 420 L785 420"/></svg>
-      <div class="k100-channel k100-lte ${channelState("lte",lte)}"><ha-icon icon="mdi:radio-tower"></ha-icon><div><strong>4G LTE</strong><span>${active==="lte"?"Активный канал":lte.state==="up"?"Резервный канал":"Нет данных"}</span></div></div>
-      <div class="k100-channel k100-eth ${channelState("ethernet",eth)}"><ha-icon icon="mdi:ethernet"></ha-icon><div><strong>Кабель</strong><span>${active==="ethernet"?"Основной канал":eth.state==="up"?"Резервный канал":"Нет данных"}</span></div></div>
+      <div class="k100-channel k100-lte ${channelState("lte",lte)}"><ha-icon icon="mdi:radio-tower"></ha-icon><div><strong>4G LTE</strong><span>${channelCaption("lte",lte)}</span></div></div>
+      <div class="k100-channel k100-eth ${channelState("ethernet",eth)}"><ha-icon icon="mdi:ethernet"></ha-icon><div><strong>Кабель</strong><span>${channelCaption("ethernet",eth)}</span></div></div>
       <div class="k100-channel k100-lan active"><ha-icon icon="mdi:lan"></ha-icon><div><strong>LAN</strong><span>Локальная сеть</span></div></div>
-      <img class="k100-router" src="/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.4" alt="Keenetic Hero 4G+">
+      <img class="k100-router" src="/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.5" alt="Keenetic Hero 4G+">
     </article>
     <div class="k100-reserve ${reserve[0]}"><ha-icon icon="${reserve[1]}"></ha-icon><div><strong>${reserve[2]}</strong><span>${reserve[3]}</span></div></div>
     <article class="k100-active-card">
@@ -2820,14 +2821,13 @@ function k100InstallCore(){
 }
 function k100InstallStyles(root){if(!root||root.querySelector("style[data-k100]"))return;const s=document.createElement("style");s.dataset.k100="1";s.textContent=`
 :host{height:100%!important;min-height:100%!important}.shell{height:100%!important;min-height:100%!important;display:flex!important;flex-direction:column!important}.shell>main{display:flex!important;flex:1 1 auto;min-height:0!important}.v075-view-slot{width:100%;min-height:100%!important;flex:1 0 auto}
-.k100-overview{display:grid;grid-template-rows:minmax(430px,1fr) auto auto auto;gap:8px;padding:8px 10px 12px;min-height:100%}.k100-hero{position:relative;height:auto;min-height:430px;border:1px solid var(--divider-color);border-radius:24px;overflow:hidden;background:url('/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.4') center/cover no-repeat;box-shadow:0 8px 26px rgba(23,45,76,.08)}
+.k100-overview{display:grid;grid-template-rows:minmax(430px,1fr) auto auto auto;gap:8px;padding:8px 10px 12px;min-height:100%}.k100-hero{position:relative;height:auto;min-height:430px;border:1px solid var(--divider-color);border-radius:24px;overflow:hidden;background:url('/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.5') center/cover no-repeat;box-shadow:0 8px 26px rgba(23,45,76,.08)}
 .k100-copy{position:absolute;z-index:8;left:16px;top:14px;max-width:48%}.k100-copy h1{margin:0 0 3px;font-size:25px;line-height:1.04}.k100-copy p{margin:0;font-size:14px;font-weight:650;color:var(--secondary-text-color)}
 .k100-indicator{position:absolute;z-index:9;right:14px;top:14px;width:174px;padding:11px 14px;border:1px solid;border-radius:18px;background:var(--card-background-color)}.k100-indicator strong,.k100-indicator span{display:block}.k100-indicator strong{font-size:16px}.k100-indicator span{margin-top:6px;font-size:13px;font-weight:600;color:var(--secondary-text-color)}.k100-indicator i,.k100-active-head i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;background:currentColor}.k100-indicator.ok{color:#2fb878;border-color:#9ce4c5;background:rgba(232,249,241,.94)}.k100-indicator.warn{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.94)}.k100-indicator.bad{color:#d95d63;border-color:#efb8ba;background:rgba(255,238,239,.94)}
-.k100-lines{position:absolute;inset:0;z-index:3;width:100%;height:100%}.k100-lines path{fill:none;stroke:#9aa3ab;stroke-width:7;stroke-linecap:round;stroke-dasharray:8 13}.k100-lines path.active{stroke:#2fbd7c;stroke-dasharray:none}.k100-lines path.standby{stroke:#16a4db}.k100-lines path.down{stroke:#dc6267;opacity:.65}
-.k100-router{position:absolute;z-index:6;left:50%;top:61%;transform:translate(-50%,-50%);width:42%;max-width:290px;filter:drop-shadow(0 10px 9px rgba(65,45,30,.18));pointer-events:none}.k100-channel{position:absolute;z-index:8;display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.94);box-shadow:0 8px 20px rgba(23,45,76,.09);min-width:145px}.k100-channel ha-icon{--mdc-icon-size:28px}.k100-channel strong,.k100-channel span{display:block}.k100-channel strong{font-size:15px}.k100-channel span{font-size:12px;margin-top:3px;color:var(--secondary-text-color)}.k100-channel.active{color:#2fbd7c}.k100-channel.standby{color:#139ed1}.k100-channel.down{color:#d95d63}.k100-channel.unknown{color:#7e8993}.k100-lte{left:50%;top:31%;transform:translate(-50%,-50%)}.k100-eth{left:3%;top:58%}.k100-lan{right:3%;top:58%}
-.k100-reserve,.k100-alert{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid;border-radius:20px}.k100-reserve ha-icon,.k100-alert ha-icon{--mdc-icon-size:30px}.k100-reserve strong,.k100-reserve span,.k100-alert strong,.k100-alert span{display:block}.k100-reserve strong,.k100-alert strong{font-size:16px}.k100-reserve span,.k100-alert span{font-size:13px;margin-top:2px;color:var(--secondary-text-color)}.k100-reserve.ok{color:#279f69;border-color:#9fe4c8;background:rgba(232,249,241,.9)}.k100-reserve.bad,.k100-alert.bad{color:#d95d63;border-color:#efb8ba;background:rgba(255,238,239,.94)}.k100-reserve.unknown{color:#69757f;border-color:#cdd3d8;background:rgba(248,249,250,.94)}.k100-alert.warn{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.94)}.k100-alert.hidden{display:none}
+.k100-router{position:absolute;z-index:6;left:50%;top:61%;transform:translate(-50%,-50%);width:42%;max-width:290px;filter:drop-shadow(0 10px 9px rgba(65,45,30,.18));pointer-events:none}.k100-channel{position:absolute;z-index:8;display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid transparent;border-radius:18px;background:rgba(255,255,255,.94);box-shadow:0 6px 16px rgba(23,45,76,.08);min-width:145px}.k100-channel ha-icon{--mdc-icon-size:28px}.k100-channel strong,.k100-channel span{display:block}.k100-channel strong{font-size:15px}.k100-channel span{font-size:12px;margin-top:3px;color:var(--secondary-text-color)}.k100-channel.active{color:#279f69;border-color:#9fe4c8;background:rgba(232,249,241,.95)}.k100-channel.standby{color:#168fbd;border-color:#a7dced;background:rgba(235,247,252,.95)}.k100-channel.down{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.95)}.k100-channel.unknown{color:#69757f;border-color:#cdd3d8;background:rgba(248,249,250,.95)}.k100-lte{left:50%;top:31%;transform:translate(-50%,-50%)}.k100-eth{left:3%;top:58%}.k100-lan{right:3%;top:58%}
+.k100-reserve,.k100-alert{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid;border-radius:20px}.k100-reserve ha-icon,.k100-alert ha-icon{--mdc-icon-size:30px}.k100-reserve strong,.k100-reserve span,.k100-alert strong,.k100-alert span{display:block}.k100-reserve strong,.k100-alert strong{font-size:16px}.k100-reserve span,.k100-alert span{font-size:13px;margin-top:2px;color:var(--secondary-text-color)}.k100-reserve.reserve{color:#168fbd;border-color:#a7dced;background:rgba(235,247,252,.95)}.k100-reserve.unavailable{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.95)}.k100-reserve.unknown{color:#69757f;border-color:#cdd3d8;background:rgba(248,249,250,.94)}.k100-alert.warn{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.94)}.k100-alert.bad{color:#d95d63;border-color:#efb8ba;background:rgba(255,238,239,.94)}.k100-alert.hidden{display:none}
 .k100-active-card{border:1px solid color-mix(in srgb,var(--primary-color) 45%,var(--divider-color));border-radius:22px;background:var(--card-background-color);overflow:hidden}.k100-active-head{min-height:58px;display:flex;align-items:center;gap:9px;padding:10px 14px}.k100-active-head>ha-icon{color:var(--primary-color);--mdc-icon-size:28px}.k100-active-head>strong{font-size:20px}.k100-active-head>span{font-size:14px;font-weight:700;color:#2fb878}.k100-active-head button{margin-left:auto;border:0;background:none;color:var(--primary-color);padding:7px}.k100-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--divider-color)}.k100-metric{min-height:72px;padding:12px;display:flex;align-items:center;gap:9px;border-right:1px solid var(--divider-color);border-bottom:1px solid var(--divider-color)}.k100-metric:nth-child(3n){border-right:0}.k100-metric ha-icon{color:var(--primary-color);--mdc-icon-size:25px}.k100-metric span,.k100-metric strong{display:block}.k100-metric span{font-size:12px;color:var(--secondary-text-color);font-weight:650}.k100-metric strong{font-size:15px;margin-top:2px}.k100-metric.wide{grid-column:span 2}.k100-alert{margin-bottom:2px}
-@media(max-width:430px){.k100-overview{grid-template-rows:minmax(350px,1fr) auto auto auto;gap:5px;padding:5px 10px 6px}.k100-hero{height:auto;min-height:350px;background-size:auto max(430px,100%);background-position:center top}.k100-lines{height:100%}.k100-copy{max-width:50%;left:13px;top:12px}.k100-copy h1{font-size:24px}.k100-indicator{right:10px;top:10px;width:164px}.k100-router{top:min(74%,260px);width:40%;max-width:245px}.k100-channel{min-width:132px;padding:9px 10px}.k100-lte{top:min(35%,122px)}.k100-eth,.k100-lan{top:min(69%,240px)}.k100-reserve{padding:9px 14px}.k100-active-head{min-height:50px;padding:7px 12px}.k100-grid{grid-template-columns:repeat(3,1fr)}.k100-metric{min-height:62px;padding:7px 8px}.k100-metric strong{font-size:14px}}
+@media(max-width:430px){.k100-overview{grid-template-rows:minmax(350px,1fr) auto auto auto;gap:5px;padding:5px 10px 6px}.k100-hero{height:auto;min-height:350px;background-size:auto max(430px,100%);background-position:center top}.k100-copy{max-width:50%;left:13px;top:12px}.k100-copy h1{font-size:24px}.k100-indicator{right:10px;top:10px;width:164px}.k100-router{top:min(74%,260px);width:40%;max-width:245px}.k100-channel{min-width:132px;padding:9px 10px}.k100-lte{top:min(35%,122px)}.k100-eth,.k100-lan{top:min(69%,240px)}.k100-reserve{padding:9px 14px}.k100-active-head{min-height:50px;padding:7px 12px}.k100-grid{grid-template-columns:repeat(3,1fr)}.k100-metric{min-height:62px;padding:7px 8px}.k100-metric strong{font-size:14px}}
 @media(max-width:390px){.k100-overview{grid-template-rows:minmax(342px,1fr) auto auto auto}.k100-hero{min-height:342px;background-size:auto max(420px,100%)}.k100-copy h1{font-size:22px}.k100-router{top:min(74%,253px);max-width:232px}.k100-lte{top:min(35%,118px)}.k100-eth,.k100-lan{top:min(69%,234px)}}
 `;root.append(s);}
 
@@ -2926,7 +2926,7 @@ class KeeneticHeroAppPanelV100 extends HTMLElement{
 @media(max-width:520px){.k100-title{min-width:0;width:100%;padding-inline:8px}.k100-title strong{font-size:21px}.k100-title small{font-size:13px}}
 @media(max-width:390px){.k100-header{grid-template-columns:48px minmax(0,1fr) 48px;min-height:calc(60px + var(--safe-top))}}
 @media(prefers-reduced-motion:reduce){.k100-scale-status{transition:none}}
-</style><div id="k100-shell"><header class="k100-header"><button id="k100-menu" class="k100-side" type="button" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button><button id="k100-title" class="k100-title" type="button" aria-label="Вернуться в исходную базовую панель NikaS"><strong>Keenetic Hero 4G+</strong><small>UI v1.0.4</small></button><button id="k100-refresh" class="k100-side k100-refresh" type="button" aria-label="Обновить"><ha-icon icon="mdi:refresh"></ha-icon></button></header><main id="k100-work" class="k100-work" aria-label="Рабочая область панели Keenetic"><div id="k100-stage" class="k100-stage"></div></main><nav id="k100-tabs" class="k100-tabs"></nav><div id="k100-scale-status" class="k100-scale-status" role="status" aria-live="polite">Масштаб 100%</div></div>`;
+</style><div id="k100-shell"><header class="k100-header"><button id="k100-menu" class="k100-side" type="button" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button><button id="k100-title" class="k100-title" type="button" aria-label="Вернуться в исходную базовую панель NikaS"><strong>Keenetic Hero 4G+</strong><small>UI v1.0.5</small></button><button id="k100-refresh" class="k100-side k100-refresh" type="button" aria-label="Обновить"><ha-icon icon="mdi:refresh"></ha-icon></button></header><main id="k100-work" class="k100-work" aria-label="Рабочая область панели Keenetic"><div id="k100-stage" class="k100-stage"></div></main><nav id="k100-tabs" class="k100-tabs"></nav><div id="k100-scale-status" class="k100-scale-status" role="status" aria-live="polite">Масштаб 100%</div></div>`;
       this.shadowRoot.getElementById("k100-menu").onclick=e=>e.currentTarget.dispatchEvent(new CustomEvent("hass-toggle-menu",{bubbles:true,composed:true}));
       this.shadowRoot.getElementById("k100-title").onclick=()=>k100Navigate(this._returnRoute||"/dashboard-infrastructure/overview");
       this.shadowRoot.getElementById("k100-refresh").onclick=()=>this._child?._loadBootstrap?.(false);
