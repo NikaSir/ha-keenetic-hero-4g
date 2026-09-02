@@ -34,7 +34,7 @@ class PanelRulesV19RebuildTests(unittest.TestCase):
         self.assertEqual(self.contract["panel"]["navigation_contract_version"], "1.1")
         self.assertEqual(self.panel_manifest["panel_version"], "1.0.5")
         self.assertEqual(self.panel_manifest["zoom_policy"]["standard"], "1.9")
-        self.assertEqual(self.integration_manifest["version"], "1.0.0-b057")
+        self.assertEqual(self.integration_manifest["version"], "1.0.0-b058")
         self.assertIn('FRONTEND_UI_VERSION = "1.0.5"', self.runtime)
         self.assertIn('FRONTEND_COMPONENT_SLUG = "v100"', self.runtime)
 

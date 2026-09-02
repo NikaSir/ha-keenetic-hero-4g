@@ -1,5 +1,10 @@
 # Changelog
 
+## Integration v1.0.0-b058 — 2026-09-02
+
+- Prefixes the Home Assistant and HACS integration name with `NikaS`.
+- Republishes the approved local Keenetic brand icon without changing UI v1.0.5.
+
 ## UI v1.0.5 / v1.00_b057 — 2026-08-30
 
 - Removes all Cable/LTE/LAN connector lines from the Overview room scene so channel state is read from the three plaques without schematic clutter.
