@@ -1,6 +1,6 @@
 {
   "domain": "keenetic_hero_4g",
-  "name": "Keenetic Hero 4G+",
+  "name": "NikaS Keenetic Hero 4G+",
   "codeowners": [],
   "config_flow": true,
   "dependencies": [
@@ -14,5 +14,5 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/NikaSir/ha-keenetic-hero-4g/issues",
   "requirements": [],
-  "version": "1.0.0-b057"
+  "version": "1.0.0-b058"
 }

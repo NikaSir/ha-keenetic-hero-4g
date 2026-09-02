@@ -125,7 +125,7 @@ class PanelOverviewV084Tests(unittest.TestCase):
         self.assertIn('FRONTEND_UI_VERSION = "1.0.5"', self.runtime)
         self.assertIn('FRONTEND_COMPONENT_SLUG = "v100"', self.runtime)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.delivery)
-        self.assertIn('"version": "1.0.0-b057"', self.manifest)
+        self.assertIn('"version": "1.0.0-b058"', self.manifest)
 
 
 if __name__ == "__main__":

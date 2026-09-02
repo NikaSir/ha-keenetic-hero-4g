@@ -27,7 +27,7 @@ class PanelFullHeightHeaderZoomV104Tests(unittest.TestCase):
         self.assertEqual(self.standard["ui_version"], "1.0.5")
         self.assertEqual(self.contract["panel"]["version"], "1.0.5")
         self.assertEqual(self.panel_manifest["panel_version"], "1.0.5")
-        self.assertEqual(self.integration_manifest["version"], "1.0.0-b057")
+        self.assertEqual(self.integration_manifest["version"], "1.0.0-b058")
         self.assertIn('const K100_VERSION = "1.0.5";', self.source)
         self.assertIn("<small>UI v1.0.5</small>", self.source)
 
