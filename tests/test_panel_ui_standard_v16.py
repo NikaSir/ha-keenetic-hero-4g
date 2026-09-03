@@ -107,11 +107,11 @@ class PanelUiStandardV22Tests(unittest.TestCase):
         self.assertIn("font-size:23px", self.shell_source)
         self.assertIn("font-size:12px", self.shell_source)
         self.assertIsNone(re.search(r"font-size:(?:[0-9]|1[01])px", self.shell_source))
-        self.assertEqual(self.manifest["panel_version"], "1.0.6")
+        self.assertEqual(self.manifest["panel_version"], "1.0.7")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
-        self.assertIn('const K100_VERSION = "1.0.6";', self.current_source)
+        self.assertIn('const K100_VERSION = "1.0.7";', self.current_source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.current_source)
-        self.assertIn("<small>UI v1.0.6</small>", self.current_source)
+        self.assertIn("<small>UI v1.0.7</small>", self.current_source)
 
 
 if __name__ == "__main__":

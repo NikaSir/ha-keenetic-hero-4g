@@ -98,7 +98,7 @@ class PanelStableDomTests(unittest.TestCase):
         self.assertFalse(updates["shadow_root_inner_html_after_mount"])
         self.assertFalse(updates["replace_children_after_mount"])
         self.assertTrue(updates["persistent_view_containers"])
-        self.assertEqual(self.manifest["panel_version"], "1.0.6")
+        self.assertEqual(self.manifest["panel_version"], "1.0.7")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
 
 
