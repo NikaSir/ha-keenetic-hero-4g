@@ -12,7 +12,7 @@
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "1.0.6"
+    "version": "1.0.7"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -148,6 +148,10 @@
       "scroll_boundary_guard": "capture_non_passive_host_boundary_guard",
       "fixed_chrome_touch_action": "host_boundary_guard",
       "short_views_fill_work_row": true,
+      "canonical_gutter_owner": "specialized_panel_shell",
+      "nested_page_padding": false,
+      "overview_scroll_at_primary_viewport": false,
+      "overview_artwork_anchor": "hero_local_static",
       "content_max_width_px": 1280,
       "content_gutters_px": {
         "phone": 12,

@@ -31,13 +31,13 @@ class PanelRulesV22RebuildTests(unittest.TestCase):
     def test_v22_rebuild_versions_are_synchronized(self) -> None:
         self.assertEqual(self.standard["version"], "2.2")
         self.assertEqual(self.standard["navigation_contract_version"], "1.2")
-        self.assertEqual(self.contract["panel"]["version"], "1.0.6")
+        self.assertEqual(self.contract["panel"]["version"], "1.0.7")
         self.assertEqual(self.contract["app_shell"]["version"], "2.2")
         self.assertEqual(self.contract["panel"]["navigation_contract_version"], "1.2")
-        self.assertEqual(self.panel_manifest["panel_version"], "1.0.6")
+        self.assertEqual(self.panel_manifest["panel_version"], "1.0.7")
         self.assertEqual(self.panel_manifest["zoom_policy"]["standard"], "2.2")
-        self.assertEqual(self.integration_manifest["version"], "1.0.0-b059")
-        self.assertIn('FRONTEND_UI_VERSION = "1.0.6"', self.runtime)
+        self.assertEqual(self.integration_manifest["version"], "1.0.0-b060")
+        self.assertIn('FRONTEND_UI_VERSION = "1.0.7"', self.runtime)
         self.assertIn('FRONTEND_COMPONENT_SLUG = "v100"', self.runtime)
 
     def test_header_return_precedence_is_explicit_and_captured_once(self) -> None:

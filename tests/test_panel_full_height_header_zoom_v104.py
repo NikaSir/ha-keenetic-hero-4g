@@ -26,12 +26,12 @@ class PanelFullHeightHeaderZoomV104Tests(unittest.TestCase):
         cls.shell = SHELL.read_text(encoding="utf-8")
 
     def test_release_metadata_is_coherent(self) -> None:
-        self.assertEqual(self.standard["ui_version"], "1.0.6")
-        self.assertEqual(self.contract["panel"]["version"], "1.0.6")
-        self.assertEqual(self.panel_manifest["panel_version"], "1.0.6")
-        self.assertEqual(self.integration_manifest["version"], "1.0.0-b059")
-        self.assertIn('const K100_VERSION = "1.0.6";', self.source)
-        self.assertIn("<small>UI v1.0.6</small>", self.source)
+        self.assertEqual(self.standard["ui_version"], "1.0.7")
+        self.assertEqual(self.contract["panel"]["version"], "1.0.7")
+        self.assertEqual(self.panel_manifest["panel_version"], "1.0.7")
+        self.assertEqual(self.integration_manifest["version"], "1.0.0-b060")
+        self.assertIn('const K100_VERSION = "1.0.7";', self.source)
+        self.assertIn("<small>UI v1.0.7</small>", self.source)
 
     def test_short_overview_fills_the_complete_work_row(self) -> None:
         for marker in (
@@ -42,11 +42,28 @@ class PanelFullHeightHeaderZoomV104Tests(unittest.TestCase):
             "grid-template-rows:minmax(350px,1fr) auto auto auto",
             "height:auto;min-height:350px",
             ".k100-stage>keenetic-hero-panel{display:block;inline-size:100%;block-size:100%;min-block-size:100%",
+            "width:100%!important;height:100%!important;min-height:100%!important;margin:0!important;padding:0!important",
+            "grid-template-rows:minmax(350px,1fr) auto auto auto;gap:5px;padding:0",
         ):
             self.assertIn(marker, self.source)
         self.assertIn(".nikas-shell__canvas{inline-size:100%;min-block-size:100%", self.shell)
+        self.assertIn("padding:12px 12px 20px", self.shell)
         self.assertTrue(
             self.contract["app_shell"]["viewport_fit"]["short_views_fill_work_row"]
+        )
+        self.assertEqual(
+            self.contract["app_shell"]["viewport_fit"]["canonical_gutter_owner"],
+            "specialized_panel_shell",
+        )
+        self.assertFalse(
+            self.contract["app_shell"]["viewport_fit"]["nested_page_padding"]
+        )
+        self.assertFalse(
+            self.contract["app_shell"]["viewport_fit"]["overview_scroll_at_primary_viewport"]
+        )
+        self.assertEqual(
+            self.contract["app_shell"]["viewport_fit"]["overview_artwork_anchor"],
+            "hero_local_static",
         )
         self.assertTrue(
             self.contract["view_patterns"]["overview"]["hero_fills_available_work_row"]

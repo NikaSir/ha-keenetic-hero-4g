@@ -1,5 +1,11 @@
 # Changelog
 
+## Integration v1.0.0-b060 / UI v1.0.7 — 2026-09-03
+
+- Removes the inherited inner-shell and Overview page padding so the canonical Shell v2.1 canvas is the only owner of the content gutters.
+- Eliminates the unintended short vertical overflow on the 430 × 932 iPhone work row; the Overview no longer slides between an empty top band and an empty bottom band.
+- Keeps the room and KN-2311 artwork anchored inside the Hero while preserving native scrolling for views whose content is genuinely longer than the work row.
+
 ## Integration v1.0.0-b059 / UI v1.0.6 — 2026-09-03
 
 - Migrates the Keenetic panel to NikaS Specialized Panel UI Standard v2.2, Navigation Contract v1.2 and host-bound Shell v2.1.
