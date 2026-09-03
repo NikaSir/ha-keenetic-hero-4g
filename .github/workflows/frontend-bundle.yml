@@ -46,7 +46,7 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Enforce NikaS UI standard v1.9 and navigation contract v1.1
+      - name: Enforce NikaS UI standard v2.2 and navigation contract v1.2
         run: python scripts/check_nikas_ui_standard.py
 
       - name: Set up Node.js
@@ -73,3 +73,6 @@ jobs:
             echo "Production panel bundle must not contain Base64 image payloads."
             exit 1
           fi
+
+      - name: Exercise Shell v2.1 scroll boundaries
+        run: node tests/shell_v2_harness.mjs

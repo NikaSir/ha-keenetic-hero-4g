@@ -53,6 +53,9 @@ jobs:
             node --check "$file"
           done < <(find custom_components -type f -path '*/frontend/*.js' -print0 2>/dev/null || true)
 
+      - name: Exercise Shell v2.1 scroll boundaries
+        run: node tests/shell_v2_harness.mjs
+
       - name: Reject tracked credential/key files
         shell: bash
         run: |

@@ -12,6 +12,7 @@ CONTRACT = INTEGRATION / "panel_contract.json"
 PANEL_MANIFEST = INTEGRATION / "panel_manifest.json"
 INTEGRATION_MANIFEST = INTEGRATION / "manifest.json"
 STANDARD_CONFIG = ROOT / ".nikas-ui-standard.json"
+SHELL = INTEGRATION / "frontend" / "nikas-specialized-shell.js"
 
 
 class PanelFullHeightHeaderZoomV104Tests(unittest.TestCase):
@@ -22,14 +23,15 @@ class PanelFullHeightHeaderZoomV104Tests(unittest.TestCase):
         cls.panel_manifest = json.loads(PANEL_MANIFEST.read_text(encoding="utf-8"))
         cls.integration_manifest = json.loads(INTEGRATION_MANIFEST.read_text(encoding="utf-8"))
         cls.standard = json.loads(STANDARD_CONFIG.read_text(encoding="utf-8"))
+        cls.shell = SHELL.read_text(encoding="utf-8")
 
     def test_release_metadata_is_coherent(self) -> None:
-        self.assertEqual(self.standard["ui_version"], "1.0.5")
-        self.assertEqual(self.contract["panel"]["version"], "1.0.5")
-        self.assertEqual(self.panel_manifest["panel_version"], "1.0.5")
-        self.assertEqual(self.integration_manifest["version"], "1.0.0-b058")
-        self.assertIn('const K100_VERSION = "1.0.5";', self.source)
-        self.assertIn("<small>UI v1.0.5</small>", self.source)
+        self.assertEqual(self.standard["ui_version"], "1.0.6")
+        self.assertEqual(self.contract["panel"]["version"], "1.0.6")
+        self.assertEqual(self.panel_manifest["panel_version"], "1.0.6")
+        self.assertEqual(self.integration_manifest["version"], "1.0.0-b059")
+        self.assertIn('const K100_VERSION = "1.0.6";', self.source)
+        self.assertIn("<small>UI v1.0.6</small>", self.source)
 
     def test_short_overview_fills_the_complete_work_row(self) -> None:
         for marker in (
@@ -39,9 +41,10 @@ class PanelFullHeightHeaderZoomV104Tests(unittest.TestCase):
             "grid-template-rows:minmax(430px,1fr) auto auto auto",
             "grid-template-rows:minmax(350px,1fr) auto auto auto",
             "height:auto;min-height:350px",
-            ".k100-stage>keenetic-hero-panel{display:block;width:100%;height:100%;min-height:100%",
+            ".k100-stage>keenetic-hero-panel{display:block;inline-size:100%;block-size:100%;min-block-size:100%",
         ):
             self.assertIn(marker, self.source)
+        self.assertIn(".nikas-shell__canvas{inline-size:100%;min-block-size:100%", self.shell)
         self.assertTrue(
             self.contract["app_shell"]["viewport_fit"]["short_views_fill_work_row"]
         )
@@ -59,20 +62,22 @@ class PanelFullHeightHeaderZoomV104Tests(unittest.TestCase):
         self.assertEqual(reference["side_action_border_divider_mix_percent"], 72)
         for marker in (
             "grid-template-columns:52px minmax(0,1fr) 52px",
-            "padding:var(--safe-top) max(12px,var(--safe-right)) 0 max(12px,var(--safe-left))",
-            "var(--primary-background-color) 97%,transparent",
-            "var(--divider-color) 70%,transparent",
+            "padding:env(safe-area-inset-top,0px) calc(12px + env(safe-area-inset-right,0px)) 0",
+            "var(--primary-background-color,#f4f6f8) 97%,transparent",
+            "var(--divider-color,#dfe3e8) 70%,transparent",
             "backdrop-filter:blur(18px) saturate(130%)",
-            "width:44px;height:44px",
-            "var(--divider-color) 72%,transparent",
+            "inline-size:44px;block-size:44px",
+            "var(--divider-color,#dfe3e8) 72%,transparent",
             "box-shadow:0 7px 20px rgba(23,45,76,.08)",
-            ".k100-title{color:var(--primary-text-color)",
-            ".k100-title:focus-visible",
-            ".k100-title:active",
+        ):
+            self.assertIn(marker, self.shell)
+        for marker in (
+            ".nikas-shell__title:focus-visible",
+            ".nikas-shell__title:active",
             'type="button" aria-label="Открыть меню Home Assistant"',
             'type="button" aria-label="Вернуться в исходную базовую панель NikaS"',
         ):
-            self.assertIn(marker, self.source)
+            self.assertIn(marker, self.source if 'type="button"' in marker else self.shell)
 
     def test_zoom_range_focal_math_and_pan_policy_are_explicit(self) -> None:
         for marker in (
@@ -85,10 +90,10 @@ class PanelFullHeightHeaderZoomV104Tests(unittest.TestCase):
             "if(this._zoom.scale<=1||event.touches.length!==1||session.multi)return",
             "if(safeScale<=1)return{scale:safeScale,x:0,y:0}",
             "viewport.classList.toggle(\"zoomed\",zoomed)",
-            "touch-action:pan-y",
-            ".k100-work.zoomed{overflow:hidden;overscroll-behavior:none;touch-action:none",
         ):
             self.assertIn(marker, self.source)
+        self.assertIn("overscroll-behavior-y:none;touch-action:pan-y", self.shell)
+        self.assertIn(".nikas-shell__viewport.zoomed{overflow:hidden;touch-action:none}", self.shell)
 
     def test_every_route_to_100_uses_the_canonical_reset(self) -> None:
         for marker in (

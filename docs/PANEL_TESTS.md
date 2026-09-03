@@ -2,11 +2,11 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel metadata version: 1.0.5
+Panel metadata version: 1.0.6
 
-Integration build: 1.0.0-b057
+Integration build: 1.0.0-b059
 
-Standard: NikaS Specialized Panel UI Standard v1.9 + NikaS Panel Navigation and Return Contract v1.1
+Standard: NikaS Specialized Panel UI Standard v2.2 + NikaS Panel Navigation and Return Contract v1.2 + Shell v2.1
 
 Target device: KN-2311
 
@@ -21,14 +21,14 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 - Header, menu, Refresh and fixed Bottom Tab Bar remain at native scale.
 - Menu and Refresh render as matching 44 × 44 px, radius-16 plaques with 25 px `ha-icon` glyphs and remain fully visible below the Dynamic Island.
 - The height-locked shell prevents the Home Assistant outer document from scrolling; short views fill the work row instead of moving either menu.
-- The custom-panel host remains in normal Home Assistant layout flow; no mobile `position: fixed; inset: 0` override may detach it from the HA panel container.
+- The custom-panel shell exactly follows the Home Assistant panel-host rectangle; no viewport unit, hard-coded sidebar offset or `position: fixed; inset: 0` override may detach it from that boundary.
 - Bottom Tab Bar is full-width, edge-attached, safe-area-aware and contains exactly `Обзор / Каналы / Failover / Трафик / Диагн.`.
-- Bottom Tab Bar keeps minimum 52 px controls, 28 px `ha-icon` pictograms and 12 px / 700 labels, and adds the iPhone bottom safe-area inset below them.
-- Final work content remains reachable above the Bottom Tab Bar; no horizontal page overflow is introduced at 430 px or 390 px.
+- Bottom Tab Bar keeps exact 52 px controls, 26 px `ha-icon` pictograms and 12 px / 14 px / 700 labels, and adds the iPhone bottom safe-area inset below them.
+- Final work content remains reachable above the Bottom Tab Bar; no horizontal page overflow is introduced across the complete 430×932, 932×430, 768×1024, 1024×768 and 1440×900 matrix.
 
 ## 2. Native scroll at 100%; bounded transform above 100%
 
-- Exactly one `#work-viewport-v080`, one direct `#zoom-stage-v080` and one direct `#zoom-surface-v080` exist after initial load, tab changes and repeated HA state updates.
+- Exactly one `#k100-work` viewport and one `#k100-stage` transform canvas exist after initial load, tab changes and repeated HA state updates.
 - At 100%, the central work area keeps native vertical scrolling, hides horizontal overflow, fixes transform `x = 0`, `y = 0`, and does not install one-finger custom pan.
 - Above 100%, one-finger pan is enabled only on axes whose scaled content overflows; release, resize and view changes clamp position to measured bounds.
 - Scale is 75–200%, persists per panel/config-entry device/client, and 97–103% snaps to exactly 100% when the gesture ends.
@@ -43,7 +43,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 3. iPhone gestures
 
-- Two-finger pinch is bound only to `#work-viewport-v080` and preserves the content point under the live midpoint through native scroll offsets at or below 100% and transform offsets above it.
+- Two-finger pinch is bound only to `#k100-work` and preserves the content point under the live midpoint through native scroll offsets at or below 100% and transform offsets above it.
 - One-finger native vertical scrolling remains available at 100%; custom one-finger pan is available only above 100%.
 - There are no permanent zoom controls. A stationary two-finger double tap returns scale and position to 100%/origin and briefly shows `Масштаб 100%`.
 - Native Header and Bottom Tab Bar interactions are outside all gesture listeners.
@@ -69,7 +69,8 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=1.0.5` and component `keenetic-hero-app-panel-v100`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=1.0.6` and component `keenetic-hero-app-panel-v100`.
+- The bundle includes the hash-pinned canonical Shell v2.1 source kit and has no runtime dependency on the contract repository.
 - Superseded shell/zoom modules v066–v078 are excluded; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
 - `python scripts/build_frontend_bundle.py --check`, JavaScript syntax, unit tests, HACS, Hassfest and repository checks pass.
@@ -87,4 +88,4 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## Release gate
 
-Build b057 is a phone-validation candidate. It is accepted only after all NikaS rule 1.17, v1.9 navigation-contract and production-bundle checks pass together with return tests from all three base panels, repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the approved line-free KN-2311 Cable/LTE/LAN composition must pass on the real iPhone Pro Max / KN-2311 environment.
+Build b059 is a viewport-validation candidate. It is accepted only after the v2.2 standard, v1.2 navigation, Shell v2.1 boundary harness and production-bundle checks pass together with return tests from all four base panels and the complete viewport matrix. Repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the approved line-free KN-2311 Cable/LTE/LAN composition must also pass on the real iPhone Pro Max / KN-2311 environment.

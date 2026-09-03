@@ -9,16 +9,18 @@ ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 DELIVERY = INTEGRATION / "frontend" / "keenetic-app-v100.js"
 SHELL = INTEGRATION / "frontend" / "keenetic-app-v080.js"
+SOURCE_KIT = INTEGRATION / "frontend" / "nikas-specialized-shell.js"
 BUNDLE = INTEGRATION / "frontend" / "keenetic-panel-bundle.js"
 RUNTIME = INTEGRATION / "panel_runtime.py"
 STANDARD = ROOT / ".nikas-ui-standard.json"
 
 
-class PanelRulesV19RebuildTests(unittest.TestCase):
+class PanelRulesV22RebuildTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.delivery = DELIVERY.read_text(encoding="utf-8")
         cls.shell = SHELL.read_text(encoding="utf-8")
+        cls.source_kit = SOURCE_KIT.read_text(encoding="utf-8")
         cls.bundle = BUNDLE.read_text(encoding="utf-8")
         cls.runtime = RUNTIME.read_text(encoding="utf-8")
         cls.standard = json.loads(STANDARD.read_text(encoding="utf-8"))
@@ -26,27 +28,28 @@ class PanelRulesV19RebuildTests(unittest.TestCase):
         cls.panel_manifest = json.loads((INTEGRATION / "panel_manifest.json").read_text(encoding="utf-8"))
         cls.integration_manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
 
-    def test_v19_rebuild_versions_are_synchronized(self) -> None:
-        self.assertEqual(self.standard["version"], "1.9")
-        self.assertEqual(self.standard["navigation_contract_version"], "1.1")
-        self.assertEqual(self.contract["panel"]["version"], "1.0.5")
-        self.assertEqual(self.contract["app_shell"]["version"], "1.9")
-        self.assertEqual(self.contract["panel"]["navigation_contract_version"], "1.1")
-        self.assertEqual(self.panel_manifest["panel_version"], "1.0.5")
-        self.assertEqual(self.panel_manifest["zoom_policy"]["standard"], "1.9")
-        self.assertEqual(self.integration_manifest["version"], "1.0.0-b058")
-        self.assertIn('FRONTEND_UI_VERSION = "1.0.5"', self.runtime)
+    def test_v22_rebuild_versions_are_synchronized(self) -> None:
+        self.assertEqual(self.standard["version"], "2.2")
+        self.assertEqual(self.standard["navigation_contract_version"], "1.2")
+        self.assertEqual(self.contract["panel"]["version"], "1.0.6")
+        self.assertEqual(self.contract["app_shell"]["version"], "2.2")
+        self.assertEqual(self.contract["panel"]["navigation_contract_version"], "1.2")
+        self.assertEqual(self.panel_manifest["panel_version"], "1.0.6")
+        self.assertEqual(self.panel_manifest["zoom_policy"]["standard"], "2.2")
+        self.assertEqual(self.integration_manifest["version"], "1.0.0-b059")
+        self.assertIn('FRONTEND_UI_VERSION = "1.0.6"', self.runtime)
         self.assertIn('FRONTEND_COMPONENT_SLUG = "v100"', self.runtime)
 
     def test_header_return_precedence_is_explicit_and_captured_once(self) -> None:
-        self.assertIn('["return_to","from"]', self.delivery)
-        self.assertIn('sessionStorage.getItem("nikas.specialized.source_route.v1")', self.delivery)
-        self.assertIn('sessionStorage.getItem("nikas.specialized.source_route_at.v1")', self.delivery)
-        self.assertIn("document.referrer", self.delivery)
-        self.assertIn("panel?.config?.parent_route", self.delivery)
+        self.assertIn('...params.getAll("return_to")', self.source_kit)
+        self.assertIn('...params.getAll("from")', self.source_kit)
+        self.assertIn("window.sessionStorage.getItem(NIKAS_SOURCE_ROUTE_KEY)", self.source_kit)
+        self.assertIn("window.sessionStorage.getItem(NIKAS_SOURCE_ROUTE_AT_KEY)", self.source_kit)
+        self.assertIn("document.referrer", self.source_kit)
+        self.assertIn("v?.config?.parent_route", self.delivery)
         self.assertIn("this._returnRoute", self.delivery)
-        self.assertIn("once!==null&&onceAt!==null", self.delivery)
-        self.assertIn("handedOffAge>=0", self.delivery)
+        self.assertIn("if (!route || !timestamp) return null", self.source_kit)
+        self.assertIn("age < 0 || age > NIKAS_SOURCE_ROUTE_MAX_AGE_MS", self.source_kit)
         self.assertNotIn("history.back(", self.bundle)
 
     def test_only_canonical_base_destinations_are_accepted(self) -> None:
@@ -54,16 +57,17 @@ class PanelRulesV19RebuildTests(unittest.TestCase):
         self.assertEqual(
             header["return_sources"],
             [
-                "/dashboard-house-v11/home",
+                "/dashboard-house-v13/home",
+                "/dashboard-rooms-v11/rooms",
                 "/dashboard-actions/home",
                 "/dashboard-infrastructure/overview",
             ],
         )
         for route in header["return_sources"]:
-            self.assertIn(route, self.delivery)
-        self.assertNotIn('"/dashboard-house"', self.delivery)
-        self.assertNotIn("/dashboard-starline", self.delivery)
-        self.assertIn("url.origin!==window.location.origin", self.delivery)
+            self.assertIn(route, self.source_kit)
+        self.assertNotIn('"/dashboard-house"', self.source_kit)
+        self.assertNotIn("/dashboard-starline", self.source_kit)
+        self.assertIn("url.origin !== window.location.origin", self.source_kit)
 
     def test_production_bundle_contains_the_current_component_without_runtime_imports(self) -> None:
         self.assertIn(

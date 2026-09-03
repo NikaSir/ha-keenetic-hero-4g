@@ -6,26 +6,32 @@
     "panel_root": "/dashboard-keenetic",
     "entry_route": "/dashboard-keenetic",
     "safe_return_route": "/dashboard-infrastructure/overview",
-    "navigation_contract_version": "1.1",
+    "navigation_contract_version": "1.2",
     "icon": "mdi:router-network",
     "owner": "ha-keenetic-hero-4g",
     "parent_route": "/dashboard-infrastructure/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "1.0.5"
+    "version": "1.0.6"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
-    "version": "1.9",
+    "version": "2.2",
     "canonical_source": "NikaSir/ha-contract-generated-ui",
-    "canonical_sha256": "a31dc45499443f8fa43eaea1906fe3a793dffcb411b10cebcd3a3a205fbcef27",
-    "navigation_contract_sha256": "c87dc760c0900701f6a807a35aba40e790f68f52c39f4579583598f697997e52",
+    "canonical_sha256": "3b6cc750b08aa0d2a375d1430ea04ac68c90525a527d197b014abd96728d23d1",
+    "navigation_contract_sha256": "d495eca80345b96976c168029a96146803f3d8195b6f6fc723827b601ffb578e",
     "standards": {
-      "shell": "1.9",
-      "zoom": "1.9",
-      "navigation": "1.1",
+      "shell": "2.1",
+      "zoom": "2.2",
+      "navigation": "1.2",
       "integration_ui": "1.4",
       "frontend_delivery": "1.1"
+    },
+    "source_kit": {
+      "path": "frontend/nikas-specialized-shell.js",
+      "sha256": "c7171560b68e2c4118b327c5e6a63c65e3410a4e1f10a02691e0d15560166e65",
+      "delivery": "vendored_build_time",
+      "runtime_dependency": false
     },
     "header": {
       "menu": {
@@ -42,7 +48,8 @@
       "saved_return_route_key": "nikas.keenetic.return_route.v1",
       "browser_history_back_allowed": false,
       "return_sources": [
-        "/dashboard-house-v11/home",
+        "/dashboard-house-v13/home",
+        "/dashboard-rooms-v11/rooms",
         "/dashboard-actions/home",
         "/dashboard-infrastructure/overview"
       ],
@@ -60,8 +67,10 @@
         "location-changed"
       ],
       "title_alignment": "viewport_center",
-      "minimum_height_px": 62,
+      "minimum_height_px": 60,
       "minimum_height_px_narrow": 60,
+      "title_width": "min(360px,100%)",
+      "title_height_px": 52,
       "symmetric_side_slots_px": 52,
       "compact_side_slots_px_narrow": 48,
       "control_size_px": 44,
@@ -96,19 +105,19 @@
       "equal_width_items": true,
       "standard_geometry": "specialized_panel_compact",
       "active_state": "compact_tint",
-      "active_full_cell_fill": false,
-      "active_max_width_px": 112,
+      "active_full_cell_fill": true,
       "min_touch_target_px": 52,
       "preferred_button_height_px": 52,
-      "icon_px": 28,
+      "icon_px": 26,
       "label_px": 12,
       "label_weight": 700,
       "active_primary_percent": 11,
       "padding_top_px": 6,
       "padding_bottom_px_before_safe_area": 6,
       "item_radius_px": 16,
-      "icon_label_gap_px": 3,
+      "icon_label_gap_px": 1,
       "max_primary_items": 5,
+      "body_height_px": 64,
       "items": [
         "overview",
         "wan",
@@ -118,8 +127,13 @@
       ]
     },
     "viewport_fit": {
-      "primary_css_width_px": 430,
-      "secondary_check_css_width_px": 390,
+      "acceptance_viewports": [
+        "430x932",
+        "932x430",
+        "768x1024",
+        "1024x768",
+        "1440x900"
+      ],
       "horizontal_scroll_allowed": false,
       "content_overflow_x_hidden": true,
       "header_title_must_remain_geometrically_centered": true,
@@ -127,13 +141,19 @@
       "safe_area_owner": "specialized_panel_shell",
       "safe_area_applied_once": true,
       "height_locked_phone_shell": true,
-      "host_position": "normal_home_assistant_panel_flow",
+      "host_position": "home_assistant_panel_host_boundary",
       "fixed_host_override": false,
       "outer_home_assistant_scroll": false,
       "scroll_chaining_to_outer_document": false,
-      "scroll_boundary_guard": "prevent_default_at_top_and_bottom",
-      "fixed_chrome_touch_action": "none",
-      "short_views_fill_work_row": true
+      "scroll_boundary_guard": "capture_non_passive_host_boundary_guard",
+      "fixed_chrome_touch_action": "host_boundary_guard",
+      "short_views_fill_work_row": true,
+      "content_max_width_px": 1280,
+      "content_gutters_px": {
+        "phone": 12,
+        "tablet": 16,
+        "desktop": 24
+      }
     },
     "content_zoom": {
       "enabled": true,

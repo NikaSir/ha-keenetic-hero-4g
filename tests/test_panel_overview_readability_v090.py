@@ -30,10 +30,10 @@ class OverviewReadabilityV100Tests(unittest.TestCase):
         self.assertIn(".k100-metric strong{font-size:15px;margin-top:2px}", self.source)
 
     def test_current_delivery_is_v100_b052(self) -> None:
-        self.assertEqual(self.manifest["panel_version"], "1.0.5")
+        self.assertEqual(self.manifest["panel_version"], "1.0.6")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
         integration_manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual(integration_manifest["version"], "1.0.0-b058")
+        self.assertEqual(integration_manifest["version"], "1.0.0-b059")
 
 
 if __name__ == "__main__":

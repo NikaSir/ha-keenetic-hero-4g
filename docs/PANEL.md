@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel metadata version: **1.0.5**
+Panel metadata version: **1.0.6**
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -20,13 +20,13 @@ The first screen must answer, without opening Keenetic Web UI:
 
 ## Home Assistant NikaS app shell
 
-The current panel follows **NikaS Specialized Panel UI Standard v1.9** and the mandatory navigation/return contract from the canonical `ha-contract-generated-ui` repository.
+The current panel follows **NikaS Specialized Panel UI Standard v2.2**, **Navigation Contract v1.2** and host-bound **Shell v2.1** from the canonical `ha-contract-generated-ui` repository.
 
 The shell and first work view are mounted once. Other views are created on first visit and retained in a stable DOM cache. Home Assistant state cycles are coalesced through `requestAnimationFrame` and patch only changed text, classes and attributes. Header, Bottom Tab Bar, zoom viewport and visited tab containers keep their identity; tab selection uses `hidden` and `inert` without a blank frame.
 
 This panel explicitly includes the optional two-level connection indicator. Its channel line uses the factual labels `Локально / Облако / Резерв / Нет связи / Нет данных`; freshness uses `Данные актуальны / Данные устарели / Нет данных`. A failed current local poll immediately reports `Нет связи` and makes retained values stale. The stable surface is tinted by the primary state and uses 16 px / 700 plus 13 px / 600 typography.
 
-On phones the integration owns a height-locked three-row application shell in the Home Assistant panel's normal layout flow. Only `#work-viewport-v080` scrolls or scales; the outer Home Assistant page, Header and Bottom Tab Bar do not participate in content movement. The runtime must not escape the HA panel container with a fixed-position host. Meaningful panel text uses a semantic hierarchy within 12–25 px rather than flattening labels and values to one size.
+The integration owns a height-locked three-row application shell bound to the actual Home Assistant panel host on phone, tablet and desktop. Only `#k100-work` scrolls and only `#k100-stage` scales; the outer Home Assistant page, Header and Bottom Tab Bar do not participate in content movement. The runtime uses no viewport units or fixed-position host override. Meaningful panel text uses a semantic hierarchy within 12–25 px rather than flattening labels and values to one size.
 
 The production shell is mounted directly and does not inherit any earlier scroll/zoom shell. At 100% its surface remains in normal document flow, so the browser owns vertical scrolling. A transform surface and custom one-finger pan exist only after scale moves away from 100% and above 100% respectively. Cable, LTE and LAN status plaques are positioned around the router and sized for the mandatory 12 px minimum text.
 
@@ -36,9 +36,9 @@ The production shell is mounted directly and does not inherit any earlier scroll
 - title `Keenetic Hero 4G+` geometrically centered against the viewport;
 - no decorative router/brand icon beside the title;
 - the complete central title surface is a button that returns to the source NikaS panel;
-- first line `Keenetic Hero 4G+`, second line `UI v1.0.5`;
+- first line `Keenetic Hero 4G+`, second line `UI v1.0.6`;
 - one global Refresh action on the right;
-- the source route is restricted to `Дом сейчас`, `Действия` or `Инфраструктура`; the left Header slot remains the native HA menu.
+- the source route is restricted to the canonical `Дом`, `Помещения`, `Действия` or `Инфраструктура` base panels; the left Header slot remains the native HA menu.
 
 ### Bottom navigation
 
