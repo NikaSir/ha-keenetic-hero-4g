@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -9,6 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "custom_components" / "keenetic_hero_4g" / "frontend"
 OUTPUT = FRONTEND / "keenetic-panel-bundle.js"
 CSS_SOURCE = FRONTEND / "keenetic-panel.css"
+SHELL_SOURCE = FRONTEND / "nikas-specialized-shell.js"
+SHELL_SHA256 = "c7171560b68e2c4118b327c5e6a63c65e3410a4e1f10a02691e0d15560166e65"
 SOURCES = [
     FRONTEND / "keenetic-panel.js",
     FRONTEND / "keenetic-overview-v040.js",
@@ -31,7 +34,7 @@ SOURCES = [
 RUNTIME_IMPORT_RE = re.compile(r"^\s*(?:await\s+)?import(?:\s*\(\s*)?\s*[\"']\./[^\"']+[\"']\s*\)?\s*;?\s*$", re.MULTILINE)
 LEGACY_INLINE_HERO_RE = re.compile(r'const KEENETIC_ROOM_V050 = "data:image/webp;base64,[^"]+";')
 ASSET_QUERY_RE = re.compile(r"(/keenetic_hero_4g_static/assets/[A-Za-z0-9._-]+(?:webp|svg))\?v=[0-9.]+")
-PANEL_VERSION = "1.0.5"
+PANEL_VERSION = "1.0.6"
 HERO_ASSET_URL = f"/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v={PANEL_VERSION}"
 CSS_LINK = '<link rel="stylesheet" href="/keenetic_hero_4g_static/keenetic-panel.css?v=${encodeURIComponent(PANEL_VERSION)}">'
 
@@ -78,11 +81,23 @@ def _wrap(path: Path) -> str:
     return "\n".join([f"// BEGIN {rel}", "(() => {", _clean(path), "})();", f"// END {rel}"])
 
 
+def _embed_shell(path: Path) -> str:
+    rel = path.relative_to(ROOT).as_posix()
+    source_bytes = path.read_bytes()
+    digest = hashlib.sha256(source_bytes).hexdigest()
+    if digest != SHELL_SHA256:
+        raise SystemExit("Vendored NikaS shell source kit does not match the canonical v2.1 hash")
+    source = source_bytes.decode("utf-8").rstrip()
+    return "\n".join([f"// BEGIN {rel}", source, f"// END {rel}"])
+
+
 def build() -> str:
     parts = [
         "// GENERATED FILE. DO NOT EDIT DIRECTLY.",
-        "// Keenetic Hero 4G+ autonomous UI 1.0.5 production bundle.",
+        "// Keenetic Hero 4G+ autonomous UI 1.0.6 production bundle.",
         "// One active shell: keenetic-hero-app-panel-v100.",
+        "",
+        _embed_shell(SHELL_SOURCE),
         "",
     ]
     for path in SOURCES:

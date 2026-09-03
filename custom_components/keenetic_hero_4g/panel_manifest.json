@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "panel": "keenetic",
-  "panel_version": "1.0.5",
+  "panel_version": "1.0.6",
   "route": "/dashboard-keenetic",
   "entry_module": "keenetic-panel-bundle.js",
   "web_component": "keenetic-hero-app-panel-v100",
@@ -11,7 +11,7 @@
     "composed": true
   },
   "zoom_policy": {
-    "standard": "1.9",
+    "standard": "2.2",
     "engine": "native_vertical_at_100_transform_pan_above_100",
     "min_percent": 75,
     "max_percent": 200,
@@ -27,13 +27,20 @@
     "pan_axes": "overflow_only"
   },
   "shell_policy": {
+    "standard": "2.1",
     "header_center_action": "return_to_source_base_panel",
     "source_route_handoff_key": "nikas.specialized.source_route.v1",
     "browser_history_back_allowed": false,
-    "host_position": "normal_home_assistant_panel_flow",
+    "host_position": "home_assistant_panel_host_boundary",
     "height_locked": true,
+    "header_body_px": 60,
+    "bottom_navigation_body_px": 64,
+    "bottom_navigation_icon_px": 26,
+    "content_max_width_px": 1280,
     "work_viewport_vertical_scroll": true,
-    "header_and_navigation_outside_viewport": true
+    "header_and_navigation_outside_viewport": true,
+    "scroll_boundary_guard": "capture_non_passive_host_boundary_guard",
+    "vendored_source_kit": "frontend/nikas-specialized-shell.js"
   },
   "update_policy": {
     "dom_mount": "once",
@@ -48,13 +55,13 @@
   "assets": [
     {
       "path": "frontend/assets/keenetic-hero-room-v064.webp",
-      "url": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.5",
+      "url": "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.6",
       "role": "overview_hero_background",
       "format": "webp"
     },
     {
       "path": "frontend/assets/keenetic-hero-router-v086.webp",
-      "url": "/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.5",
+      "url": "/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.6",
       "role": "overview_router_layer",
       "format": "webp"
     }

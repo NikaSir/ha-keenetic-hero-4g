@@ -1,10 +1,10 @@
 {
-  "version": "1.9",
-  "navigation_contract_version": "1.1",
+  "version": "2.2",
+  "navigation_contract_version": "1.2",
   "standard_path": "docs/NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md",
-  "standard_sha256": "a31dc45499443f8fa43eaea1906fe3a793dffcb411b10cebcd3a3a205fbcef27",
+  "standard_sha256": "3b6cc750b08aa0d2a375d1430ea04ac68c90525a527d197b014abd96728d23d1",
   "navigation_contract_path": "docs/NIKAS_PANEL_NAVIGATION_CONTRACT.md",
-  "navigation_contract_sha256": "c87dc760c0900701f6a807a35aba40e790f68f52c39f4579583598f697997e52",
+  "navigation_contract_sha256": "d495eca80345b96976c168029a96146803f3d8195b6f6fc723827b601ffb578e",
   "role": "specialized",
   "artifact_kind": "production",
   "runtime_files": [
@@ -15,6 +15,7 @@
   "header_return_runtime_path": "custom_components/keenetic_hero_4g/frontend/keenetic-panel-bundle.js",
   "build_source_files": [
     "scripts/build_frontend_bundle.py",
+    "custom_components/keenetic_hero_4g/frontend/nikas-specialized-shell.js",
     "custom_components/keenetic_hero_4g/frontend/keenetic-panel.css",
     "custom_components/keenetic_hero_4g/frontend/keenetic-panel.js",
     "custom_components/keenetic_hero_4g/frontend/keenetic-overview-v040.js",
@@ -34,13 +35,40 @@
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v075.js",
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js"
   ],
-  "ui_version": "1.0.5",
+  "ui_version": "1.0.6",
   "web_component": "keenetic-hero-app-panel-v100",
   "bundle_contract": {
     "autonomous": true,
     "runtime_imports": false,
     "deterministic": true,
     "cache_busting": "ui_version"
+  },
+  "source_kit": {
+    "path": "custom_components/keenetic_hero_4g/frontend/nikas-specialized-shell.js",
+    "sha256": "c7171560b68e2c4118b327c5e6a63c65e3410a4e1f10a02691e0d15560166e65",
+    "delivery": "vendored-build-time",
+    "runtime_dependency": false
+  },
+  "shell_contract": {
+    "version": "2.1",
+    "host_boundary": "ha-panel",
+    "header_body_px": 60,
+    "peer_selector_px": 52,
+    "bottom_nav_body_px": 64,
+    "content_max_width_px": 1280,
+    "coordinate_tolerance_px": 2,
+    "scroll_boundary_guard": "capture-non-passive-touchmove",
+    "specialized_tab_range": [
+      3,
+      5
+    ],
+    "viewport_matrix": {
+      "phone_portrait": "430x932",
+      "phone_landscape": "932x430",
+      "tablet_portrait": "768x1024",
+      "tablet_landscape": "1024x768",
+      "desktop": "1440x900"
+    }
   },
   "data_truth": {
     "entity_source": "integration_or_ha_registry",
@@ -54,14 +82,17 @@
   },
   "header_return": {
     "button_marker": "id=\"k100-title\"",
-    "version_marker": "<small>UI v1.0.5</small>",
-    "focus_marker": ".k100-title:focus-visible",
-    "pressed_marker": ".k100-title:active",
-    "explicit_precedence_marker": "[\"return_to\",\"from\"]",
-    "capture_once_marker": "this._returnRoute",
-    "timestamp_required_marker": "onceAt!==null",
-    "future_timestamp_rejection_marker": "handedOffAge>=0"
+    "version_marker": "<small>UI v1.0.6</small>",
+    "focus_marker": ".nikas-shell__title:focus-visible",
+    "pressed_marker": ".nikas-shell__title:active",
+    "explicit_precedence_marker": "...params.getAll(\"return_to\")",
+    "capture_once_marker": "if(!this._returnRoute)",
+    "timestamp_required_marker": "if (!route || !timestamp)",
+    "future_timestamp_rejection_marker": "age < 0"
   },
+  "forbidden_runtime_markers": [
+    "history.back("
+  ],
   "header_reference": {
     "implementation": "S8 OMNI",
     "implementation_source": "NikaSir/ha-s8-omni",
@@ -77,12 +108,48 @@
   "title_plaque_reference": {
     "implementation": "S8 OMNI",
     "implementation_source": "NikaSir/ha-s8-omni",
-    "min_width": "min(290px,100%)",
-    "min_height_px": 44,
+    "width": "min(360px,100%)",
+    "height_px": 52,
     "padding_px": "5 14",
     "radius_px": 16,
     "primary_background_mix_percent": 5,
     "primary_border_mix_percent": 24,
     "shadow": "0 5px 16px rgba(23,45,76,.06)"
+  },
+  "panel_identity": {
+    "title": "Keenetic Hero 4G+"
+  },
+  "shell_scroll_guard": {
+    "implementation_version": "2.1",
+    "strategy": "capture_non_passive_host_boundary_guard",
+    "scroll_chaining": false,
+    "multitouch_passthrough": true,
+    "movement_threshold_px": 4,
+    "cleanup_on_disconnect": true
+  },
+  "peer_device_status_lamp_reference": {
+    "implementation": "Stark SolarPower",
+    "visual_lineage": "StarLine",
+    "diameter_px": 9,
+    "halo_px": 3,
+    "states": {
+      "good": "green",
+      "warning": "orange",
+      "fault": "red",
+      "unknown": "gray"
+    },
+    "state_priority": [
+      "fault",
+      "warning",
+      "good",
+      "unknown"
+    ],
+    "selection_is_independent": true,
+    "update_mode": "point-patch",
+    "accessible_status_required": true
+  },
+  "peer_device_selector": {
+    "enabled": false,
+    "reason": "single physical router"
   }
 }

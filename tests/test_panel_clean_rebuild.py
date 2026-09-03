@@ -9,6 +9,7 @@ FRONTEND = ROOT / "custom_components" / "keenetic_hero_4g" / "frontend"
 SOURCE = FRONTEND / "keenetic-app-v100.js"
 BUNDLE = FRONTEND / "keenetic-panel-bundle.js"
 BUILD = ROOT / "scripts" / "build_frontend_bundle.py"
+SHELL = FRONTEND / "nikas-specialized-shell.js"
 
 
 class PanelCleanRebuildTests(unittest.TestCase):
@@ -17,6 +18,7 @@ class PanelCleanRebuildTests(unittest.TestCase):
         cls.source = SOURCE.read_text(encoding="utf-8")
         cls.bundle = BUNDLE.read_text(encoding="utf-8")
         cls.build = BUILD.read_text(encoding="utf-8")
+        cls.shell = SHELL.read_text(encoding="utf-8")
 
     def test_only_v100_app_shell_is_shipped(self) -> None:
         self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.bundle)
@@ -30,6 +32,12 @@ class PanelCleanRebuildTests(unittest.TestCase):
 
     def test_build_has_one_current_shell_source_and_no_superseded_delivery_sources(self) -> None:
         self.assertIn('FRONTEND / "keenetic-app-v100.js"', self.build)
+        self.assertIn('SHELL_SOURCE = FRONTEND / "nikas-specialized-shell.js"', self.build)
+        self.assertIn('SHELL_SHA256 = "c7171560b68e2c4118b327c5e6a63c65e3410a4e1f10a02691e0d15560166e65"', self.build)
+        self.assertIn(
+            "// BEGIN custom_components/keenetic_hero_4g/frontend/nikas-specialized-shell.js",
+            self.bundle,
+        )
         for name in [
             "keenetic-app-v066.js", "keenetic-app-v067.js", "keenetic-app-v069.js",
             "keenetic-app-v070.js", "keenetic-app-v071.js", "keenetic-app-v072.js",
@@ -48,10 +56,12 @@ class PanelCleanRebuildTests(unittest.TestCase):
         self.assertNotIn("history.back(", self.bundle)
 
     def test_v100_runtime_exposes_current_version_and_semantic_return_shell(self) -> None:
-        self.assertIn('const K100_VERSION = "1.0.5";', self.source)
-        self.assertIn("nikas.specialized.source_route.v1", self.source)
-        self.assertIn("history.pushState", self.source)
-        self.assertIn("location-changed", self.source)
+        self.assertIn('const K100_VERSION = "1.0.6";', self.source)
+        self.assertIn("nikas.specialized.source_route.v1", self.shell)
+        self.assertIn("history.pushState", self.shell)
+        self.assertIn("location-changed", self.shell)
+        self.assertIn("captureNikasShellReturnRoute", self.source)
+        self.assertIn("navigateNikasShell", self.source)
         self.assertIn("UI v", self.source)
 
 

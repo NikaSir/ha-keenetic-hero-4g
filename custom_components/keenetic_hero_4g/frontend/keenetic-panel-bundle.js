@@ -1,6 +1,333 @@
 // GENERATED FILE. DO NOT EDIT DIRECTLY.
-// Keenetic Hero 4G+ autonomous UI 1.0.5 production bundle.
+// Keenetic Hero 4G+ autonomous UI 1.0.6 production bundle.
 // One active shell: keenetic-hero-app-panel-v100.
+
+// BEGIN custom_components/keenetic_hero_4g/frontend/nikas-specialized-shell.js
+/* NikaS specialized panel shell source kit v2.1.
+ * Copy this file into a panel repository at build time and concatenate it into
+ * that panel's single autonomous production bundle. Runtime imports are forbidden.
+ */
+
+const NIKAS_SHELL_V2_VERSION = "2.1";
+const NIKAS_SOURCE_ROUTE_KEY = "nikas.specialized.source_route.v1";
+const NIKAS_SOURCE_ROUTE_AT_KEY = "nikas.specialized.source_route_at.v1";
+const NIKAS_SOURCE_ROUTE_MAX_AGE_MS = 30_000;
+const NIKAS_SHELL_BOUNDARY_THRESHOLD_PX = 4;
+
+const NIKAS_BASE_ROUTES = Object.freeze([
+  Object.freeze({ root: "/dashboard-house-v13", entry: "/dashboard-house-v13/home" }),
+  Object.freeze({ root: "/dashboard-rooms-v11", entry: "/dashboard-rooms-v11/rooms" }),
+  Object.freeze({ root: "/dashboard-actions", entry: "/dashboard-actions/home" }),
+  Object.freeze({ root: "/dashboard-infrastructure", entry: "/dashboard-infrastructure/overview" }),
+]);
+const NIKAS_SPECIALIZED_ROOTS = Object.freeze([
+  "/dashboard-access-v1",
+  "/dashboard-zont",
+  "/starline",
+  "/dashboard-s8-omni",
+  "/dashboard-irrigation",
+  "/dashboard-ups",
+  "/dashboard-keenetic",
+  "/dashboard-lider",
+  "/dashboard-water-accounting",
+]);
+
+function nikasShellV2Styles() {
+  return `
+    :host{
+      display:block;position:relative;inline-size:100%;block-size:100%;min-inline-size:0;min-block-size:0;
+      overflow:hidden;overscroll-behavior:none;color:var(--primary-text-color,#15191d);
+      background:var(--primary-background-color,#f4f6f8);
+      font-family:var(--paper-font-body1_-_font-family,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)
+    }
+    *{box-sizing:border-box}
+    [hidden]{display:none!important}
+    button{appearance:none;-webkit-appearance:none;font:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+    .nikas-shell{
+      position:absolute;inset:0;inline-size:100%;block-size:100%;display:grid;min-inline-size:0;min-block-size:0;
+      container:nikas-panel / inline-size;
+      grid-template-areas:"header" "viewport" "tabs";
+      grid-template-rows:calc(60px + env(safe-area-inset-top,0px)) minmax(0,1fr)
+        calc(64px + env(safe-area-inset-bottom,0px));
+      overflow:hidden;overscroll-behavior:none;background:var(--primary-background-color,#f4f6f8)
+    }
+    .nikas-shell--with-peer{
+      grid-template-areas:"header" "peer" "viewport" "tabs";
+      grid-template-rows:calc(60px + env(safe-area-inset-top,0px)) 52px minmax(0,1fr)
+        calc(64px + env(safe-area-inset-bottom,0px))
+    }
+    .nikas-shell__header{
+      grid-area:header;position:relative;z-index:20;min-inline-size:0;
+      padding:env(safe-area-inset-top,0px) calc(12px + env(safe-area-inset-right,0px)) 0
+        calc(12px + env(safe-area-inset-left,0px));
+      display:grid;grid-template-columns:52px minmax(0,1fr) 52px;align-items:center;
+      background:color-mix(in srgb,var(--primary-background-color,#f4f6f8) 97%,transparent);
+      border-bottom:1px solid color-mix(in srgb,var(--divider-color,#dfe3e8) 70%,transparent);
+      backdrop-filter:blur(18px) saturate(130%);-webkit-backdrop-filter:blur(18px) saturate(130%)
+    }
+    .nikas-shell__side-action{
+      inline-size:44px;block-size:44px;padding:0;
+      border:1px solid color-mix(in srgb,var(--divider-color,#dfe3e8) 72%,transparent);
+      border-radius:16px;background:var(--card-background-color,#fff);box-shadow:0 7px 20px rgba(23,45,76,.08);
+      display:grid;place-items:center;color:var(--primary-text-color,#17191c);cursor:pointer
+    }
+    .nikas-shell__side-action--right{justify-self:end;color:var(--primary-color,#03a9d9)}
+    .nikas-shell__side-action:disabled{opacity:.55;cursor:wait}
+    .nikas-shell__side-action ha-icon{--mdc-icon-size:25px}
+    .nikas-shell__title{
+      justify-self:center;inline-size:min(360px,100%);block-size:52px;padding:5px 14px;
+      border:1px solid color-mix(in srgb,var(--primary-color,#03a9d9) 24%,var(--divider-color,#dfe3e8));
+      border-radius:16px;background:color-mix(in srgb,var(--primary-color,#03a9d9) 5%,var(--card-background-color,#fff));
+      box-shadow:0 5px 16px rgba(23,45,76,.06);color:inherit;display:grid;place-content:center;
+      text-align:center;cursor:pointer;line-height:1.08
+    }
+    .nikas-shell__title strong{display:block;max-inline-size:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:23px;font-weight:800}
+    .nikas-shell__title small{display:block;font-size:14px;font-weight:560;color:var(--secondary-text-color,#68737d)}
+    .nikas-shell__title:active{
+      transform:scale(.985);border-color:color-mix(in srgb,var(--primary-color,#03a9d9) 42%,var(--divider-color,#dfe3e8));
+      background:color-mix(in srgb,var(--primary-color,#03a9d9) 13%,var(--card-background-color,#fff));
+      box-shadow:0 2px 7px rgba(23,45,76,.05)
+    }
+    .nikas-shell__title:focus-visible,.nikas-shell__side-action:focus-visible{
+      outline:2px solid var(--primary-color,#03a9d9);outline-offset:2px
+    }
+    .nikas-shell__side-action:active:not(:disabled){transform:scale(.985)}
+    .nikas-shell__peer{grid-area:peer;min-inline-size:0;min-block-size:0}
+    .nikas-shell__viewport{
+      grid-area:viewport;position:relative;z-index:1;min-inline-size:0;min-block-size:0;
+      overflow-y:auto;overflow-x:hidden;overscroll-behavior-x:none;overscroll-behavior-y:none;touch-action:pan-y;
+      background:var(--primary-background-color,#f4f6f8);-webkit-overflow-scrolling:touch;overflow-anchor:none
+    }
+    .nikas-shell__viewport.zoomed{overflow:hidden;touch-action:none}
+    .nikas-shell__canvas{inline-size:100%;min-block-size:100%;transform-origin:0 0}
+    .nikas-shell__content{
+      inline-size:100%;max-inline-size:1280px;min-block-size:100%;margin:0 auto;padding:12px 12px 20px
+    }
+    .nikas-shell__tabs{
+      grid-area:tabs;position:relative;z-index:20;min-inline-size:0;min-block-size:0;
+      padding:6px calc(6px + env(safe-area-inset-right,0px))
+        calc(6px + env(safe-area-inset-bottom,0px)) calc(6px + env(safe-area-inset-left,0px));
+      display:grid;grid-template-columns:repeat(var(--nikas-shell-tab-count,4),minmax(0,1fr));gap:2px;
+      background:var(--card-background-color,#fff);border-top:1px solid var(--divider-color,#dfe3e8);
+      box-shadow:0 -5px 22px rgba(23,45,76,.08)
+    }
+    .nikas-shell__tab{
+      min-inline-size:0;block-size:52px;padding:2px 3px 6px;border:0;border-radius:16px;background:transparent;
+      color:var(--secondary-text-color,#68737d);display:flex;flex-direction:column;align-items:center;
+      justify-content:center;gap:1px;overflow:hidden;font-family:inherit;font-weight:700;line-height:1;cursor:pointer
+    }
+    .nikas-shell__tab ha-icon{--mdc-icon-size:26px;display:block;flex:0 0 26px}
+    .nikas-shell__tab small{display:block;flex:0 0 14px;max-inline-size:100%;font-family:inherit;font-size:12px;font-weight:700;line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .nikas-shell__tab.active{
+      color:var(--primary-color,#2186d7);background:color-mix(in srgb,var(--primary-color,#2186d7) 11%,transparent)
+    }
+    @container nikas-panel (min-width:600px){.nikas-shell__content{padding-inline:16px}}
+    @container nikas-panel (min-width:1024px){.nikas-shell__content{padding-inline:24px}}
+    @container nikas-panel (max-width:359px){
+      .nikas-shell__header{grid-template-columns:48px minmax(0,1fr) 48px}
+      .nikas-shell__title{inline-size:100%;padding-inline:8px}
+      .nikas-shell__title strong{font-size:21px}.nikas-shell__title small{font-size:13px}
+    }
+  `;
+}
+
+function shouldBlockNikasShellBoundaryMove({
+  deltaX,
+  deltaY,
+  inViewport,
+  scrollTop,
+  scrollHeight,
+  clientHeight,
+}) {
+  if (!Number.isFinite(deltaY) || Math.abs(deltaY) <= Math.abs(Number(deltaX) || 0)) return false;
+  if (!inViewport) return true;
+  const maximumScroll = Math.max(0, (Number(scrollHeight) || 0) - (Number(clientHeight) || 0));
+  if (maximumScroll <= 1) return true;
+  const currentScroll = Math.max(0, Number(scrollTop) || 0);
+  if (deltaY > 0 && currentScroll <= 1) return true;
+  return deltaY < 0 && currentScroll >= maximumScroll - 1;
+}
+
+function createNikasShellScrollBoundaryGuard({ host, viewport }) {
+  if (!host?.addEventListener || !viewport) return () => {};
+  let touch = null;
+
+  const eventStartedInViewport = (event) => {
+    const path = typeof event.composedPath === "function" ? event.composedPath() : [];
+    return path.includes(viewport) || Boolean(viewport.contains?.(event.target));
+  };
+  const rememberTouch = (event) => {
+    if (event.touches.length !== 1) {
+      touch = null;
+      return;
+    }
+    const current = event.touches[0];
+    touch = {
+      x: current.clientX,
+      y: current.clientY,
+      startX: current.clientX,
+      startY: current.clientY,
+      inViewport: eventStartedInViewport(event),
+      blocked: false,
+    };
+  };
+  const moveTouch = (event) => {
+    if (event.touches.length !== 1) {
+      touch = null;
+      return;
+    }
+    const current = event.touches[0];
+    if (!touch) {
+      rememberTouch(event);
+      return;
+    }
+    const deltaX = current.clientX - touch.x;
+    const deltaY = current.clientY - touch.y;
+    const travelX = current.clientX - touch.startX;
+    const travelY = current.clientY - touch.startY;
+    touch.x = current.clientX;
+    touch.y = current.clientY;
+    const verticalIntent = Math.abs(travelY) > NIKAS_SHELL_BOUNDARY_THRESHOLD_PX
+      && Math.abs(travelY) > Math.abs(travelX);
+    if (!touch.blocked && verticalIntent) {
+      touch.blocked = shouldBlockNikasShellBoundaryMove({
+        deltaX,
+        deltaY,
+        inViewport: touch.inViewport,
+        scrollTop: viewport.scrollTop,
+        scrollHeight: viewport.scrollHeight,
+        clientHeight: viewport.clientHeight,
+      });
+    }
+    if (touch.blocked && event.cancelable) {
+      event.preventDefault();
+    }
+  };
+  const endTouch = (event) => {
+    if (event.touches.length === 1) rememberTouch(event);
+    else touch = null;
+  };
+  const cancelTouch = () => {
+    touch = null;
+  };
+
+  host.addEventListener("touchstart", rememberTouch, { passive: false, capture: true });
+  host.addEventListener("touchmove", moveTouch, { passive: false, capture: true });
+  host.addEventListener("touchend", endTouch, { passive: true, capture: true });
+  host.addEventListener("touchcancel", cancelTouch, { passive: true, capture: true });
+
+  return () => {
+    host.removeEventListener("touchstart", rememberTouch, true);
+    host.removeEventListener("touchmove", moveTouch, true);
+    host.removeEventListener("touchend", endTouch, true);
+    host.removeEventListener("touchcancel", cancelTouch, true);
+    touch = null;
+  };
+}
+
+function normalizeNikasBaseRoute(value) {
+  if (typeof value !== "string" || !value || value.startsWith("//")) return null;
+  try {
+    const url = new URL(value, window.location.origin);
+    if (url.origin !== window.location.origin) return null;
+    const match = NIKAS_BASE_ROUTES.find(
+      ({ root }) => url.pathname === root || url.pathname.startsWith(`${root}/`),
+    );
+    return match?.entry || null;
+  } catch (_error) {
+    return null;
+  }
+}
+
+function consumeNikasSourceHandoff(now = Date.now()) {
+  let route = null;
+  let timestamp = null;
+  try {
+    route = window.sessionStorage.getItem(NIKAS_SOURCE_ROUTE_KEY);
+    timestamp = window.sessionStorage.getItem(NIKAS_SOURCE_ROUTE_AT_KEY);
+  } catch (_error) {
+    return null;
+  } finally {
+    try {
+      window.sessionStorage.removeItem(NIKAS_SOURCE_ROUTE_KEY);
+      window.sessionStorage.removeItem(NIKAS_SOURCE_ROUTE_AT_KEY);
+    } catch (_error) {
+      // Storage is optional; both values were still consumed for this mount.
+    }
+  }
+  if (!route || !timestamp) return null;
+  const createdAt = Number(timestamp);
+  const age = now - createdAt;
+  if (!Number.isFinite(createdAt) || age < 0 || age > NIKAS_SOURCE_ROUTE_MAX_AGE_MS) return null;
+  return normalizeNikasBaseRoute(route);
+}
+
+function captureNikasShellReturnRoute({ panelId, parentRoute, safeReturnRoute }) {
+  const savedKey = `nikas.${panelId}.return_route.v1`;
+  const params = new URLSearchParams(window.location.search);
+  const handoff = consumeNikasSourceHandoff();
+  let saved = null;
+  try {
+    saved = window.localStorage.getItem(savedKey);
+  } catch (_error) {
+    // Saved return routes are an optional convenience.
+  }
+  const candidates = [
+    ...params.getAll("return_to"),
+    ...params.getAll("from"),
+    handoff,
+    saved,
+    document.referrer,
+    parentRoute,
+    safeReturnRoute,
+  ];
+  const accepted = candidates.map(normalizeNikasBaseRoute).find(Boolean)
+    || NIKAS_BASE_ROUTES[0].entry;
+  try {
+    window.localStorage.setItem(savedKey, accepted);
+  } catch (_error) {
+    // The captured route remains stable for the mounted panel instance.
+  }
+  return accepted;
+}
+
+function rememberNikasSpecializedSourceRoute(destination) {
+  if (typeof destination !== "string" || !destination.startsWith("/")) return false;
+  const target = new URL(destination, window.location.origin);
+  const isSpecialized = target.origin === window.location.origin && NIKAS_SPECIALIZED_ROOTS.some(
+    (root) => target.pathname === root || target.pathname.startsWith(`${root}/`),
+  );
+  if (!isSpecialized) return false;
+  const sourceRoute = normalizeNikasBaseRoute(window.location.pathname);
+  if (!sourceRoute) return false;
+  try {
+    window.sessionStorage.setItem(NIKAS_SOURCE_ROUTE_KEY, sourceRoute);
+    window.sessionStorage.setItem(NIKAS_SOURCE_ROUTE_AT_KEY, String(Date.now()));
+    return true;
+  } catch (_error) {
+    try {
+      window.sessionStorage.removeItem(NIKAS_SOURCE_ROUTE_KEY);
+      window.sessionStorage.removeItem(NIKAS_SOURCE_ROUTE_AT_KEY);
+    } catch (_storageError) {
+      // Destination navigation remains available without storage.
+    }
+    return false;
+  }
+}
+
+function navigateNikasShell(path, { captureSource = false } = {}) {
+  if (typeof path !== "string" || !path.startsWith("/") || path.startsWith("//")) return false;
+  const target = new URL(path, window.location.origin);
+  if (target.origin !== window.location.origin) return false;
+  const destination = `${target.pathname}${target.search}${target.hash}`;
+  const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (current === destination) return true;
+  if (captureSource) rememberNikasSpecializedSourceRoute(destination);
+  window.history.pushState(null, "", destination);
+  window.dispatchEvent(new Event("location-changed"));
+  return true;
+}
+// END custom_components/keenetic_hero_4g/frontend/nikas-specialized-shell.js
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-panel.js
 (() => {
@@ -1188,7 +1515,7 @@ function openHomeAssistantMenuV045(target) {
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v050.js
 (() => {
 const CORE_COMPONENT_V050 = customElements.get("keenetic-hero-panel");
-const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.5";
+const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.6";
 
 function escV050(value) {
   return String(value ?? "")
@@ -1389,7 +1716,7 @@ if (CORE_COMPONENT_V050 && !CORE_COMPONENT_V050.prototype.__nikaOverviewV050) {
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v051.js
 (() => {
 const CORE_COMPONENT_V051 = customElements.get("keenetic-hero-panel");
-const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.5";
+const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.6";
 
 if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) {
   CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051 = true;
@@ -1449,7 +1776,7 @@ if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) 
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
 (() => {
-const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.5";
+const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.6";
 const CORE_COMPONENT_V052 = customElements.get("keenetic-hero-panel");
 
 if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV052) {
@@ -1477,8 +1804,8 @@ if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV0
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js
 (() => {
 const CORE_COMPONENT_V060 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.5";
-const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.5";
+const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.6";
+const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.6";
 
 function _v060CreateMetricCell(label, value, className = "") {
   const span = document.createElement("span");
@@ -1682,8 +2009,8 @@ if (CORE_COMPONENT_V060 && !CORE_COMPONENT_V060.prototype.__nikaLayeredHeroV060)
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v061.js
 (() => {
 const CORE_COMPONENT_V061 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.5";
-const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.5";
+const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.6";
+const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.6";
 
 function _v061LabelCard(kind, title, subtitle, icon) {
   const card = document.createElement("div");
@@ -1830,8 +2157,8 @@ if (CORE_COMPONENT_V061 && !CORE_COMPONENT_V061.prototype.__nikaAcceptedTopology
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v062.js
 (() => {
 const CORE_COMPONENT_V062 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=1.0.5";
-const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.5";
+const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=1.0.6";
+const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.6";
 
 function _v062EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -1962,8 +2289,8 @@ if (CORE_COMPONENT_V062 && !CORE_COMPONENT_V062.prototype.__nikaHeroCompositionV
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
 (() => {
 const CORE_COMPONENT_V063 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.5";
-const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.5";
+const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.6";
+const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.6";
 
 function _v063EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -2147,7 +2474,7 @@ if (CORE_COMPONENT_V063 && !CORE_COMPONENT_V063.prototype.__nikaTargetGeometryV0
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v064.js
 (() => {
 const CORE_COMPONENT_V064 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.5";
+const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.6";
 
 function _v064InstallRoom(root) {
   if (!root) return;
@@ -2550,8 +2877,8 @@ function preloadImagesV075(root) {
     image.decode?.().catch(() => {});
   });
   [
-    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.5",
-    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.5",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.6",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.6",
   ].forEach((url) => {
     const image = new Image();
     image.src = url;
@@ -2716,7 +3043,7 @@ if (CORE_COMPONENT_V075 && !CORE_COMPONENT_V075.prototype.__nikaStableDomV075) {
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js
 (() => {
-const K100_VERSION = "1.0.5";
+const K100_VERSION = "1.0.6";
 const K100_SCALE_MIN = 0.75;
 const K100_SCALE_MAX = 2;
 const K100_SCALE_SNAP_MIN = 0.97;
@@ -2728,7 +3055,6 @@ const K100_CLICK_GUARD = 460;
 const k100Clamp = (value,min,max)=>Math.min(max,Math.max(min,value));
 const k100Finite = (value,fallback)=>value!==null&&value!==""&&Number.isFinite(Number(value))?Number(value):fallback;
 const K100_CORE = customElements.get("keenetic-hero-panel");
-const K100_ALLOWED = ["/dashboard-house-v11/home", "/dashboard-actions/home", "/dashboard-infrastructure/overview"];
 const K100_TABS = [
   ["overview","mdi:view-dashboard-outline","Обзор"],
   ["wan","mdi:web","Каналы"],
@@ -2740,23 +3066,6 @@ const K100_VIEW_IDS = new Set([...K100_TABS.map(([view])=>view),"system"]);
 function k100ViewFromLocation(){const value=(location.hash||"").slice(1).toLowerCase();return K100_VIEW_IDS.has(value)?value:"overview";}
 
 function k100Esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
-function k100SafeRoute(v){
-  if(!v)return null;
-  try{const url=new URL(v,window.location.origin);if(url.origin!==window.location.origin)return null;const pathname=url.pathname;return K100_ALLOWED.some(p=>pathname===p||pathname.startsWith(`${p}/`))?`${url.pathname}${url.search}${url.hash}`:null;}catch{return null;}
-}
-function k100Return(panel){
-  const q=new URLSearchParams(location.search);
-  for(const key of ["return_to","from"]){const v=k100SafeRoute(q.get(key));if(v)return v;}
-  const once=sessionStorage.getItem("nikas.specialized.source_route.v1");
-  const onceAt=sessionStorage.getItem("nikas.specialized.source_route_at.v1");
-  if(once!==null||onceAt!==null){sessionStorage.removeItem("nikas.specialized.source_route.v1");sessionStorage.removeItem("nikas.specialized.source_route_at.v1");if(once!==null&&onceAt!==null){const handedOffAge=Date.now()-Number(onceAt);const v=k100SafeRoute(once);if(v&&Number.isFinite(handedOffAge)&&handedOffAge>=0&&handedOffAge<10*60*1000)return v;}}
-  const saved=k100SafeRoute(localStorage.getItem("nikas.keenetic.return_route.v1"));if(saved)return saved;
-  const ref=k100SafeRoute(document.referrer);if(ref)return ref;
-  const configured=k100SafeRoute(panel?.config?.parent_route);if(configured)return configured;
-  return "/dashboard-infrastructure/overview";
-}
-function k100Navigate(route){history.pushState(null,"",route);window.dispatchEvent(new Event("location-changed"));}
-
 function k100Reserve(panel,active){
   if(active==="lte")return ["reserve","mdi:check-circle","Работа через резерв","Основной Ethernet недоступен."];
   const role=active==="ethernet"?"lte":null;
@@ -2791,7 +3100,7 @@ function k100Overview(panel){
       <div class="k100-channel k100-lte ${channelState("lte",lte)}"><ha-icon icon="mdi:radio-tower"></ha-icon><div><strong>4G LTE</strong><span>${channelCaption("lte",lte)}</span></div></div>
       <div class="k100-channel k100-eth ${channelState("ethernet",eth)}"><ha-icon icon="mdi:ethernet"></ha-icon><div><strong>Кабель</strong><span>${channelCaption("ethernet",eth)}</span></div></div>
       <div class="k100-channel k100-lan active"><ha-icon icon="mdi:lan"></ha-icon><div><strong>LAN</strong><span>Локальная сеть</span></div></div>
-      <img class="k100-router" src="/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.5" alt="Keenetic Hero 4G+">
+      <img class="k100-router" src="/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.6" alt="Keenetic Hero 4G+">
     </article>
     <div class="k100-reserve ${reserve[0]}"><ha-icon icon="${reserve[1]}"></ha-icon><div><strong>${reserve[2]}</strong><span>${reserve[3]}</span></div></div>
     <article class="k100-active-card">
@@ -2821,7 +3130,7 @@ function k100InstallCore(){
 }
 function k100InstallStyles(root){if(!root||root.querySelector("style[data-k100]"))return;const s=document.createElement("style");s.dataset.k100="1";s.textContent=`
 :host{height:100%!important;min-height:100%!important}.shell{height:100%!important;min-height:100%!important;display:flex!important;flex-direction:column!important}.shell>main{display:flex!important;flex:1 1 auto;min-height:0!important}.v075-view-slot{width:100%;min-height:100%!important;flex:1 0 auto}
-.k100-overview{display:grid;grid-template-rows:minmax(430px,1fr) auto auto auto;gap:8px;padding:8px 10px 12px;min-height:100%}.k100-hero{position:relative;height:auto;min-height:430px;border:1px solid var(--divider-color);border-radius:24px;overflow:hidden;background:url('/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.5') center/cover no-repeat;box-shadow:0 8px 26px rgba(23,45,76,.08)}
+.k100-overview{display:grid;grid-template-rows:minmax(430px,1fr) auto auto auto;gap:8px;padding:8px 10px 12px;min-height:100%}.k100-hero{position:relative;height:auto;min-height:430px;border:1px solid var(--divider-color);border-radius:24px;overflow:hidden;background:url('/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.6') center/cover no-repeat;box-shadow:0 8px 26px rgba(23,45,76,.08)}
 .k100-copy{position:absolute;z-index:8;left:16px;top:14px;max-width:48%}.k100-copy h1{margin:0 0 3px;font-size:25px;line-height:1.04}.k100-copy p{margin:0;font-size:14px;font-weight:650;color:var(--secondary-text-color)}
 .k100-indicator{position:absolute;z-index:9;right:14px;top:14px;width:174px;padding:11px 14px;border:1px solid;border-radius:18px;background:var(--card-background-color)}.k100-indicator strong,.k100-indicator span{display:block}.k100-indicator strong{font-size:16px}.k100-indicator span{margin-top:6px;font-size:13px;font-weight:600;color:var(--secondary-text-color)}.k100-indicator i,.k100-active-head i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;background:currentColor}.k100-indicator.ok{color:#2fb878;border-color:#9ce4c5;background:rgba(232,249,241,.94)}.k100-indicator.warn{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.94)}.k100-indicator.bad{color:#d95d63;border-color:#efb8ba;background:rgba(255,238,239,.94)}
 .k100-router{position:absolute;z-index:6;left:50%;top:61%;transform:translate(-50%,-50%);width:42%;max-width:290px;filter:drop-shadow(0 10px 9px rgba(65,45,30,.18));pointer-events:none}.k100-channel{position:absolute;z-index:8;display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid transparent;border-radius:18px;background:rgba(255,255,255,.94);box-shadow:0 6px 16px rgba(23,45,76,.08);min-width:145px}.k100-channel ha-icon{--mdc-icon-size:28px}.k100-channel strong,.k100-channel span{display:block}.k100-channel strong{font-size:15px}.k100-channel span{font-size:12px;margin-top:3px;color:var(--secondary-text-color)}.k100-channel.active{color:#279f69;border-color:#9fe4c8;background:rgba(232,249,241,.95)}.k100-channel.standby{color:#168fbd;border-color:#a7dced;background:rgba(235,247,252,.95)}.k100-channel.down{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.95)}.k100-channel.unknown{color:#69757f;border-color:#cdd3d8;background:rgba(248,249,250,.95)}.k100-lte{left:50%;top:31%;transform:translate(-50%,-50%)}.k100-eth{left:3%;top:58%}.k100-lan{right:3%;top:58%}
@@ -2833,7 +3142,7 @@ function k100InstallStyles(root){if(!root||root.querySelector("style[data-k100]"
 
 class KeeneticHeroAppPanelV100 extends HTMLElement{
   constructor(){super();this.attachShadow({mode:"open"});this._hass=null;this._panel=null;this._route=null;this._child=null;this._view=k100ViewFromLocation();this._zoom={scale:1,x:0,y:0};this._zoomSession=null;this._lastTwoFingerTap=0;this._suppressClicksUntil=0;this._returnRoute=null;this._sentPanel=null;this._sentRoute=null;this._sentHass=null;this._hashHandler=()=>{const view=k100ViewFromLocation();if(view!==this._view)this._setView(view,false);};}
-  set hass(v){this._hass=v;this._mount();this._syncChild();} set panel(v){this._panel=v;if(!this._returnRoute){this._returnRoute=k100Return(v);localStorage.setItem("nikas.keenetic.return_route.v1",this._returnRoute);}this._mount();this._syncChild();} set route(v){this._route=v;this._mount();this._syncChild();}
+  set hass(v){this._hass=v;this._mount();this._syncChild();} set panel(v){this._panel=v;if(!this._returnRoute)this._returnRoute=captureNikasShellReturnRoute({panelId:"keenetic",parentRoute:v?.config?.parent_route,safeReturnRoute:"/dashboard-infrastructure/overview"});this._mount();this._syncChild();} set route(v){this._route=v;this._mount();this._syncChild();}
   connectedCallback(){this._mount();this._bind();this._bindScrollBoundaryGuard();window.addEventListener("hashchange",this._hashHandler);}
   disconnectedCallback(){this._unbind();this._unbindScrollBoundaryGuard();window.removeEventListener("hashchange",this._hashHandler);}
 
@@ -2903,32 +3212,19 @@ class KeeneticHeroAppPanelV100 extends HTMLElement{
   }
 
   _bindScrollBoundaryGuard(){
-    if(this._scrollGuardBound)return;
-    const work=this.shadowRoot.getElementById("k100-work");if(!work)return;
-    this._scrollGuardBound=true;this._scrollTouchY=null;
-    this._scrollStart=e=>{if(this._zoom.scale<=1&&e.touches?.length===1)this._scrollTouchY=e.touches[0].clientY;else this._scrollTouchY=null;};
-    this._scrollMove=e=>{if(this._zoom.scale>1||e.touches?.length!==1||this._scrollTouchY===null)return;const y=e.touches[0].clientY;const dy=y-this._scrollTouchY;const atTop=work.scrollTop<=0;const atBottom=work.scrollTop+work.clientHeight>=work.scrollHeight-1;if((atTop&&dy>0)||(atBottom&&dy<0)){e.preventDefault();e.stopPropagation();}this._scrollTouchY=y;};
-    this._scrollEnd=()=>{this._scrollTouchY=null;};
-    work.addEventListener("touchstart",this._scrollStart,{passive:true});work.addEventListener("touchmove",this._scrollMove,{passive:false});work.addEventListener("touchend",this._scrollEnd,{passive:true});work.addEventListener("touchcancel",this._scrollEnd,{passive:true});
+    if(this._scrollGuardCleanup)return;
+    const viewport=this.shadowRoot.getElementById("k100-work");if(!viewport)return;
+    this._scrollGuardCleanup=createNikasShellScrollBoundaryGuard({host:this,viewport});
   }
-  _unbindScrollBoundaryGuard(){const work=this.shadowRoot.getElementById("k100-work");if(work&&this._scrollGuardBound){work.removeEventListener("touchstart",this._scrollStart);work.removeEventListener("touchmove",this._scrollMove);work.removeEventListener("touchend",this._scrollEnd);work.removeEventListener("touchcancel",this._scrollEnd);}this._scrollGuardBound=false;this._scrollTouchY=null;}
+  _unbindScrollBoundaryGuard(){this._scrollGuardCleanup?.();this._scrollGuardCleanup=null;}
 
-  _mount(){if(!this.shadowRoot.getElementById("k100-shell")){this.shadowRoot.innerHTML=`<style data-k100-shell-v104>
-:host{--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px);display:block;position:relative;width:100%;height:100vh;height:100dvh;min-height:0;max-height:100dvh;overflow:hidden;overscroll-behavior:none;background:var(--primary-background-color);color:var(--primary-text-color);font-family:var(--ha-font-family-body,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)}
-*{box-sizing:border-box}button{font:inherit;-webkit-tap-highlight-color:transparent}
-#k100-shell{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;width:100%;height:100%;min-height:0;max-height:100%;overflow:hidden;overscroll-behavior:none}
-.k100-header{z-index:60;display:grid;grid-template-columns:52px minmax(0,1fr) 52px;align-items:center;gap:8px;min-height:calc(62px + var(--safe-top));padding:var(--safe-top) max(12px,var(--safe-right)) 0 max(12px,var(--safe-left));touch-action:none;overscroll-behavior:none;background:color-mix(in srgb,var(--primary-background-color) 97%,transparent);border-bottom:1px solid color-mix(in srgb,var(--divider-color) 70%,transparent);backdrop-filter:blur(18px) saturate(130%);-webkit-backdrop-filter:blur(18px) saturate(130%)}
-.k100-side{justify-self:center;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid color-mix(in srgb,var(--divider-color) 72%,transparent);border-radius:16px;background:var(--card-background-color);box-shadow:0 7px 20px rgba(23,45,76,.08);color:var(--primary-text-color);-webkit-appearance:none;appearance:none}.k100-side ha-icon{--mdc-icon-size:25px}.k100-refresh{color:var(--primary-color)}
-.k100-title{color:var(--primary-text-color);justify-self:center;min-width:min(290px,100%);max-width:100%;min-height:44px;padding:5px 14px;border:1px solid color-mix(in srgb,var(--primary-color,#03a9d9) 24%,var(--divider-color,#dfe3e8));border-radius:16px;background:color-mix(in srgb,var(--primary-color,#03a9d9) 5%,var(--card-background-color,#fff));box-shadow:0 5px 16px rgba(23,45,76,.06);text-align:center;cursor:pointer;-webkit-appearance:none;appearance:none}.k100-title strong,.k100-title small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.k100-title strong{font-size:23px;font-weight:800;line-height:1.08}.k100-title small{margin-top:2px;color:var(--secondary-text-color);font-size:14px;font-weight:560}.k100-title:focus-visible{outline:2px solid var(--primary-color,#03a9d9);outline-offset:2px}.k100-title:active{transform:scale(.985);background:color-mix(in srgb,var(--primary-color,#03a9d9) 13%,var(--card-background-color,#fff));border-color:color-mix(in srgb,var(--primary-color,#03a9d9) 42%,var(--divider-color,#dfe3e8));box-shadow:0 2px 7px rgba(23,45,76,.05)}
-.k100-work{position:relative;min-width:0;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior-x:none;overscroll-behavior-y:none;touch-action:pan-y;-webkit-overflow-scrolling:touch}.k100-work.zoomed{overflow:hidden;overscroll-behavior:none;touch-action:none;user-select:none;-webkit-user-select:none}.k100-stage{position:relative;display:flex;width:100%;min-height:100%;transform-origin:0 0;will-change:transform}.k100-work.zoomed .k100-stage{position:absolute;left:0;top:0}.k100-stage>keenetic-hero-panel{display:block;width:100%;height:100%;min-height:100%;flex:1 0 100%}
-.k100-tabs{z-index:70;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;padding:6px max(6px,var(--safe-right)) calc(6px + var(--safe-bottom)) max(6px,var(--safe-left));touch-action:none;overscroll-behavior:none;background:var(--card-background-color);border-top:1px solid var(--divider-color);box-shadow:0 -4px 18px rgba(23,45,76,.08)}.k100-tabs button{display:grid;place-items:center;align-content:center;gap:3px;min-height:52px;padding:0;border:0;border-radius:16px;background:transparent;color:var(--secondary-text-color)}.k100-tabs button.active{color:var(--primary-color);background:color-mix(in srgb,var(--primary-color) 11%,transparent)}.k100-tabs ha-icon{--mdc-icon-size:28px}.k100-tabs span{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.k100-scale-status{position:absolute;z-index:90;left:50%;bottom:calc(76px + var(--safe-bottom));transform:translate(-50%,10px);opacity:0;pointer-events:none;padding:9px 14px;border-radius:999px;background:rgba(20,27,34,.88);color:#fff;font-size:13px;font-weight:720;white-space:nowrap;transition:opacity .14s ease,transform .14s ease}.k100-scale-status.visible{opacity:1;transform:translate(-50%,0)}
-@media(max-width:520px){.k100-title{min-width:0;width:100%;padding-inline:8px}.k100-title strong{font-size:21px}.k100-title small{font-size:13px}}
-@media(max-width:390px){.k100-header{grid-template-columns:48px minmax(0,1fr) 48px;min-height:calc(60px + var(--safe-top))}}
+  _mount(){if(!this.shadowRoot.getElementById("k100-shell")){this.shadowRoot.innerHTML=`<style data-k100-shell-v106>${nikasShellV2Styles()}
+.k100-stage{position:relative;display:flex;will-change:transform}.k100-work.zoomed .k100-stage{position:absolute;inset-inline-start:0;inset-block-start:0}.k100-stage>keenetic-hero-panel{display:block;inline-size:100%;block-size:100%;min-block-size:100%;flex:1 0 100%}
+.k100-scale-status{position:absolute;z-index:90;inset-inline-start:50%;inset-block-end:calc(76px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);opacity:0;pointer-events:none;padding:9px 14px;border-radius:999px;background:rgba(20,27,34,.88);color:#fff;font-size:13px;font-weight:720;white-space:nowrap;transition:opacity .14s ease,transform .14s ease}.k100-scale-status.visible{opacity:1;transform:translate(-50%,0)}
 @media(prefers-reduced-motion:reduce){.k100-scale-status{transition:none}}
-</style><div id="k100-shell"><header class="k100-header"><button id="k100-menu" class="k100-side" type="button" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button><button id="k100-title" class="k100-title" type="button" aria-label="Вернуться в исходную базовую панель NikaS"><strong>Keenetic Hero 4G+</strong><small>UI v1.0.5</small></button><button id="k100-refresh" class="k100-side k100-refresh" type="button" aria-label="Обновить"><ha-icon icon="mdi:refresh"></ha-icon></button></header><main id="k100-work" class="k100-work" aria-label="Рабочая область панели Keenetic"><div id="k100-stage" class="k100-stage"></div></main><nav id="k100-tabs" class="k100-tabs"></nav><div id="k100-scale-status" class="k100-scale-status" role="status" aria-live="polite">Масштаб 100%</div></div>`;
+</style><div id="k100-shell" class="nikas-shell"><header class="k100-header nikas-shell__header"><button id="k100-menu" class="k100-side nikas-shell__side-action" type="button" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button><button id="k100-title" class="k100-title nikas-shell__title" type="button" aria-label="Вернуться в исходную базовую панель NikaS"><strong>Keenetic Hero 4G+</strong><small>UI v1.0.6</small></button><button id="k100-refresh" class="k100-side k100-refresh nikas-shell__side-action nikas-shell__side-action--right" type="button" aria-label="Обновить"><ha-icon icon="mdi:refresh"></ha-icon></button></header><main id="k100-work" class="k100-work nikas-shell__viewport" aria-label="Рабочая область панели Keenetic"><div id="k100-stage" class="k100-stage nikas-shell__canvas nikas-shell__content"></div></main><nav id="k100-tabs" class="k100-tabs nikas-shell__tabs" style="--nikas-shell-tab-count:5" aria-label="Основные разделы"></nav><div id="k100-scale-status" class="k100-scale-status" role="status" aria-live="polite">Масштаб 100%</div></div>`;
       this.shadowRoot.getElementById("k100-menu").onclick=e=>e.currentTarget.dispatchEvent(new CustomEvent("hass-toggle-menu",{bubbles:true,composed:true}));
-      this.shadowRoot.getElementById("k100-title").onclick=()=>k100Navigate(this._returnRoute||"/dashboard-infrastructure/overview");
+      this.shadowRoot.getElementById("k100-title").onclick=()=>navigateNikasShell(this._returnRoute||"/dashboard-infrastructure/overview");
       this.shadowRoot.getElementById("k100-refresh").onclick=()=>this._child?._loadBootstrap?.(false);
       this._renderTabs();
     }
@@ -2936,7 +3232,7 @@ class KeeneticHeroAppPanelV100 extends HTMLElement{
   }
   _mountChild(){const stage=this.shadowRoot.getElementById("k100-stage");if(!this.isConnected||!stage)return;if(!this._child){this._child=document.createElement("keenetic-hero-panel");this._child.addEventListener("keenetic-view-request",event=>{const view=event.detail?.view;if(!K100_VIEW_IDS.has(view))return;event.preventDefault();this._setView(view);});stage.append(this._child);}this._syncChild();}
   _syncChild(){if(!this._child)return;if(this._panel&&this._sentPanel!==this._panel){this._child.panel=this._panel;this._sentPanel=this._panel;}if(this._route&&this._sentRoute!==this._route){this._child.route=this._route;this._sentRoute=this._route;}if(this._child._view!==this._view)this._child._view=this._view;if(this._hass&&this._sentHass!==this._hass){this._child.hass=this._hass;this._sentHass=this._hass;}}
-  _renderTabs(){const nav=this.shadowRoot.getElementById("k100-tabs");if(!nav)return;if(nav.dataset.mounted!=="true"){for(const[v,icon,label]of K100_TABS){const button=document.createElement("button");button.dataset.view=v;button.type="button";const glyph=document.createElement("ha-icon");glyph.setAttribute("icon",icon);const text=document.createElement("span");text.textContent=label;button.append(glyph,text);button.addEventListener("click",()=>this._setView(v));nav.append(button);}nav.dataset.mounted="true";}this._updateTabs();}
+  _renderTabs(){const nav=this.shadowRoot.getElementById("k100-tabs");if(!nav)return;if(nav.dataset.mounted!=="true"){for(const[v,icon,label]of K100_TABS){const button=document.createElement("button");button.className="nikas-shell__tab";button.dataset.view=v;button.type="button";const glyph=document.createElement("ha-icon");glyph.setAttribute("icon",icon);const text=document.createElement("small");text.textContent=label;button.append(glyph,text);button.addEventListener("click",()=>this._setView(v));nav.append(button);}nav.dataset.mounted="true";}this._updateTabs();}
   _updateTabs(){this.shadowRoot.querySelectorAll("#k100-tabs button").forEach(button=>{const active=button.dataset.view===this._view||(this._view==="system"&&button.dataset.view==="diagnostics");button.classList.toggle("active",active);if(active)button.setAttribute("aria-current","page");else button.removeAttribute("aria-current");});}
   _setView(v,updateLocation=true){if(!K100_VIEW_IDS.has(v))return;this._view=v;if(updateLocation)history.replaceState(null,"",`${location.pathname}${location.search}#${v}`);this._mountChild();if(this._child){this._child._view=v;this._child._showStableViewV075?.(v);this._child._scheduleRender?.();this._child._loadViewData?.();}this._resetZoomPosition();this._updateTabs();}
   _bind(){

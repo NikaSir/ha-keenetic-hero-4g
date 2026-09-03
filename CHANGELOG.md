@@ -1,5 +1,12 @@
 # Changelog
 
+## Integration v1.0.0-b059 / UI v1.0.6 — 2026-09-03
+
+- Migrates the Keenetic panel to NikaS Specialized Panel UI Standard v2.2, Navigation Contract v1.2 and host-bound Shell v2.1.
+- Vendors the canonical shell source kit into the autonomous bundle and binds the three-row layout to the Home Assistant panel host instead of viewport units.
+- Adds the capture-phase non-passive host boundary guard, canonical 60/64 px rows, 52 px title plaque, 26 px Bottom Tab Bar icons and 12/16/24 px responsive content gutters.
+- Adds canonical House v13 and Rooms v11 return routes with a 30-second one-shot hand-off while preserving the approved read-only network logic, KN-2311 artwork and channel-state fills unchanged.
+
 ## Integration v1.0.0-b058 — 2026-09-02
 
 - Prefixes the Home Assistant and HACS integration name with `NikaS`.
