@@ -40,7 +40,7 @@ class FixedChromeV089Tests(unittest.TestCase):
         self.assertEqual(self.manifest["panel_version"], "1.0.7")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
         integration_manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual(integration_manifest["version"], "1.0.0-b060")
+        self.assertEqual(integration_manifest["version"], "1.0.0-b061")
 
 
 if __name__ == "__main__":

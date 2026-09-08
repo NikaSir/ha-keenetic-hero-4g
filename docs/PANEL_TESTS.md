@@ -4,7 +4,7 @@ Panel: Keenetic Hero 4G+
 
 Panel metadata version: 1.0.7
 
-Integration build: 1.0.0-b060
+Integration build: 1.0.0-b061
 
 Standard: NikaS Specialized Panel UI Standard v2.2 + NikaS Panel Navigation and Return Contract v1.2 + Shell v2.1
 
@@ -91,4 +91,4 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## Release gate
 
-Build b060 is a viewport-validation candidate. It is accepted only after the v2.2 standard, v1.2 navigation, Shell v2.1 boundary harness and production-bundle checks pass together with return tests from all four base panels and the complete viewport matrix. Repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the approved line-free KN-2311 Cable/LTE/LAN composition must also pass on the real iPhone Pro Max / KN-2311 environment.
+Build b061 is a viewport-validation candidate. It is accepted only after the v2.2 standard, v1.2 navigation, Shell v2.1 boundary harness and production-bundle checks pass together with return tests from all four base panels and the complete viewport matrix. Repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the approved line-free KN-2311 Cable/LTE/LAN composition must also pass on the real iPhone Pro Max / KN-2311 environment.
