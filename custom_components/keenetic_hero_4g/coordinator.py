@@ -16,7 +16,13 @@ from .api import KeeneticError, KeeneticRCIClient
 from .const import DIAGNOSTIC_INTERVAL, DOMAIN, ETHERNET_INTERFACE, LTE_INTERFACE, PING_HOST
 from .traffic import rci_error_message
 from .traffic_accounting import update_accounting
-from .wan import WAN_ETHERNET, WAN_LTE, connected, determine_active_wan, switch_reason
+from .wan import (
+    WAN_ETHERNET,
+    WAN_LTE,
+    connected,
+    determine_active_wan,
+    update_failover_tracking,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,11 +58,13 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._state_loaded = False
         self._tracking: dict[str, Any] = {
             "date": None,
-            "active_wan": None,
+            "last_known_wan": None,
+            "interval_wan": None,
             "last_switch": None,
             "last_switch_reason": None,
             "switches_today": 0,
             "lte_seconds_today": 0.0,
+            "unknown_seconds_today": 0.0,
             "traffic": None,
         }
         self._last_poll_monotonic: float | None = None
@@ -78,43 +86,25 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         lte_stats: dict[str, Any],
     ) -> None:
         now = dt_util.now()
-        today = now.date().isoformat()
         monotonic_now = time.monotonic()
-
-        if self._tracking.get("date") != today:
-            self._tracking["date"] = today
-            self._tracking["switches_today"] = 0
-            self._tracking["lte_seconds_today"] = 0.0
-
-        previous_wan = self._tracking.get("active_wan")
-
-        if self._last_poll_monotonic is not None and previous_wan == WAN_LTE:
+        elapsed: float | None = None
+        if self._last_poll_monotonic is not None:
             elapsed = monotonic_now - self._last_poll_monotonic
             base_interval = (
                 self.update_interval.total_seconds() if self.update_interval else 30.0
             )
             max_reasonable = max(90.0, base_interval * 2.5)
-            if 0 <= elapsed <= max_reasonable:
-                self._tracking["lte_seconds_today"] = float(
-                    self._tracking.get("lte_seconds_today", 0.0)
-                ) + elapsed
+            if elapsed < 0 or elapsed > max_reasonable:
+                elapsed = None
 
-        if (
-            not self._first_runtime_update
-            and active_wan in {WAN_ETHERNET, WAN_LTE}
-            and previous_wan in {WAN_ETHERNET, WAN_LTE}
-            and active_wan != previous_wan
-        ):
-            self._tracking["switches_today"] = int(
-                self._tracking.get("switches_today", 0)
-            ) + 1
-            self._tracking["last_switch"] = now.isoformat()
-            self._tracking["last_switch_reason"] = switch_reason(
-                previous_wan, active_wan, ethernet
-            )
-
-        if active_wan in {WAN_ETHERNET, WAN_LTE}:
-            self._tracking["active_wan"] = active_wan
+        self._tracking = update_failover_tracking(
+            self._tracking,
+            active_wan,
+            ethernet,
+            now,
+            elapsed,
+            first_runtime_update=self._first_runtime_update,
+        )
 
         # Keep long-period traffic independent from raw interface-counter
         # baselines. The accounting engine persists deltas and survives a raw
@@ -238,11 +228,15 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "diagnostics": self._diagnostics,
             "traffic_accounting": self._tracking.get("traffic") or {},
             "failover": {
+                "last_known_wan": self._tracking.get("last_known_wan"),
                 "last_switch": self._tracking.get("last_switch"),
                 "last_switch_reason": self._tracking.get("last_switch_reason"),
                 "switches_today": int(self._tracking.get("switches_today", 0)),
                 "lte_seconds_today": float(
                     self._tracking.get("lte_seconds_today", 0.0)
+                ),
+                "unknown_seconds_today": float(
+                    self._tracking.get("unknown_seconds_today", 0.0)
                 ),
             },
         }

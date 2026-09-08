@@ -1,5 +1,12 @@
 # Changelog
 
+## Integration v1.0.0-b061 / UI v1.0.7 — 2026-09-08
+
+- Determines the active WAN from factual route evidence without treating a link state alone as route selection.
+- Ignores stale default and public host routes that point to an explicitly down interface.
+- Separates last-known WAN history from the current accounting interval so unknown gaps no longer inflate LTE time.
+- Tracks unknown intervals independently and attributes only the new-day portion when a polling interval crosses midnight.
+
 ## Integration v1.0.0-b060 / UI v1.0.7 — 2026-09-03
 
 - Removes the inherited inner-shell and Overview page padding so the canonical Shell v2.1 canvas is the only owner of the content gutters.
