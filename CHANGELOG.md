@@ -1,5 +1,10 @@
 # Changelog
 
+## Integration 1.0.0-b064 / UI 1.0.10 — 2026-09-13
+
+- Main panel title now opens `/home/overview` regardless of opening source, query parameters, stored return routes, or referrer.
+- Adopt Navigation Contract v1.3 and refresh the autonomous frontend cache version.
+
 ## Integration v1.0.0-b063 / UI v1.0.9 — 2026-09-13
 
 - Aligned the overview connection plaque with NikaS UI Standard v2.2: exact 168 × 58 px geometry, fixed 13 px anchor and single-line labels.

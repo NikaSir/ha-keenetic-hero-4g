@@ -11,7 +11,7 @@ FRONTEND = ROOT / "custom_components" / "keenetic_hero_4g" / "frontend"
 OUTPUT = FRONTEND / "keenetic-panel-bundle.js"
 CSS_SOURCE = FRONTEND / "keenetic-panel.css"
 SHELL_SOURCE = FRONTEND / "nikas-specialized-shell.js"
-SHELL_SHA256 = "c7171560b68e2c4118b327c5e6a63c65e3410a4e1f10a02691e0d15560166e65"
+SHELL_SHA256 = "b7dbb84bb2f950fce75591266d6de7dbff824f4d480f455f0b8cbb0866a1c176"
 SOURCES = [
     FRONTEND / "keenetic-panel.js",
     FRONTEND / "keenetic-overview-v040.js",
@@ -34,7 +34,7 @@ SOURCES = [
 RUNTIME_IMPORT_RE = re.compile(r"^\s*(?:await\s+)?import(?:\s*\(\s*)?\s*[\"']\./[^\"']+[\"']\s*\)?\s*;?\s*$", re.MULTILINE)
 LEGACY_INLINE_HERO_RE = re.compile(r'const KEENETIC_ROOM_V050 = "data:image/webp;base64,[^"]+";')
 ASSET_QUERY_RE = re.compile(r"(/keenetic_hero_4g_static/assets/[A-Za-z0-9._-]+(?:webp|svg))\?v=[0-9.]+")
-PANEL_VERSION = "1.0.9"
+PANEL_VERSION = "1.0.10"
 HERO_ASSET_URL = f"/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v={PANEL_VERSION}"
 CSS_LINK = '<link rel="stylesheet" href="/keenetic_hero_4g_static/keenetic-panel.css?v=${encodeURIComponent(PANEL_VERSION)}">'
 
@@ -94,7 +94,7 @@ def _embed_shell(path: Path) -> str:
 def build() -> str:
     parts = [
         "// GENERATED FILE. DO NOT EDIT DIRECTLY.",
-        "// Keenetic Hero 4G+ autonomous UI 1.0.9 production bundle.",
+        "// Keenetic Hero 4G+ autonomous UI 1.0.10 production bundle.",
         "// One active shell: keenetic-hero-app-panel-v100.",
         "",
         _embed_shell(SHELL_SOURCE),

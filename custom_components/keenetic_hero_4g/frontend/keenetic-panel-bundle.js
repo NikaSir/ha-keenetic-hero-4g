@@ -1,5 +1,5 @@
 // GENERATED FILE. DO NOT EDIT DIRECTLY.
-// Keenetic Hero 4G+ autonomous UI 1.0.9 production bundle.
+// Keenetic Hero 4G+ autonomous UI 1.0.10 production bundle.
 // One active shell: keenetic-hero-app-panel-v100.
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/nikas-specialized-shell.js
@@ -15,6 +15,7 @@ const NIKAS_SOURCE_ROUTE_MAX_AGE_MS = 30_000;
 const NIKAS_SHELL_BOUNDARY_THRESHOLD_PX = 4;
 
 const NIKAS_BASE_ROUTES = Object.freeze([
+  Object.freeze({ root: "/home", entry: "/home/overview" }),
   Object.freeze({ root: "/dashboard-house-v13", entry: "/dashboard-house-v13/home" }),
   Object.freeze({ root: "/dashboard-rooms-v11", entry: "/dashboard-rooms-v11/rooms" }),
   Object.freeze({ root: "/dashboard-actions", entry: "/dashboard-actions/home" }),
@@ -262,33 +263,19 @@ function consumeNikasSourceHandoff(now = Date.now()) {
   return normalizeNikasBaseRoute(route);
 }
 
-function captureNikasShellReturnRoute({ panelId, parentRoute, safeReturnRoute }) {
-  const savedKey = `nikas.${panelId}.return_route.v1`;
-  const params = new URLSearchParams(window.location.search);
-  const handoff = consumeNikasSourceHandoff();
-  let saved = null;
+// Navigation contract v1.3: the declared hierarchy is the only authority.
+function captureNikasShellReturnRoute({ parentRoute } = {}) {
+  const overview = "/home/overview";
+  if (typeof parentRoute !== "string" || !parentRoute.startsWith("/")
+      || parentRoute.startsWith("//")) return overview;
   try {
-    saved = window.localStorage.getItem(savedKey);
+    const parent = new URL(parentRoute, window.location.origin);
+    if (parent.origin !== window.location.origin || parent.search || parent.hash
+        || parent.pathname === window.location.pathname) return overview;
+    return parent.pathname;
   } catch (_error) {
-    // Saved return routes are an optional convenience.
+    return overview;
   }
-  const candidates = [
-    ...params.getAll("return_to"),
-    ...params.getAll("from"),
-    handoff,
-    saved,
-    document.referrer,
-    parentRoute,
-    safeReturnRoute,
-  ];
-  const accepted = candidates.map(normalizeNikasBaseRoute).find(Boolean)
-    || NIKAS_BASE_ROUTES[0].entry;
-  try {
-    window.localStorage.setItem(savedKey, accepted);
-  } catch (_error) {
-    // The captured route remains stable for the mounted panel instance.
-  }
-  return accepted;
 }
 
 function rememberNikasSpecializedSourceRoute(destination) {
@@ -1515,7 +1502,7 @@ function openHomeAssistantMenuV045(target) {
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v050.js
 (() => {
 const CORE_COMPONENT_V050 = customElements.get("keenetic-hero-panel");
-const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.9";
+const KEENETIC_ROOM_V050 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.10";
 
 function escV050(value) {
   return String(value ?? "")
@@ -1716,7 +1703,7 @@ if (CORE_COMPONENT_V050 && !CORE_COMPONENT_V050.prototype.__nikaOverviewV050) {
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v051.js
 (() => {
 const CORE_COMPONENT_V051 = customElements.get("keenetic-hero-panel");
-const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.9";
+const HERO_ASSET_V051 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.10";
 
 if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) {
   CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051 = true;
@@ -1776,7 +1763,7 @@ if (CORE_COMPONENT_V051 && !CORE_COMPONENT_V051.prototype.__nikaStaticHeroV051) 
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v052.js
 (() => {
-const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.9";
+const HERO_ASSET_V052 = "/keenetic_hero_4g_static/assets/keenetic-room-v052.webp?v=1.0.10";
 const CORE_COMPONENT_V052 = customElements.get("keenetic-hero-panel");
 
 if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV052) {
@@ -1804,8 +1791,8 @@ if (CORE_COMPONENT_V052 && !CORE_COMPONENT_V052.prototype.__nikaAssetsStandardV0
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v060.js
 (() => {
 const CORE_COMPONENT_V060 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.9";
-const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.9";
+const ROOM_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.10";
+const ROUTER_ASSET_V060 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.10";
 
 function _v060CreateMetricCell(label, value, className = "") {
   const span = document.createElement("span");
@@ -2009,8 +1996,8 @@ if (CORE_COMPONENT_V060 && !CORE_COMPONENT_V060.prototype.__nikaLayeredHeroV060)
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v061.js
 (() => {
 const CORE_COMPONENT_V061 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.9";
-const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.9";
+const ROOM_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.10";
+const ROUTER_ASSET_V061 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.10";
 
 function _v061LabelCard(kind, title, subtitle, icon) {
   const card = document.createElement("div");
@@ -2157,8 +2144,8 @@ if (CORE_COMPONENT_V061 && !CORE_COMPONENT_V061.prototype.__nikaAcceptedTopology
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v062.js
 (() => {
 const CORE_COMPONENT_V062 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=1.0.9";
-const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.9";
+const ROOM_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v062.svg?v=1.0.10";
+const ROUTER_ASSET_V062 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v060.svg?v=1.0.10";
 
 function _v062EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -2289,8 +2276,8 @@ if (CORE_COMPONENT_V062 && !CORE_COMPONENT_V062.prototype.__nikaHeroCompositionV
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v063.js
 (() => {
 const CORE_COMPONENT_V063 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.9";
-const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.9";
+const ROOM_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v060.svg?v=1.0.10";
+const ROUTER_ASSET_V063 = "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.10";
 
 function _v063EnhanceScene(root) {
   const scene = root.querySelector(".v050-scene");
@@ -2474,7 +2461,7 @@ if (CORE_COMPONENT_V063 && !CORE_COMPONENT_V063.prototype.__nikaTargetGeometryV0
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v064.js
 (() => {
 const CORE_COMPONENT_V064 = customElements.get("keenetic-hero-panel");
-const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.9";
+const ROOM_ASSET_V064 = "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.10";
 
 function _v064InstallRoom(root) {
   if (!root) return;
@@ -2877,8 +2864,8 @@ function preloadImagesV075(root) {
     image.decode?.().catch(() => {});
   });
   [
-    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.9",
-    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.9",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.10",
+    "/keenetic_hero_4g_static/assets/keenetic-hero-router-v063.webp?v=1.0.10",
   ].forEach((url) => {
     const image = new Image();
     image.src = url;
@@ -3043,7 +3030,7 @@ if (CORE_COMPONENT_V075 && !CORE_COMPONENT_V075.prototype.__nikaStableDomV075) {
 
 // BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js
 (() => {
-const K100_VERSION = "1.0.9";
+const K100_VERSION = "1.0.10";
 const K100_SCALE_MIN = 0.75;
 const K100_SCALE_MAX = 2;
 const K100_SCALE_SNAP_MIN = 0.97;
@@ -3102,7 +3089,7 @@ function k100Overview(panel){
         <div class="k100-channel k100-lte ${channelState("lte",lte)}"><ha-icon icon="mdi:radio-tower"></ha-icon><div><strong>4G LTE</strong><span>${channelCaption("lte",lte)}</span></div></div>
         <div class="k100-channel k100-eth ${channelState("ethernet",eth)}"><ha-icon icon="mdi:ethernet"></ha-icon><div><strong>Кабель</strong><span>${channelCaption("ethernet",eth)}</span></div></div>
         <div class="k100-channel k100-lan active"><ha-icon icon="mdi:lan"></ha-icon><div><strong>LAN</strong><span>Локальная сеть</span></div></div>
-        <img class="k100-router" src="/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.9" alt="Keenetic Hero 4G+">
+        <img class="k100-router" src="/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.10" alt="Keenetic Hero 4G+">
       </div>
     </article>
     <div class="k100-reserve ${reserve[0]}"><ha-icon icon="${reserve[1]}"></ha-icon><div><strong>${reserve[2]}</strong><span>${reserve[3]}</span></div></div>
@@ -3136,7 +3123,7 @@ function k100InstallStyles(root){if(!root||root.querySelector("style[data-k100]"
 .k100-overview{display:grid;grid-template-rows:minmax(430px,1fr) auto auto auto;gap:8px;padding:0;min-height:100%}.k100-hero{position:relative;min-height:430px;border:1px solid var(--divider-color);border-radius:24px;isolation:isolate;container:k100-hero / inline-size;background:color-mix(in srgb,var(--card-background-color) 95%,var(--primary-color) 5%);box-shadow:0 8px 26px rgba(23,45,76,.08)}
 .k100-hero-decoration{position:absolute;inset:0;z-index:0;border-radius:inherit;overflow:hidden;pointer-events:none}.k100-hero-accent{position:absolute;right:-70px;top:-92px;width:205px;height:205px;border:0;border-radius:50%;background:rgba(3,169,217,0.07);opacity:1;box-shadow:none;filter:none;transform:none;animation:none}.k100-copy{position:absolute;z-index:1;left:16px;right:16px;top:20px;min-height:58px;padding-right:177px;box-sizing:border-box}.k100-copy h1{margin:0 0 3px;font-size:25px;line-height:1.04}.k100-copy p{margin:0;font-size:14px;font-weight:650;color:var(--secondary-text-color)}
 .k100-indicator{position:absolute;z-index:2;right:13px;top:13px;box-sizing:border-box;width:168px;min-width:168px;max-width:168px;height:58px;min-height:58px;max-height:58px;margin:0;padding:11px 12px;border:1px solid;border-radius:18px;display:grid;grid-template-columns:10px minmax(0,1fr);column-gap:9px;align-items:center;background:var(--card-background-color);box-shadow:0 4px 14px rgba(0,0,0,.055);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-style:normal;letter-spacing:0;text-transform:none;text-align:left;white-space:nowrap}.k100-indicator>div{min-width:0;display:flex;flex-direction:column;gap:3px}.k100-indicator strong,.k100-indicator span{display:block;margin:0;padding:0;letter-spacing:0;font-style:normal;text-transform:none;white-space:nowrap}.k100-indicator strong{font-size:16px;font-weight:700;line-height:17px}.k100-indicator span{font-size:13px;font-weight:600;line-height:14px;color:var(--secondary-text-color)}.k100-indicator>i,.k100-active-head i{display:inline-block;width:10px;height:10px;border-radius:50%;background:currentColor}.k100-indicator>i{flex-shrink:0}.k100-active-head i{margin-right:8px}.k100-indicator.ok{color:#2fb878;border-color:#9ce4c5;background:rgba(232,249,241,.94)}.k100-indicator.warn{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.94)}.k100-indicator.bad{color:#d95d63;border-color:#efb8ba;background:rgba(255,238,239,.94)}
-.k100-scene{position:absolute;left:12px;right:12px;bottom:12px;height:310px;z-index:2;border:1px solid color-mix(in srgb,var(--divider-color) 82%,transparent);border-radius:20px;overflow:hidden;background:url('/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.9') center/cover no-repeat}.k100-router{position:absolute;z-index:6;left:50%;top:68%;transform:translate(-50%,-50%);width:42%;max-width:290px;filter:drop-shadow(0 10px 9px rgba(65,45,30,.18));pointer-events:none}.k100-channel{position:absolute;z-index:8;display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid transparent;border-radius:18px;background:rgba(255,255,255,.94);box-shadow:0 6px 16px rgba(23,45,76,.08);min-width:145px}.k100-channel ha-icon{--mdc-icon-size:28px}.k100-channel strong,.k100-channel span{display:block}.k100-channel strong{font-size:15px}.k100-channel span{font-size:12px;margin-top:3px;color:var(--secondary-text-color)}.k100-channel.active{color:#279f69;border-color:#9fe4c8;background:rgba(232,249,241,.95)}.k100-channel.standby{color:#168fbd;border-color:#a7dced;background:rgba(235,247,252,.95)}.k100-channel.down{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.95)}.k100-channel.unknown{color:#69757f;border-color:#cdd3d8;background:rgba(248,249,250,.95)}.k100-lte{left:50%;top:25%;transform:translate(-50%,-50%)}.k100-eth{left:3%;top:62%}.k100-lan{right:3%;top:62%}
+.k100-scene{position:absolute;left:12px;right:12px;bottom:12px;height:310px;z-index:2;border:1px solid color-mix(in srgb,var(--divider-color) 82%,transparent);border-radius:20px;overflow:hidden;background:url('/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.10') center/cover no-repeat}.k100-router{position:absolute;z-index:6;left:50%;top:68%;transform:translate(-50%,-50%);width:42%;max-width:290px;filter:drop-shadow(0 10px 9px rgba(65,45,30,.18));pointer-events:none}.k100-channel{position:absolute;z-index:8;display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid transparent;border-radius:18px;background:rgba(255,255,255,.94);box-shadow:0 6px 16px rgba(23,45,76,.08);min-width:145px}.k100-channel ha-icon{--mdc-icon-size:28px}.k100-channel strong,.k100-channel span{display:block}.k100-channel strong{font-size:15px}.k100-channel span{font-size:12px;margin-top:3px;color:var(--secondary-text-color)}.k100-channel.active{color:#279f69;border-color:#9fe4c8;background:rgba(232,249,241,.95)}.k100-channel.standby{color:#168fbd;border-color:#a7dced;background:rgba(235,247,252,.95)}.k100-channel.down{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.95)}.k100-channel.unknown{color:#69757f;border-color:#cdd3d8;background:rgba(248,249,250,.95)}.k100-lte{left:50%;top:25%;transform:translate(-50%,-50%)}.k100-eth{left:3%;top:62%}.k100-lan{right:3%;top:62%}
 .k100-reserve,.k100-alert{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid;border-radius:20px}.k100-reserve ha-icon,.k100-alert ha-icon{--mdc-icon-size:30px}.k100-reserve strong,.k100-reserve span,.k100-alert strong,.k100-alert span{display:block}.k100-reserve strong,.k100-alert strong{font-size:16px}.k100-reserve span,.k100-alert span{font-size:13px;margin-top:2px;color:var(--secondary-text-color)}.k100-reserve.reserve{color:#168fbd;border-color:#a7dced;background:rgba(235,247,252,.95)}.k100-reserve.unavailable{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.95)}.k100-reserve.unknown{color:#69757f;border-color:#cdd3d8;background:rgba(248,249,250,.94)}.k100-alert.warn{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.94)}.k100-alert.bad{color:#d95d63;border-color:#efb8ba;background:rgba(255,238,239,.94)}.k100-alert.hidden{display:none}
 .k100-active-card{border:1px solid color-mix(in srgb,var(--primary-color) 45%,var(--divider-color));border-radius:22px;background:var(--card-background-color);overflow:hidden}.k100-active-head{min-height:58px;display:flex;align-items:center;gap:9px;padding:10px 14px}.k100-active-head>ha-icon{color:var(--primary-color);--mdc-icon-size:28px}.k100-active-head>strong{font-size:20px}.k100-active-head>span{font-size:14px;font-weight:700;color:#2fb878}.k100-active-head button{margin-left:auto;border:0;background:none;color:var(--primary-color);padding:7px}.k100-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--divider-color)}.k100-metric{min-height:72px;padding:12px;display:flex;align-items:center;gap:9px;border-right:1px solid var(--divider-color);border-bottom:1px solid var(--divider-color)}.k100-metric:nth-child(3n){border-right:0}.k100-metric ha-icon{color:var(--primary-color);--mdc-icon-size:25px}.k100-metric span,.k100-metric strong{display:block}.k100-metric span{font-size:12px;color:var(--secondary-text-color);font-weight:650}.k100-metric strong{font-size:15px;margin-top:2px}.k100-metric.wide{grid-column:span 2}.k100-alert{margin-bottom:2px}
 @media(max-width:430px){.k100-overview{grid-template-rows:minmax(350px,1fr) auto auto auto;gap:5px;padding:0}.k100-hero{min-height:350px}.k100-scene{left:10px;right:10px;top:100px;bottom:10px;height:auto}.k100-copy{left:13px;right:13px;top:16px}.k100-copy h1{font-size:24px}.k100-router{top:68%;width:40%;max-width:245px}.k100-channel{min-width:132px;padding:9px 10px}.k100-lte{top:25%}.k100-eth,.k100-lan{top:62%}.k100-reserve{padding:9px 14px}.k100-active-head{min-height:50px;padding:7px 12px}.k100-grid{grid-template-columns:repeat(3,1fr)}.k100-metric{min-height:62px;padding:7px 8px}.k100-metric strong{font-size:14px}}
@@ -3146,7 +3133,7 @@ function k100InstallStyles(root){if(!root||root.querySelector("style[data-k100]"
 
 class KeeneticHeroAppPanelV100 extends HTMLElement{
   constructor(){super();this.attachShadow({mode:"open"});this._hass=null;this._panel=null;this._route=null;this._child=null;this._view=k100ViewFromLocation();this._zoom={scale:1,x:0,y:0};this._zoomSession=null;this._lastTwoFingerTap=0;this._suppressClicksUntil=0;this._returnRoute=null;this._sentPanel=null;this._sentRoute=null;this._sentHass=null;this._hashHandler=()=>{const view=k100ViewFromLocation();if(view!==this._view)this._setView(view,false);};}
-  set hass(v){this._hass=v;this._mount();this._syncChild();} set panel(v){this._panel=v;if(!this._returnRoute)this._returnRoute=captureNikasShellReturnRoute({panelId:"keenetic",parentRoute:v?.config?.parent_route,safeReturnRoute:"/dashboard-infrastructure/overview"});this._mount();this._syncChild();} set route(v){this._route=v;this._mount();this._syncChild();}
+  set hass(v){this._hass=v;this._mount();this._syncChild();} set panel(v){this._panel=v;if(!this._returnRoute)this._returnRoute=captureNikasShellReturnRoute({panelId:"keenetic",parentRoute:v?.config?.parent_route,safeReturnRoute:"/home/overview"});this._mount();this._syncChild();} set route(v){this._route=v;this._mount();this._syncChild();}
   connectedCallback(){this._mount();this._bind();this._bindScrollBoundaryGuard();window.addEventListener("hashchange",this._hashHandler);}
   disconnectedCallback(){this._unbind();this._unbindScrollBoundaryGuard();window.removeEventListener("hashchange",this._hashHandler);}
 
@@ -3226,9 +3213,9 @@ class KeeneticHeroAppPanelV100 extends HTMLElement{
 .k100-stage{position:relative;display:flex;will-change:transform}.k100-work.zoomed .k100-stage{position:absolute;inset-inline-start:0;inset-block-start:0}.k100-stage>keenetic-hero-panel{display:block;inline-size:100%;block-size:100%;min-block-size:100%;flex:1 0 100%}
 .k100-scale-status{position:absolute;z-index:90;inset-inline-start:50%;inset-block-end:calc(76px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);opacity:0;pointer-events:none;padding:9px 14px;border-radius:999px;background:rgba(20,27,34,.88);color:#fff;font-size:13px;font-weight:720;white-space:nowrap;transition:opacity .14s ease,transform .14s ease}.k100-scale-status.visible{opacity:1;transform:translate(-50%,0)}
 @media(prefers-reduced-motion:reduce){.k100-scale-status{transition:none}}
-</style><div id="k100-shell" class="nikas-shell"><header class="k100-header nikas-shell__header"><button id="k100-menu" class="k100-side nikas-shell__side-action" type="button" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button><button id="k100-title" class="k100-title nikas-shell__title" type="button" aria-label="Вернуться в исходную базовую панель NikaS"><strong>Keenetic Hero 4G+</strong><small>UI v1.0.9</small></button><button id="k100-refresh" class="k100-side k100-refresh nikas-shell__side-action nikas-shell__side-action--right" type="button" aria-label="Обновить"><ha-icon icon="mdi:refresh"></ha-icon></button></header><main id="k100-work" class="k100-work nikas-shell__viewport" aria-label="Рабочая область панели Keenetic"><div id="k100-stage" class="k100-stage nikas-shell__canvas nikas-shell__content"></div></main><nav id="k100-tabs" class="k100-tabs nikas-shell__tabs" style="--nikas-shell-tab-count:5" aria-label="Основные разделы"></nav><div id="k100-scale-status" class="k100-scale-status" role="status" aria-live="polite">Масштаб 100%</div></div>`;
+</style><div id="k100-shell" class="nikas-shell"><header class="k100-header nikas-shell__header"><button id="k100-menu" class="k100-side nikas-shell__side-action" type="button" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button><button id="k100-title" class="k100-title nikas-shell__title" type="button" aria-label="Вернуться на главную панель"><strong>Keenetic Hero 4G+</strong><small>UI v1.0.10</small></button><button id="k100-refresh" class="k100-side k100-refresh nikas-shell__side-action nikas-shell__side-action--right" type="button" aria-label="Обновить"><ha-icon icon="mdi:refresh"></ha-icon></button></header><main id="k100-work" class="k100-work nikas-shell__viewport" aria-label="Рабочая область панели Keenetic"><div id="k100-stage" class="k100-stage nikas-shell__canvas nikas-shell__content"></div></main><nav id="k100-tabs" class="k100-tabs nikas-shell__tabs" style="--nikas-shell-tab-count:5" aria-label="Основные разделы"></nav><div id="k100-scale-status" class="k100-scale-status" role="status" aria-live="polite">Масштаб 100%</div></div>`;
       this.shadowRoot.getElementById("k100-menu").onclick=e=>e.currentTarget.dispatchEvent(new CustomEvent("hass-toggle-menu",{bubbles:true,composed:true}));
-      this.shadowRoot.getElementById("k100-title").onclick=()=>navigateNikasShell(this._returnRoute||"/dashboard-infrastructure/overview");
+      this.shadowRoot.getElementById("k100-title").onclick=()=>navigateNikasShell(this._returnRoute||"/home/overview");
       this.shadowRoot.getElementById("k100-refresh").onclick=()=>this._child?._loadBootstrap?.(false);
       this._renderTabs();
     }
