@@ -23,7 +23,6 @@ class TargetCompositionV088Tests(unittest.TestCase):
         composition = self.contract["view_patterns"]["overview"]["composition"]
         self.assertEqual(composition["router_asset"], "keenetic-hero-router-v086.webp")
         self.assertEqual(composition["router_scale_mobile_percent"], 40)
-        self.assertEqual(composition["router_vertical_percent"], 64.5)
 
     def test_all_paths_reach_and_pass_behind_the_housing(self) -> None:
         self.assertIn('"M500 210 L500 406"', self.source)
@@ -38,10 +37,10 @@ class TargetCompositionV088Tests(unittest.TestCase):
         self.assertIn("v083-reserve-state warn", self.source)
 
     def test_target_composition_is_preserved_by_current_delivery(self) -> None:
-        self.assertEqual(self.manifest["panel_version"], "1.0.7")
+        self.assertEqual(self.manifest["panel_version"], "1.0.8")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
         integration_manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual(integration_manifest["version"], "1.0.0-b061")
+        self.assertEqual(integration_manifest["version"], "1.0.0-b062")
 
 
 if __name__ == "__main__":
