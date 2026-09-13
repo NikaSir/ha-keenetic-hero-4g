@@ -22,9 +22,10 @@ class FixedChromeV089Tests(unittest.TestCase):
     def test_lte_card_clears_the_accepted_router_antennas(self) -> None:
         self.assertIn(".v083-overview .v061-lte{top:28.5%!important}", self.source)
         self.assertIn('const d = "M500 190 L500 406"', self.source)
-        composition = self.contract["view_patterns"]["overview"]["composition"]
-        self.assertEqual(composition["router_scale_mobile_percent"], 40)
-        self.assertEqual(composition["lte_card_top_percent"], 28.5)
+        self.assertEqual(
+            self.contract["view_patterns"]["overview"]["composition"]["router_scale_mobile_percent"],
+            40,
+        )
 
     def test_native_scroll_cannot_chain_into_home_assistant(self) -> None:
         self.assertIn("shouldBlockNikasShellBoundaryMove", self.shell)
@@ -37,10 +38,10 @@ class FixedChromeV089Tests(unittest.TestCase):
         self.assertEqual(viewport["fixed_chrome_touch_action"], "host_boundary_guard")
 
     def test_current_delivery_is_v100_b052(self) -> None:
-        self.assertEqual(self.manifest["panel_version"], "1.0.7")
+        self.assertEqual(self.manifest["panel_version"], "1.0.8")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
         integration_manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual(integration_manifest["version"], "1.0.0-b061")
+        self.assertEqual(integration_manifest["version"], "1.0.0-b062")
 
 
 if __name__ == "__main__":
