@@ -1,9 +1,16 @@
 # Changelog
 
-## Integration 1.0.0-b062 / UI 1.0.8 — 2026-09-13
+## Integration 1.0.0-b063 / UI 1.0.9 — 2026-09-13
 
 - Main panel title now opens `/home/overview` regardless of opening source, query parameters, stored return routes, or referrer.
 - Adopt Navigation Contract v1.3 and refresh the autonomous frontend cache version.
+
+## Integration v1.0.0-b062 / UI v1.0.8 — 2026-09-13
+
+- Rebuilt the overview hero after the S8 OMNI composition: internet and connection status now sit on a dedicated themed header surface.
+- Added the translucent cyan header accent and moved the room artwork into a shorter rounded inset scene.
+- Kept the approved line-free channel plaques and their green, blue, orange and neutral state fills inside the photo scene.
+- Preserved the fixed shell, 430×932 fit contract, pinch zoom and canonical two-finger double-tap reset to 100%.
 
 ## Integration v1.0.0-b061 / UI v1.0.7 — 2026-09-08
 

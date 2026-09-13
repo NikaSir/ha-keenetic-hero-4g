@@ -30,11 +30,12 @@ class PanelTabsViewportV100Tests(unittest.TestCase):
     def test_mobile_scene_fills_available_height_without_moving_topology(self) -> None:
         self.assertIn("@media(max-width:430px)", self.source)
         self.assertIn("grid-template-rows:minmax(350px,1fr) auto auto auto", self.source)
-        self.assertIn(".k100-hero{height:auto;min-height:350px;background-size:auto max(430px,100%);background-position:center top}", self.source)
+        self.assertIn(".k100-hero{min-height:350px}", self.source)
+        self.assertIn(".k100-scene{left:10px;right:10px;bottom:10px;height:250px}", self.source)
         self.assertNotIn(".k100-lines{", self.source)
-        self.assertIn(".k100-router{top:min(74%,260px);width:40%", self.source)
-        self.assertIn(".k100-lte{top:min(35%,122px)}", self.source)
-        self.assertIn(".k100-eth,.k100-lan{top:min(69%,240px)}", self.source)
+        self.assertIn(".k100-router{top:68%;width:40%", self.source)
+        self.assertIn(".k100-lte{top:25%}", self.source)
+        self.assertIn(".k100-eth,.k100-lan{top:62%}", self.source)
 
 
 if __name__ == "__main__":

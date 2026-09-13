@@ -21,7 +21,7 @@ class OverviewReadabilityV100Tests(unittest.TestCase):
         self.assertIn(".k100-copy p{margin:0;font-size:14px", self.source)
         self.assertIn(".k100-channel strong{font-size:15px}", self.source)
         self.assertIn(".k100-channel span{font-size:12px", self.source)
-        self.assertIn(".k100-lte{left:50%;top:31%", self.source)
+        self.assertIn(".k100-lte{left:50%;top:25%", self.source)
 
     def test_lte_signal_value_is_not_prefixed_or_truncated(self) -> None:
         self.assertIn('panel._display("lte_rsrp","—")', self.source)
@@ -30,10 +30,10 @@ class OverviewReadabilityV100Tests(unittest.TestCase):
         self.assertIn(".k100-metric strong{font-size:15px;margin-top:2px}", self.source)
 
     def test_current_delivery_is_v100_b052(self) -> None:
-        self.assertEqual(self.manifest["panel_version"], "1.0.8")
+        self.assertEqual(self.manifest["panel_version"], "1.0.9")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
         integration_manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual(integration_manifest["version"], "1.0.0-b062")
+        self.assertEqual(integration_manifest["version"], "1.0.0-b063")
 
 
 if __name__ == "__main__":

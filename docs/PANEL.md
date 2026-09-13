@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ native panel
 
-Panel metadata version: **1.0.7**
+Panel metadata version: **1.0.9**
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
 Parent route: **`/dashboard-infrastructure/overview`**
@@ -36,7 +36,7 @@ The production shell is mounted directly and does not inherit any earlier scroll
 - title `Keenetic Hero 4G+` geometrically centered against the viewport;
 - no decorative router/brand icon beside the title;
 - the complete central title surface is a button that returns to the source NikaS panel;
-- first line `Keenetic Hero 4G+`, second line `UI v1.0.7`;
+- first line `Keenetic Hero 4G+`, second line `UI v1.0.9`;
 - one global Refresh action on the right;
 - the source route is restricted to the canonical `Дом`, `Помещения`, `Действия` or `Инфраструктура` base panels; the left Header slot remains the native HA menu.
 
@@ -56,7 +56,7 @@ It is full-width, edge-attached, non-floating and respects iOS safe area. `Си�
 
 `Header -> network topology/status -> reserve readiness -> active-channel metrics -> compact reserve channel -> Bottom Tab Bar`
 
-The compact Internet / Active WAN / Ethernet / LTE composition is always preserved. The phone hero contains only the network state, the two-line connection indicator and the Cable/LTE/LAN status plaques. Active metrics never overlap the artwork.
+The compact Internet / Active WAN / Ethernet / LTE composition is always preserved. Following the S8 OMNI composition, the phone hero places the network state and two-line connection indicator on a dedicated themed header surface with a translucent cyan accent. The room artwork is a separate 250 px rounded inset scene containing the router and Cable/LTE/LAN status plaques. Active metrics never overlap the artwork.
 
 ### Overview channel composition
 
