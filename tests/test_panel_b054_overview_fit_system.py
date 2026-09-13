@@ -11,7 +11,7 @@ class B054Tests(unittest.TestCase):
     def test_mobile_overview_is_compacted_and_fills_short_work_rows(self):
         self.assertIn('grid-template-rows:minmax(350px,1fr) auto auto auto', SRC)
         self.assertIn('.k100-hero{min-height:350px}', SRC)
-        self.assertIn('.k100-scene{left:10px;right:10px;bottom:10px;height:250px}', SRC)
+        self.assertIn('.k100-scene{left:10px;right:10px;top:100px;bottom:10px;height:auto}', SRC)
         self.assertIn('gap:5px;padding:0', SRC)
         self.assertIn('.k100-active-head{min-height:50px;padding:7px 12px}', SRC)
         self.assertIn('.k100-metric{min-height:62px;padding:7px 8px}', SRC)

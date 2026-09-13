@@ -32,12 +32,12 @@ class PanelOverviewV108HeaderTests(unittest.TestCase):
         for marker in (
             ".k100-hero{position:relative;min-height:430px",
             ".k100-scene{position:absolute;left:12px;right:12px;bottom:12px;height:310px",
-            ".k100-copy{position:absolute;z-index:3;left:16px;top:20px",
-            ".k100-indicator{position:absolute;z-index:4;right:14px;top:14px",
-            ".k100-hero-accent{position:absolute;z-index:1;right:-74px;top:-86px",
+            ".k100-copy{position:absolute;z-index:1;left:16px;right:16px;top:20px;min-height:58px;padding-right:177px",
+            ".k100-indicator{position:absolute;z-index:2;right:13px;top:13px",
+            ".k100-hero-accent{position:absolute;right:-70px;top:-92px;width:205px;height:205px",
             "@media(max-width:430px)",
             ".k100-hero{min-height:350px}",
-            ".k100-scene{left:10px;right:10px;bottom:10px;height:250px}",
+            ".k100-scene{left:10px;right:10px;top:100px;bottom:10px;height:auto}",
         ):
             self.assertIn(marker, self.source)
 
@@ -45,7 +45,7 @@ class PanelOverviewV108HeaderTests(unittest.TestCase):
 
         overview = self.contract["view_patterns"]["overview"]
         self.assertEqual(overview["hero_style"], "status_header_with_inset_room_scene")
-        self.assertEqual(overview["photo_scene_mobile_height_px"], 250)
+        self.assertEqual(overview["photo_scene_mobile_height_px"], 240)
         self.assertEqual(overview["composition"]["router_vertical_percent"], 68)
         self.assertEqual(overview["composition"]["lte_card_top_percent"], 25)
 
