@@ -21,7 +21,7 @@ class PanelShellV22Tests(unittest.TestCase):
 
     def test_vendored_source_kit_is_hash_pinned_and_bundled_first(self) -> None:
         digest = hashlib.sha256(self.source_kit.encode("utf-8")).hexdigest()
-        self.assertEqual(digest, "c7171560b68e2c4118b327c5e6a63c65e3410a4e1f10a02691e0d15560166e65")
+        self.assertEqual(digest, "b7dbb84bb2f950fce75591266d6de7dbff824f4d480f455f0b8cbb0866a1c176")
         self.assertEqual(self.profile["source_kit"]["sha256"], digest)
         shell_marker = "// BEGIN custom_components/keenetic_hero_4g/frontend/nikas-specialized-shell.js"
         runtime_marker = "// BEGIN custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js"

@@ -1,5 +1,10 @@
 # Changelog
 
+## Integration 1.0.0-b062 / UI 1.0.8 — 2026-09-13
+
+- Main panel title now opens `/home/overview` regardless of opening source, query parameters, stored return routes, or referrer.
+- Adopt Navigation Contract v1.3 and refresh the autonomous frontend cache version.
+
 ## Integration v1.0.0-b061 / UI v1.0.7 — 2026-09-08
 
 - Determines the active WAN from factual route evidence without treating a link state alone as route selection.

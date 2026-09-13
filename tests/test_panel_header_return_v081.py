@@ -23,12 +23,12 @@ class PanelHeaderReturnV22Tests(unittest.TestCase):
 
     def test_current_ui_and_standard_are_explicit(self) -> None:
         self.assertEqual(self.standard["version"], "2.2")
-        self.assertEqual(self.standard["navigation_contract_version"], "1.2")
-        self.assertEqual(self.standard["ui_version"], "1.0.7")
+        self.assertEqual(self.standard["navigation_contract_version"], "1.3")
+        self.assertEqual(self.standard["ui_version"], "1.0.8")
         self.assertEqual(self.standard["web_component"], "keenetic-hero-app-panel-v100")
-        self.assertIn('FRONTEND_UI_VERSION = "1.0.7"', self.runtime)
+        self.assertIn('FRONTEND_UI_VERSION = "1.0.8"', self.runtime)
         self.assertIn('FRONTEND_COMPONENT_SLUG = "v100"', self.runtime)
-        self.assertIn('const K100_VERSION = "1.0.7";', self.source)
+        self.assertIn('const K100_VERSION = "1.0.8";', self.source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.source)
 
     def test_center_header_is_a_semantic_return_button(self) -> None:
@@ -41,21 +41,9 @@ class PanelHeaderReturnV22Tests(unittest.TestCase):
         self.assertEqual(reference["width"], "min(360px,100%)")
         self.assertEqual(reference["radius_px"], 16)
 
-    def test_return_route_is_source_aware_and_safely_bounded(self) -> None:
-        for route in [
-            "/dashboard-house-v13/home",
-            "/dashboard-rooms-v11/rooms",
-            "/dashboard-actions/home",
-            "/dashboard-infrastructure/overview",
-        ]:
-            self.assertIn(route, self.bundle)
-        self.assertIn('...params.getAll("return_to")', self.bundle)
-        self.assertIn('...params.getAll("from")', self.bundle)
-        self.assertIn('window.sessionStorage.getItem(NIKAS_SOURCE_ROUTE_KEY)', self.bundle)
-        self.assertIn('window.sessionStorage.getItem(NIKAS_SOURCE_ROUTE_AT_KEY)', self.bundle)
-        self.assertIn("document.referrer", self.bundle)
-        self.assertIn("parentRoute", self.bundle)
-        self.assertIn("url.origin !== window.location.origin", self.bundle)
+    def test_header_returns_home_regardless_of_opening_source(self) -> None:
+        import subprocess
+        subprocess.run(["node", "tests/header_parent_navigation.mjs"], cwd=ROOT, check=True)
 
     def test_one_shot_handoff_requires_matching_fresh_timestamp(self) -> None:
         self.assertIn("window.sessionStorage.removeItem(NIKAS_SOURCE_ROUTE_KEY)", self.bundle)

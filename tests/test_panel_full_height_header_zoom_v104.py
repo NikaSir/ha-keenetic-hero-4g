@@ -26,12 +26,12 @@ class PanelFullHeightHeaderZoomV104Tests(unittest.TestCase):
         cls.shell = SHELL.read_text(encoding="utf-8")
 
     def test_release_metadata_is_coherent(self) -> None:
-        self.assertEqual(self.standard["ui_version"], "1.0.7")
-        self.assertEqual(self.contract["panel"]["version"], "1.0.7")
-        self.assertEqual(self.panel_manifest["panel_version"], "1.0.7")
-        self.assertEqual(self.integration_manifest["version"], "1.0.0-b061")
-        self.assertIn('const K100_VERSION = "1.0.7";', self.source)
-        self.assertIn("<small>UI v1.0.7</small>", self.source)
+        self.assertEqual(self.standard["ui_version"], "1.0.8")
+        self.assertEqual(self.contract["panel"]["version"], "1.0.8")
+        self.assertEqual(self.panel_manifest["panel_version"], "1.0.8")
+        self.assertEqual(self.integration_manifest["version"], "1.0.0-b062")
+        self.assertIn('const K100_VERSION = "1.0.8";', self.source)
+        self.assertIn("<small>UI v1.0.8</small>", self.source)
 
     def test_short_overview_fills_the_complete_work_row(self) -> None:
         for marker in (
@@ -92,7 +92,7 @@ class PanelFullHeightHeaderZoomV104Tests(unittest.TestCase):
             ".nikas-shell__title:focus-visible",
             ".nikas-shell__title:active",
             'type="button" aria-label="Открыть меню Home Assistant"',
-            'type="button" aria-label="Вернуться в исходную базовую панель NikaS"',
+            'type="button" aria-label="Вернуться на главную панель"',
         ):
             self.assertIn(marker, self.source if 'type="button"' in marker else self.shell)
 

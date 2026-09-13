@@ -5,14 +5,14 @@
     "path": "/dashboard-keenetic",
     "panel_root": "/dashboard-keenetic",
     "entry_route": "/dashboard-keenetic",
-    "safe_return_route": "/dashboard-infrastructure/overview",
-    "navigation_contract_version": "1.2",
+    "safe_return_route": "/home/overview",
+    "navigation_contract_version": "1.3",
     "icon": "mdi:router-network",
     "owner": "ha-keenetic-hero-4g",
-    "parent_route": "/dashboard-infrastructure/overview",
+    "parent_route": "/home/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "1.0.7"
+    "version": "1.0.8"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -23,13 +23,13 @@
     "standards": {
       "shell": "2.1",
       "zoom": "2.2",
-      "navigation": "1.2",
+      "navigation": "1.3",
       "integration_ui": "1.4",
       "frontend_delivery": "1.1"
     },
     "source_kit": {
       "path": "frontend/nikas-specialized-shell.js",
-      "sha256": "c7171560b68e2c4118b327c5e6a63c65e3410a4e1f10a02691e0d15560166e65",
+      "sha256": "b7dbb84bb2f950fce75591266d6de7dbff824f4d480f455f0b8cbb0866a1c176",
       "delivery": "vendored_build_time",
       "runtime_dependency": false
     },
@@ -42,26 +42,10 @@
         "min_touch_target_px": 44
       },
       "title": "Keenetic Hero 4G+",
-      "title_surface_action": "return_to_source_nikas_panel",
-      "source_route_handoff_key": "nikas.specialized.source_route.v1",
-      "source_route_timestamp_key": "nikas.specialized.source_route_at.v1",
-      "saved_return_route_key": "nikas.keenetic.return_route.v1",
+      "title_surface_action": "navigate_to_declared_parent",
       "browser_history_back_allowed": false,
-      "return_sources": [
-        "/dashboard-house-v13/home",
-        "/dashboard-rooms-v11/rooms",
-        "/dashboard-actions/home",
-        "/dashboard-infrastructure/overview"
-      ],
-      "return_capture_precedence": [
-        "return_to",
-        "from",
-        "session_handoff",
-        "saved_route",
-        "same_origin_referrer",
-        "parent_route",
-        "safe_return_route"
-      ],
+      "return_sources": ["/home/overview"],
+      "return_capture_precedence": ["parent_route"],
       "return_navigation": [
         "history.pushState",
         "location-changed"
