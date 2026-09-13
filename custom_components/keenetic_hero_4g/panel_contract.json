@@ -12,7 +12,7 @@
     "parent_route": "/home/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "1.0.10"
+    "version": "1.0.11"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -200,7 +200,10 @@
       "cache_privacy_safe": true,
       "cache_excludes_host_and_unique_id": true,
       "live_values_from_hass_states": true,
-      "websocket_refresh": "background_only",
+      "websocket_refresh": "background_structural_plus_manual_router_poll",
+      "manual_refresh_command": "keenetic_hero_4g/panel/refresh",
+      "manual_refresh_invalidates_view_history": true,
+      "manual_refresh_preserves_visible_data_on_error": true,
       "websocket_timeout_seconds": 5,
       "structural_polling_seconds": 0,
       "blank_screen_on_bootstrap_timeout": false,

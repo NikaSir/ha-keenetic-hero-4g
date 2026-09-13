@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel metadata version: 1.0.10
+Panel metadata version: 1.0.11
 
-Integration build: 1.0.0-b064
+Integration build: 1.0.0-b065
 
 Standard: NikaS Specialized Panel UI Standard v2.2 + NikaS Panel Navigation and Return Contract v1.2 + Shell v2.1
 
@@ -63,6 +63,8 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 - Shell Header and Bottom Tab Bar remain present during loading.
 - Registration snapshot fallback is used if the background bootstrap WebSocket is delayed; the panel never remains indefinitely blank.
+- Header Refresh performs one immediate coordinator poll, reloads current factual data, invalidates Traffic/Failover history caches and preserves the visible snapshot if the poll fails.
+- While manual Refresh is running, the right Header action is disabled with a rotating icon; completion and failure are announced in the transient status surface.
 - Ethernet/LTE active state, rates, ping, loss, failover and radio values remain factual and read-only.
 - `unknown`, `unavailable`, stale or untrusted data never appear healthy and are never fabricated as zero.
 - Domain cards and local room/router artwork remain unchanged by the status-surface revision.
@@ -73,7 +75,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=1.0.10` and component `keenetic-hero-app-panel-v100`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=1.0.11` and component `keenetic-hero-app-panel-v100`.
 - The bundle includes the hash-pinned canonical Shell v2.1 source kit and has no runtime dependency on the contract repository.
 - Superseded shell/zoom modules v066–v078 are excluded; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
@@ -93,4 +95,4 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## Release gate
 
-Build b063 is a viewport-validation candidate. It is accepted only after the v2.2 standard, v1.2 navigation, Shell v2.1 boundary harness and production-bundle checks pass together with return tests from all four base panels and the complete viewport matrix. Repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the approved line-free KN-2311 Cable/LTE/LAN composition must also pass on the real iPhone Pro Max / KN-2311 environment.
+Build b065 is a viewport-validation candidate. It is accepted only after the v2.2 standard, v1.2 navigation, Shell v2.1 boundary harness and production-bundle checks pass together with return tests from all four base panels and the complete viewport matrix. Repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the approved line-free KN-2311 Cable/LTE/LAN composition must also pass on the real iPhone Pro Max / KN-2311 environment.

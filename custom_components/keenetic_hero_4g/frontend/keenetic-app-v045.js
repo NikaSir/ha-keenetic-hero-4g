@@ -147,6 +147,34 @@ if (CORE_COMPONENT_V045 && !CORE_COMPONENT_V045.prototype.__nikaFastBootstrapV04
       this._scheduleRender?.();
     }
   };
+
+  CORE_COMPONENT_V045.prototype._refreshNow = async function () {
+    if (!this._hass) throw new Error("Home Assistant connection is unavailable");
+    if (this._manualRefreshLoading) return;
+
+    this._manualRefreshLoading = true;
+    try {
+      const config = this._panel?.config || {};
+      const fresh = await this._hass.callWS({
+        type: "keenetic_hero_4g/panel/refresh",
+        ...(config.entry_id ? { entry_id: config.entry_id } : {}),
+      });
+      this._bootstrap = fresh;
+      writeBootstrapCacheV045(fresh);
+      this._bootstrapError = null;
+      this._bootstrapBackgroundError = null;
+      this._trafficHistory = {};
+      this._failoverHistory = [];
+      this._loadViewData?.();
+    } catch (err) {
+      if (!this._bootstrap) this._bootstrapError = err?.message || String(err);
+      else this._bootstrapBackgroundError = err?.message || String(err);
+      throw err;
+    } finally {
+      this._manualRefreshLoading = false;
+      this._scheduleRender?.();
+    }
+  };
 }
 
 function openHomeAssistantMenuV045(target) {

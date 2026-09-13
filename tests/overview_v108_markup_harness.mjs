@@ -127,6 +127,38 @@ assert.equal(accent.top, "-92px");
 assert.equal(accent.right, "-70px");
 assert.equal(accent.background, "rgba(3,169,217,0.07)");
 
+const healthyIndicator = declarations(".k100-indicator.ok");
+assert.equal(healthyIndicator.color, "var(--success-color,#43a047)");
+assert.equal(
+  healthyIndicator.background,
+  "color-mix(in srgb,var(--card-background-color) 89%,var(--success-color,#43a047) 11%)",
+  "Healthy connection surface must inherit the active light or dark card background",
+);
+assert.equal(
+  declarations(".k100-indicator.warn").background,
+  "color-mix(in srgb,var(--card-background-color) 90%,var(--warning-color,#f6a623) 10%)",
+);
+assert.equal(
+  declarations(".k100-indicator.bad").background,
+  "color-mix(in srgb,var(--card-background-color) 90%,var(--error-color,#db4437) 10%)",
+);
+
+const readyReserve = declarations(".k100-reserve.reserve");
+assert.equal(readyReserve.color, "var(--primary-color,#03a9d9)");
+assert.equal(
+  readyReserve.background,
+  "color-mix(in srgb,var(--card-background-color) 90%,var(--primary-color,#03a9d9) 10%)",
+  "Ready-reserve surface must inherit the active light or dark card background",
+);
+assert.equal(
+  declarations(".k100-reserve.unavailable").background,
+  "color-mix(in srgb,var(--card-background-color) 90%,var(--warning-color,#f6a623) 10%)",
+);
+assert.equal(
+  declarations(".k100-reserve.unknown").background,
+  "color-mix(in srgb,var(--card-background-color) 92%,var(--secondary-text-color) 8%)",
+);
+
 const mobileCss = installedStyle.slice(installedStyle.indexOf("@media(max-width:430px)"));
 assert.doesNotMatch(mobileCss, /\.k100-indicator\{[^}]*\bwidth:/, "Phone CSS must not resize the connection plaque");
 assert.doesNotMatch(mobileCss, /\.k100-indicator\{[^}]*(?:\btop:|\bright:)/, "Phone CSS must not move the connection plaque");

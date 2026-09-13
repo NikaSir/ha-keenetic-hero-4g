@@ -26,12 +26,12 @@ class PanelFullHeightHeaderZoomV104Tests(unittest.TestCase):
         cls.shell = SHELL.read_text(encoding="utf-8")
 
     def test_release_metadata_is_coherent(self) -> None:
-        self.assertEqual(self.standard["ui_version"], "1.0.10")
-        self.assertEqual(self.contract["panel"]["version"], "1.0.10")
-        self.assertEqual(self.panel_manifest["panel_version"], "1.0.10")
-        self.assertEqual(self.integration_manifest["version"], "1.0.0-b064")
-        self.assertIn('const K100_VERSION = "1.0.10";', self.source)
-        self.assertIn("<small>UI v1.0.10</small>", self.source)
+        self.assertEqual(self.standard["ui_version"], "1.0.11")
+        self.assertEqual(self.contract["panel"]["version"], "1.0.11")
+        self.assertEqual(self.panel_manifest["panel_version"], "1.0.11")
+        self.assertEqual(self.integration_manifest["version"], "1.0.0-b065")
+        self.assertIn('const K100_VERSION = "1.0.11";', self.source)
+        self.assertIn("<small>UI v1.0.11</small>", self.source)
 
     def test_short_overview_fills_the_complete_work_row(self) -> None:
         for marker in (

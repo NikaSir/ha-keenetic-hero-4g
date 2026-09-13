@@ -25,7 +25,7 @@ class PanelChannelStatusFillsV105Tests(unittest.TestCase):
         self.assertTrue(overview["line_free_channel_composition"])
         self.assertFalse(overview["topology"]["visual_connectors"])
 
-    def test_channel_surfaces_use_the_approved_light_state_palette(self) -> None:
+    def test_channel_surfaces_stay_light_and_status_surfaces_follow_theme(self) -> None:
         for marker in (
             ".k100-channel.active{color:#279f69;border-color:#9fe4c8;background:rgba(232,249,241,.95)}",
             ".k100-channel.standby{color:#168fbd;border-color:#a7dced;background:rgba(235,247,252,.95)}",
@@ -44,11 +44,17 @@ class PanelChannelStatusFillsV105Tests(unittest.TestCase):
             },
         )
         self.assertIn(
-            ".k100-reserve.reserve{color:#168fbd;border-color:#a7dced;background:rgba(235,247,252,.95)}",
+            ".k100-reserve.reserve{color:var(--primary-color,#03a9d9);"
+            "border-color:color-mix(in srgb,var(--divider-color) 70%,"
+            "var(--primary-color,#03a9d9) 30%);background:color-mix(in srgb,"
+            "var(--card-background-color) 90%,var(--primary-color,#03a9d9) 10%)}",
             self.source,
         )
         self.assertIn(
-            ".k100-reserve.unavailable{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.95)}",
+            ".k100-reserve.unavailable{color:var(--warning-color,#f6a623);"
+            "border-color:color-mix(in srgb,var(--divider-color) 70%,"
+            "var(--warning-color,#f6a623) 30%);background:color-mix(in srgb,"
+            "var(--card-background-color) 90%,var(--warning-color,#f6a623) 10%)}",
             self.source,
         )
 
@@ -63,7 +69,9 @@ class PanelChannelStatusFillsV105Tests(unittest.TestCase):
         self.assertIn('return ["unavailable","mdi:alert-circle-outline"', self.source)
         self.assertNotIn(".k100-channel.down{color:#d95d63", self.source)
         self.assertNotIn(".k100-reserve.unavailable{color:#d95d63", self.source)
-        self.assertIn(".k100-indicator.bad{color:#d95d63", self.source)
+        self.assertIn(
+            ".k100-indicator.bad{color:var(--error-color,#db4437)", self.source
+        )
 
 
 if __name__ == "__main__":

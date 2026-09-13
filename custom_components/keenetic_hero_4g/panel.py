@@ -297,6 +297,36 @@ def websocket_panel_bootstrap(
     connection.send_result(msg["id"], _bootstrap_payload(hass, entry))
 
 
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/panel/refresh",
+        vol.Optional("entry_id"): str,
+    }
+)
+@websocket_api.async_response
+async def websocket_panel_refresh(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+) -> None:
+    """Poll Keenetic immediately and return the refreshed panel payload."""
+    entry_id = msg.get("entry_id")
+    entry = hass.config_entries.async_get_entry(entry_id) if entry_id else None
+    if entry is None:
+        entries = hass.config_entries.async_entries(DOMAIN)
+        entry = entries[0] if entries else None
+
+    if entry is None or not isinstance(entry.runtime_data, KeeneticCoordinator):
+        connection.send_error(
+            msg["id"], "not_loaded", "Keenetic Hero 4G+ integration is not loaded"
+        )
+        return
+
+    coordinator: KeeneticCoordinator = entry.runtime_data
+    await coordinator.async_request_refresh()
+    connection.send_result(msg["id"], _bootstrap_payload(hass, entry))
+
+
 async def async_register_native_panel(
     hass: HomeAssistant, entry: ConfigEntry
 ) -> None:
@@ -305,6 +335,7 @@ async def async_register_native_panel(
 
     if not domain_data.get(_DATA_WS_REGISTERED):
         websocket_api.async_register_command(hass, websocket_panel_bootstrap)
+        websocket_api.async_register_command(hass, websocket_panel_refresh)
         domain_data[_DATA_WS_REGISTERED] = True
 
     if not domain_data.get(_DATA_STATIC_REGISTERED):
