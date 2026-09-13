@@ -31,7 +31,7 @@ class PanelTabsViewportV100Tests(unittest.TestCase):
         self.assertIn("@media(max-width:430px)", self.source)
         self.assertIn("grid-template-rows:minmax(350px,1fr) auto auto auto", self.source)
         self.assertIn(".k100-hero{min-height:350px}", self.source)
-        self.assertIn(".k100-scene{left:10px;right:10px;bottom:10px;height:250px}", self.source)
+        self.assertIn(".k100-scene{left:10px;right:10px;top:100px;bottom:10px;height:auto}", self.source)
         self.assertNotIn(".k100-lines{", self.source)
         self.assertIn(".k100-router{top:68%;width:40%", self.source)
         self.assertIn(".k100-lte{top:25%}", self.source)

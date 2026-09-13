@@ -1,9 +1,16 @@
 # Changelog
 
-## Integration 1.0.0-b063 / UI 1.0.9 — 2026-09-13
+## Integration 1.0.0-b064 / UI 1.0.10 — 2026-09-13
 
 - Main panel title now opens `/home/overview` regardless of opening source, query parameters, stored return routes, or referrer.
 - Adopt Navigation Contract v1.3 and refresh the autonomous frontend cache version.
+
+## Integration v1.0.0-b063 / UI v1.0.9 — 2026-09-13
+
+- Aligned the overview connection plaque with NikaS UI Standard v2.2: exact 168 × 58 px geometry, fixed 13 px anchor and single-line labels.
+- Restored the canonical 205 px pale-blue corner decoration and isolated its clipping from interactive content.
+- Reserved the complete heading area and a 12 px scene gap on phones so the active-channel caption no longer touches the photo.
+- Added an executable regression guard for the emitted overview markup and CSS tokens while preserving the canonical zoom/reset contract.
 
 ## Integration v1.0.0-b062 / UI v1.0.8 — 2026-09-13
 

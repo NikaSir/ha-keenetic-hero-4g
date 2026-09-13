@@ -7,12 +7,19 @@ const sourcePath = new URL(
   import.meta.url,
 );
 const source = fs.readFileSync(sourcePath, "utf8");
-const overviewOnly = source.slice(0, source.indexOf("function k100InstallCore"));
+const overviewOnly = source.slice(0, source.indexOf("class KeeneticHeroAppPanelV100"));
+let installedStyle = null;
 const context = {
   customElements: { get: () => class {} },
+  document: {
+    createElement: () => ({ dataset: {}, textContent: "" }),
+  },
 };
 vm.createContext(context);
-vm.runInContext(`${overviewOnly}\nglobalThis.renderOverview = k100Overview;`, context);
+vm.runInContext(
+  `${overviewOnly}\nglobalThis.renderOverview = k100Overview;globalThis.installStyles = k100InstallStyles;`,
+  context,
+);
 
 const panel = {
   _internet: () => ({ online: true }),
@@ -24,6 +31,21 @@ const panel = {
 };
 
 const markup = context.renderOverview(panel);
+context.installStyles({
+  querySelector: () => null,
+  append: (style) => { installedStyle = style.textContent; },
+});
+assert.ok(installedStyle, "Overview styles must be installed");
+
+function declarations(selector, css = installedStyle) {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = css.match(new RegExp(`${escaped}\\{([^}]+)\\}`));
+  assert.ok(match, `Missing CSS rule: ${selector}`);
+  return Object.fromEntries(match[1].split(";").filter(Boolean).map((entry) => {
+    const separator = entry.indexOf(":");
+    return [entry.slice(0, separator).trim(), entry.slice(separator + 1).trim()];
+  }));
+}
 
 function parseMarkup(html) {
   const root = { tag: "root", classes: [], children: [] };
@@ -70,7 +92,7 @@ assert.ok(hero, "Overview must render the hero surface");
 const directHeroClasses = hero.children.flatMap((node) => node.classes);
 assert.ok(directHeroClasses.includes("k100-copy"), "Status copy belongs on the hero background");
 assert.ok(directHeroClasses.includes("k100-indicator"), "Connection status belongs on the hero background");
-assert.ok(directHeroClasses.includes("k100-hero-accent"), "Hero background needs the cyan accent");
+assert.ok(directHeroClasses.includes("k100-hero-decoration"), "Hero background needs a clipped decoration layer");
 assert.ok(directHeroClasses.includes("k100-scene"), "Photo must be an inset scene");
 assert.ok(!directHeroClasses.includes("k100-channel"), "Channel plaques must not sit on the hero background");
 assert.ok(!directHeroClasses.includes("k100-router"), "Router must stay inside the photo scene");
@@ -81,3 +103,30 @@ assert.ok(findByClass(scene, "k100-eth"), "Ethernet plaque must stay inside the 
 assert.ok(findByClass(scene, "k100-lan"), "LAN plaque must stay inside the photo scene");
 assert.ok(findByClass(scene, "k100-router"), "Router must stay inside the photo scene");
 
+const decoration = findByClass(hero, "k100-hero-decoration");
+assert.ok(findByClass(decoration, "k100-hero-accent"), "Cyan accent belongs inside the clipped layer");
+
+const indicator = declarations(".k100-indicator");
+assert.equal(indicator.width, "168px");
+assert.equal(indicator["min-width"], "168px");
+assert.equal(indicator["max-width"], "168px");
+assert.equal(indicator.height, "58px");
+assert.equal(indicator["min-height"], "58px");
+assert.equal(indicator["max-height"], "58px");
+assert.equal(indicator.top, "13px");
+assert.equal(indicator.right, "13px");
+assert.equal(indicator.padding, "11px 12px");
+assert.equal(indicator["grid-template-columns"], "10px minmax(0,1fr)");
+assert.equal(indicator["column-gap"], "9px");
+assert.equal(indicator["white-space"], "nowrap");
+
+const accent = declarations(".k100-hero-accent");
+assert.equal(accent.width, "205px");
+assert.equal(accent.height, "205px");
+assert.equal(accent.top, "-92px");
+assert.equal(accent.right, "-70px");
+assert.equal(accent.background, "rgba(3,169,217,0.07)");
+
+const mobileCss = installedStyle.slice(installedStyle.indexOf("@media(max-width:430px)"));
+assert.doesNotMatch(mobileCss, /\.k100-indicator\{[^}]*\bwidth:/, "Phone CSS must not resize the connection plaque");
+assert.doesNotMatch(mobileCss, /\.k100-indicator\{[^}]*(?:\btop:|\bright:)/, "Phone CSS must not move the connection plaque");

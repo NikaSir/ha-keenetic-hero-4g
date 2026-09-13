@@ -8,7 +8,7 @@
 
 **Audited production path:** `panel_runtime.py` → autonomous `keenetic-panel-bundle.js` → `keenetic-hero-app-panel-v100`
 
-**Release candidate:** UI 1.0.9 / integration 1.0.0-b063
+**Release candidate:** UI 1.0.10 / integration 1.0.0-b064
 
 | Area | Result | Evidence |
 |---|---|---|
@@ -26,7 +26,7 @@
 | Stable runtime | PASS (code) | The fixed shell mounts once; tab content remains cached and telemetry updates continue through the existing stable child runtime. |
 | Domain UI preservation | PASS (code) | Cable/LTE/LAN lines remain absent and the approved green, blue, orange and grey state fills are unchanged. |
 | Single-device scope | PASS | Keenetic represents one physical router, so no peer selector or peer-status lamp row is rendered. |
-| Version coherence | PASS | Visible UI, runtime/cache key, asset URLs, contract, panel manifest and integration metadata agree on UI 1.0.9 / b062. |
+| Version coherence | PASS | Visible UI, runtime/cache key, asset URLs, contract, panel manifest and integration metadata agree on UI 1.0.10 / b064. |
 | Deterministic delivery | PASS | The generated production bundle is autonomous, import-free and reproducible from the declared source list, including the hash-pinned shell kit. |
 
 ## Device verification still required

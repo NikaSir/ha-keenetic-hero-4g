@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel metadata version: 1.0.9
+Panel metadata version: 1.0.10
 
-Integration build: 1.0.0-b063
+Integration build: 1.0.0-b064
 
 Standard: NikaS Specialized Panel UI Standard v2.2 + NikaS Panel Navigation and Return Contract v1.2 + Shell v2.1
 
@@ -73,7 +73,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=1.0.9` and component `keenetic-hero-app-panel-v100`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=1.0.10` and component `keenetic-hero-app-panel-v100`.
 - The bundle includes the hash-pinned canonical Shell v2.1 source kit and has no runtime dependency on the contract repository.
 - Superseded shell/zoom modules v066–v078 are excluded; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
@@ -93,4 +93,4 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## Release gate
 
-Build b062 is a viewport-validation candidate. It is accepted only after the v2.2 standard, v1.2 navigation, Shell v2.1 boundary harness and production-bundle checks pass together with return tests from all four base panels and the complete viewport matrix. Repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the approved line-free KN-2311 Cable/LTE/LAN composition must also pass on the real iPhone Pro Max / KN-2311 environment.
+Build b063 is a viewport-validation candidate. It is accepted only after the v2.2 standard, v1.2 navigation, Shell v2.1 boundary harness and production-bundle checks pass together with return tests from all four base panels and the complete viewport matrix. Repeated `Failover` opening at 75%, 100%, 150% and 200%; native vertical scroll, focal pinch, two-finger double-tap reset, fixed Header/Bottom Tab Bar, more-info holds, semantic typography, persistence, bounded pan, exactly-once safe areas and the approved line-free KN-2311 Cable/LTE/LAN composition must also pass on the real iPhone Pro Max / KN-2311 environment.
