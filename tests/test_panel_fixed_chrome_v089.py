@@ -38,10 +38,10 @@ class FixedChromeV089Tests(unittest.TestCase):
         self.assertEqual(viewport["fixed_chrome_touch_action"], "host_boundary_guard")
 
     def test_current_delivery_is_v100_b052(self) -> None:
-        self.assertEqual(self.manifest["panel_version"], "1.0.8")
+        self.assertEqual(self.manifest["panel_version"], "1.0.9")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
         integration_manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual(integration_manifest["version"], "1.0.0-b062")
+        self.assertEqual(integration_manifest["version"], "1.0.0-b063")
 
 
 if __name__ == "__main__":

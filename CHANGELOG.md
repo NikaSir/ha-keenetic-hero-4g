@@ -1,5 +1,12 @@
 # Changelog
 
+## Integration v1.0.0-b063 / UI v1.0.9 — 2026-09-13
+
+- Aligned the overview connection plaque with NikaS UI Standard v2.2: exact 168 × 58 px geometry, fixed 13 px anchor and single-line labels.
+- Restored the canonical 205 px pale-blue corner decoration and isolated its clipping from interactive content.
+- Reserved the complete heading area and a 12 px scene gap on phones so the active-channel caption no longer touches the photo.
+- Added an executable regression guard for the emitted overview markup and CSS tokens while preserving the canonical zoom/reset contract.
+
 ## Integration v1.0.0-b062 / UI v1.0.8 — 2026-09-13
 
 - Rebuilt the overview hero after the S8 OMNI composition: internet and connection status now sit on a dedicated themed header surface.
