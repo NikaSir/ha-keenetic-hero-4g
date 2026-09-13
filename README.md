@@ -7,7 +7,7 @@ Custom Home Assistant integration for **Keenetic Hero 4G+ (KN-2311)**. The integ
 ## Status
 
 - integration candidate: `v1.00_b060`;
-- native panel candidate: `UI v1.0.10`;
+- native panel candidate: `UI v1.0.11`;
 - publication model: reviewed branch/PR without GitHub Release or automatic tag.
 
 The current candidate keeps the validated read-only RCI telemetry, approved KN-2311 artwork and semantic channel fills, uses NikaS UI Standard v2.2 / Navigation Contract v1.2, and removes the duplicate inner page gutters that made the 430×932 Overview drift inside a false scroll range. Final acceptance requires Companion App checks for the host-bound layout, source-aware Header return, scroll boundaries, pinch, two-finger reset, more-info holds and repeated tab switching on the target KN-2311 panel.

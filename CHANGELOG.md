@@ -1,5 +1,13 @@
 # Changelog
 
+## Integration v1.0.0-b065 / UI v1.0.11 — 2026-09-13
+
+- Made the overview connection plaque and reserve-status strip theme-aware so both retain dark surfaces in dark themes with their semantic state accents.
+- Changed the Header Refresh action from a structural-bootstrap reload into an immediate coordinator poll of the Keenetic router.
+- Refreshes the factual panel payload and invalidates cached Traffic and Failover data after a successful manual poll.
+- Shows an animated, temporarily disabled Refresh control plus concise progress, success and error feedback without blanking existing telemetry.
+- Added emitted-CSS and refresh-flow regression tests.
+
 ## Integration 1.0.0-b064 / UI 1.0.10 — 2026-09-13
 
 - Main panel title now opens `/home/overview` regardless of opening source, query parameters, stored return routes, or referrer.
