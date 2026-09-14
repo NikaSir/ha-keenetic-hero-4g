@@ -125,7 +125,7 @@ assert.equal(accent.width, "205px");
 assert.equal(accent.height, "205px");
 assert.equal(accent.top, "-92px");
 assert.equal(accent.right, "-70px");
-assert.equal(accent.background, "rgba(3,169,217,0.07)");
+assert.equal(accent.background, "color-mix(in srgb,var(--primary-color,#03a9d9) 12%,var(--card-background-color,#fff))");
 
 const healthyIndicator = declarations(".k100-indicator.ok");
 assert.equal(healthyIndicator.color, "var(--success-color,#43a047)");
