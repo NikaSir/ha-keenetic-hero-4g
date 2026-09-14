@@ -2,9 +2,9 @@
 
 Panel: Keenetic Hero 4G+
 
-Panel metadata version: 1.0.11
+Panel metadata version: 1.0.12
 
-Integration build: 1.0.0-b065
+Integration build: 1.0.0-b066
 
 Standard: NikaS Specialized Panel UI Standard v2.2 + NikaS Panel Navigation and Return Contract v1.2 + Shell v2.1
 
@@ -75,7 +75,7 @@ Primary viewport: Home Assistant Companion App on iPhone Pro Max portrait
 
 ## 6. Frontend delivery
 
-- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=1.0.11` and component `keenetic-hero-app-panel-v100`.
+- Home Assistant registers one self-contained `keenetic-panel-bundle.js?v=1.0.12` and component `keenetic-hero-app-panel-v100`.
 - The bundle includes the hash-pinned canonical Shell v2.1 source kit and has no runtime dependency on the contract repository.
 - Superseded shell/zoom modules v066–v078 are excluded; production contains no runtime import chain, external panel CSS or Base64 artwork payload.
 - Panel contract, manifest, component, route, HA menu event, zoom/reset policy and asset cache-busting agree.
