@@ -33,7 +33,7 @@ class PanelCleanRebuildTests(unittest.TestCase):
     def test_build_has_one_current_shell_source_and_no_superseded_delivery_sources(self) -> None:
         self.assertIn('FRONTEND / "keenetic-app-v100.js"', self.build)
         self.assertIn('SHELL_SOURCE = FRONTEND / "nikas-specialized-shell.js"', self.build)
-        self.assertIn('SHELL_SHA256 = "b7dbb84bb2f950fce75591266d6de7dbff824f4d480f455f0b8cbb0866a1c176"', self.build)
+        self.assertIn('SHELL_SHA256 = "af7155175f289eee3f7c78475ebfb18c77adedb8cb95aca3aa78422f41419298"', self.build)
         self.assertIn(
             "// BEGIN custom_components/keenetic_hero_4g/frontend/nikas-specialized-shell.js",
             self.bundle,
