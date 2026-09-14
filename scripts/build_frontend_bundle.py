@@ -11,7 +11,7 @@ FRONTEND = ROOT / "custom_components" / "keenetic_hero_4g" / "frontend"
 OUTPUT = FRONTEND / "keenetic-panel-bundle.js"
 CSS_SOURCE = FRONTEND / "keenetic-panel.css"
 SHELL_SOURCE = FRONTEND / "nikas-specialized-shell.js"
-SHELL_SHA256 = "b7dbb84bb2f950fce75591266d6de7dbff824f4d480f455f0b8cbb0866a1c176"
+SHELL_SHA256 = "af7155175f289eee3f7c78475ebfb18c77adedb8cb95aca3aa78422f41419298"
 SOURCES = [
     FRONTEND / "keenetic-panel.js",
     FRONTEND / "keenetic-overview-v040.js",
