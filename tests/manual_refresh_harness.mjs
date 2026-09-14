@@ -84,6 +84,11 @@ assert.equal(panel.viewLoadCount, 1, "active-view data must reload after the rou
 const AppPanel = registry.get("keenetic-hero-app-panel-v100");
 const buttonClasses = new Set();
 const attributes = new Map();
+const refreshIcon = {
+  icon: "mdi:refresh",
+  getAttribute(name) { return name === "icon" ? this.icon : null; },
+  setAttribute(name, value) { if (name === "icon") this.icon = value; },
+};
 const button = {
   disabled: false,
   classList: {
@@ -92,6 +97,7 @@ const button = {
   },
   setAttribute: (name, value) => attributes.set(name, value),
   removeAttribute: (name) => attributes.delete(name),
+  querySelector: (selector) => selector === "ha-icon" ? refreshIcon : null,
 };
 const statusClasses = new Set();
 const status = {
@@ -120,6 +126,12 @@ assert.equal(button.disabled, false);
 assert.equal(buttonClasses.has("refreshing"), false);
 assert.equal(attributes.has("aria-busy"), false);
 assert.equal(status.textContent, "Данные обновлены");
+assert.equal(refreshIcon.icon, "mdi:check", "successful refresh must show a check mark");
+assert.equal(buttonClasses.has("success"), true, "successful refresh check mark must be green");
+
+await new Promise((resolve) => setTimeout(resolve, 1200));
+assert.equal(refreshIcon.icon, "mdi:refresh", "success feedback must return to the refresh icon");
+assert.equal(buttonClasses.has("success"), false);
 
 app._child = { _refreshNow: async () => { throw new Error("router unavailable"); } };
 await app._runManualRefresh();

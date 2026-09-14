@@ -1,5 +1,11 @@
 # Changelog
 
+## Integration v1.0.0-b066 / UI v1.0.12 — 2026-09-14
+
+- Shows a green check mark in the Header Refresh control after a successful router poll, synchronized with the existing success message.
+- Restores the regular Refresh icon automatically after the confirmation interval.
+- Extends the manual-refresh harness to protect the complete progress → success → ready visual state sequence.
+
 ## Integration v1.0.0-b065 / UI v1.0.11 — 2026-09-13
 
 - Made the overview connection plaque and reserve-status strip theme-aware so both retain dark surfaces in dark themes with their semantic state accents.
