@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ for Home Assistant
 
-> Beta candidate: **1.0.0-b067** / UI **1.0.13**. Unified header with a black refresh icon in the light theme (theme-aware in dark mode). Device control behavior is unchanged. Publication is manual as a GitHub pre-release; this notice does not confirm publication.
+> Beta candidate: **1.0.0-beta068** / UI **1.0.14**. Unified header with a black refresh icon in the light theme (theme-aware in dark mode). Device control behavior is unchanged. Publication is manual as a GitHub pre-release; this notice does not confirm publication.
 
 ![Keenetic Hero 4G+ integration icon](docs/icon.svg)
 
