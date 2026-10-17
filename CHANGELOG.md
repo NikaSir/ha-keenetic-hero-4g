@@ -1,3 +1,8 @@
+## Repository audit maintenance — 2026-10-17
+
+- Align manifest codeowners with the existing @NikaSir repository owner.
+- Product/UI versions and equipment commands are unchanged; target-device acceptance remains separate.
+
 # Changelog
 
 ## Integration v1.0.0-b066 / UI v1.0.12 — 2026-09-14
