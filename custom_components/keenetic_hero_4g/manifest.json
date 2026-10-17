@@ -1,7 +1,7 @@
 {
   "domain": "keenetic_hero_4g",
   "name": "NikaS Keenetic Hero 4G+",
-  "codeowners": [],
+  "codeowners": ["@NikaSir"],
   "config_flow": true,
   "dependencies": [
     "frontend",
