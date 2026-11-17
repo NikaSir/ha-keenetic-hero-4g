@@ -108,3 +108,9 @@ The generated Infrastructure UI should eventually keep only a compact summary (I
 - **Факт.** Локально прошёл 161 тест, включая пары статусов связи и свежести, успешный и неуспешный опрос, повторное нажатие и точное время обратной связи. Проверена воспроизводимость поставляемого JS.
 - **План.** Проверить отрисовку в обеих темах и геометрию на целевых ширинах. После установки беты подтвердить версии в Home Assistant и проверить панель в Companion App на Keenetic Hero 4G+.
 - **Источники.** Запрос от 17.11.2026, [база знаний NikaS](https://chatgpt.com/library?file_id=libfile_8ce4c1ea396481918b20dade42180c24&account_id=personal), [UI Standard v2.2](https://github.com/NikaSir/ha-contract-generated-ui/blob/main/docs/NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md), [поправка к значкам](https://github.com/NikaSir/ha-contract-generated-ui/pull/195).
+
+### 17.11.2026 — публикация беты 1.0.0-beta069
+
+- **Факт.** В 08:37 МСК опубликован предварительный релиз Keenetic `1.0.0-beta069` с UI `1.0.15`. Тег указывает на коммит `aae0bc761b327e18bbeaa7dbc255427ef2d6fa60`. [Релиз GitHub](https://github.com/NikaSir/ha-keenetic-hero-4g/releases/tag/1.0.0-beta069), [PR #107](https://github.com/NikaSir/ha-keenetic-hero-4g/pull/107).
+- **Факт.** На коммите тега прошли [Repository checks](https://github.com/NikaSir/ha-keenetic-hero-4g/actions/runs/44024437466), [Frontend bundle](https://github.com/NikaSir/ha-keenetic-hero-4g/actions/runs/44024437499), [HACS и Hassfest](https://github.com/NikaSir/ha-keenetic-hero-4g/actions/runs/44024437496).
+- **План.** Установить `1.0.0-beta069` через HACS и проверить в Home Assistant Companion обе темы, индикаторы в «Обзоре» и результат ручного обновления.
