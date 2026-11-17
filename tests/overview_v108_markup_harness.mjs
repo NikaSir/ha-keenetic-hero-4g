@@ -6,10 +6,12 @@ const sourcePath = new URL(
   "../custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js",
   import.meta.url,
 );
+const corePath = new URL("keenetic-panel.js", sourcePath);
 const source = fs.readFileSync(sourcePath, "utf8");
 const overviewOnly = source.slice(0, source.indexOf("class KeeneticHeroAppPanelV100"));
 let installedStyle = null;
 const context = {
+  HTMLElement: class {},
   customElements: { get: () => class {} },
   document: {
     createElement: () => ({ dataset: {}, textContent: "" }),
@@ -17,13 +19,18 @@ const context = {
 };
 vm.createContext(context);
 vm.runInContext(
+  `${fs.readFileSync(corePath, "utf8")}\nglobalThis.getTelemetry = KeeneticHeroPanel.prototype._telemetry;`,
+  context,
+);
+vm.runInContext(
   `${overviewOnly}\nglobalThis.renderOverview = k100Overview;globalThis.installStyles = k100InstallStyles;`,
   context,
 );
 
 const panel = {
+  _bootstrap: { telemetry: { connection_available: true, rci_telemetry_received_at: new Date().toISOString() } },
   _internet: () => ({ online: true }),
-  _telemetry: () => ({ trusted: true, stale: false, age: 4 }),
+  _telemetry: context.getTelemetry,
   _activeWan: () => "ethernet",
   _connection: () => ({ state: "up" }),
   _entityId: () => null,
@@ -91,7 +98,10 @@ assert.ok(hero, "Overview must render the hero surface");
 
 const directHeroClasses = hero.children.flatMap((node) => node.classes);
 assert.ok(directHeroClasses.includes("k100-copy"), "Status copy belongs on the hero background");
-assert.ok(directHeroClasses.includes("k100-indicator"), "Connection status belongs on the hero background");
+const copy = findByClass(hero, "k100-copy");
+const icons = findByClass(copy, "k100-status-icons");
+assert.ok(icons, "Compact indicators belong beside the hero heading");
+assert.deepEqual(icons.children.map((child) => child.classes[1]), ["k100-status-connection", "k100-status-freshness"]);
 assert.ok(directHeroClasses.includes("k100-hero-decoration"), "Hero background needs a clipped decoration layer");
 assert.ok(directHeroClasses.includes("k100-scene"), "Photo must be an inset scene");
 assert.ok(!directHeroClasses.includes("k100-channel"), "Channel plaques must not sit on the hero background");
@@ -106,19 +116,30 @@ assert.ok(findByClass(scene, "k100-router"), "Router must stay inside the photo 
 const decoration = findByClass(hero, "k100-hero-decoration");
 assert.ok(findByClass(decoration, "k100-hero-accent"), "Cyan accent belongs inside the clipped layer");
 
-const indicator = declarations(".k100-indicator");
-assert.equal(indicator.width, "168px");
-assert.equal(indicator["min-width"], "168px");
-assert.equal(indicator["max-width"], "168px");
-assert.equal(indicator.height, "58px");
-assert.equal(indicator["min-height"], "58px");
-assert.equal(indicator["max-height"], "58px");
-assert.equal(indicator.top, "13px");
-assert.equal(indicator.right, "13px");
-assert.equal(indicator.padding, "11px 12px");
-assert.equal(indicator["grid-template-columns"], "10px minmax(0,1fr)");
-assert.equal(indicator["column-gap"], "9px");
-assert.equal(indicator["white-space"], "nowrap");
+const indicator = declarations(".k100-status-icon");
+assert.equal(indicator["inline-size"], "26px");
+assert.equal(indicator["block-size"], "26px");
+assert.equal(declarations(".k100-status-icon>ha-icon")["--mdc-icon-size"], "24px");
+
+const states = [
+  [true, 1, "good", "cloud", "Связь с роутером есть", "good", "check-circle-outline", "Данные актуальны"],
+  [true, 91, "good", "cloud", "Связь с роутером есть", "warning", "clock-alert-outline", "Данные устарели"],
+  [true, null, "good", "cloud", "Связь с роутером есть", "unknown", "clock-outline", "Нет данных"],
+  [false, 1, "warning", "cloud-off-outline", "Связь с роутером потеряна", "warning", "clock-alert-outline", "Данные устарели"],
+  [false, null, "warning", "cloud-off-outline", "Связь с роутером потеряна", "unknown", "clock-outline", "Нет данных"],
+  [null, null, "unknown", "cloud-question-outline", "Связь с роутером неизвестна", "unknown", "clock-outline", "Нет данных"],
+];
+for (const [available, age, connectionTone, cloud, connectionLabel, freshnessTone, clock, freshnessLabel] of states) {
+  panel._bootstrap.telemetry = {
+    connection_available: available,
+    rci_telemetry_received_at: age === null ? null : new Date(Date.now() - age * 1000).toISOString(),
+  };
+  const statuses = context.renderOverview(panel);
+  const expected = (kind, tone, icon, label) =>
+    `class="k100-status-icon k100-status-${kind}" data-tone="${tone}" role="img" aria-label="${label}" title="${label}"><ha-icon icon="mdi:${icon}"`;
+  assert.ok(statuses.includes(expected("connection", connectionTone, cloud, connectionLabel)));
+  assert.ok(statuses.includes(expected("freshness", freshnessTone, clock, freshnessLabel)));
+}
 
 const accent = declarations(".k100-hero-accent");
 assert.equal(accent.width, "205px");
@@ -126,22 +147,6 @@ assert.equal(accent.height, "205px");
 assert.equal(accent.top, "-92px");
 assert.equal(accent.right, "-70px");
 assert.equal(accent.background, "color-mix(in srgb,var(--primary-color,#03a9d9) 12%,var(--card-background-color,#fff))");
-
-const healthyIndicator = declarations(".k100-indicator.ok");
-assert.equal(healthyIndicator.color, "var(--success-color,#43a047)");
-assert.equal(
-  healthyIndicator.background,
-  "color-mix(in srgb,var(--card-background-color) 89%,var(--success-color,#43a047) 11%)",
-  "Healthy connection surface must inherit the active light or dark card background",
-);
-assert.equal(
-  declarations(".k100-indicator.warn").background,
-  "color-mix(in srgb,var(--card-background-color) 90%,var(--warning-color,#f6a623) 10%)",
-);
-assert.equal(
-  declarations(".k100-indicator.bad").background,
-  "color-mix(in srgb,var(--card-background-color) 90%,var(--error-color,#db4437) 10%)",
-);
 
 const readyReserve = declarations(".k100-reserve.reserve");
 assert.equal(readyReserve.color, "var(--primary-color,#03a9d9)");
@@ -158,7 +163,3 @@ assert.equal(
   declarations(".k100-reserve.unknown").background,
   "color-mix(in srgb,var(--card-background-color) 92%,var(--secondary-text-color) 8%)",
 );
-
-const mobileCss = installedStyle.slice(installedStyle.indexOf("@media(max-width:430px)"));
-assert.doesNotMatch(mobileCss, /\.k100-indicator\{[^}]*\bwidth:/, "Phone CSS must not resize the connection plaque");
-assert.doesNotMatch(mobileCss, /\.k100-indicator\{[^}]*(?:\btop:|\bright:)/, "Phone CSS must not move the connection plaque");

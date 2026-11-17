@@ -69,9 +69,8 @@ class PanelChannelStatusFillsV105Tests(unittest.TestCase):
         self.assertIn('return ["unavailable","mdi:alert-circle-outline"', self.source)
         self.assertNotIn(".k100-channel.down{color:#d95d63", self.source)
         self.assertNotIn(".k100-reserve.unavailable{color:#d95d63", self.source)
-        self.assertIn(
-            ".k100-indicator.bad{color:var(--error-color,#db4437)", self.source
-        )
+        self.assertIn('down: ["warning", "mdi:cloud-off-outline"]', self.source)
+        self.assertIn('unknown: ["unknown", "mdi:cloud-question-outline"]', self.source)
 
 
 if __name__ == "__main__":

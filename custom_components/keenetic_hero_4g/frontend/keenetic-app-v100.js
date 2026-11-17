@@ -1,4 +1,4 @@
-const K100_VERSION = "1.0.14";
+const K100_VERSION = "1.0.15";
 const K100_SCALE_MIN = 0.75;
 const K100_SCALE_MAX = 2;
 const K100_SCALE_SNAP_MIN = 0.97;
@@ -7,6 +7,25 @@ const K100_PAN_THRESHOLD = 6;
 const K100_TAP_DURATION = 300;
 const K100_DOUBLE_TAP_GAP = 420;
 const K100_CLICK_GUARD = 460;
+const K100_STATUS_TICK_MS = 10_000;
+const K100_REFRESH_MINIMUM_MS = 900;
+const K100_REFRESH_RESULT_MS = 1400;
+const K100_REFRESH_STATES = {
+  idle: ["mdi:refresh", "Обновить"],
+  busy: ["mdi:refresh", "Обновление данных"],
+  success: ["mdi:check", "Запрос обновления выполнен"],
+  error: ["mdi:alert-circle-outline", "Не удалось обновить данные"],
+};
+const K100_CONNECTION_ICONS = {
+  up: ["good", "mdi:cloud"],
+  down: ["warning", "mdi:cloud-off-outline"],
+  unknown: ["unknown", "mdi:cloud-question-outline"],
+};
+const K100_FRESHNESS_ICONS = {
+  current: ["good", "mdi:check-circle-outline"],
+  stale: ["warning", "mdi:clock-alert-outline"],
+  unknown: ["unknown", "mdi:clock-outline"],
+};
 const k100Clamp = (value,min,max)=>Math.min(max,Math.max(min,value));
 const k100Finite = (value,fallback)=>value!==null&&value!==""&&Number.isFinite(Number(value))?Number(value):fallback;
 const K100_CORE = customElements.get("keenetic-hero-panel");
@@ -21,6 +40,12 @@ const K100_VIEW_IDS = new Set([...K100_TABS.map(([view])=>view),"system"]);
 function k100ViewFromLocation(){const value=(location.hash||"").slice(1).toLowerCase();return K100_VIEW_IDS.has(value)?value:"overview";}
 
 function k100Esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
+function k100StatusIcon(kind, [tone, icon], label) {
+  const question = kind === "freshness"
+    ? '<ha-icon class="k100-status-question" icon="mdi:help" aria-hidden="true"></ha-icon>'
+    : "";
+  return `<span class="k100-status-icon k100-status-${kind}" data-tone="${tone}" role="img" aria-label="${k100Esc(label)}" title="${k100Esc(label)}"><ha-icon icon="${icon}" aria-hidden="true"></ha-icon>${question}</span>`;
+}
 function k100Reserve(panel,active){
   if(active==="lte")return ["reserve","mdi:check-circle","Работа через резерв","Основной Ethernet недоступен."];
   const role=active==="ethernet"?"lte":null;
@@ -51,13 +76,18 @@ function k100Overview(panel){
   return `<section class="k100-overview">
     <article class="k100-hero">
       <div class="k100-hero-decoration" aria-hidden="true"><div class="k100-hero-accent"></div></div>
-      <div class="k100-copy"><h1>${k100Esc(heroTitle)}</h1><p>${active?`Основной канал · ${k100Esc(activeName)}`:"Канал не определён"}</p></div>
-      <div class="k100-indicator ${telemetry.trusted?"ok":telemetry.stale?"warn":"bad"}"><i aria-hidden="true"></i><div><strong>${telemetry.trusted?"Локально":telemetry.stale?"Локально":"Нет связи"}</strong><span>${telemetry.trusted?"Данные актуальны":telemetry.stale?"Данные устарели":"Нет данных"}</span></div></div>
+      <div class="k100-copy">
+        <div><h1>${k100Esc(heroTitle)}</h1><p>${active?`Основной канал · ${k100Esc(activeName)}`:"Канал не определён"}</p></div>
+        <div class="k100-status-icons">
+          ${k100StatusIcon("connection", K100_CONNECTION_ICONS[telemetry.reachability], telemetry.connectionLabel)}
+          ${k100StatusIcon("freshness", K100_FRESHNESS_ICONS[telemetry.freshness], telemetry.freshnessLabel)}
+        </div>
+      </div>
       <div class="k100-scene">
         <div class="k100-channel k100-lte ${channelState("lte",lte)}"><ha-icon icon="mdi:radio-tower"></ha-icon><div><strong>4G LTE</strong><span>${channelCaption("lte",lte)}</span></div></div>
         <div class="k100-channel k100-eth ${channelState("ethernet",eth)}"><ha-icon icon="mdi:ethernet"></ha-icon><div><strong>Кабель</strong><span>${channelCaption("ethernet",eth)}</span></div></div>
         <div class="k100-channel k100-lan active"><ha-icon icon="mdi:lan"></ha-icon><div><strong>LAN</strong><span>Локальная сеть</span></div></div>
-        <img class="k100-router" src="/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.14" alt="Keenetic Hero 4G+">
+        <img class="k100-router" src="/keenetic_hero_4g_static/assets/keenetic-hero-router-v086.webp?v=1.0.15" alt="Keenetic Hero 4G+">
       </div>
     </article>
     <div class="k100-reserve ${reserve[0]}"><ha-icon icon="${reserve[1]}"></ha-icon><div><strong>${reserve[2]}</strong><span>${reserve[3]}</span></div></div>
@@ -74,13 +104,19 @@ function k100Overview(panel){
         ${k100Metric(panel,uptime,"mdi:clock-outline","Uptime",active?panel._display(uptime,"—"):"—")}
       </div>
     </article>
-    <div class="k100-alert ${telemetry.trusted?"hidden":telemetry.stale?"warn":"bad"}"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><div><strong>${k100Esc(telemetry.label)}</strong><span>${k100Esc(telemetry.detail)}</span></div></div>
+    <div class="k100-alert ${telemetry.trusted?"hidden":telemetry.tone}"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><div><strong>${k100Esc(telemetry.label)}</strong><span>${k100Esc(telemetry.detail)}</span></div></div>
   </section>`;
 }
 
 function k100InstallCore(){
   if(!K100_CORE||K100_CORE.prototype.__k100)return;K100_CORE.prototype.__k100=true;
   K100_CORE.prototype._renderOverview=function(){return k100Overview(this);};
+  const connect = K100_CORE.prototype.connectedCallback;
+  K100_CORE.prototype.connectedCallback = function (...args) {
+    connect.apply(this, args);
+    // Receipt time can advance even when no entity value has changed.
+    this._refreshTimer = window.setInterval(() => this._maybeRefreshIndicatorV075(), K100_STATUS_TICK_MS);
+  };
   const oldMount=K100_CORE.prototype._mountStableDomV075;
   if(oldMount)K100_CORE.prototype._mountStableDomV075=function(...args){const r=oldMount.apply(this,args);k100InstallStyles(this.shadowRoot);return r;};
   const oldRender=K100_CORE.prototype._render;
@@ -89,21 +125,38 @@ function k100InstallCore(){
 function k100InstallStyles(root){if(!root||root.querySelector("style[data-k100]"))return;const s=document.createElement("style");s.dataset.k100="1";s.textContent=`
 :host{height:100%!important;min-height:100%!important}.shell{width:100%!important;height:100%!important;min-height:100%!important;margin:0!important;padding:0!important;display:flex!important;flex-direction:column!important}.shell>main{display:flex!important;flex:1 1 auto;min-height:0!important}.v075-view-slot{width:100%;min-height:100%!important;flex:1 0 auto}
 .k100-overview{display:grid;grid-template-rows:minmax(430px,1fr) auto auto auto;gap:8px;padding:0;min-height:100%}.k100-hero{position:relative;min-height:430px;border:1px solid var(--divider-color);border-radius:24px;isolation:isolate;container:k100-hero / inline-size;background:color-mix(in srgb,var(--card-background-color) 95%,var(--primary-color) 5%);box-shadow:0 8px 26px rgba(23,45,76,.08)}
-.k100-hero-decoration{position:absolute;inset:0;z-index:0;border-radius:inherit;overflow:hidden;pointer-events:none}.k100-hero-accent{position:absolute;right:-70px;top:-92px;width:205px;height:205px;border:0;border-radius:50%;background:color-mix(in srgb,var(--primary-color,#03a9d9) 12%,var(--card-background-color,#fff));opacity:1;box-shadow:none;filter:none;transform:none;animation:none}.k100-copy{position:absolute;z-index:1;left:16px;right:16px;top:20px;min-height:58px;padding-right:177px;box-sizing:border-box}.k100-copy h1{margin:0 0 3px;font-size:25px;line-height:1.04}.k100-copy p{margin:0;font-size:14px;font-weight:650;color:var(--secondary-text-color)}
-.k100-indicator{position:absolute;z-index:2;right:13px;top:13px;box-sizing:border-box;width:168px;min-width:168px;max-width:168px;height:58px;min-height:58px;max-height:58px;margin:0;padding:11px 12px;border:1px solid;border-radius:18px;display:grid;grid-template-columns:10px minmax(0,1fr);column-gap:9px;align-items:center;background:var(--card-background-color);box-shadow:0 4px 14px rgba(0,0,0,.055);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-style:normal;letter-spacing:0;text-transform:none;text-align:left;white-space:nowrap}.k100-indicator>div{min-width:0;display:flex;flex-direction:column;gap:3px}.k100-indicator strong,.k100-indicator span{display:block;margin:0;padding:0;letter-spacing:0;font-style:normal;text-transform:none;white-space:nowrap}.k100-indicator strong{font-size:16px;font-weight:700;line-height:17px}.k100-indicator span{font-size:13px;font-weight:600;line-height:14px;color:var(--secondary-text-color)}.k100-indicator>i,.k100-active-head i{display:inline-block;width:10px;height:10px;border-radius:50%;background:currentColor}.k100-indicator>i{flex-shrink:0}.k100-active-head i{margin-right:8px}.k100-indicator.ok{color:var(--success-color,#43a047);border-color:color-mix(in srgb,var(--divider-color) 70%,var(--success-color,#43a047) 30%);background:color-mix(in srgb,var(--card-background-color) 89%,var(--success-color,#43a047) 11%)}.k100-indicator.warn{color:var(--warning-color,#f6a623);border-color:color-mix(in srgb,var(--divider-color) 70%,var(--warning-color,#f6a623) 30%);background:color-mix(in srgb,var(--card-background-color) 90%,var(--warning-color,#f6a623) 10%)}.k100-indicator.bad{color:var(--error-color,#db4437);border-color:color-mix(in srgb,var(--divider-color) 70%,var(--error-color,#db4437) 30%);background:color-mix(in srgb,var(--card-background-color) 90%,var(--error-color,#db4437) 10%)}
-.k100-scene{position:absolute;left:12px;right:12px;bottom:12px;height:310px;z-index:2;border:1px solid color-mix(in srgb,var(--divider-color) 82%,transparent);border-radius:20px;overflow:hidden;background:url('/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.14') center/cover no-repeat}.k100-router{position:absolute;z-index:6;left:50%;top:68%;transform:translate(-50%,-50%);width:42%;max-width:290px;filter:drop-shadow(0 10px 9px rgba(65,45,30,.18));pointer-events:none}.k100-channel{position:absolute;z-index:8;display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid transparent;border-radius:18px;background:rgba(255,255,255,.94);box-shadow:0 6px 16px rgba(23,45,76,.08);min-width:145px}.k100-channel ha-icon{--mdc-icon-size:28px}.k100-channel strong,.k100-channel span{display:block}.k100-channel strong{font-size:15px}.k100-channel span{font-size:12px;margin-top:3px;color:var(--secondary-text-color)}.k100-channel.active{color:#279f69;border-color:#9fe4c8;background:rgba(232,249,241,.95)}.k100-channel.standby{color:#168fbd;border-color:#a7dced;background:rgba(235,247,252,.95)}.k100-channel.down{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.95)}.k100-channel.unknown{color:#69757f;border-color:#cdd3d8;background:rgba(248,249,250,.95)}.k100-lte{left:50%;top:25%;transform:translate(-50%,-50%)}.k100-eth{left:3%;top:62%}.k100-lan{right:3%;top:62%}
-.k100-reserve,.k100-alert{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid;border-radius:20px}.k100-reserve ha-icon,.k100-alert ha-icon{--mdc-icon-size:30px}.k100-reserve strong,.k100-reserve span,.k100-alert strong,.k100-alert span{display:block}.k100-reserve strong,.k100-alert strong{font-size:16px}.k100-reserve span,.k100-alert span{font-size:13px;margin-top:2px;color:var(--secondary-text-color)}.k100-reserve.reserve{color:var(--primary-color,#03a9d9);border-color:color-mix(in srgb,var(--divider-color) 70%,var(--primary-color,#03a9d9) 30%);background:color-mix(in srgb,var(--card-background-color) 90%,var(--primary-color,#03a9d9) 10%)}.k100-reserve.unavailable{color:var(--warning-color,#f6a623);border-color:color-mix(in srgb,var(--divider-color) 70%,var(--warning-color,#f6a623) 30%);background:color-mix(in srgb,var(--card-background-color) 90%,var(--warning-color,#f6a623) 10%)}.k100-reserve.unknown{color:var(--secondary-text-color);border-color:color-mix(in srgb,var(--divider-color) 72%,var(--secondary-text-color) 28%);background:color-mix(in srgb,var(--card-background-color) 92%,var(--secondary-text-color) 8%)}.k100-alert.warn{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.94)}.k100-alert.bad{color:#d95d63;border-color:#efb8ba;background:rgba(255,238,239,.94)}.k100-alert.hidden{display:none}
+.k100-hero-decoration{position:absolute;inset:0;z-index:0;border-radius:inherit;overflow:hidden;pointer-events:none}.k100-hero-accent{position:absolute;right:-70px;top:-92px;width:205px;height:205px;border:0;border-radius:50%;background:color-mix(in srgb,var(--primary-color,#03a9d9) 12%,var(--card-background-color,#fff));opacity:1;box-shadow:none;filter:none;transform:none;animation:none}.k100-copy{position:absolute;z-index:1;left:16px;right:16px;top:20px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:10px}
+.k100-copy h1{margin:0 0 3px;font-size:25px;line-height:1.04}.k100-copy p{margin:0;font-size:14px;font-weight:650;color:var(--secondary-text-color)}
+.k100-status-icons{display:flex;gap:6px;align-items:center}
+.k100-status-icon{position:relative;display:grid;place-items:center;inline-size:26px;block-size:26px}
+.k100-status-icon>ha-icon{--mdc-icon-size:24px}
+.k100-status-icon[data-tone="good"]{color:light-dark(#23763f,#66c78b)}
+.k100-status-icon[data-tone="warning"]{color:light-dark(#a55308,#f5ae53)}
+.k100-status-icon[data-tone="unknown"]{color:light-dark(#5b6874,#a6afb7)}
+.k100-status-icon>.k100-status-question{display:none;position:absolute;inset-inline-end:-2px;inset-block-end:0;--mdc-icon-size:12px;border-radius:50%;background:var(--card-background-color,#fff)}
+.k100-status-icon[data-tone="unknown"]>.k100-status-question{display:block}
+.k100-active-head i{display:inline-block;width:10px;height:10px;border-radius:50%;background:currentColor;margin-right:8px}
+.k100-scene{position:absolute;left:12px;right:12px;bottom:12px;height:310px;z-index:2;border:1px solid color-mix(in srgb,var(--divider-color) 82%,transparent);border-radius:20px;overflow:hidden;background:url('/keenetic_hero_4g_static/assets/keenetic-hero-room-v064.webp?v=1.0.15') center/cover no-repeat}.k100-router{position:absolute;z-index:6;left:50%;top:68%;transform:translate(-50%,-50%);width:42%;max-width:290px;filter:drop-shadow(0 10px 9px rgba(65,45,30,.18));pointer-events:none}.k100-channel{position:absolute;z-index:8;display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid transparent;border-radius:18px;background:rgba(255,255,255,.94);box-shadow:0 6px 16px rgba(23,45,76,.08);min-width:145px}.k100-channel ha-icon{--mdc-icon-size:28px}.k100-channel strong,.k100-channel span{display:block}.k100-channel strong{font-size:15px}.k100-channel span{font-size:12px;margin-top:3px;color:var(--secondary-text-color)}.k100-channel.active{color:#279f69;border-color:#9fe4c8;background:rgba(232,249,241,.95)}.k100-channel.standby{color:#168fbd;border-color:#a7dced;background:rgba(235,247,252,.95)}.k100-channel.down{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.95)}.k100-channel.unknown{color:#69757f;border-color:#cdd3d8;background:rgba(248,249,250,.95)}.k100-lte{left:50%;top:25%;transform:translate(-50%,-50%)}.k100-eth{left:3%;top:62%}.k100-lan{right:3%;top:62%}
+.k100-reserve,.k100-alert{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid;border-radius:20px}.k100-reserve ha-icon,.k100-alert ha-icon{--mdc-icon-size:30px}.k100-reserve strong,.k100-reserve span,.k100-alert strong,.k100-alert span{display:block}.k100-reserve strong,.k100-alert strong{font-size:16px}.k100-reserve span,.k100-alert span{font-size:13px;margin-top:2px;color:var(--secondary-text-color)}.k100-reserve.reserve{color:var(--primary-color,#03a9d9);border-color:color-mix(in srgb,var(--divider-color) 70%,var(--primary-color,#03a9d9) 30%);background:color-mix(in srgb,var(--card-background-color) 90%,var(--primary-color,#03a9d9) 10%)}.k100-reserve.unavailable{color:var(--warning-color,#f6a623);border-color:color-mix(in srgb,var(--divider-color) 70%,var(--warning-color,#f6a623) 30%);background:color-mix(in srgb,var(--card-background-color) 90%,var(--warning-color,#f6a623) 10%)}.k100-reserve.unknown{color:var(--secondary-text-color);border-color:color-mix(in srgb,var(--divider-color) 72%,var(--secondary-text-color) 28%);background:color-mix(in srgb,var(--card-background-color) 92%,var(--secondary-text-color) 8%)}.k100-alert.warn{color:#c58419;border-color:#efcf95;background:rgba(255,248,235,.94)}.k100-alert.bad{color:#d95d63;border-color:#efb8ba;background:rgba(255,238,239,.94)}.k100-alert.unknown{color:var(--secondary-text-color);border-color:var(--divider-color);background:var(--card-background-color)}.k100-alert.hidden{display:none}
 .k100-active-card{border:1px solid color-mix(in srgb,var(--primary-color) 45%,var(--divider-color));border-radius:22px;background:var(--card-background-color);overflow:hidden}.k100-active-head{min-height:58px;display:flex;align-items:center;gap:9px;padding:10px 14px}.k100-active-head>ha-icon{color:var(--primary-color);--mdc-icon-size:28px}.k100-active-head>strong{font-size:20px}.k100-active-head>span{font-size:14px;font-weight:700;color:#2fb878}.k100-active-head button{margin-left:auto;border:0;background:none;color:var(--primary-color);padding:7px}.k100-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--divider-color)}.k100-metric{min-height:72px;padding:12px;display:flex;align-items:center;gap:9px;border-right:1px solid var(--divider-color);border-bottom:1px solid var(--divider-color)}.k100-metric:nth-child(3n){border-right:0}.k100-metric ha-icon{color:var(--primary-color);--mdc-icon-size:25px}.k100-metric span,.k100-metric strong{display:block}.k100-metric span{font-size:12px;color:var(--secondary-text-color);font-weight:650}.k100-metric strong{font-size:15px;margin-top:2px}.k100-metric.wide{grid-column:span 2}.k100-alert{margin-bottom:2px}
 @media(max-width:430px){.k100-overview{grid-template-rows:minmax(350px,1fr) auto auto auto;gap:5px;padding:0}.k100-hero{min-height:350px}.k100-scene{left:10px;right:10px;top:100px;bottom:10px;height:auto}.k100-copy{left:13px;right:13px;top:16px}.k100-copy h1{font-size:24px}.k100-router{top:68%;width:40%;max-width:245px}.k100-channel{min-width:132px;padding:9px 10px}.k100-lte{top:25%}.k100-eth,.k100-lan{top:62%}.k100-reserve{padding:9px 14px}.k100-active-head{min-height:50px;padding:7px 12px}.k100-grid{grid-template-columns:repeat(3,1fr)}.k100-metric{min-height:62px;padding:7px 8px}.k100-metric strong{font-size:14px}}
 @media(max-width:390px){.k100-overview{grid-template-rows:minmax(342px,1fr) auto auto auto}.k100-hero{min-height:342px}.k100-copy h1{font-size:22px}.k100-router{max-width:232px}}
-@container k100-hero (max-width:359px){.k100-copy{padding-right:0;padding-top:67px}}
 `;root.append(s);}
 
 class KeeneticHeroAppPanelV100 extends HTMLElement{
-  constructor(){super();this.attachShadow({mode:"open"});this._hass=null;this._panel=null;this._route=null;this._child=null;this._view=k100ViewFromLocation();this._zoom={scale:1,x:0,y:0};this._zoomSession=null;this._lastTwoFingerTap=0;this._suppressClicksUntil=0;this._returnRoute=null;this._sentPanel=null;this._sentRoute=null;this._sentHass=null;this._manualRefreshRunning=false;this._hashHandler=()=>{const view=k100ViewFromLocation();if(view!==this._view)this._setView(view,false);};}
+  constructor(){super();this.attachShadow({mode:"open"});this._hass=null;this._panel=null;this._route=null;this._child=null;this._view=k100ViewFromLocation();this._zoom={scale:1,x:0,y:0};this._zoomSession=null;this._lastTwoFingerTap=0;this._suppressClicksUntil=0;this._returnRoute=null;this._sentPanel=null;this._sentRoute=null;this._sentHass=null;this._refreshRequest=null;this._hashHandler=()=>{const view=k100ViewFromLocation();if(view!==this._view)this._setView(view,false);};}
   set hass(v){this._hass=v;this._mount();this._syncChild();} set panel(v){this._panel=v;if(!this._returnRoute)this._returnRoute=captureNikasShellReturnRoute({panelId:"keenetic",parentRoute:v?.config?.parent_route,safeReturnRoute:"/home/overview"});this._mount();this._syncChild();} set route(v){this._route=v;this._mount();this._syncChild();}
   connectedCallback(){this._mount();this._bind();this._bindScrollBoundaryGuard();window.addEventListener("hashchange",this._hashHandler);}
-  disconnectedCallback(){this._unbind();this._unbindScrollBoundaryGuard();window.removeEventListener("hashchange",this._hashHandler);}
+  disconnectedCallback() {
+    this._unbind();
+    this._unbindScrollBoundaryGuard();
+    window.removeEventListener("hashchange", this._hashHandler);
+    this._refreshRequest = null;
+    clearTimeout(this._refreshResultTimer);
+    clearTimeout(this._scaleStatusTimer);
+    this._setRefreshState("idle");
+    this.shadowRoot.getElementById("k100-scale-status")?.classList.remove("visible");
+  }
 
   _zoomKey(){return `nikas:panel-transform:v2:${location.pathname}:keenetic:panel`;}
   _restoreZoom(){
@@ -147,26 +200,47 @@ class KeeneticHeroAppPanelV100 extends HTMLElement{
     stage.style.transform=Math.abs(this._zoom.scale-1)<.0001?"none":`translate3d(${this._zoom.x}px,${this._zoom.y}px,0) scale(${this._zoom.scale})`;
   }
   _clampAndApplyZoom(persist=true){this._zoom=this._clampZoom(this._zoom.scale,this._zoom.x,this._zoom.y);this._applyZoom();if(persist)this._saveZoom();}
-  _showShellStatus(message){
+  _showShellStatus(message, duration = 1100){
     const status=this.shadowRoot.getElementById("k100-scale-status");if(!status)return;
     status.textContent=message;
-    status.classList.add("visible");clearTimeout(this._scaleStatusTimer);this._scaleStatusTimer=setTimeout(()=>status.classList.remove("visible"),1100);
+    status.classList.add("visible");clearTimeout(this._scaleStatusTimer);this._scaleStatusTimer=setTimeout(()=>status.classList.remove("visible"),duration);
   }
   _showScaleStatus(){this._showShellStatus("Масштаб 100%");}
-  async _runManualRefresh(){
-    if(this._manualRefreshRunning)return;
-    const button=this.shadowRoot.getElementById("k100-refresh");
-    if(!this._child?._refreshNow){this._showShellStatus("Обновление недоступно");return;}
-    const icon=button?.querySelector("ha-icon");
+  _setRefreshState(state) {
+    const button = this.shadowRoot.getElementById("k100-refresh");
+    if (!button) return;
+    const [icon, label] = K100_REFRESH_STATES[state];
+    button.dataset.state = state;
+    button.disabled = state === "busy";
+    if (button.disabled) button.setAttribute("aria-busy", "true");
+    else button.removeAttribute("aria-busy");
+    button.setAttribute("aria-label", label);
+    button.querySelector("ha-icon").setAttribute("icon", icon);
+  }
+
+  async _runManualRefresh() {
+    if (this._refreshRequest || !this.isConnected) return;
     clearTimeout(this._refreshResultTimer);
-    if(button)button.classList.remove("success");
-    if(icon)icon.setAttribute("icon","mdi:refresh");
-    this._manualRefreshRunning=true;
-    if(button){button.disabled=true;button.classList.add("refreshing");button.setAttribute("aria-busy","true");}
+    const request = Symbol();
+    this._refreshRequest = request;
+    this._setRefreshState("busy");
     this._showShellStatus("Обновление данных…");
-    try{await this._child._refreshNow();if(button)button.classList.add("success");if(icon)icon.setAttribute("icon","mdi:check");this._showShellStatus("Данные обновлены");this._refreshResultTimer=setTimeout(()=>{button?.classList.remove("success");icon?.setAttribute("icon","mdi:refresh");},1100);}
-    catch(_error){this._showShellStatus("Ошибка обновления");}
-    finally{this._manualRefreshRunning=false;if(button){button.disabled=false;button.classList.remove("refreshing");button.removeAttribute("aria-busy");}}
+
+    const minimum = new Promise(resolve => setTimeout(resolve, K100_REFRESH_MINIMUM_MS));
+    let succeeded = false;
+    try {
+      succeeded = await this._child?._refreshNow?.() === true;
+    } catch (_error) {
+      // Keep transport errors out of the user-facing feedback.
+    }
+    await minimum;
+    if (this._refreshRequest !== request || !this.isConnected) return;
+
+    this._refreshRequest = null;
+    const state = succeeded ? "success" : "error";
+    this._setRefreshState(state);
+    this._showShellStatus(K100_REFRESH_STATES[state][1], K100_REFRESH_RESULT_MS);
+    this._refreshResultTimer = setTimeout(() => this._setRefreshState("idle"), K100_REFRESH_RESULT_MS);
   }
   _resetZoom(showStatus=false){
     this._zoom={scale:1,x:0,y:0};
@@ -195,17 +269,38 @@ class KeeneticHeroAppPanelV100 extends HTMLElement{
   _unbindScrollBoundaryGuard(){this._scrollGuardCleanup?.();this._scrollGuardCleanup=null;}
 
   _mount(){if(!this.shadowRoot.getElementById("k100-shell")){this.shadowRoot.innerHTML=`<style data-k100-shell-v106>${nikasShellV2Styles()}
+:host{color-scheme:light dark}
+.k100-title{border-color:color-mix(in srgb,var(--primary-color,#03a9d9) 12%,var(--divider-color,#dfe3e8));background:color-mix(in srgb,var(--primary-color,#03a9d9) 3%,var(--card-background-color,#fff))}
+.k100-title strong{font-size:22px;font-weight:700;text-overflow:clip}
+.k100-title small{font-size:clamp(11px,calc(2.7273cqi + 2.2727px),14px);font-weight:500;white-space:nowrap}
+@container nikas-panel (max-width:359px){.k100-title strong{font-size:20px}}
 .k100-stage{position:relative;display:flex;will-change:transform}.k100-work.zoomed .k100-stage{position:absolute;inset-inline-start:0;inset-block-start:0}.k100-stage>keenetic-hero-panel{display:block;inline-size:100%;block-size:100%;min-block-size:100%;flex:1 0 100%}
 .k100-scale-status{position:absolute;z-index:90;inset-inline-start:50%;inset-block-end:calc(76px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);opacity:0;pointer-events:none;padding:9px 14px;border-radius:999px;background:rgba(20,27,34,.88);color:#fff;font-size:13px;font-weight:720;white-space:nowrap;transition:opacity .14s ease,transform .14s ease}.k100-scale-status.visible{opacity:1;transform:translate(-50%,0)}
-.k100-refresh.refreshing ha-icon{animation:k100-refresh-spin .8s linear infinite}.k100-refresh.success{color:var(--success-color,#43a047)!important}.k100-refresh:disabled{opacity:.7}@keyframes k100-refresh-spin{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.k100-scale-status{transition:none}.k100-refresh.refreshing ha-icon{animation:none}}
-</style><div id="k100-shell" class="nikas-shell"><header class="k100-header nikas-shell__header"><button id="k100-menu" class="k100-side nikas-shell__side-action" type="button" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button><button id="k100-title" class="k100-title nikas-shell__title" type="button" aria-label="Вернуться на главную панель"><strong>Keenetic Hero 4G+</strong><small>UI v1.0.14</small></button><button id="k100-refresh" class="k100-side k100-refresh nikas-shell__side-action nikas-shell__side-action--right" type="button" aria-label="Обновить"><ha-icon icon="mdi:refresh"></ha-icon></button></header><main id="k100-work" class="k100-work nikas-shell__viewport" aria-label="Рабочая область панели Keenetic"><div id="k100-stage" class="k100-stage nikas-shell__canvas nikas-shell__content"></div></main><nav id="k100-tabs" class="k100-tabs nikas-shell__tabs" style="--nikas-shell-tab-count:5" aria-label="Основные разделы"></nav><div id="k100-scale-status" class="k100-scale-status" role="status" aria-live="polite">Масштаб 100%</div></div>`;
+.k100-refresh{color:light-dark(#000,#fff);background:light-dark(#fff,color-mix(in srgb,#1c1c1c 92%,var(--card-background-color,#1c1c1c) 8%))}
+.k100-refresh[data-state="busy"]{opacity:1}
+.k100-refresh[data-state="busy"] ha-icon{animation:k100-refresh-spin .9s linear infinite}
+.k100-refresh[data-state="success"]{color:#43a047}.k100-refresh[data-state="error"]{color:#e53935}
+@keyframes k100-refresh-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.k100-scale-status{transition:none}.k100-refresh[data-state="busy"]{outline:2px solid var(--primary-color,#03a9d9);outline-offset:2px}.k100-refresh[data-state="busy"] ha-icon{animation:none}}
+</style><div id="k100-shell" class="nikas-shell"><header class="k100-header nikas-shell__header"><button id="k100-menu" class="k100-side nikas-shell__side-action" type="button" aria-label="Открыть меню Home Assistant"><ha-icon icon="mdi:menu"></ha-icon></button><button id="k100-title" class="k100-title nikas-shell__title" type="button" aria-label="Вернуться на главную панель" aria-describedby="k100-version"><strong>Keenetic Hero 4G+</strong><small id="k100-version">UI v${K100_VERSION} / —</small></button><button id="k100-refresh" class="k100-side k100-refresh nikas-shell__side-action nikas-shell__side-action--right" type="button" data-state="idle" aria-label="Обновить"><ha-icon icon="mdi:refresh" aria-hidden="true"></ha-icon></button></header><main id="k100-work" class="k100-work nikas-shell__viewport" aria-label="Рабочая область панели Keenetic"><div id="k100-stage" class="k100-stage nikas-shell__canvas nikas-shell__content"></div></main><nav id="k100-tabs" class="k100-tabs nikas-shell__tabs" style="--nikas-shell-tab-count:5" aria-label="Основные разделы"></nav><div id="k100-scale-status" class="k100-scale-status" role="status" aria-live="polite">Масштаб 100%</div></div>`;
       this.shadowRoot.getElementById("k100-menu").onclick=e=>e.currentTarget.dispatchEvent(new CustomEvent("hass-toggle-menu",{bubbles:true,composed:true}));
       this.shadowRoot.getElementById("k100-title").onclick=()=>navigateNikasShell(this._returnRoute||"/home/overview");
       this.shadowRoot.getElementById("k100-refresh").onclick=()=>this._runManualRefresh();
       this._renderTabs();
     }
+    this._syncHeader();
     this._mountChild();
+  }
+  _syncHeader() {
+    const shell = this.shadowRoot.getElementById("k100-shell");
+    const darkMode = this._hass?.themes?.darkMode;
+    const colorScheme = darkMode === true ? "dark" : darkMode === false ? "light" : "";
+    if (shell.style.colorScheme !== colorScheme) shell.style.colorScheme = colorScheme;
+
+    const version = this.shadowRoot.getElementById("k100-version");
+    const installed = this._panel?.config?.integration_version || "—";
+    const label = `UI v${K100_VERSION} / ${installed}`;
+    if (version.textContent !== label) version.textContent = label;
   }
   _mountChild(){const stage=this.shadowRoot.getElementById("k100-stage");if(!this.isConnected||!stage)return;if(!this._child){this._child=document.createElement("keenetic-hero-panel");this._child.addEventListener("keenetic-view-request",event=>{const view=event.detail?.view;if(!K100_VIEW_IDS.has(view))return;event.preventDefault();this._setView(view);});stage.append(this._child);}this._syncChild();}
   _syncChild(){if(!this._child)return;if(this._panel&&this._sentPanel!==this._panel){this._child.panel=this._panel;this._sentPanel=this._panel;}if(this._route&&this._sentRoute!==this._route){this._child.route=this._route;this._sentRoute=this._route;}if(this._child._view!==this._view)this._child._view=this._view;if(this._hass&&this._sentHass!==this._hass){this._child.hass=this._hass;this._sentHass=this._hass;}}

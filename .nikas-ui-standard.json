@@ -35,7 +35,7 @@
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v075.js",
     "custom_components/keenetic_hero_4g/frontend/keenetic-app-v100.js"
   ],
-  "ui_version": "1.0.14",
+  "ui_version": "1.0.15",
   "web_component": "keenetic-hero-app-panel-v100",
   "bundle_contract": {
     "autonomous": true,
@@ -82,7 +82,7 @@
   },
   "header_return": {
     "button_marker": "id=\"k100-title\"",
-    "version_marker": "<small>UI v1.0.14</small>",
+    "version_marker": "<small id=\"k100-version\">UI v${K100_VERSION} / —</small>",
     "focus_marker": ".nikas-shell__title:focus-visible",
     "pressed_marker": ".nikas-shell__title:active"
   },
@@ -108,8 +108,8 @@
     "height_px": 52,
     "padding_px": "5 14",
     "radius_px": 16,
-    "primary_background_mix_percent": 5,
-    "primary_border_mix_percent": 24,
+    "primary_background_mix_percent": 3,
+    "primary_border_mix_percent": 12,
     "shadow": "0 5px 16px rgba(23,45,76,.06)"
   },
   "panel_identity": {
@@ -158,7 +158,7 @@
     "version": "1.18",
     "status": "required",
     "path": "docs/NIKAS_HEADER_CONTRACT_1_18.md",
-    "refresh_idle_color": "var(--primary-text-color)",
+    "refresh_idle_colors": {"light": "#000000", "dark": "#ffffff"},
     "peer_selector_position": "between_work_viewport_and_bottom_navigation_when_present",
     "hero_reference": "S8 OMNI / Keenetic",
     "update_mode": "point-patch"

@@ -32,8 +32,8 @@ class PanelOverviewV108HeaderTests(unittest.TestCase):
         for marker in (
             ".k100-hero{position:relative;min-height:430px",
             ".k100-scene{position:absolute;left:12px;right:12px;bottom:12px;height:310px",
-            ".k100-copy{position:absolute;z-index:1;left:16px;right:16px;top:20px;min-height:58px;padding-right:177px",
-            ".k100-indicator{position:absolute;z-index:2;right:13px;top:13px",
+            ".k100-copy{position:absolute;z-index:1;left:16px;right:16px;top:20px;display:grid",
+            ".k100-status-icons{display:flex;gap:6px",
             ".k100-hero-accent{position:absolute;right:-70px;top:-92px;width:205px;height:205px",
             "@media(max-width:430px)",
             ".k100-hero{min-height:350px}",

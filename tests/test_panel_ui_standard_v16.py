@@ -10,7 +10,6 @@ ROOT = Path(__file__).resolve().parents[1]
 INTEGRATION = ROOT / "custom_components" / "keenetic_hero_4g"
 CURRENT_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v100.js"
 SHELL_SOURCE = INTEGRATION / "frontend" / "nikas-specialized-shell.js"
-INDICATOR_SOURCE = INTEGRATION / "frontend" / "keenetic-app-v076.js"
 STANDARD = ROOT / "docs" / "NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md"
 
 
@@ -19,7 +18,6 @@ class PanelUiStandardV22Tests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.current_source = CURRENT_SOURCE.read_text(encoding="utf-8")
         cls.shell_source = SHELL_SOURCE.read_text(encoding="utf-8")
-        cls.indicator_source = INDICATOR_SOURCE.read_text(encoding="utf-8")
         cls.standard = STANDARD.read_text(encoding="utf-8")
         cls.contract = json.loads(
             (INTEGRATION / "panel_contract.json").read_text(encoding="utf-8")
@@ -63,10 +61,10 @@ class PanelUiStandardV22Tests(unittest.TestCase):
 
     def test_header_actions_match_reference_plaques(self) -> None:
         header = self.contract["app_shell"]["header"]
-        self.assertEqual(header["title_px"], 23)
+        self.assertEqual(header["title_px"], 22)
         self.assertEqual(header["subtitle_px"], 14)
-        self.assertEqual(header["title_px_narrow"], 21)
-        self.assertEqual(header["subtitle_px_narrow"], 13)
+        self.assertEqual(header["title_px_narrow"], 20)
+        self.assertEqual(header["subtitle_px_narrow"], 11)
         self.assertIn("inline-size:44px;block-size:44px", self.shell_source)
         self.assertIn("border-radius:16px", self.shell_source)
         self.assertIn("box-shadow:0 7px 20px rgba(23,45,76,.08)", self.shell_source)
@@ -88,17 +86,12 @@ class PanelUiStandardV22Tests(unittest.TestCase):
         self.assertIn(".nikas-shell__tab ha-icon{--mdc-icon-size:26px", self.shell_source)
         self.assertIn("line-height:14px", self.shell_source)
 
-    def test_indicator_is_stable_two_line_tinted_surface(self) -> None:
+    def test_overview_has_compact_connection_and_freshness_icons(self) -> None:
         indicator = self.contract["app_shell"]["connection_indicator"]
-        self.assertEqual(indicator["surface"], "stable_two_line_status_tinted")
-        self.assertEqual(indicator["primary_font_px"], 16)
-        self.assertEqual(indicator["secondary_font_px"], 13)
-        self.assertEqual(indicator["current_freshness_tone"], "neutral")
+        self.assertEqual(indicator["layout"], "compact_icons_beside_overview_heading")
+        self.assertEqual(indicator["order"], ["connection", "freshness"])
+        self.assertEqual(indicator["glyph_px"], 24)
         self.assertFalse(indicator["animations"])
-        self.assertIn("failedPoll || age > staleAfter", self.indicator_source)
-        self.assertNotIn("if (failedPoll) connection", self.indicator_source)
-        self.assertIn("telemetryCategoryV076", self.indicator_source)
-        self.assertIn("aria-live", self.indicator_source)
 
     def test_typography_envelope_and_current_component(self) -> None:
         typography = self.contract["app_shell"]["typography"]
@@ -107,11 +100,11 @@ class PanelUiStandardV22Tests(unittest.TestCase):
         self.assertIn("font-size:23px", self.shell_source)
         self.assertIn("font-size:12px", self.shell_source)
         self.assertIsNone(re.search(r"font-size:(?:[0-9]|1[01])px", self.shell_source))
-        self.assertEqual(self.manifest["panel_version"], "1.0.14")
+        self.assertEqual(self.manifest["panel_version"], "1.0.15")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
-        self.assertIn('const K100_VERSION = "1.0.14";', self.current_source)
+        self.assertIn('const K100_VERSION = "1.0.15";', self.current_source)
         self.assertIn('customElements.define("keenetic-hero-app-panel-v100"', self.current_source)
-        self.assertIn("<small>UI v1.0.14</small>", self.current_source)
+        self.assertIn('<small id="k100-version">UI v${K100_VERSION} / —</small>', self.current_source)
 
 
 if __name__ == "__main__":

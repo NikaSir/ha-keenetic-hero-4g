@@ -282,70 +282,59 @@ class KeeneticHeroPanel extends HTMLElement {
     return null;
   }
 
-  _latestRciUpdate() {
-    const entities = this._bootstrap?.entities || {};
-    const sources = this._bootstrap?.sources || {};
-    let latest = null;
-    for (const [role, entityId] of Object.entries(entities)) {
-      if (sources[role] !== "rci") continue;
-      const obj = this._hass?.states?.[entityId];
-      if (!obj?.last_updated) continue;
-      const date = new Date(obj.last_updated);
-      if (Number.isNaN(date.getTime())) continue;
-      if (!latest || date > latest) latest = date;
-    }
-    if (latest) return latest;
-    const fallback = this._bootstrap?.telemetry?.latest_rci_state_update;
-    if (!fallback) return null;
-    const date = new Date(fallback);
-    return Number.isNaN(date.getTime()) ? null : date;
-  }
-
   _telemetry() {
     const t = this._bootstrap?.telemetry || {};
-    const scan = Number(t.scan_interval_seconds || 30);
-    const latest = this._latestRciUpdate();
-    const age = latest
-      ? Math.max(0, (Date.now() - latest.getTime()) / 1000)
+    const reportedConnection = this._bootstrapBackgroundError || this._hass?.connected === false
+      ? null
+      : t.connection_available;
+    const reachability = reportedConnection === true ? "up" : reportedConnection === false ? "down" : "unknown";
+    const connectionLabel = {
+      up: "Связь с роутером есть",
+      down: "Связь с роутером потеряна",
+      unknown: "Связь с роутером неизвестна",
+    }[reachability];
+    const receivedAt = Date.parse(t.rci_telemetry_received_at);
+    const age = Number.isFinite(receivedAt)
+      ? Math.max(0, (Date.now() - receivedAt) / 1000)
       : null;
-    const staleAfter = Math.max(90, scan * 3);
-    if (t.last_update_success === false) {
+    const staleAfter = Math.max(90, (Number(t.scan_interval_seconds) || 30) * 3);
+    const stale = age !== null && (reachability === "down" || age > staleAfter);
+    const freshness = age === null ? "unknown" : stale ? "stale" : "current";
+    const freshnessLabel = { current: "Данные актуальны", stale: "Данные устарели", unknown: "Нет данных" }[freshness];
+    const status = { reachability, connectionLabel, freshness, freshnessLabel, stale, age };
+    if (reachability === "down") {
       return {
+        ...status,
         trusted: false,
-        stale: false,
         tone: "bad",
         label: "Телеметрия недостоверна",
         detail: "Последний RCI-опрос завершился ошибкой",
-        age,
       };
     }
-    if (age !== null && age > staleAfter) {
+    if (stale) {
       return {
+        ...status,
         trusted: false,
-        stale: true,
         tone: "warn",
-        label: "Данные устарели",
+        label: freshnessLabel,
         detail: `Возраст данных ${Math.round(age)} сек`,
-        age,
       };
     }
-    if (!latest) {
+    if (age === null || reachability === "unknown") {
       return {
+        ...status,
         trusted: false,
-        stale: false,
         tone: "unknown",
-        label: "Свежесть неизвестна",
-        detail: "Нет метки последнего RCI-обновления",
-        age,
+        label: age === null ? "Свежесть неизвестна" : "Связь не подтверждена",
+        detail: age === null ? "Нет метки получения данных RCI" : `Последние данные получены ${formatAgo(receivedAt)}`,
       };
     }
     return {
+      ...status,
       trusted: true,
-      stale: false,
       tone: "ok",
       label: "Телеметрия актуальна",
-      detail: `Обновлено ${formatAgo(latest)}`,
-      age,
+      detail: `Обновлено ${formatAgo(receivedAt)}`,
     };
   }
 
@@ -779,7 +768,7 @@ class KeeneticHeroPanel extends HTMLElement {
       "lte_modem_model", "lte_modem_firmware", "lte_sim_state", "lte_modem_temperature",
     ];
     return `<section class="view">
-      <article class="card integrity-card ${esc(telemetry.tone)}"><div><ha-icon icon="${telemetry.trusted ? "mdi:shield-check" : "mdi:shield-alert"}"></ha-icon><div><strong>${esc(telemetry.label)}</strong><span>${esc(telemetry.detail)}</span></div></div><small>unknown / unavailable не считаются нормальным состоянием.</small></article>
+      <article class="card integrity-card ${esc(telemetry.tone)}"><div><ha-icon icon="${telemetry.trusted ? "mdi:shield-check" : "mdi:shield-alert"}"></ha-icon><div><strong>${esc(telemetry.label)}</strong><span>${esc(telemetry.detail)}</span></div></div><small class="keenetic-connection-detail">${esc(telemetry.connectionLabel)}${telemetry.reachability === "up" ? " (локально, RCI)" : ""} · ${esc(telemetry.freshnessLabel)}</small></article>
       <article class="card diagnostics-card"><div class="section-heading"><div><ha-icon icon="mdi:stethoscope"></ha-icon><h2>WAN / источники данных</h2></div></div><div class="diag-list">${coreRoles.map((r) => this._diagnosticRow(r)).join("")}</div></article>
       <article class="card diagnostics-card"><div class="section-heading"><div><ha-icon icon="mdi:radio-tower"></ha-icon><h2>LTE radio diagnostics</h2></div></div><div class="diag-list">${radioRoles.map((r) => this._diagnosticRow(r)).join("")}</div></article>
       <article class="card diagnostic-actions"><div><ha-icon icon="mdi:information-outline"></ha-icon><div><strong>Стандартная диагностика Home Assistant</strong><span>Privacy-safe diagnostics интеграции доступны через Устройства и службы. Логин/пароль и идентификаторы SIM редактируются на стороне интеграции.</span></div></div><button data-view="system">Система</button></article>

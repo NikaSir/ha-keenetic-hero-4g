@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ast
 import asyncio
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -14,7 +15,7 @@ class _Coordinator:
     def __init__(self, events: list[str]) -> None:
         self.events = events
 
-    async def async_request_refresh(self) -> None:
+    async def async_refresh(self) -> None:
         self.events.append("refresh")
 
 
@@ -68,6 +69,16 @@ def _load_refresh_handler(events: list[str]):
 
 
 class PanelManualRefreshTests(unittest.TestCase):
+    def test_frontend_distinguishes_success_failure_and_retry(self) -> None:
+        result = subprocess.run(
+            ["node", "tests/manual_refresh_harness.mjs"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_refresh_command_polls_router_before_returning_fresh_payload(self) -> None:
         events: list[str] = []
         handler = _load_refresh_handler(events)

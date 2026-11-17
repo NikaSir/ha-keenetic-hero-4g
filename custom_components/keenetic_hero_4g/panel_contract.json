@@ -12,7 +12,7 @@
     "parent_route": "/home/overview",
     "expose_in_generated_ui": true,
     "preferred_view": "overview",
-    "version": "1.0.14"
+    "version": "1.0.15"
   },
   "app_shell": {
     "standard": "Home Assistant NikaS specialized panel",
@@ -60,10 +60,12 @@
       "control_size_px": 44,
       "control_radius_px": 16,
       "control_icon_px": 25,
-      "title_px": 23,
-      "title_px_narrow": 21,
+      "title_px": 22,
+      "title_px_narrow": 20,
       "subtitle_px": 14,
-      "subtitle_px_narrow": 13,
+      "subtitle_px_narrow": 11,
+      "version_line_format": "UI v{ui_version} / {integration_version}",
+      "integration_version_source": "loaded_ha_manifest",
       "control_shadow": "0 7px 20px rgba(23,45,76,.08)",
       "reference_implementation": "S8 OMNI",
       "surface_background_primary_mix_percent": 97,
@@ -236,36 +238,18 @@
     },
     "connection_indicator": {
       "enabled_by_request": true,
-      "primary_states": [
-        "Локально",
-        "Облако",
-        "Резерв",
-        "Нет связи",
-        "Нет данных"
-      ],
-      "secondary_states": [
-        "Данные актуальны",
-        "Данные устарели",
-        "Нет данных"
-      ],
-      "online_label_forbidden": true,
-      "reserve_only_when_active": true,
+      "layout": "compact_icons_beside_overview_heading",
+      "order": ["connection", "freshness"],
+      "glyph_px": 24,
+      "connection_source": "coordinator_poll_result",
+      "freshness_source": "rci_telemetry_received_at",
       "failed_poll_marks_saved_data_stale": true,
       "default_stale_after_missed_intervals": 3,
+      "minimum_stale_after_seconds": 90,
       "category_change_only": true,
-      "primary_font_px": 16,
-      "primary_font_weight": 700,
-      "secondary_font_px": 13,
-      "secondary_font_weight": 600,
-      "minimum_font_px": 13,
-      "maximum_font_px": 16,
-      "surface": "stable_two_line_status_tinted",
-      "main_status_drives_surface_tint": true,
-      "surface_tint_percent": 10,
-      "surface_border_tint_percent": 30,
-      "current_freshness_tone": "neutral",
-      "animations": false,
-      "aria_live": "polite"
+      "accessible_labels": true,
+      "text_status_in_diagnostics": true,
+      "animations": false
     },
     "typography": {
       "meaningful_min_px": 12,

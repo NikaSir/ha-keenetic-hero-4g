@@ -108,9 +108,10 @@ if (CORE_COMPONENT_V045 && !CORE_COMPONENT_V045.prototype.__nikaFastBootstrapV04
   };
 
   CORE_COMPONENT_V045.prototype._loadBootstrap = async function (silent = false) {
-    if (!this._hass || this._bootstrapLoading) return;
+    if (!this._hass || this._bootstrapLoading || this._manualRefreshLoading) return;
 
     seedBootstrapV045(this);
+    const previousBootstrap = this._bootstrap;
     this._bootstrapLoading = true;
     if (!silent && !this._bootstrap) this._bootstrapError = null;
 
@@ -128,12 +129,14 @@ if (CORE_COMPONENT_V045 && !CORE_COMPONENT_V045.prototype.__nikaFastBootstrapV04
         );
       });
       const fresh = await Promise.race([request, timeout]);
+      if (this._bootstrap !== previousBootstrap) return;
       this._bootstrap = fresh;
       writeBootstrapCacheV045(fresh);
       this._bootstrapError = null;
       this._bootstrapBackgroundError = null;
       this._loadViewData?.();
     } catch (err) {
+      if (this._bootstrap !== previousBootstrap) return;
       // A slow structural refresh must never replace a usable panel with a
       // full-screen loading/error state. Cached/fallback mapping remains active.
       if (!this._bootstrap) this._bootstrapError = err?.message || String(err);
@@ -150,7 +153,7 @@ if (CORE_COMPONENT_V045 && !CORE_COMPONENT_V045.prototype.__nikaFastBootstrapV04
 
   CORE_COMPONENT_V045.prototype._refreshNow = async function () {
     if (!this._hass) throw new Error("Home Assistant connection is unavailable");
-    if (this._manualRefreshLoading) return;
+    if (this._manualRefreshLoading) return false;
 
     this._manualRefreshLoading = true;
     try {
@@ -159,13 +162,16 @@ if (CORE_COMPONENT_V045 && !CORE_COMPONENT_V045.prototype.__nikaFastBootstrapV04
         type: "keenetic_hero_4g/panel/refresh",
         ...(config.entry_id ? { entry_id: config.entry_id } : {}),
       });
+      if (!fresh?.telemetry) return false;
       this._bootstrap = fresh;
       writeBootstrapCacheV045(fresh);
       this._bootstrapError = null;
       this._bootstrapBackgroundError = null;
+      if (fresh.telemetry.last_update_success !== true) return false;
       this._trafficHistory = {};
       this._failoverHistory = [];
       this._loadViewData?.();
+      return true;
     } catch (err) {
       if (!this._bootstrap) this._bootstrapError = err?.message || String(err);
       else this._bootstrapBackgroundError = err?.message || String(err);

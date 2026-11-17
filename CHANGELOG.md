@@ -5,6 +5,12 @@
 
 # Changelog
 
+## Integration 1.0.0-beta069 / UI 1.0.15 — 2026-11-17
+
+- Shows the full UI and installed integration versions on one line under the fixed panel title.
+- Replaces the Overview connection plaque with independent router reachability and data-freshness icons. Diagnostics displays the same statuses in text.
+- Measures freshness from receipt of a valid core RCI sample and keeps manual refresh feedback tied to the result of the awaited router poll.
+
 ## Integration v1.0.0-b066 / UI v1.0.12 — 2026-09-14
 
 - Shows a green check mark in the Header Refresh control after a successful router poll, synchronized with the existing success message.
