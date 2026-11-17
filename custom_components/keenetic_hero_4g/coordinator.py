@@ -201,6 +201,11 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         except KeeneticError as err:
             raise UpdateFailed(str(err)) from err
 
+        # Timestamp the core sample at receipt, even when the readings repeat.
+        # The optional radio and traffic metrics do not determine its freshness.
+        received_at = (
+            dt_util.utcnow().isoformat() if system and version and ethernet else None
+        )
         active_wan = determine_active_wan(
             routes,
             ethernet,
@@ -217,6 +222,7 @@ class KeeneticCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         await self._async_update_diagnostics(ethernet, lte)
 
         return {
+            "rci_telemetry_received_at": received_at,
             "system": system,
             "version": version,
             "ethernet": ethernet,

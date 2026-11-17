@@ -1,6 +1,6 @@
 # Keenetic Hero 4G+ for Home Assistant
 
-> Beta candidate: **1.0.0-beta068** / UI **1.0.14**. Unified header with a black refresh icon in the light theme (theme-aware in dark mode). Device control behavior is unchanged. Publication is manual as a GitHub pre-release; this notice does not confirm publication.
+> Beta candidate: **1.0.0-beta069** / UI **1.0.15**. The header shows both complete versions, and Overview uses compact router reachability and freshness icons.
 
 ![Keenetic Hero 4G+ integration icon](docs/icon.svg)
 
@@ -8,11 +8,11 @@ Custom Home Assistant integration for **Keenetic Hero 4G+ (KN-2311)**. The integ
 
 ## Status
 
-- integration candidate: `v1.00_b060`;
-- native panel candidate: `UI v1.0.12`;
-- publication model: reviewed branch/PR without GitHub Release or automatic tag.
+- integration candidate: `1.0.0-beta069`;
+- native panel candidate: `UI v1.0.15`;
+- delivery: reviewed PR and separate manual prerelease publication.
 
-The current candidate keeps the validated read-only RCI telemetry, approved KN-2311 artwork and semantic channel fills, uses NikaS UI Standard v2.2 / Navigation Contract v1.2, and removes the duplicate inner page gutters that made the 430×932 Overview drift inside a false scroll range. Final acceptance requires Companion App checks for the host-bound layout, source-aware Header return, scroll boundaries, pinch, two-finger reset, more-info holds and repeated tab switching on the target KN-2311 panel.
+The panel uses NikaS UI Standard v2.2, Navigation Contract v1.3, and Refresh Action Contract v1.3. Final acceptance covers the host-bound layout, title navigation to `/home/overview`, scroll boundaries, pinch, two-finger reset, more-info holds and repeated tab switching on the target KN-2311 panel.
 
 Existing SNMP/template entities may remain installed during comparison testing. Temporary `_2` or `_old` entity IDs are not part of the integration's final entity model.
 

@@ -74,7 +74,8 @@ class PanelStableDomTests(unittest.TestCase):
         self.assertNotIn("Math.round(telemetry.age)", self.source)
 
     def test_bootstrap_exposes_factual_local_transport_availability(self) -> None:
-        self.assertIn('"connection_available": bool(coordinator.last_update_success)', self.panel_source)
+        self.assertIn('"connection_available": (', self.panel_source)
+        self.assertIn('if coordinator.data or coordinator.last_exception is not None', self.panel_source)
         self.assertIn('"data_channel": "local"', self.panel_source)
         self.assertIn("configured.connection_available === false", self.standard_source)
 
@@ -84,13 +85,11 @@ class PanelStableDomTests(unittest.TestCase):
         self.assertNotIn("if (lteSubtitle) lteSubtitle.textContent", self.source)
         self.assertNotIn("if (cableSubtitle) cableSubtitle.textContent", self.source)
 
-    def test_indicator_typography_has_no_sub_13px_text(self) -> None:
+    def test_compact_icons_have_accessible_labels_and_diagnostic_text(self) -> None:
         indicator = self.contract["app_shell"]["connection_indicator"]
-        self.assertEqual(indicator["primary_font_px"], 16)
-        self.assertEqual(indicator["secondary_font_px"], 13)
-        self.assertEqual(indicator["minimum_font_px"], 13)
-        self.assertIn(".connection-primary{font-size:16px!important;font-weight:700!important", self.source)
-        self.assertIn(".connection-secondary{font-size:13px!important;font-weight:600!important", self.source)
+        self.assertTrue(indicator["category_change_only"])
+        self.assertTrue(indicator["accessible_labels"])
+        self.assertTrue(indicator["text_status_in_diagnostics"])
 
     def test_delivery_contract_selects_stable_component(self) -> None:
         updates = self.contract["app_shell"]["stable_updates"]
@@ -98,7 +97,7 @@ class PanelStableDomTests(unittest.TestCase):
         self.assertFalse(updates["shadow_root_inner_html_after_mount"])
         self.assertFalse(updates["replace_children_after_mount"])
         self.assertTrue(updates["persistent_view_containers"])
-        self.assertEqual(self.manifest["panel_version"], "1.0.14")
+        self.assertEqual(self.manifest["panel_version"], "1.0.15")
         self.assertEqual(self.manifest["web_component"], "keenetic-hero-app-panel-v100")
 
 

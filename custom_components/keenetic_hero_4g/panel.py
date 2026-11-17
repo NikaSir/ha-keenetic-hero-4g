@@ -12,6 +12,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er
+from homeassistant.loader import async_get_loaded_integration
 
 from .const import (
     DOMAIN,
@@ -247,8 +248,15 @@ def _bootstrap_payload(hass: HomeAssistant, entry: ConfigEntry) -> dict[str, Any
         "sources": source_map,
         "telemetry": {
             "last_update_success": bool(coordinator.last_update_success),
-            "connection_available": bool(coordinator.last_update_success),
+            "connection_available": (
+                bool(coordinator.last_update_success)
+                if coordinator.data or coordinator.last_exception is not None
+                else None
+            ),
             "data_channel": "local",
+            "rci_telemetry_received_at": (coordinator.data or {}).get(
+                "rci_telemetry_received_at"
+            ),
             "latest_rci_state_update": _latest_rci_state_update(
                 hass, entity_map, source_map
             ),
@@ -323,7 +331,7 @@ async def websocket_panel_refresh(
         return
 
     coordinator: KeeneticCoordinator = entry.runtime_data
-    await coordinator.async_request_refresh()
+    await coordinator.async_refresh()
     connection.send_result(msg["id"], _bootstrap_payload(hass, entry))
 
 
@@ -377,6 +385,9 @@ async def async_register_native_panel(
                 "owner": PANEL_OWNER,
                 "parent_route": PANEL_PARENT_ROUTE,
                 "panel_version": PANEL_VERSION,
+                "integration_version": async_get_loaded_integration(
+                    hass, DOMAIN
+                ).manifest.get("version"),
                 "preferred_view": PANEL_PREFERRED_VIEW,
                 "bootstrap_fallback": _frontend_bootstrap_fallback(hass, entry),
             },

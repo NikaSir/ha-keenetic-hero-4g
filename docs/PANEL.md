@@ -1,9 +1,10 @@
 # Keenetic Hero 4G+ native panel
 
-Panel metadata version: **1.0.12**
+Panel metadata version: **1.0.15**
+
 Owner: **ha-keenetic-hero-4g**  
 Stable route: **`/dashboard-keenetic`**  
-Parent route: **`/dashboard-infrastructure/overview`**
+Parent route: **`/home/overview`**
 
 ## Purpose
 
@@ -20,11 +21,11 @@ The first screen must answer, without opening Keenetic Web UI:
 
 ## Home Assistant NikaS app shell
 
-The current panel follows **NikaS Specialized Panel UI Standard v2.2**, **Navigation Contract v1.2** and host-bound **Shell v2.1** from the canonical `ha-contract-generated-ui` repository.
+The current panel follows **NikaS Specialized Panel UI Standard v2.2**, **Navigation Contract v1.3**, **Refresh Action Contract v1.3** and host-bound **Shell v2.1** from the canonical `ha-contract-generated-ui` repository.
 
 The shell and first work view are mounted once. Other views are created on first visit and retained in a stable DOM cache. Home Assistant state cycles are coalesced through `requestAnimationFrame` and patch only changed text, classes and attributes. Header, Bottom Tab Bar, zoom viewport and visited tab containers keep their identity; tab selection uses `hidden` and `inert` without a blank frame.
 
-This panel explicitly includes the optional two-level connection indicator. Its channel line uses the factual labels `Локально / Облако / Резерв / Нет связи / Нет данных`; freshness uses `Данные актуальны / Данные устарели / Нет данных`. A failed current local poll immediately reports `Нет связи` and makes retained values stale. The stable surface is tinted by the primary state and uses 16 px / 700 plus 13 px / 600 typography.
+Overview shows local router reachability first and data freshness second. Reachability uses a green filled cloud, an orange crossed-out cloud, or a gray cloud with a question mark. Freshness uses a green circled check, an orange clock with an alert mark, or a gray clock with a question mark. The same text statuses are available in Diagnostics. The RCI coordinator timestamps receipt of the core sample from the system, firmware and Ethernet responses. The age limit is 90 seconds or three polling intervals, whichever is longer. A confirmed failed poll marks retained data stale. A missing receipt gives the gray freshness icon.
 
 The integration owns a height-locked three-row application shell bound to the actual Home Assistant panel host on phone, tablet and desktop. Only `#k100-work` scrolls and only `#k100-stage` scales; the outer Home Assistant page, Header and Bottom Tab Bar do not participate in content movement. The runtime uses no viewport units or fixed-position host override. Meaningful panel text uses a semantic hierarchy within 12–25 px rather than flattening labels and values to one size.
 
@@ -35,10 +36,9 @@ The production shell is mounted directly and does not inherit any earlier scroll
 - permanent `mdi:menu` Home Assistant menu on the left; it dispatches `hass-toggle-menu`;
 - title `Keenetic Hero 4G+` geometrically centered against the viewport;
 - no decorative router/brand icon beside the title;
-- the complete central title surface is a button that returns to the source NikaS panel;
-- first line `Keenetic Hero 4G+`, second line `UI v1.0.12`;
-- one global Refresh action on the right; it immediately polls Keenetic, refreshes the active view and reports progress, success or failure without clearing the current data;
-- the source route is restricted to the canonical `Дом`, `Помещения`, `Действия` or `Инфраструктура` base panels; the left Header slot remains the native HA menu.
+- the complete central title surface is a button that opens the declared parent `/home/overview`;
+- first line `Keenetic Hero 4G+`, second line `UI v1.0.15 / 1.0.0-beta069` for this candidate, with the integration version read from the loaded HA manifest;
+- the right Refresh action uses a black arrow on white in the light theme and a white arrow on dark in the dark theme. It starts an immediate RCI poll, shows at least 900 ms of busy feedback, and displays the result for 1400 ms.
 
 ### Bottom navigation
 
@@ -56,7 +56,7 @@ It is full-width, edge-attached, non-floating and respects iOS safe area. `Си�
 
 `Header -> network topology/status -> reserve readiness -> active-channel metrics -> compact reserve channel -> Bottom Tab Bar`
 
-The compact Internet / Active WAN / Ethernet / LTE composition is always preserved. Following the S8 OMNI composition, the phone hero places the network state and two-line connection indicator on a dedicated themed header surface with a translucent cyan accent. The room artwork is a separate 250 px rounded inset scene containing the router and Cable/LTE/LAN status plaques. Active metrics never overlap the artwork.
+Following the S8 OMNI composition, the phone hero places the network state and compact icons on a dedicated themed header surface with a translucent cyan accent. The room artwork is a separate rounded inset scene containing the router and Cable/LTE/LAN status plaques. Active metrics never overlap the artwork.
 
 ### Overview channel composition
 
@@ -99,3 +99,12 @@ Long press on factual entity-backed metrics opens native Home Assistant more-inf
 ## Central UI contract
 
 The generated Infrastructure UI should eventually keep only a compact summary (Internet, Active WAN, LTE reserve, switches today) and deep-link to `/dashboard-keenetic`; detailed WAN/LTE/radio/failover/traffic content belongs to this integration-owned panel.
+
+## Журнал проекта
+
+### 17.11.2026 — шапка и индикаторы связи и свежести
+
+- **Факт.** В UI `1.0.15` / интеграции `1.0.0-beta069` обновлены заголовок и обратная связь кнопки обновления. Двухстрочную плашку из UI `1.0.14` сменили два независимых значка. Расшифровка доступна в «Диагностике».
+- **Факт.** Локально прошёл 161 тест, включая пары статусов связи и свежести, успешный и неуспешный опрос, повторное нажатие и точное время обратной связи. Проверена воспроизводимость поставляемого JS.
+- **План.** Проверить отрисовку в обеих темах и геометрию на целевых ширинах. После установки беты подтвердить версии в Home Assistant и проверить панель в Companion App на Keenetic Hero 4G+.
+- **Источники.** Запрос от 17.11.2026, [база знаний NikaS](https://chatgpt.com/library?file_id=libfile_8ce4c1ea396481918b20dade42180c24&account_id=personal), [UI Standard v2.2](https://github.com/NikaSir/ha-contract-generated-ui/blob/main/docs/NIKAS_SPECIALIZED_PANEL_UI_STANDARD.md), [поправка к значкам](https://github.com/NikaSir/ha-contract-generated-ui/pull/195).
